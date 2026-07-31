@@ -1,0 +1,20 @@
+.DS_Store
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Local environments and caches
+.conda_envs/
+.conda_pkgs/
+
+# Package build/check products
+*.Rcheck/
+*.tar.gz
+
+# Generated simulations and downloaded references
+results/
+references/
+reads/
+assemblies/
+evaluation/

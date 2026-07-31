@@ -1,0 +1,7 @@
+name	accession	start	end	strand	notes
+blaTEM-1b	NC_019368.1	80325	81185	+	beta-lactamase TEM-1b (gene range from NCBI gene page)
+catA1	V00622			+	chloramphenicol acetyltransferase (Tn9 cat gene; full record)
+aadA1	NG_052030.1			+	aadA1 aminoglycoside (streptomycin/spectinomycin) resistance; full record
+aacC1	X15852.1			+	aacC1 gentamicin resistance; full record
+aph3-Ia	V00359			+	aph(3')-Ia kanamycin resistance (Tn903); full record
+TetA_TetR	J01830			+	tetA/tetR region (Tn10); full record

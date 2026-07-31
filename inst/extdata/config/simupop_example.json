@@ -1,0 +1,21 @@
+{
+  "population": {
+    "size": 100,
+    "ploidy": 2,
+    "loci": [200],
+    "infoFields": ["ind_id"]
+  },
+  "init": {
+    "from_fasta": "inst/extdata/ref_files/random_panel.fa",
+    "max_loci": 500,
+    "sample_haplotypes": true,
+    "track_hap_ids": true
+  },
+  "mating": {
+    "scheme": "RandomMating",
+    "offspring": 100
+  },
+  "generations": 5,
+  "export_vcf": true,
+  "preset": "F2"
+}

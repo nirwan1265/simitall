@@ -1,0 +1,5 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^environment-macos\.yml$
+^\.git$
+^\.gitignore$

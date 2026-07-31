@@ -1,0 +1,7 @@
+gene_symbol	target_gene_index	element_type	offset_bp	length_bp	gc_target	sequence_id	notes
+GENE1	1	enhancer	-2000	800	0.55		upstream enhancer (synthetic)
+GENE2	2	silencer	-800	400	0.45		upstream silencer (synthetic)
+GENE3	3	enhancer	1500	600	0.55		downstream enhancer (synthetic)
+GENE4	4	silencer	900	500	0.45		downstream silencer (synthetic)
+GENE5	5	enhancer	-2500	700	0.55		both example (enhancer)
+GENE5	5	silencer	-600	300	0.45		both example (silencer)

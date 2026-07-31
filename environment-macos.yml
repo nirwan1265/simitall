@@ -1,0 +1,25 @@
+name: simitall
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - pip
+  - r-base>=4.3
+  - r-remotes
+  - r-devtools
+  - r-roxygen2
+  - r-testthat
+  - r-jsonlite
+  - r-reticulate
+  - art
+  - pbsim
+  - pbsim3
+  - unicycler
+  - samtools
+  - seqkit
+  - pigz
+  - pip:
+      - badread
+      - quast
+      - simuPOP

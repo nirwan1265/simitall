@@ -1,0 +1,7 @@
+gene_symbol	target_gene_index	element_type	offset_bp	length_bp	gc_target	sequence_id	notes
+SHH	1	enhancer	-2000	800	0.55		ZRS-like enhancer (synthetic sequence)
+HBB	2	enhancer	-1500	600	0.55		LCR HS2-like enhancer (synthetic sequence)
+CD4	3	silencer	-800	400	0.45		Intron silencer-like element (synthetic sequence)
+BDNF	4	silencer	-1200	500	0.45		NRSE-like silencer (synthetic sequence)
+HBG1	5	enhancer	-2500	700	0.55		Gamma globin enhancer-like element (synthetic sequence)
+HBG1	5	silencer	-600	300	0.45		Gamma globin silencer-like element (synthetic sequence)
