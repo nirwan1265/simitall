@@ -270,7 +270,7 @@ summarize_quast <- function(quast_root, out_csv) {
 #' @param genome_fa Reference genome FASTA.
 #' @param out_prefix Prefix for VCF, genotype, phenotype, and QC outputs.
 #' @param ... Additional options such as `n_samples`, `snp_rate`,
-#'   `ld_block_size`, `n_subpops`, and `recomb_map`.
+#'   `ld_block_size`, `n_pops`, and `recomb_map_in`.
 #'
 #' @return Invisibly returns `TRUE`.
 #' @examples
@@ -314,10 +314,15 @@ simulate_gwas_cohort <- function(genome_fa, out_prefix, ...) {
 #' }
 #' @export
 simulate_phenotypes <- function(geno_file, out_prefix, ...) {
+  extras <- list(...)
+  if (!is.null(extras$h2) && is.null(extras$heritability)) {
+    extras$heritability <- extras$h2
+    extras$h2 <- NULL
+  }
   args <- .simitall_cli_args(
     geno_file = geno_file,
     out_prefix = out_prefix,
-    .args = list(...)
+    .args = extras
   )
   .simitall_run(main_10b_simulate_phenotypes, args)
 }

@@ -333,6 +333,7 @@ sp_args <- list(
   output_format = output_format,
   to_r = TRUE,  # Return to R for post-processing
   model = model,
+  sim_method = effect_distribution,
   home_dir = dirname(out_prefix),
   constraints = constraints,
   vary_QTN = FALSE,
@@ -392,16 +393,17 @@ if (export_qtn || export_effects) {
 }
 
 # Run simulation
-tryCatch({
-  result <- do.call(simplePHENOTYPES::create_phenotypes, sp_args)
+result <- tryCatch({
+  value <- do.call(simplePHENOTYPES::create_phenotypes, sp_args)
   cat("simplePHENOTYPES completed successfully\n\n")
+  value
 }, error = function(e) {
   cat("ERROR in simplePHENOTYPES:", conditionMessage(e), "\n")
   cat("Trying with relaxed constraints...\n")
 
   # Try with relaxed constraints
   sp_args$constraints <- NULL
-  result <<- do.call(simplePHENOTYPES::create_phenotypes, sp_args)
+  do.call(simplePHENOTYPES::create_phenotypes, sp_args)
 })
 
 # -----------------------------------------------------------------------------
@@ -421,9 +423,13 @@ n_samples <- nrow(pheno_df)
 cat("Samples:", n_samples, "\n")
 
 # Identify trait columns (exclude ID columns)
-id_cols <- c("taxa", "id", "sample", "<Taxa>", "Taxa")
+id_cols <- c("taxa", "id", "sample", "<Taxa>", "Taxa", "<Trait>", "Trait")
 trait_cols <- setdiff(names(pheno_df), id_cols)
 trait_cols <- trait_cols[!grepl("^rep|^Rep", trait_cols)]
+trait_cols <- trait_cols[vapply(pheno_df[trait_cols], is.numeric, logical(1L))]
+if (!length(trait_cols)) {
+  stop("simplePHENOTYPES returned no numeric phenotype columns")
+}
 
 cat("Trait columns:", paste(trait_cols, collapse = ", "), "\n\n")
 

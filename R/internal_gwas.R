@@ -302,11 +302,6 @@ if (ld_block_size > 0) {
   block_id <- floor((variants$pos - 1) / ld_block_size) + 1
   for (b in sort(unique(block_id))) {
     idx <- which(block_id == b)
-    # haplotypes: rows=variants in block, cols=haplotypes
-    H <- matrix(0, nrow = length(idx), ncol = ld_haplotypes)
-    for (j in seq_along(idx)) {
-      H[j, ] <- rbinom(ld_haplotypes, 1, p_pop[idx[j], pop_idx])
-    }
     # assign haplotypes per sample and sum per ploidy
     for (s in seq_len(n_samples)) {
       pop_idx <- pop_index[s]
@@ -388,8 +383,16 @@ for (i in seq_len(nrow(variants))) {
 }
 
 # Write genotype TSV (rows=variants, cols=samples)
-geno_df <- data.frame(id = variants$id, pos = variants$pos, ref = variants$ref, alt = variants$alt, G, stringsAsFactors = FALSE)
-colnames(geno_df)[5:ncol(geno_df)] <- samples
+geno_df <- data.frame(
+  id = variants$id,
+  seqname = seqname,
+  pos = variants$pos,
+  ref = variants$ref,
+  alt = variants$alt,
+  G,
+  stringsAsFactors = FALSE
+)
+colnames(geno_df)[seq.int(ncol(geno_df) - n_samples + 1L, ncol(geno_df))] <- samples
 write.table(geno_df, geno_out, sep = "\t", row.names = FALSE, quote = FALSE)
 
 # Write phenotype TSV

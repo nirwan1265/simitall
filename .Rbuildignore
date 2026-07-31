@@ -3,3 +3,4 @@
 ^environment-macos\.yml$
 ^\.git$
 ^\.gitignore$
+^analysis$

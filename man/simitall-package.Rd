@@ -6,8 +6,9 @@
 \alias{simitall-package}
 \title{simitall: Integrated genomics simulation from R}
 \description{
-\code{simitall} coordinates genome, annotation, sequencing, assembly, population,
-phenotype, and breeding simulations while retaining explicit truth outputs.
+\code{simitall} coordinates genome, annotation, sequencing, assembly, GWAS,
+RNA-seq, eQTL, phenotype, population, and breeding simulations while
+retaining explicit truth outputs.
 }
 \seealso{
 Useful links:

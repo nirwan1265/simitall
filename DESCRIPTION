@@ -1,6 +1,6 @@
 Package: simitall
 Type: Package
-Title: Integrated Genome, Sequencing, Population, and Breeding Simulation
+Title: Integrated Genome, Multi-Omics, Population, and Breeding Simulation
 Version: 0.1.0
 Authors@R: c(
     person(
@@ -12,11 +12,12 @@ Authors@R: c(
   )
 Description: An R-first interface for coordinated genome, genome annotation,
     sequencing-read, hybrid-assembly, genome-wide association study,
-    phenotype, population-genetic, and breeding simulations. The package
-    produces explicit truth sets and interoperable FASTA, FASTQ, VCF, GFF3,
-    BED, TSV, and JSON outputs. External simulators and assemblers are
-    orchestrated from R, while population evolution can be delegated to
-    SimuPOP through 'reticulate'.
+    phenotype, RNA-sequencing, expression quantitative trait locus,
+    population-genetic, and breeding simulations. The package produces
+    explicit truth sets and interoperable FASTA, FASTQ, VCF, GFF3, BED, TSV,
+    and JSON outputs. External simulators and assemblers are orchestrated from
+    R, while population evolution can be delegated to SimuPOP through
+    'reticulate'.
 License: MIT + file LICENSE
 URL: https://github.com/nirwan1265/simitall
 BugReports: https://github.com/nirwan1265/simitall/issues
@@ -26,6 +27,9 @@ Imports:
     jsonlite,
     reticulate
 Suggests:
+    Rsubread,
+    ggplot2,
+    patchwork,
     roxygen2,
     simplePHENOTYPES,
     testthat (>= 3.0.0)

@@ -12,6 +12,10 @@ dependencies:
   - r-testthat
   - r-jsonlite
   - r-reticulate
+  - r-biocmanager
+  - r-ggplot2
+  - r-patchwork
+  - bioconductor-rsubread
   - art
   - pbsim
   - pbsim3
