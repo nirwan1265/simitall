@@ -18,85 +18,180 @@ and emits compatible truth files for benchmarking.
 - Haploid through polyploid genome copies with SNP and indel divergence
 - Genes, CDS features, operons, promoters, TSSs, terminators, rRNA/tRNA
   clusters, riboswitches, CRISPR arrays, plasmids, and regulatory elements
-- Illumina reads with ART
-- PacBio CLR and HiFi/CCS reads with PBSIM/PBSIM3
-- Oxford Nanopore reads with Badread
-- Hybrid assembly grids with Unicycler and evaluation with QUAST
-- Annotation-aware TF, histone-mark, and nucleosome ChIP-seq with matched
-  inputs, differential binding, FASTQ reads, peak truth, and publication plots
 - GWAS cohorts with LD blocks, recombination maps, subpopulations, and
   quantitative or binary phenotypes
-- RNA-seq from the same GWAS individuals, with cis/trans eQTLs, condition and
-  batch effects, genotype-by-condition interactions, latent confounders, and
-  allele-specific expression
-- Standalone bulk and single-cell RNA-seq experiments with technical,
-  biological, or mixed replicates, even when no genotype data are available
-- eQTL association testing with causal-truth precision and recall summaries
-- Single-cell RNA-seq from GWAS donors with cell types, marker programs,
-  pseudotime, cell-type-specific eQTLs, dropout, ambient RNA, and doublets
-- Donor-by-cell-type pseudobulk and cell-type eQTL benchmarking without
-  treating cells as independent biological replicates
 - Advanced phenotype architectures through `simplePHENOTYPES`
 - F1, F2, backcross, selfing, RIL, NIL, doubled-haploid, NAM, and MAGIC
   populations
 - SimuPOP mating schemes through `reticulate`, with VCF-compatible genotype
   output and sample metadata
+- Illumina reads with ART
+- PacBio CLR and HiFi/CCS reads with PBSIM/PBSIM3
+- Oxford Nanopore reads with Badread
+- Hybrid assembly grids with Unicycler and evaluation with QUAST
+- Standalone bulk RNA-seq experiments with technical, biological, or mixed
+  replicates, even when no genotype data are available
+- RNA-seq from the same GWAS individuals, with cis/trans eQTLs, condition and
+  batch effects, genotype-by-condition interactions, latent confounders, and
+  allele-specific expression
+- eQTL association testing with causal-truth precision and recall summaries
+- Standalone single-cell RNA-seq experiments with technical, biological, or
+  mixed replicates
+- Single-cell RNA-seq from GWAS donors with cell types, marker programs,
+  pseudotime, cell-type-specific eQTLs, dropout, ambient RNA, and doublets
+- Donor-by-cell-type pseudobulk and cell-type eQTL benchmarking without
+  treating cells as independent biological replicates
+- Annotation-aware TF, histone-mark, and nucleosome ChIP-seq with matched
+  inputs, differential binding, FASTQ reads, peak truth, and publication plots
 
 Truth outputs include FASTA, VCF, GFF3, BED, TSV, and JSON files. Functions
 write results to user-selected output paths; generated analyses are not stored
 inside the package source tree.
 
-## Installation on Apple Silicon
+## Tutorial map
 
-The R package is small. Large reference genomes and command-line tools are
-installed or downloaded separately.
+The sections below are ordered as a complete simulation project. Start with a
+reference or synthetic genome, annotate it, create related individuals, and
+then choose the sequencing or multi-omics branches needed for the study. You do
+not have to run every branch.
+
+```mermaid
+flowchart LR
+  A["Genome FASTA"] --> B["Genome annotations"]
+  B --> C["GWAS cohort and phenotypes"]
+  C --> D["Breeding populations"]
+  B --> E["DNA read simulation"]
+  E --> F["Hybrid assembly and QUAST"]
+  C --> G["Bulk RNA-seq and eQTLs"]
+  C --> H["Single-cell RNA-seq"]
+  B --> I["ChIP-seq"]
+  G --> J["Publication figures and truth benchmarks"]
+  H --> J
+  I --> J
+```
+
+1. [Install the package and external simulators](#1-install-simitall).
+2. [Simulate or load a genome FASTA](#2-start-a-project-and-simulate-a-genome).
+3. [Add genes and regulatory annotations](#3-add-genome-annotations).
+4. [Generate a GWAS cohort and phenotypes](#4-simulate-a-gwas-cohort-and-phenotypes).
+5. [Generate breeding populations](#5-simulate-breeding-populations).
+6. [Simulate DNA reads and evaluate assemblies](#6-simulate-dna-sequencing-and-assembly).
+7. [Simulate bulk RNA-seq and benchmark eQTLs](#7-simulate-bulk-rna-seq-and-eqtls).
+8. [Simulate single-cell RNA-seq and cell-type eQTLs](#8-simulate-single-cell-rna-seq).
+9. [Simulate ChIP-seq and differential binding](#9-simulate-chip-seq).
+
+
+## 1. Install simitall
+
+The bootstrap installers create a Conda environment, install the selected R,
+Bioconductor, Python, and command-line dependencies, install `simitall`, and run
+a dependency check. Miniforge is installed automatically when Conda is not
+already available.
+
+### macOS
+
+The same installer detects Apple Silicon (`arm64`, including M1-M4) and Intel
+(`x86_64`) Macs automatically:
 
 ```bash
-cd /Users/nirwantandukar/Documents/Github/simitall
+git clone https://github.com/nirwan1265/simitall.git
+cd simitall
+bash install_simitall_macos.sh full
+```
 
+Choose a smaller profile when the complete toolchain is unnecessary:
+
+```bash
+bash install_simitall_macos.sh minimal
+bash install_simitall_macos.sh population
+bash install_simitall_macos.sh omics
+bash install_simitall_macos.sh sequencing
+bash install_simitall_macos.sh full
+```
+
+### Windows
+
+Run the native Windows installer from PowerShell:
+
+```powershell
+git clone https://github.com/nirwan1265/simitall.git
+cd simitall
+powershell -ExecutionPolicy Bypass -File .\install_simitall_windows.ps1 -Profile full
+```
+
+Native Windows supports the `minimal`, `population`, and `omics` profiles.
+SimuPOP is installed from its cross-platform Conda package. The `sequencing`
+and `full` profiles automatically run inside WSL2 because ART, PBSIM, and
+Unicycler are Linux/macOS Bioconda tools. Install WSL2 once, restart if Windows
+requests it, and rerun the same installer command:
+
+```powershell
+wsl --install -d Ubuntu
+```
+
+Windows profile examples:
+
+```powershell
+.\install_simitall_windows.ps1 -Profile minimal
+.\install_simitall_windows.ps1 -Profile population
+.\install_simitall_windows.ps1 -Profile omics
+.\install_simitall_windows.ps1 -Profile sequencing
+.\install_simitall_windows.ps1 -Profile full
+```
+
+### Linux and WSL2
+
+Linux and Windows Subsystem for Linux users can run:
+
+```bash
+git clone https://github.com/nirwan1265/simitall.git
+cd simitall
+bash install_simitall_linux.sh full
+```
+
+### Installation profiles
+
+| Profile | Installed capabilities |
+|---|---|
+| `minimal` | Core R package, genome/annotation simulation, and required R/Python runtime |
+| `population` | Minimal plus SimuPOP, GWAS, breeding, and advanced phenotype dependencies |
+| `omics` | Minimal plus bulk RNA-seq, single-cell, ChIP-seq, Rsubread, Splatter, and ChIPsim |
+| `sequencing` | Minimal plus ART, PBSIM/PBSIM3, Badread, Unicycler, QUAST, samtools, seqkit, and pigz |
+| `full` | Population, omics, sequencing, assembly, evaluation, and all optional backends |
+
+After installation, activate the environment and inspect it from R:
+
+```bash
+conda activate simitall
+R
+```
+
+```r
+library(simitall)
+check_simitall_dependencies("full")
+```
+
+An already-installed copy of `simitall` can add or audit profiles directly:
+
+```r
+install_simitall_dependencies("omics")
+check_simitall_dependencies("omics")
+```
+
+The dependency installer is never run silently during `install.packages()` or
+`remotes::install_github()`. This prevents an R package installation from
+unexpectedly modifying Conda, Python, WSL, or system software.
+
+### Manual installation
+
+Users who prefer to control every package can still create the supplied full
+macOS/Linux environment and install the local package manually:
+
+```bash
 conda env create -f environment-macos.yml
 conda activate simitall
-
-R -q -e 'install.packages("remotes")'
 R -q -e 'remotes::install_local(".", dependencies = TRUE)'
 ```
-
-QUAST and SimuPOP are installed with `pip` in the supplied environment because
-native Conda builds are not consistently available for `osx-arm64`.
-
-Gene-level RNA-seq simulation uses base R. FASTQ generation is optional and
-uses the Bioconductor package `Rsubread`, which is included in
-`environment-macos.yml`. If it is missing from an existing environment, install
-it with:
-
-```r
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-BiocManager::install("Rsubread")
-```
-
-ChIP-seq read simulation can use the optional Bioconductor package
-`ChIPsim`, which is also included in `environment-macos.yml`:
-
-```r
-BiocManager::install("ChIPsim")
-```
-
-Single-cell simulation always has a native R backend. For the optional
-[Splatter](https://bioconductor.org/packages/release/bioc/html/splatter.html)
-technical backend and standard `SingleCellExperiment` output, install:
-
-```r
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-BiocManager::install(c("splatter", "SingleCellExperiment"))
-```
-
-These packages are also listed in `environment-macos.yml` for a fresh Conda
-environment. `backend = "auto"` uses Splatter when available and otherwise
-falls back to the native gamma/negative-binomial technical model.
 
 For package development:
 
@@ -107,9 +202,10 @@ devtools::test()
 devtools::check()
 ```
 
-## Quick start
+## 2. Start a project and simulate a genome
 
-Load the package and locate its bundled, lightweight example files:
+Create one results directory, load the package, and locate the bundled
+lightweight example files:
 
 ```r
 library(simitall)
@@ -162,7 +258,26 @@ simulate_genome(
 )
 ```
 
-Generate annotations:
+
+
+Key genome controls:
+
+- `random_length` and `random_gc` control synthetic genome size and GC content.
+- `in_fa` starts from an existing reference instead of creating random sequence.
+- `n_events`, `seg_len`, and `copies` control repeat burden.
+- `spacing_distribution` controls uniform, Poisson, or fixed repeat spacing.
+- `ploidy`, `snp_rate`, and `indel_rate` control homologous genome copies.
+
+Primary outputs are the simulated FASTA plus repeat-coordinate TSV, BED, GFF3,
+per-copy coordinate files, name mappings, and a JSON parameter summary.
+
+## 3. Add genome annotations
+
+Annotations turn the FASTA sequence into a usable genome model for downstream
+RNA-seq and ChIP-seq simulation. `simulate_annotations()` can generate genes,
+CDS features, operons, TSSs, promoters, terminators, rRNA/tRNA clusters,
+riboswitches, CRISPR arrays, plasmids, and regulatory elements.
+
 
 ```r
 simulate_annotations(
@@ -179,7 +294,112 @@ simulate_annotations(
 )
 ```
 
-## Sequencing and assembly
+
+Key annotation controls:
+
+- `n_genes` controls the number of generated gene models.
+- `rrna_clusters`, `trna_per_cluster`, and `crispr_count` add bacterial features.
+- `riboswitch_count` and regulatory options add functional non-coding elements.
+- `plasmid_count` adds plasmid contigs and optional selectable markers.
+- `in_gff3` imports existing gene models instead of generating random models.
+
+The GFF3 and feature FASTAs produced here are reused by RNA-seq and ChIP-seq.
+
+## 4. Simulate a GWAS cohort and phenotypes
+
+Use the genome created in Step 2 as the reference for a related cohort:
+
+```r
+simulate_gwas_cohort(
+  genome_fa = "results/synthetic_genome.fa",
+  out_prefix = "results/gwas/demo",
+  n_samples = 200,
+  snp_rate = 0.01,
+  n_pops = 2,
+  ld_block_size = 50000,
+  phenotype = "quantitative",
+  n_causal = 10,
+  seed = 1
+)
+```
+
+Advanced phenotype simulation is optional and requires
+`simplePHENOTYPES`:
+
+```r
+simulate_phenotypes(
+  geno_file = "results/gwas/demo.vcf",
+  out_prefix = "results/phenotypes/demo",
+  h2 = 0.5,
+  n_add_qtn = 20,
+  n_traits = 2
+)
+```
+
+Important GWAS controls are `n_samples`, SNP/indel rates, `n_pops`, `fst`, LD
+block size, recombination maps, trait type, causal-locus count, and effect-size
+distribution. The cohort writes VCF, genotype, phenotype, population-label,
+recombination, and causal-truth files that can feed the later omics sections.
+
+## 5. Simulate breeding populations
+
+Steps 4 and 5 are complementary population-simulation routes. Breeding does
+not require the GWAS output: use it when the samples should follow a designed
+cross, and use the GWAS cohort simulator for diversity panels or general
+population structure.
+
+Generate a founder panel or use the bundled demo. The resulting lines can be
+used as a mapping population or as input to later phenotype and sequencing
+simulations:
+
+```r
+generate_random_haplotype_panel(
+  out_fa = "results/founders.fa",
+  n_haplotypes = 8,
+  length = 50000,
+  snp_rate = 0.005,
+  seed = 1
+)
+
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/ril",
+  scheme = "RIL",
+  n_offspring = 100,
+  generations = 6,
+  interference_shape = 2,
+  genotyping_error = 0.005,
+  missing_rate = 0.01,
+  seed = 1
+)
+```
+
+Run a SimuPOP preset:
+
+```r
+simupop_api(
+  out_prefix = "results/simupop/f2",
+  config = list(
+    population = list(size = 100, ploidy = 2, loci = 200),
+    preset = "F2",
+    generations = 2,
+    export_vcf = TRUE
+  )
+)
+```
+
+`simupop_api()` also supports configured random, monogamous, polygamous,
+selfing, hermaphroditic, clonal, conditional, heterogeneous, pedigree, and
+controlled mating schemes. A `python_hook` field can define specialized
+SimuPOP parent choosers or frequency trajectories before a run.
+
+
+Use `simulate_breeding()` for explicit founder-haplotype crossing designs and
+`simupop_api()` for forward-time mating, selection, migration, pedigrees, and
+custom Python hooks. Both routes retain family and founder labels for VCF and
+mapping-population analysis.
+
+## 6. Simulate DNA sequencing and assembly
 
 All external programs are called from R:
 
@@ -238,110 +458,20 @@ summarize_quast(
 )
 ```
 
-## ChIP-seq
 
-`simulate_chipseq()` connects the existing promoter, enhancer, silencer, gene,
-and regulatory annotations to transcription-factor, histone-mark, or
-nucleosome ChIP-seq experiments. Candidate intervals can come from GFF3, a
-user BED file, or random genomic positions when no annotation is supplied.
+Coverage, read length, insert/fragment length, long-read technology, and the
+Illumina-by-long-read grid are the main controls. These steps require the
+external ART, PBSIM/PBSIM3, Badread, Unicycler, and QUAST programs installed in
+the supplied Conda environment.
 
-```r
-chip <- simulate_chipseq(
-  genome_fa = "results/synthetic_genome.fa",
-  annotation_gff3 = "results/synthetic_genome.gff3",
-  out_prefix = "results/chipseq/tf_demo",
-  assay_type = "TF",
-  target_features = c("promoter", "enhancer", "silencer"),
-  n_peaks = 100,
-  conditions = c("control", "treatment"),
-  biological_replicates = 3,
-  technical_replicates = 1,
-  differential_binding_fraction = 0.2,
-  signal_fraction = 0.35,
-  n_reads = 100000,
-  input_reads = 100000,
-  backend = "auto",
-  seed = 1
-)
-```
+## 7. Simulate bulk RNA-seq and eQTLs
 
-Histone-mark presets choose suitable target classes, widths, and broad-peak
-behavior. Available presets are `H3K4me3`, `H3K27ac`, `H3K27me3`, and
-`H3K36me3`:
+Bulk RNA-seq can be simulated independently or from exactly the same genotype
+samples produced in Step 4. Use the standalone path for differential-expression
+benchmarks, or the GWAS-linked path when cis/trans eQTLs, genotype-by-condition
+interactions, and allele-specific expression are required.
 
-```r
-simulate_chipseq(
-  genome_fa = "results/synthetic_genome.fa",
-  annotation_gff3 = "results/synthetic_genome.gff3",
-  out_prefix = "results/chipseq/h3k27ac",
-  assay_type = "histone",
-  histone_mark = "H3K27ac",
-  conditions = c("control", "treatment"),
-  biological_replicates = 3,
-  seed = 2
-)
-```
-
-`backend = "auto"` uses ChIPsim's strand-specific binding/read-density model
-for small references when available. Large references automatically use the
-native interval sampler to avoid allocating chromosome-length dense vectors.
-Both backends produce the same interoperable truth, QC, peak-count, read-
-position, metadata, and FASTQ interfaces.
-
-Generate a six-panel PDF and PNG with genomic peak locations, aggregate
-peak-centered enrichment, FRiP, library complexity, signal by annotation
-class, and differential-binding recovery:
-
-```r
-plot_chipseq_results(
-  chip_prefix = "results/chipseq/tf_demo",
-  out_prefix = "results/figures/tf_chipseq"
-)
-```
-
-![Example annotation-aware ChIP-seq simulation](analysis/example_figures/figure8_chipseq.png)
-
-The complete lightweight example and all panel source-data tables are
-reproducible with:
-
-```bash
-Rscript analysis/paper_fig/fig8_chipseq_simulation.R --backend native
-```
-
-Key outputs include `*.truth_peaks.bed`, `*.truth_peaks.tsv`, matched ChIP and
-input FASTQs, `*.peak_counts.tsv`, `*.qc.tsv`, differential-binding truth,
-sample metadata, read positions, and a JSON parameter summary.
-
-## GWAS, RNA-seq, and phenotypes
-
-```r
-simulate_gwas_cohort(
-  genome_fa = demo_genome,
-  out_prefix = "results/gwas/demo",
-  n_samples = 200,
-  snp_rate = 0.01,
-  n_pops = 2,
-  ld_block_size = 50000,
-  phenotype = "quantitative",
-  n_causal = 10,
-  seed = 1
-)
-```
-
-Advanced phenotype simulation is optional and requires
-`simplePHENOTYPES`:
-
-```r
-simulate_phenotypes(
-  geno_file = "results/gwas/demo.vcf",
-  out_prefix = "results/phenotypes/demo",
-  h2 = 0.5,
-  n_add_qtn = 20,
-  n_traits = 2
-)
-```
-
-### Standalone RNA-seq experiments
+### 7.1 Standalone bulk RNA-seq
 
 Genotypes are optional. `simulate_rnaseq_experiment()` creates a conventional
 bulk RNA-seq experiment directly from sample names or an experiment design.
@@ -405,39 +535,7 @@ bulk_mixed <- simulate_rnaseq_experiment(
 )
 ```
 
-The same design model is available for single-cell experiments. Here, three
-technical capture libraries are generated from the same biological sample:
-
-```r
-sc_technical <- simulate_scrnaseq_experiment(
-  out_prefix = "results/scrna/sample_A",
-  sample_names = "sample_A",
-  replicates = 3,
-  replicate_mode = "technical",
-  cells_per_replicate = 500,
-  n_genes = 1000,
-  cell_type_proportions = c(
-    T_cell = 0.4,
-    B_cell = 0.3,
-    Monocyte = 0.3
-  ),
-  backend = "auto",
-  seed = 4
-)
-
-plot_scrnaseq_results(
-  scrna_prefix = "results/scrna/sample_A",
-  out_prefix = "results/figures/sample_A_scrna"
-)
-```
-
-Standalone single-cell output includes donor-level pseudobulk, which combines
-technical captures before biological interpretation, and library-level
-pseudobulk, which keeps captures separate for technical-QC analyses. Technical
-replicates increase measurement precision but are not independent biological
-replicates and should not be counted as separate donors in inference.
-
-### RNA-seq from the GWAS cohort
+### 7.2 Bulk RNA-seq from the GWAS cohort
 
 `simulate_rnaseq_from_gwas()` uses the GWAS genotype matrix as its starting
 point, so the RNA-seq sample IDs and genotypes are the same individuals used in
@@ -515,7 +613,7 @@ labels, and precision, recall, and empirical FDR summaries. `pair_mode = "cis"`
 tests all local variant-gene pairs when gene metadata is supplied, while
 `pair_mode = "all"` is available for deliberately small datasets.
 
-### Optional RNA-seq FASTQ files
+### 7.3 Optional RNA-seq FASTQ files
 
 The count simulator is the causal experimental engine. When sequence-level
 reads are needed, `simulate_rnaseq_reads()` passes its expression levels to
@@ -540,7 +638,7 @@ abundance is then divided among mapped transcripts. FASTQ simulation can also
 be requested directly with `simulate_rnaseq_from_gwas(simulate_reads = TRUE,
 transcript_fasta = ...)`.
 
-### Result summaries and publication figures
+### 7.4 eQTL benchmarks and publication figures
 
 Summarize the count simulation and eQTL benchmark in one result row:
 
@@ -575,7 +673,47 @@ Rscript analysis/paper_fig/fig6_rnaseq_eqtl_simulation.R
 
 See `analysis/paper_fig/README.md` for runner options and paper-scale guidance.
 
-### Single-cell RNA-seq from GWAS donors
+## 8. Simulate single-cell RNA-seq
+
+Single-cell experiments can also be standalone or linked to the GWAS cohort.
+In either case, cells are technical observations nested within biological
+samples or donors; donor-level pseudobulk is provided for valid inference.
+
+### 8.1 Standalone single-cell experiments
+
+The same design model is available for single-cell experiments. Here, three
+technical capture libraries are generated from the same biological sample:
+
+```r
+sc_technical <- simulate_scrnaseq_experiment(
+  out_prefix = "results/scrna/sample_A",
+  sample_names = "sample_A",
+  replicates = 3,
+  replicate_mode = "technical",
+  cells_per_replicate = 500,
+  n_genes = 1000,
+  cell_type_proportions = c(
+    T_cell = 0.4,
+    B_cell = 0.3,
+    Monocyte = 0.3
+  ),
+  backend = "auto",
+  seed = 4
+)
+
+plot_scrnaseq_results(
+  scrna_prefix = "results/scrna/sample_A",
+  out_prefix = "results/figures/sample_A_scrna"
+)
+```
+
+Standalone single-cell output includes donor-level pseudobulk, which combines
+technical captures before biological interpretation, and library-level
+pseudobulk, which keeps captures separate for technical-QC analyses. Technical
+replicates increase measurement precision but are not independent biological
+replicates and should not be counted as separate donors in inference.
+
+### 8.2 Single-cell RNA-seq from GWAS donors
 
 `simulate_scrnaseq_from_gwas()` expands each GWAS individual into a donor with
 many cells while keeping the original genotype, population, family, phenotype,
@@ -706,52 +844,81 @@ GWAS donor genotypes and explicit biological truth. This separation makes it
 possible to add reference-fitted or multi-omic backends later without changing
 the donor/eQTL API.
 
-## Breeding and SimuPOP
+## 9. Simulate ChIP-seq
 
-Generate a founder panel or use the bundled demo:
+`simulate_chipseq()` connects the existing promoter, enhancer, silencer, gene,
+and regulatory annotations to transcription-factor, histone-mark, or
+nucleosome ChIP-seq experiments. Candidate intervals can come from GFF3, a
+user BED file, or random genomic positions when no annotation is supplied.
 
 ```r
-generate_random_haplotype_panel(
-  out_fa = "results/founders.fa",
-  n_haplotypes = 8,
-  length = 50000,
-  snp_rate = 0.005,
-  seed = 1
-)
-
-simulate_breeding(
-  haplotype_fa = demo_panel,
-  out_prefix = "results/breeding/ril",
-  scheme = "RIL",
-  n_offspring = 100,
-  generations = 6,
-  interference_shape = 2,
-  genotyping_error = 0.005,
-  missing_rate = 0.01,
+chip <- simulate_chipseq(
+  genome_fa = "results/synthetic_genome.fa",
+  annotation_gff3 = "results/synthetic_genome.gff3",
+  out_prefix = "results/chipseq/tf_demo",
+  assay_type = "TF",
+  target_features = c("promoter", "enhancer", "silencer"),
+  n_peaks = 100,
+  conditions = c("control", "treatment"),
+  biological_replicates = 3,
+  technical_replicates = 1,
+  differential_binding_fraction = 0.2,
+  signal_fraction = 0.35,
+  n_reads = 100000,
+  input_reads = 100000,
+  backend = "auto",
   seed = 1
 )
 ```
 
-Run a SimuPOP preset:
+Histone-mark presets choose suitable target classes, widths, and broad-peak
+behavior. Available presets are `H3K4me3`, `H3K27ac`, `H3K27me3`, and
+`H3K36me3`:
 
 ```r
-simupop_api(
-  out_prefix = "results/simupop/f2",
-  config = list(
-    population = list(size = 100, ploidy = 2, loci = 200),
-    preset = "F2",
-    generations = 2,
-    export_vcf = TRUE
-  )
+simulate_chipseq(
+  genome_fa = "results/synthetic_genome.fa",
+  annotation_gff3 = "results/synthetic_genome.gff3",
+  out_prefix = "results/chipseq/h3k27ac",
+  assay_type = "histone",
+  histone_mark = "H3K27ac",
+  conditions = c("control", "treatment"),
+  biological_replicates = 3,
+  seed = 2
 )
 ```
 
-`simupop_api()` also supports configured random, monogamous, polygamous,
-selfing, hermaphroditic, clonal, conditional, heterogeneous, pedigree, and
-controlled mating schemes. A `python_hook` field can define specialized
-SimuPOP parent choosers or frequency trajectories before a run.
+`backend = "auto"` uses ChIPsim's strand-specific binding/read-density model
+for small references when available. Large references automatically use the
+native interval sampler to avoid allocating chromosome-length dense vectors.
+Both backends produce the same interoperable truth, QC, peak-count, read-
+position, metadata, and FASTQ interfaces.
 
-## Example data
+Generate a six-panel PDF and PNG with genomic peak locations, aggregate
+peak-centered enrichment, FRiP, library complexity, signal by annotation
+class, and differential-binding recovery:
+
+```r
+plot_chipseq_results(
+  chip_prefix = "results/chipseq/tf_demo",
+  out_prefix = "results/figures/tf_chipseq"
+)
+```
+
+![Example annotation-aware ChIP-seq simulation](analysis/example_figures/figure8_chipseq.png)
+
+The complete lightweight example and all panel source-data tables are
+reproducible with:
+
+```bash
+Rscript analysis/paper_fig/fig8_chipseq_simulation.R --backend native
+```
+
+Key outputs include `*.truth_peaks.bed`, `*.truth_peaks.tsv`, matched ChIP and
+input FASTQs, `*.peak_counts.tsv`, `*.qc.tsv`, differential-binding truth,
+sample metadata, read positions, and a JSON parameter summary.
+
+## 10. Example data
 
 Small synthetic files are bundled under `inst/extdata`:
 
@@ -774,7 +941,7 @@ maize B73 chromosome 1, and Arabidopsis chromosome 1 from NCBI. Users can pass
 their own FASTA, GFF3, recombination maps, regulatory panels, marker panels,
 and aligned founder haplotypes to the corresponding simulators.
 
-## Package layout
+## 11. Package layout
 
 ```text
 simitall/
@@ -788,7 +955,7 @@ simitall/
 └── README.md           overview and examples
 ```
 
-## Reproducibility and attribution
+## 12. Reproducibility and attribution
 
 Set `seed` in each simulator and record tool versions for publication. The
 package orchestrates external software; publications should cite both
@@ -799,12 +966,12 @@ applicable. Analyses that generate RNA-seq FASTQ files should also cite
 should cite Splatter in addition to `simitall`. ChIP-seq analyses using
 `backend = "chipsim"` should cite ChIPsim.
 
-## Status
+## 13. Status
 
 `simitall` is under active development. Simulated annotations and regulatory
 elements are benchmarking truth, not biological claims. Large-genome and
 high-coverage runs can require substantial memory, storage, and compute time.
 
-## License
+## 14. License
 
 MIT

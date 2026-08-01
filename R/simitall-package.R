@@ -3,6 +3,7 @@
 #' `simitall` coordinates genome, annotation, sequencing, assembly, GWAS,
 #' bulk and single-cell RNA-seq, ChIP-seq, eQTL, phenotype, population, and
 #' breeding simulations while retaining explicit truth outputs.
+#' Profile-based dependency installers support macOS, Linux/WSL2, and Windows.
 #'
 #' @importFrom stats plogis qnorm quantile rbeta rbinom rexp rgamma rnorm rpois
 #'   runif sd var

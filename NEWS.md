@@ -1,5 +1,12 @@
 # simitall 0.1.0
 
+* Added one-command, profile-based bootstrap installers for Apple Silicon and
+  Intel macOS, Linux/WSL2, and native Windows PowerShell. Profiles install
+  minimal, population, omics, sequencing, or full dependency stacks.
+* Added `check_simitall_dependencies()` and
+  `install_simitall_dependencies()` for dependency audits and explicit
+  profile installation from R. Native Windows sequencing/full installations
+  delegate to WSL2 for Bioconda-only tools.
 * Added annotation-aware TF, histone-mark, and nucleosome ChIP-seq simulation
   with GFF3/BED targets, matched input controls, biological and technical
   replicates, differential binding, PCR duplicates, sequencing errors, FASTQ,
