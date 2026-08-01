@@ -1,20 +1,33 @@
 utils::globalVariables(c(
   "condition", "library_size", "PC1", "PC2", "batch", "variant_mb",
   "neglog10_p", "causal_label", "discovery", "p", "effect_log2", "type",
-  "alt_probability", "observed_alt_fraction", "total_count", "metric", "value"
+  "alt_probability", "observed_alt_fraction", "total_count", "metric", "value",
+  "cell_type", "n_cells", "gene_label", "observed_cell_type",
+  "mean_log_expression", "scope", "beta", "start", "end", "feature_type",
+  "distance_bin", "reads_per_million_per_peak", "assay", "frip",
+  "unique_fraction", "counts_per_million", "observed_effect_log2",
+  "direction", "baseline_enrichment"
 ))
 
 .simitall_results_table <- function(path, label) {
   if (!file.exists(path)) {
     stop(label, " does not exist: ", path)
   }
-  utils::read.delim(
+  result <- utils::read.delim(
     path,
     header = TRUE,
     sep = "\t",
     check.names = FALSE,
-    stringsAsFactors = FALSE
+    stringsAsFactors = FALSE,
+    colClasses = "character"
   )
+  result[] <- lapply(
+    result,
+    utils::type.convert,
+    as.is = TRUE,
+    tryLogical = FALSE
+  )
+  result
 }
 
 .simitall_empty_panel <- function(title, message) {

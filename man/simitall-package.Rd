@@ -7,8 +7,8 @@
 \title{simitall: Integrated genomics simulation from R}
 \description{
 \code{simitall} coordinates genome, annotation, sequencing, assembly, GWAS,
-RNA-seq, eQTL, phenotype, population, and breeding simulations while
-retaining explicit truth outputs.
+bulk and single-cell RNA-seq, ChIP-seq, eQTL, phenotype, population, and
+breeding simulations while retaining explicit truth outputs.
 }
 \seealso{
 Useful links:

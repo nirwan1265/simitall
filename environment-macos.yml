@@ -15,7 +15,11 @@ dependencies:
   - r-biocmanager
   - r-ggplot2
   - r-patchwork
+  - r-matrix
   - bioconductor-rsubread
+  - bioconductor-chipsim
+  - bioconductor-singlecellexperiment
+  - bioconductor-splatter
   - art
   - pbsim
   - pbsim3

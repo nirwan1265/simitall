@@ -12,8 +12,9 @@ Authors@R: c(
   )
 Description: An R-first interface for coordinated genome, genome annotation,
     sequencing-read, hybrid-assembly, genome-wide association study,
-    phenotype, RNA-sequencing, expression quantitative trait locus,
-    population-genetic, and breeding simulations. The package produces
+    phenotype, bulk and single-cell RNA-sequencing, cell-type expression
+    quantitative trait locus, population-genetic, and breeding simulations.
+    The package produces
     explicit truth sets and interoperable FASTA, FASTQ, VCF, GFF3, BED, TSV,
     and JSON outputs. External simulators and assemblers are orchestrated from
     R, while population evolution can be delegated to SimuPOP through
@@ -25,13 +26,18 @@ Depends:
     R (>= 4.1.0)
 Imports:
     jsonlite,
+    Matrix,
     reticulate
 Suggests:
+    ChIPsim,
     Rsubread,
     ggplot2,
     patchwork,
     roxygen2,
+    SingleCellExperiment,
     simplePHENOTYPES,
+    splatter,
+    SummarizedExperiment,
     testthat (>= 3.0.0)
 SystemRequirements: ART, PBSIM or PBSIM3, Badread, Unicycler, QUAST, pigz
 Encoding: UTF-8

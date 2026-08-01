@@ -1,8 +1,8 @@
 #' simitall: Integrated genomics simulation from R
 #'
 #' `simitall` coordinates genome, annotation, sequencing, assembly, GWAS,
-#' RNA-seq, eQTL, phenotype, population, and breeding simulations while
-#' retaining explicit truth outputs.
+#' bulk and single-cell RNA-seq, ChIP-seq, eQTL, phenotype, population, and
+#' breeding simulations while retaining explicit truth outputs.
 #'
 #' @importFrom stats plogis qnorm quantile rbeta rbinom rexp rgamma rnorm rpois
 #'   runif sd var

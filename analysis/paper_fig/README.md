@@ -32,3 +32,50 @@ The default runner uses the lightweight genome bundled with the package. For a
 paper-scale analysis, replace `demo_genome` and the simulation dimensions in
 the script with the selected reference, annotation, cohort size, and replicate
 design.
+
+## Donor-aware single-cell RNA-seq and cell-type eQTL figure
+
+Run the complete GWAS donor to single-cell workflow with:
+
+```bash
+conda activate simitall
+Rscript analysis/paper_fig/fig7_scrnaseq_celltype_eqtl.R
+```
+
+Optional arguments:
+
+```bash
+Rscript analysis/paper_fig/fig7_scrnaseq_celltype_eqtl.R \
+  --out_dir analysis/results/scrnaseq_celltype_eqtl \
+  --seed 52 \
+  --backend native
+```
+
+Use `--backend auto` to select Splatter when installed and otherwise use the
+native simulator. The runner writes sparse counts, cell/gene/truth metadata,
+donor-cell-type pseudobulk matrices, cell-type eQTL results, a six-panel PDF
+and PNG, and six panel-level source-data CSV files.
+
+## Annotation-aware ChIP-seq figure
+
+Run the TF binding, matched-input, and differential-binding example with:
+
+```bash
+conda activate simitall
+Rscript analysis/paper_fig/fig8_chipseq_simulation.R --backend native
+```
+
+Optional arguments:
+
+```bash
+Rscript analysis/paper_fig/fig8_chipseq_simulation.R \
+  --out_dir analysis/results/chipseq \
+  --seed 62 \
+  --backend auto
+```
+
+The runner writes regulatory target annotations, truth peaks, ChIP and input
+FASTQ files, read positions, peak counts, differential-binding truth, library
+QC, a six-panel PDF and PNG, and six panel-level source-data CSV files. Auto
+uses ChIPsim for the bundled small reference when installed; native is the
+memory-efficient option for chromosome-scale references.

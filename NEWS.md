@@ -1,5 +1,24 @@
 # simitall 0.1.0
 
+* Added annotation-aware TF, histone-mark, and nucleosome ChIP-seq simulation
+  with GFF3/BED targets, matched input controls, biological and technical
+  replicates, differential binding, PCR duplicates, sequencing errors, FASTQ,
+  BED, peak-count, QC, and truth outputs.
+* Added native and optional ChIPsim read-density backends plus a six-panel
+  ChIP-seq publication figure and reproducible example runner.
+* Added standalone bulk and single-cell RNA-seq experiment simulators that do
+  not require GWAS genotypes, with explicit technical, biological, mixed, and
+  custom replicate designs.
+* Added separate biological- and library-level effects, standalone condition
+  and batch truth, donor-level and library-level pseudobulk, and reusable
+  single-cell publication plotting for one-sample experiments.
+* Added donor-aware single-cell RNA-seq simulation from GWAS genotypes with
+  shared and cell-type-specific eQTLs, marker programs, pseudotime, condition,
+  batch, donor, latent, dropout, ambient-RNA, and doublet effects.
+* Added native and optional Splatter technical backends, sparse 10x-style
+  output, optional `SingleCellExperiment` export, donor-cell-type pseudobulk,
+  cell-type eQTL benchmarking, and six-panel publication figures.
+
 - Established the project as an installable R package.
 - Added R-first genome, annotation, read, assembly, GWAS, phenotype, breeding,
   and SimuPOP interfaces.
