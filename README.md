@@ -348,56 +348,308 @@ not require the GWAS output: use it when the samples should follow a designed
 cross, and use the GWAS cohort simulator for diversity panels or general
 population structure.
 
-Generate a founder panel or use the bundled demo. The resulting lines can be
-used as a mapping population or as input to later phenotype and sequencing
-simulations:
+### 5.1 Choose or generate founders
+
+Every breeding design starts from an aligned multi-FASTA in which each record
+is one founder haplotype and all records have the same length. Use the bundled
+eight-founder panel for a quick run:
+
+```r
+demo_panel <- system.file(
+  "extdata", "panels", "demo_panel.fa",
+  package = "simitall"
+)
+stopifnot(nzchar(demo_panel))
+```
+
+Alternatively, generate a larger synthetic founder panel:
 
 ```r
 generate_random_haplotype_panel(
-  out_fa = "results/founders.fa",
+  out_fa = "results/breeding/founders.fa",
   n_haplotypes = 8,
   length = 50000,
   snp_rate = 0.005,
   seed = 1
 )
+```
 
+The major preset and sequence-based designs are:
+
+| Design | Main setting | Typical use |
+|---|---|---|
+| F1 | `sequence = "F1"` | Hybrid generation |
+| F2 | `scheme = "F2"` | Biparental linkage mapping |
+| F2:3-style | `sequence = "F1,SELF:2"` | F3 progeny derived through an F2 generation |
+| F2-derived S3 | `sequence = "F1,SELF:4"` | More-inbred F2-derived lines |
+| Backcross | `sequence = "F1,BC:P1:3"` | Recurrent-parent recovery |
+| RIL | `scheme = "RIL"` | Stable recombinant inbred mapping lines |
+| NIL | `scheme = "NIL"` | Donor introgression in a recurrent background |
+| DH | `scheme = "DH"` | Immediate homozygous doubled haploids |
+| NAM | `scheme = "NAM"` | Families sharing one common parent |
+| MAGIC | `scheme = "MAGIC"` | Multi-parent recombination population |
+
+In a custom sequence, `SELF:k`, `SIB:k`, and `BC:P1:k` mean `k` consecutive
+generations. `P1` is the recurrent parent and `P2` is the donor unless the
+sequence specifies otherwise.
+
+### 5.2 F1, F2, and advanced selfing populations
+
+Generate 100 F1 individuals from `hap1` and `hap2`:
+
+```r
 simulate_breeding(
   haplotype_fa = demo_panel,
-  out_prefix = "results/breeding/ril",
-  scheme = "RIL",
+  out_prefix = "results/breeding/f1",
+  parents = "hap1,hap2",
+  sequence = "F1",
   n_offspring = 100,
-  generations = 6,
-  interference_shape = 2,
-  genotyping_error = 0.005,
-  missing_rate = 0.01,
-  seed = 1
+  vcf_out = "results/breeding/f1.vcf",
+  seed = 11
 )
 ```
 
-Run a SimuPOP preset:
+Generate a conventional F2 mapping population:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/f2",
+  parents = "hap1,hap2",
+  scheme = "F2",
+  n_offspring = 250,
+  vcf_out = "results/breeding/f2.vcf",
+  graph_out = "results/breeding/f2_cross.mmd",
+  seed = 12
+)
+```
+
+Custom selfing sequences make later-generation populations. The first example
+passes through F1, F2, and F3 and is useful as an F2:3-style final generation.
+The second adds three selfing cycles after F2, producing F2-derived S3 lines:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/f2_3",
+  parents = "hap1,hap2",
+  sequence = "F1,SELF:2",
+  n_offspring = 200,
+  vcf_out = "results/breeding/f2_3.vcf",
+  seed = 13
+)
+
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/f2_s3",
+  parents = "hap1,hap2",
+  sequence = "F1,SELF:4",
+  n_offspring = 200,
+  vcf_out = "results/breeding/f2_s3.vcf",
+  seed = 14
+)
+```
+
+These sequence-based examples return the final generation. They model the
+genetic progression through F2 and F3 but do not currently retain every
+intermediate plant as a separately exported F2:3 pedigree family.
+
+### 5.3 RIL and doubled-haploid populations
+
+Create recombinant inbred lines by single-seed descent. Increasing
+`self_generations` reduces residual heterozygosity, while
+`interference_shape > 1` creates more regularly spaced crossovers than a
+Poisson model:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/ril_ssd",
+  parents = "hap1,hap2",
+  scheme = "RIL",
+  ril_mating = "SSD",
+  self_generations = 8,
+  n_offspring = 200,
+  interference_shape = 2,
+  genotype_error = 0.005,
+  missing_rate = 0.01,
+  vcf_out = "results/breeding/ril_ssd.vcf",
+  seed = 21
+)
+```
+
+Use sibling mating instead of SSD when that better matches the organism or
+breeding program:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/ril_sib",
+  parents = "hap1,hap2",
+  scheme = "RIL",
+  ril_mating = "SIB",
+  self_generations = 8,
+  n_offspring = 200,
+  vcf_out = "results/breeding/ril_sib.vcf",
+  seed = 22
+)
+```
+
+Doubled haploids receive one recombinant gamete and duplicate it, so the final
+lines should have essentially no biological heterozygosity:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/dh",
+  parents = "hap1,hap2",
+  scheme = "DH",
+  n_offspring = 200,
+  vcf_out = "results/breeding/dh.vcf",
+  seed = 23
+)
+```
+
+### 5.4 Backcross and NIL populations
+
+The sequence API can combine backcrossing and selfing. This example makes an
+F1, performs three backcrosses to `P1`, and then self-fertilizes twice:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/bc3s2",
+  parents = "hap1,hap2",
+  sequence = "F1,BC:P1:3,SELF:2",
+  n_offspring = 150,
+  vcf_out = "results/breeding/bc3s2.vcf",
+  seed = 31
+)
+```
+
+For NILs, foreground selection can force a donor interval to remain while
+background selection chooses candidates with less donor ancestry elsewhere.
+The coordinates below fit the bundled 2 kb demo panel; use biologically
+meaningful coordinates for a real chromosome:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/nil_target",
+  parents = "hap1,hap2",
+  scheme = "NIL",
+  n_offspring = 100,
+  backcross_generations = 4,
+  self_generations = 3,
+  fix_locus = "800:900",
+  fix_allele = "donor",
+  background_selection = TRUE,
+  selection_pool = 50,
+  marker_step = 50,
+  introgression_target_len = 300,
+  vcf_out = "results/breeding/nil_target.vcf",
+  seed = 32
+)
+```
+
+### 5.5 NAM and MAGIC populations
+
+A NAM population uses the first selected founder as the common parent and
+crosses it to each remaining founder. Family IDs are retained in the metadata
+and VCF sample declarations:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/nam",
+  scheme = "NAM",
+  founders = "hap1,hap2,hap3,hap4,hap5",
+  n_offspring = 400,
+  vcf_out = "results/breeding/nam.vcf",
+  graph_out = "results/breeding/nam_cross.mmd",
+  seed = 41
+)
+```
+
+MAGIC combines multiple founders before repeated selfing. This example uses
+all eight demo founders and six selfing generations:
+
+```r
+simulate_breeding(
+  haplotype_fa = demo_panel,
+  out_prefix = "results/breeding/magic8",
+  scheme = "MAGIC",
+  founders = paste0("hap", 1:8, collapse = ","),
+  n_offspring = 300,
+  self_generations = 6,
+  interference_shape = 2,
+  vcf_out = "results/breeding/magic8.vcf",
+  graph_out = "results/breeding/magic8_cross.mmd",
+  seed = 42
+)
+```
+
+### 5.6 Forward-time mating with SimuPOP
+
+`simulate_breeding()` follows explicit founder haplotypes and designed crosses.
+Use `simupop_api()` when the experiment instead needs forward-time population
+evolution, flexible population sizes, parent-choice rules, pedigrees, mixed
+mating systems, or custom Python hooks.
+
+Initialize a SimuPOP F2 preset from variable sites in the demo panel:
 
 ```r
 simupop_api(
   out_prefix = "results/simupop/f2",
   config = list(
-    population = list(size = 100, ploidy = 2, loci = 200),
+    population = list(size = 200, ploidy = 2, infoFields = "ind_id"),
+    init = list(
+      from_fasta = demo_panel,
+      max_loci = 500,
+      sample_haplotypes = TRUE
+    ),
     preset = "F2",
-    generations = 2,
+    export_vcf = TRUE,
+    generations = 2
+  )
+)
+```
+
+Run ten generations of random mating without a preset:
+
+```r
+simupop_api(
+  out_prefix = "results/simupop/random10",
+  config = list(
+    population = list(size = 500, ploidy = 2, loci = 1000),
+    mating = list(
+      scheme = "RandomMating",
+      offspring = 500,
+      numOffspring = 1
+    ),
+    generations = 10,
     export_vcf = TRUE
   )
 )
 ```
 
-`simupop_api()` also supports configured random, monogamous, polygamous,
-selfing, hermaphroditic, clonal, conditional, heterogeneous, pedigree, and
-controlled mating schemes. A `python_hook` field can define specialized
-SimuPOP parent choosers or frequency trajectories before a run.
+`simupop_api()` also supports random, monogamous, polygamous, selfing,
+hermaphroditic, clonal, conditional, heterogeneous, pedigree, and controlled
+mating schemes. A `python_hook` field can define specialized SimuPOP parent
+choosers or allele-frequency trajectories before a run.
 
+### 5.7 Breeding outputs and important controls
 
-Use `simulate_breeding()` for explicit founder-haplotype crossing designs and
-`simupop_api()` for forward-time mating, selection, migration, pedigrees, and
-custom Python hooks. Both routes retain family and founder labels for VCF and
-mapping-population analysis.
+Each `simulate_breeding()` run writes diploid haplotypes to `.fa` and sample,
+generation, scheme, and family labels to `.meta.tsv`. Set `vcf_out` for marker
+genotypes and `graph_out` for a Mermaid crossing graph. SVG or PNG rendering
+can be requested with `graph_format` when Mermaid CLI (`mmdc`) is installed.
+
+Important controls include `parents`, `founders`, `n_offspring`,
+`self_generations`, `backcross_generations`, `ril_mating`, recombination-map
+settings, crossover interference, locus fixation, background selection,
+segregation distortion, genotype error, missingness, marker ascertainment, and
+structural-variant rate.
 
 ## 6. Simulate DNA sequencing and assembly
 

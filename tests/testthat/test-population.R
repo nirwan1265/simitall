@@ -47,6 +47,30 @@ test_that("a small F2 population is generated", {
   expect_true(file.exists(vcf))
 })
 
+test_that("monomorphic breeding outputs can write an empty VCF truth set", {
+  out_dir <- tempfile("simitall-monomorphic-")
+  dir.create(out_dir)
+  panel <- file.path(out_dir, "identical.fa")
+  writeLines(c(">parent1", "ACGTACGT", ">parent2", "ACGTACGT"), panel)
+  prefix <- file.path(out_dir, "f1")
+  vcf <- paste0(prefix, ".vcf")
+
+  expect_true(simulate_breeding(
+    haplotype_fa = panel,
+    out_prefix = prefix,
+    parents = "parent1,parent2",
+    n_founders = 2,
+    sequence = "F1",
+    n_offspring = 4,
+    vcf_out = vcf,
+    seed = 8
+  ))
+
+  expect_true(file.exists(vcf))
+  expect_true(any(grepl("^#CHROM", readLines(vcf))))
+  expect_false(any(grepl("^chr1\\t", readLines(vcf))))
+})
+
 test_that("simplePHENOTYPES generates a quantitative trait", {
   skip_if_not_installed("simplePHENOTYPES")
   out_dir <- tempfile("simitall-phenotype-")

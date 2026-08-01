@@ -141,7 +141,9 @@ recomb_hotspots <- as.integer(get_arg("--recomb_hotspots", 3))
 recomb_hotspot_mult <- as.numeric(get_arg("--recomb_hotspot_mult", 5.0))
 
 interference_shape <- as.numeric(get_arg("--interference_shape", 1.0))
-self_generations <- as.integer(get_arg("--self_generations", 6))
+self_generations <- as.integer(
+  get_arg("--self_generations", get_arg("--generations", 6))
+)
 backcross_generations <- as.integer(get_arg("--backcross_generations", 3))
 ril_mating <- toupper(get_arg("--ril_mating", "SSD"))
 fix_locus <- get_arg("--fix_locus", NA)
@@ -479,7 +481,7 @@ if (!is.na(scheme)) {
       parents <- c(list(list(h1 = f1$h1, h2 = f1$h2)), parents[-c(1,2)])
     }
     current_pop <- list(parents[[1]])
-    sequence_tokens <- "SELF"
+    sequence_tokens <- paste0("SELF:", self_generations)
   } else if (scheme == "NAM") {
     common <- list(id = founder_ids[1], h1 = founder_seqs[1], h2 = founder_seqs[1])
     fams <- list()
@@ -501,7 +503,7 @@ if (!is.na(scheme)) {
     }
     sequence_tokens <- character()
   } else if (scheme == "F2") {
-    sequence_tokens <- c("F1", paste0("SELF:", n_offspring))
+    sequence_tokens <- c("F1", "SELF")
   } else if (scheme == "RIL") {
     if (toupper(ril_mating) == "SIB") {
       sequence_tokens <- c("F1", paste0("SIB:", self_generations))
@@ -734,9 +736,13 @@ if (!is.na(vcf_out)) {
     }
   }
   # ascertainment: keep only variants polymorphic between founders
-  if (tolower(ascertainment) == "founders") {
+  if (tolower(ascertainment) == "founders" && nrow(variants) > 0L) {
     p1 <- P1$h1; p2 <- P2$h1
-    keep <- sapply(variants$pos, function(pos) substr(p1, pos, pos) != substr(p2, pos, pos))
+    keep <- vapply(
+      variants$pos,
+      function(pos) substr(p1, pos, pos) != substr(p2, pos, pos),
+      logical(1L)
+    )
     variants <- variants[keep, , drop = FALSE]
   }
 

@@ -1,5 +1,9 @@
 # simitall 0.1.0
 
+* Expanded the breeding tutorial with runnable F1, F2, F2:3-style,
+  F2-derived S3, backcross, RIL-SSD, RIL-sib, DH, NIL, NAM, MAGIC, and SimuPOP
+  examples. Corrected F2 and MAGIC generation expansion and made empty VCF
+  truth sets safe for monomorphic final populations.
 * Added one-command, profile-based bootstrap installers for Apple Silicon and
   Intel macOS, Linux/WSL2, and native Windows PowerShell. Profiles install
   minimal, population, omics, sequencing, or full dependency stacks.
