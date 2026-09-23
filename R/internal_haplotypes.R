@@ -9,6 +9,8 @@ usage <- function() {
   cat("\nOptions:\n")
   cat("  --n_haps <int>            default 8\n")
   cat("  --length <int>            default 100000\n")
+  cat("  --n_chromosomes <int>     default 1\n")
+  cat("  --chromosome_lengths <csv> optional length for each chromosome\n")
   cat("  --gc <float>              default 0.5\n")
   cat("  --snp_rate <float>        default 0.001\n")
   cat("  --indel_rate <float>      default 0.0001\n")
@@ -29,12 +31,25 @@ if (is.null(out_fa)) usage()
 
 n_haps <- as.integer(get_arg("--n_haps", 8))
 len <- as.integer(get_arg("--length", 100000))
+n_chromosomes <- as.integer(get_arg("--n_chromosomes", 1))
+chromosome_lengths_arg <- get_arg("--chromosome_lengths", NA)
 gc <- as.numeric(get_arg("--gc", 0.5))
 snp_rate <- as.numeric(get_arg("--snp_rate", 0.001))
 indel_rate <- as.numeric(get_arg("--indel_rate", 0.0001))
 indel_maxlen <- as.integer(get_arg("--indel_maxlen", 3))
 seed <- as.integer(get_arg("--seed", 1))
 set.seed(seed)
+
+if (n_chromosomes < 1L) stop("n_chromosomes must be positive")
+chromosome_lengths <- if (!is.na(chromosome_lengths_arg)) {
+  as.integer(strsplit(chromosome_lengths_arg, ",", fixed = TRUE)[[1L]])
+} else {
+  rep(len, n_chromosomes)
+}
+if (length(chromosome_lengths) != n_chromosomes ||
+    anyNA(chromosome_lengths) || any(chromosome_lengths < 2L)) {
+  stop("chromosome_lengths must provide one positive length per chromosome")
+}
 
 make_random_genome <- function(length, gc_target) {
   bases <- c("A", "C", "G", "T")
@@ -85,13 +100,35 @@ write_fasta <- function(path, ids, seqs, width = 80) {
   }
 }
 
-base <- make_random_genome(len, gc)
-ids <- paste0("hap", seq_len(n_haps))
-seqs <- character(n_haps)
-seqs[1] <- base
-if (n_haps > 1) {
-  for (i in 2:n_haps) {
-    seqs[i] <- mutate_sequence(base, snp_rate, indel_rate, indel_maxlen)
+chromosome_ids <- paste0("chr", seq_len(n_chromosomes))
+bases <- lapply(chromosome_lengths, make_random_genome, gc_target = gc)
+ids <- character()
+seqs <- character()
+for (i in seq_len(n_haps)) {
+  for (chromosome_index in seq_len(n_chromosomes)) {
+    sequence <- if (i == 1L) {
+      bases[[chromosome_index]]
+    } else {
+      mutate_sequence(
+        bases[[chromosome_index]], snp_rate, indel_rate, indel_maxlen
+      )
+    }
+    target_length <- chromosome_lengths[chromosome_index]
+    if (nchar(sequence) > target_length) {
+      sequence <- substr(sequence, 1L, target_length)
+    } else if (nchar(sequence) < target_length) {
+      sequence <- paste0(
+        sequence,
+        paste(rep("N", target_length - nchar(sequence)), collapse = "")
+      )
+    }
+    founder_id <- paste0("hap", i)
+    ids <- c(
+      ids,
+      if (n_chromosomes == 1L) founder_id else
+        paste(founder_id, chromosome_ids[chromosome_index], sep = "|")
+    )
+    seqs <- c(seqs, sequence)
   }
 }
 

@@ -393,7 +393,97 @@ In a custom sequence, `SELF:k`, `SIB:k`, and `BC:P1:k` mean `k` consecutive
 generations. `P1` is the recurrent parent and `P2` is the donor unless the
 sequence specifies otherwise.
 
-### 5.2 F1, F2, and advanced selfing populations
+### 5.2 Multi-chromosome breeding
+
+Multi-chromosome founder panels use one FASTA record per founder and
+chromosome. Separate the two identifiers with `|`:
+
+```text
+>FounderA|chr1
+ACGT...
+>FounderA|chr2
+TGCA...
+>FounderB|chr1
+ACGA...
+>FounderB|chr2
+TTCA...
+```
+
+Every founder must provide the same chromosome names, and corresponding
+chromosomes must have equal aligned lengths. A legacy panel containing one
+record per founder remains valid and is interpreted as `chr1`.
+
+Generate a four-founder, three-chromosome example panel:
+
+```r
+generate_random_haplotype_panel(
+  out_fa = "results/breeding/multichrom_founders.fa",
+  n_haplotypes = 4,
+  n_chromosomes = 3,
+  chromosome_lengths = c(50000, 40000, 30000),
+  snp_rate = 0.005,
+  indel_rate = 0,
+  seed = 2
+)
+```
+
+A small ready-to-run panel is also bundled with the package:
+
+```r
+demo_multi_panel <- system.file(
+  "extdata", "panels", "demo_multichrom_panel.fa",
+  package = "simitall"
+)
+```
+
+When `recomb_map_in` is omitted, `simitall` generates an independent random
+map for every chromosome. A real or custom map is a tab-separated file with
+`chromosome`, `pos_bp`, and `cM` columns:
+
+```r
+recombination_map <- data.frame(
+  chromosome = rep(c("chr1", "chr2", "chr3"), each = 2),
+  pos_bp = c(1, 600, 1, 500, 1, 400),
+  cM = c(0, 120, 0, 95, 0, 80)
+)
+write.table(
+  recombination_map,
+  "results/breeding/multichrom_map.tsv",
+  sep = "\t", quote = FALSE, row.names = FALSE
+)
+
+simulate_breeding(
+  haplotype_fa = demo_multi_panel,
+  out_prefix = "results/breeding/multichrom_f2",
+  parents = "hap1,hap2",
+  scheme = "F2",
+  n_offspring = 100,
+  recomb_map_in = "results/breeding/multichrom_map.tsv",
+  interference_shape = 2,
+  vcf_out = "results/breeding/multichrom_f2.vcf",
+  seed = 3
+)
+```
+
+Each chromosome draws its starting parental homolog independently, providing
+Mendelian independent assortment, and then applies crossovers from its own
+map. The simulation writes:
+
+- `multichrom_f2.fa`: both haplotypes of every chromosome.
+- `multichrom_f2.vcf`: chromosome-aware variants and contig headers.
+- `multichrom_f2.ancestry.tsv`: founder ancestry tracts.
+- `multichrom_f2.breakpoints.tsv`: ancestry junctions and flanking founders.
+- `multichrom_f2.recombination_map.tsv`: the maps actually used.
+- `multichrom_f2.sv_truth.tsv`: inherited structural-variant truth when
+  `sv_rate > 0`.
+- `multichrom_f2.meta.tsv`: sample, generation, scheme, and family labels.
+
+Locus arguments are chromosome-aware. For example, use
+`fix_locus = "chr2:10000:12000"` and
+`selection_loci = "chr1:5000,chr3:15000"`. Legacy coordinates such as
+`fix_locus = "800:900"` continue to target the first chromosome.
+
+### 5.3 F1, F2, and advanced selfing populations
 
 Generate 100 F1 individuals from `hap1` and `hap2`:
 
@@ -454,7 +544,7 @@ These sequence-based examples return the final generation. They model the
 genetic progression through F2 and F3 but do not currently retain every
 intermediate plant as a separately exported F2:3 pedigree family.
 
-### 5.3 RIL and doubled-haploid populations
+### 5.4 RIL and doubled-haploid populations
 
 Create recombinant inbred lines by single-seed descent. Increasing
 `self_generations` reduces residual heterozygosity, while
@@ -510,7 +600,7 @@ simulate_breeding(
 )
 ```
 
-### 5.4 Backcross and NIL populations
+### 5.5 Backcross and NIL populations
 
 The sequence API can combine backcrossing and selfing. This example makes an
 F1, performs three backcrosses to `P1`, and then self-fertilizes twice:
@@ -552,7 +642,7 @@ simulate_breeding(
 )
 ```
 
-### 5.5 NAM and MAGIC populations
+### 5.6 NAM and MAGIC populations
 
 A NAM population uses the first selected founder as the common parent and
 crosses it to each remaining founder. Family IDs are retained in the metadata
@@ -589,7 +679,7 @@ simulate_breeding(
 )
 ```
 
-### 5.6 Forward-time mating with SimuPOP
+### 5.7 Forward-time mating with SimuPOP
 
 `simulate_breeding()` follows explicit founder haplotypes and designed crosses.
 Use `simupop_api()` when the experiment instead needs forward-time population
@@ -638,7 +728,7 @@ hermaphroditic, clonal, conditional, heterogeneous, pedigree, and controlled
 mating schemes. A `python_hook` field can define specialized SimuPOP parent
 choosers or allele-frequency trajectories before a run.
 
-### 5.7 Breeding outputs and important controls
+### 5.8 Breeding outputs and important controls
 
 Each `simulate_breeding()` run writes diploid haplotypes to `.fa` and sample,
 generation, scheme, and family labels to `.meta.tsv`. Set `vcf_out` for marker

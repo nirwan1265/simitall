@@ -329,12 +329,17 @@ simulate_phenotypes <- function(geno_file, out_prefix, ...) {
 
 #' Generate a random haplotype panel
 #'
-#' Create an aligned multi-FASTA panel by introducing SNPs and indels into a
-#' shared synthetic founder sequence.
+#' Create an aligned multi-FASTA panel by introducing variants into shared
+#' synthetic chromosome sequences. Panels with multiple chromosomes use
+#' `founder|chromosome` FASTA record identifiers.
 #'
 #' @param out_fa Output multi-FASTA path.
 #' @param n_haplotypes Number of founder haplotypes.
 #' @param length Sequence length in base pairs.
+#' @param n_chromosomes Number of chromosomes per founder. Multi-chromosome
+#'   records are written as `founder|chromosome`.
+#' @param chromosome_lengths Optional integer vector with one sequence length
+#'   per chromosome. When omitted, every chromosome uses `length`.
 #' @param ... Additional options such as `gc`, `snp_rate`, `indel_rate`, and
 #'   `seed`.
 #'
@@ -347,11 +352,16 @@ generate_random_haplotype_panel <- function(
     out_fa,
     n_haplotypes = 8,
     length = 100000,
+    n_chromosomes = 1,
+    chromosome_lengths = NULL,
     ...) {
   args <- .simitall_cli_args(
     out_fa = out_fa,
     n_haps = n_haplotypes,
     length = length,
+    n_chromosomes = n_chromosomes,
+    chromosome_lengths = if (is.null(chromosome_lengths)) NULL else
+      paste(chromosome_lengths, collapse = ","),
     .args = list(...)
   )
   .simitall_run(main_11a_generate_random_haplotype_panel, args)
@@ -360,15 +370,20 @@ generate_random_haplotype_panel <- function(
 #' Simulate breeding populations
 #'
 #' Simulate F1, F2, backcross, selfing, RIL, NIL, doubled-haploid, NAM, and
-#' MAGIC populations from an aligned haplotype FASTA panel. Optional models
-#' include crossover interference, fixed loci, background selection,
-#' segregation distortion, structural variants, missingness, and genotyping
-#' error.
+#' MAGIC populations from an aligned haplotype FASTA panel. A panel may contain
+#' one record per founder or one `founder|chromosome` record for every founder
+#' and chromosome. Chromosomes undergo independent assortment and use separate
+#' recombination maps. Optional models include crossover interference, fixed
+#' loci, background selection, segregation distortion, missingness, and
+#' genotyping error.
 #'
-#' @param haplotype_fa Aligned founder haplotypes in multi-FASTA format.
-#' @param out_prefix Prefix for FASTA, metadata, VCF, graph, and QC outputs.
+#' @param haplotype_fa Aligned founder haplotypes in multi-FASTA format. Use
+#'   `founder|chromosome` headers for multi-chromosome panels.
+#' @param out_prefix Prefix for FASTA, metadata, ancestry, breakpoint,
+#'   recombination-map, VCF, and graph outputs.
 #' @param ... Additional breeding options such as `scheme`, `n_offspring`,
-#'   `generations`, `parents`, `founders`, and `fix_locus`.
+#'   `self_generations`, `parents`, `founders`, `recomb_map_in`, `vcf_out`,
+#'   and chromosome-aware `fix_locus` values such as `"chr2:1000:1200"`.
 #'
 #' @return Invisibly returns `TRUE`.
 #' @examples

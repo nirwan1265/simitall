@@ -1,5 +1,10 @@
 # simitall 0.1.0
 
+* Added multi-chromosome breeding with `founder|chromosome` FASTA panels,
+  chromosome-specific recombination maps, independent assortment,
+  chromosome-aware VCF output, founder-ancestry tracts, and breakpoint truth.
+  Added a bundled three-chromosome founder panel and generator controls for
+  chromosome counts and lengths.
 * Expanded the breeding tutorial with runnable F1, F2, F2:3-style,
   F2-derived S3, backcross, RIL-SSD, RIL-sib, DH, NIL, NAM, MAGIC, and SimuPOP
   examples. Corrected F2 and MAGIC generation expansion and made empty VCF

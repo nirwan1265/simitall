@@ -7,22 +7,27 @@
 simulate_breeding(haplotype_fa, out_prefix, ...)
 }
 \arguments{
-\item{haplotype_fa}{Aligned founder haplotypes in multi-FASTA format.}
+\item{haplotype_fa}{Aligned founder haplotypes in multi-FASTA format. Use
+\code{founder|chromosome} headers for multi-chromosome panels.}
 
-\item{out_prefix}{Prefix for FASTA, metadata, VCF, graph, and QC outputs.}
+\item{out_prefix}{Prefix for FASTA, metadata, ancestry, breakpoint,
+recombination-map, VCF, and graph outputs.}
 
 \item{...}{Additional breeding options such as \code{scheme}, \code{n_offspring},
-\code{generations}, \code{parents}, \code{founders}, and \code{fix_locus}.}
+\code{self_generations}, \code{parents}, \code{founders}, \code{recomb_map_in}, \code{vcf_out},
+and chromosome-aware \code{fix_locus} values such as \code{"chr2:1000:1200"}.}
 }
 \value{
 Invisibly returns \code{TRUE}.
 }
 \description{
 Simulate F1, F2, backcross, selfing, RIL, NIL, doubled-haploid, NAM, and
-MAGIC populations from an aligned haplotype FASTA panel. Optional models
-include crossover interference, fixed loci, background selection,
-segregation distortion, structural variants, missingness, and genotyping
-error.
+MAGIC populations from an aligned haplotype FASTA panel. A panel may contain
+one record per founder or one \code{founder|chromosome} record for every founder
+and chromosome. Chromosomes undergo independent assortment and use separate
+recombination maps. Optional models include crossover interference, fixed
+loci, background selection, segregation distortion, missingness, and
+genotyping error.
 }
 \examples{
 \dontrun{

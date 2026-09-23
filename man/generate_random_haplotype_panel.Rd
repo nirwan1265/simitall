@@ -4,7 +4,14 @@
 \alias{generate_random_haplotype_panel}
 \title{Generate a random haplotype panel}
 \usage{
-generate_random_haplotype_panel(out_fa, n_haplotypes = 8, length = 1e+05, ...)
+generate_random_haplotype_panel(
+  out_fa,
+  n_haplotypes = 8,
+  length = 1e+05,
+  n_chromosomes = 1,
+  chromosome_lengths = NULL,
+  ...
+)
 }
 \arguments{
 \item{out_fa}{Output multi-FASTA path.}
@@ -13,6 +20,12 @@ generate_random_haplotype_panel(out_fa, n_haplotypes = 8, length = 1e+05, ...)
 
 \item{length}{Sequence length in base pairs.}
 
+\item{n_chromosomes}{Number of chromosomes per founder. Multi-chromosome
+records are written as \code{founder|chromosome}.}
+
+\item{chromosome_lengths}{Optional integer vector with one sequence length
+per chromosome. When omitted, every chromosome uses \code{length}.}
+
 \item{...}{Additional options such as \code{gc}, \code{snp_rate}, \code{indel_rate}, and
 \code{seed}.}
 }
@@ -20,8 +33,9 @@ generate_random_haplotype_panel(out_fa, n_haplotypes = 8, length = 1e+05, ...)
 Invisibly returns \code{TRUE}.
 }
 \description{
-Create an aligned multi-FASTA panel by introducing SNPs and indels into a
-shared synthetic founder sequence.
+Create an aligned multi-FASTA panel by introducing variants into shared
+synthetic chromosome sequences. Panels with multiple chromosomes use
+\code{founder|chromosome} FASTA record identifiers.
 }
 \examples{
 panel <- tempfile(fileext = ".fa")
