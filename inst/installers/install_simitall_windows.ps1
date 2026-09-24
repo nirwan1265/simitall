@@ -94,6 +94,7 @@ if ($Profile -eq "population") {
         & $Conda run -n $EnvName python -m pip install simuPOP
     }
     & $Conda run -n $EnvName Rscript -e 'if (!requireNamespace("simplePHENOTYPES", quietly=TRUE)) remotes::install_github("samuelbfernandes/simplePHENOTYPES", dependencies=TRUE, upgrade="never")'
+    & $Conda run -n $EnvName Rscript -e 'needed <- c("simstudy", "pedtricks"); missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly=TRUE)]; if (length(missing)) install.packages(missing, repos="https://cloud.r-project.org")'
 }
 
 if ($Profile -eq "omics") {

@@ -1,5 +1,9 @@
 # simitall 0.1.0
 
+* Added package-backed breeding phenotype wrappers: `simstudy` provides
+  ordinal, Poisson, negative-binomial, and shared family effects, while
+  `pedtricks` provides direct, maternal, and paternal pedigree effects with
+  component-level truth output.
 * Added multi-chromosome breeding with `founder|chromosome` FASTA panels,
   chromosome-specific recombination maps, independent assortment,
   chromosome-aware VCF output, founder-ancestry tracts, and breakpoint truth.

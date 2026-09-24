@@ -30,12 +30,15 @@ Imports:
     reticulate
 Suggests:
     ChIPsim,
+    data.table,
+    pedtricks,
     Rsubread,
     ggplot2,
     patchwork,
     roxygen2,
     SingleCellExperiment,
     simplePHENOTYPES,
+    simstudy,
     splatter,
     SummarizedExperiment,
     testthat (>= 3.0.0)

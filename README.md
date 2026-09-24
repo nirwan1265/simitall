@@ -11,6 +11,45 @@ The goal is not to replace mature simulators. `simitall` provides a reproducible
 R layer that makes those tools work together, keeps parameters in one analysis,
 and emits compatible truth files for benchmarking.
 
+## Project architecture
+
+`simitall` is organized around three connected components. The simulation
+engine generates biological truth and synthetic datasets, the analysis engine
+processes either simulated or real datasets, and the agent layer translates a
+scientific request into a reproducible plan that it can run and explain. When
+simulation truth is available, analysis results can be benchmarked
+automatically before reports, figures, and quality-control summaries are
+created.
+
+```mermaid
+flowchart TB
+  S["simitall"]
+  SIM["Simulation"]
+  ANA["Analysis"]
+  AGENT["Agent"]
+  SIMDESC["Generate biological truth<br/>and datasets"]
+  ANADESC["Analyze simulated<br/>or real datasets"]
+  AGENTDESC["Understand requests;<br/>plan, run, and explain"]
+  BENCH["Benchmark against truth"]
+  OUTPUT["Reports, figures, and QC"]
+
+  S --> SIM
+  S --> ANA
+  S --> AGENT
+  SIM --> SIMDESC
+  ANA --> ANADESC
+  AGENT --> AGENTDESC
+  SIMDESC --> BENCH
+  ANADESC --> BENCH
+  AGENTDESC --> BENCH
+  BENCH --> OUTPUT
+```
+
+The agent is an orchestration layer rather than a replacement for established
+scientific software. Every workflow should remain callable directly from R,
+record its parameters and random seeds, and produce outputs that can be rerun
+without the agent.
+
 ## What it can simulate
 
 - Random genomes or reference-derived genomes with tandem and motif repeats
@@ -20,7 +59,11 @@ and emits compatible truth files for benchmarking.
   clusters, riboswitches, CRISPR arrays, plasmids, and regulatory elements
 - GWAS cohorts with LD blocks, recombination maps, subpopulations, and
   quantitative or binary phenotypes
-- Advanced phenotype architectures through `simplePHENOTYPES`
+- Advanced quantitative and binary phenotype architectures through
+  `simplePHENOTYPES`
+- Ordinal and count traits plus shared breeding-family effects through
+  `simstudy`
+- Direct, maternal, and paternal pedigree effects through `pedtricks`
 - F1, F2, backcross, selfing, RIL, NIL, doubled-haploid, NAM, and MAGIC
   populations
 - SimuPOP mating schemes through `reticulate`, with VCF-compatible genotype
@@ -154,7 +197,7 @@ bash install_simitall_linux.sh full
 | Profile | Installed capabilities |
 |---|---|
 | `minimal` | Core R package, genome/annotation simulation, and required R/Python runtime |
-| `population` | Minimal plus SimuPOP, GWAS, breeding, and advanced phenotype dependencies |
+| `population` | Minimal plus SimuPOP, GWAS, breeding, `simplePHENOTYPES`, `simstudy`, and `pedtricks` |
 | `omics` | Minimal plus bulk RNA-seq, single-cell, ChIP-seq, Rsubread, Splatter, and ChIPsim |
 | `sequencing` | Minimal plus ART, PBSIM/PBSIM3, Badread, Unicycler, QUAST, samtools, seqkit, and pigz |
 | `full` | Population, omics, sequencing, assembly, evaluation, and all optional backends |
@@ -197,6 +240,7 @@ For package development:
 
 ```r
 install.packages(c("devtools", "roxygen2", "testthat"))
+install.packages(c("simstudy", "pedtricks"))
 devtools::document()
 devtools::test()
 devtools::check()
@@ -740,6 +784,134 @@ Important controls include `parents`, `founders`, `n_offspring`,
 settings, crossover interference, locus fixation, background selection,
 segregation distortion, genotype error, missingness, marker ascertainment, and
 structural-variant rate.
+
+### 5.9 Ordinal, count, family, and maternal phenotypes
+
+The population installation profile includes two established phenotype
+backends:
+
+- `simstudy` generates ordinal outcomes, Poisson or negative-binomial counts,
+  and shared family-level random effects.
+- `pedtricks` generates direct, maternal, and paternal genetic or
+  environmental effects across arbitrary pedigrees.
+
+`simitall` validates and connects the data but does not replace either
+package's statistical simulator.
+
+First generate a genotype-driven quantitative score for the F2 population:
+
+```r
+simulate_phenotypes(
+  geno_file = "results/breeding/f2.vcf",
+  out_prefix = "results/breeding/f2_base_trait",
+  h2 = 0.5,
+  n_add_qtn = 20,
+  seed = 51
+)
+
+metadata <- read.delim("results/breeding/f2.meta.tsv")
+base_trait <- read.delim("results/breeding/f2_base_trait.pheno.tsv")
+
+# The first column is the sample ID and the first numeric trait is the score.
+names(base_trait)[1] <- "sample"
+trait_column <- names(base_trait)[
+  vapply(base_trait, is.numeric, logical(1))
+][1]
+base_trait$genetic_score <- base_trait[[trait_column]]
+records <- merge(
+  metadata,
+  base_trait[c("sample", "genetic_score")],
+  by = "sample",
+  sort = FALSE
+)
+```
+
+Add one `simstudy` random effect per breeding family. Every member of the same
+family receives the same generated effect:
+
+```r
+records <- simulate_family_effects(
+  data = records,
+  family_id = "family",
+  variance = 0.2,
+  effect_name = "family_effect",
+  out_file = "results/breeding/f2.family_effects.tsv",
+  seed = 52
+)
+
+records$liability <- records$genetic_score + records$family_effect
+```
+
+Convert that liability into ordered disease or resistance categories:
+
+```r
+ordinal <- simulate_ordinal_trait(
+  data = records,
+  predictor = "liability",
+  probabilities = c(0.10, 0.30, 0.40, 0.20),
+  labels = c("resistant", "mild", "moderate", "severe"),
+  trait_name = "disease_severity",
+  out_file = "results/breeding/f2.ordinal.tsv",
+  seed = 53
+)
+```
+
+Generate an overdispersed count such as lesion number, seed count, or
+infection burden. The formula is interpreted by `simstudy` on the selected
+link scale:
+
+```r
+counts <- simulate_count_trait(
+  data = records,
+  formula = "1 + 0.4 * genetic_score + family_effect",
+  distribution = "negative_binomial",
+  dispersion = 0.6,
+  link = "log",
+  trait_name = "lesion_count",
+  out_file = "results/breeding/f2.count.tsv",
+  seed = 54
+)
+```
+
+Use `distribution = "poisson"` when conditional variance is expected to be
+close to the conditional mean. Use `"negative_binomial"` when biological
+counts are overdispersed.
+
+Maternal and paternal effects require an explicit pedigree. The pedigree may
+come from an external breeding record or another simulator and must include
+every referenced parent:
+
+```r
+pedigree <- data.frame(
+  id = c("dam1", "sire1", "child1", "child2"),
+  sire = c(NA, NA, "sire1", "sire1"),
+  dam = c(NA, NA, "dam1", "dam1")
+)
+
+parental <- simulate_parental_effects(
+  pedigree = pedigree,
+  traits = 1,
+  genetic_covariance = diag(c(1.0, 0.30)),
+  environmental_covariance = diag(c(0.8, 0.20)),
+  parental_genetic = c("d", "m"),
+  parental_environmental = c("d", "m"),
+  out_prefix = "results/breeding/maternal_trait",
+  seed = 55
+)
+```
+
+The `pedtricks` effect codes are `"d"` for direct, `"m"` for maternal, and
+`"p"` for paternal. The example writes:
+
+- `maternal_trait.phenotypes.tsv`: final simulated phenotype.
+- `maternal_trait.effects.tsv`: direct and maternal genetic/environmental
+  truth components.
+- `maternal_trait.summary.json`: backend version and simulation settings.
+
+For multiple traits, provide covariance matrices whose dimensions match the
+effect-code vectors. For example, two direct traits plus two maternal traits
+use four-by-four covariance matrices and
+`parental_genetic = c("d", "d", "m", "m")`.
 
 ## 6. Simulate DNA sequencing and assembly
 
