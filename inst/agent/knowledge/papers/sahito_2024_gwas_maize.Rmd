@@ -1,0 +1,110 @@
+---
+id: paper_sahito_2024_gwas_maize
+document_type: paper_summary
+title: "Advancements and Prospects of Genome-Wide Association Studies (GWAS) in Maize"
+citation_key: "sahito2024"
+authors: "Sahito et al."
+year: 2024
+doi: "10.3390/ijms25031918"
+journal: "International Journal of Molecular Sciences"
+url: "https://doi.org/10.3390/ijms25031918"
+domains:
+  - plant_genetics
+  - genome_wide_association_studies
+techniques:
+  - GWAS
+  - QTL_mapping
+  - multi_omics_integration
+organisms:
+  - maize
+evidence_status: unreviewed
+source_file: "Advancements and Prospects of Genome-Wide Association Studies (GWAS) in Maize.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Sahito, J. H., Zhang, H., Gishkori, Z. G. N., Ma, C., Wang, Z., Ding, D., Zhang, X., and Tang, J. (2024). Advancements and Prospects of Genome-Wide Association Studies (GWAS) in Maize. *International Journal of Molecular Sciences* 25, 1918. https://doi.org/10.3390/ijms25031918 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review surveys maize GWAS designs, reported trait associations, limitations, and proposed integration with molecular and phenotyping data for breeding (PDF pp. 1, 4–18).
+
+# Research Question
+
+How have maize GWAS identified loci for agronomic and stress-related traits, which design factors affect association mapping, and what remains necessary to connect associations with causal genes? This paraphrases the review's aims (PDF pp. 1, 4, 17–18).
+
+# Biological System
+
+Maize (*Zea mays* L.) populations from previously published studies, including diverse inbred lines, association panels, hybrids, and nested association mapping populations (PDF pp. 1, 10, 12–14, Table 1). No new maize population was recruited by this review: Not reported.
+
+# Study Design
+
+Narrative review comparing published GWAS approaches and compiling maize studies from 2018 to 2023 into Table 1 (PDF p. 11, Section 7; pp. 12–14, Table 1). A systematic literature-search protocol, uniform reanalysis, or newly collected genotype–phenotype cohort: Not reported.
+
+# Data
+
+Table 1 summarizes previously published traits, population types, sample sizes, SNP/QTL or candidate-gene counts, and chromosome locations; these are **study-specific reported values**, not pooled observations or new estimates by the authors (PDF pp. 12–14, Table 1). Original genotype files, phenotype matrix, and accession numbers for one joint analysis: Not reported.
+
+# Methods
+
+- Contrast biparental QTL mapping with association mapping using diverse lines and historical recombination (PDF pp. 2–3, Figure 1; p. 4, Section 2).
+- Outline genotype and phenotype collection, linkage disequilibrium, population structure, kinship, association testing, and downstream candidate evaluation (PDF pp. 3–6, Figures 1–2, Section 3).
+- Discuss effects of phenotype quality, population size, marker density, population structure, and linkage disequilibrium on power and resolution (PDF pp. 6–8, Section 4, Figure 3).
+- Summarize reported maize traits and candidate loci, then discuss pleiotropy, multiple testing, rare variants, functional validation, and multi-omics integration (PDF pp. 8–18, Sections 5–12, Table 1).
+
+# Software and Versions
+
+The text mentions **Tassel version 5.0** and the R package **GAPIT** in descriptions of published GWAS approaches (PDF pp. 5–6, Section 3). Software and versions actually run by the review authors: Not reported. These mentions should not be read as an executed workflow.
+
+# Important Parameters
+
+No single marker-quality cutoff, minor-allele-frequency threshold, LD window, genome-wide significance threshold, or mixed-model specification applies across the reviewed studies: Not reported for a new analysis. Study designs and sample sizes vary by Table 1 row (PDF pp. 12–14, Table 1); the review discusses these as design factors rather than providing universal settings (PDF pp. 6–8, Section 4).
+
+# Inputs and Outputs
+
+Conceptual inputs to GWAS are genotypes, trait measurements, and information on structure, relatedness, and LD; outputs include associated markers or loci and prioritized candidates (PDF pp. 3, 6–8, Figures 1–3). The review itself outputs a literature synthesis and Table 1, not an original set of summary statistics (PDF pp. 11–14, Section 7, Table 1).
+
+# Main Results
+
+The paper compiles prior maize associations for yield, architecture, quality, and biotic and abiotic stress traits (PDF pp. 8–14, Sections 5–7, Table 1). The authors argue that detection and interpretation depend on population design, phenotype quality, LD, and genetic structure, and that associated variants still require biological validation (PDF pp. 6–8, Section 4; pp. 16–18, Sections 9–12). These are **review synthesis and author interpretation**, not newly replicated trait associations.
+
+# Assumptions
+
+GWAS requires reliable phenotypes and genotypes, enough segregating variation and sample size, and control of population structure/relatedness to limit confounding (PDF pp. 5–8, Sections 3–4). A nearby or linked candidate gene is not automatically causal; the authors explicitly call for functional validation (PDF p. 16, Section 9.2; p. 18, Section 11).
+
+# Limitations
+
+The authors identify multiple-testing penalties, low-frequency variants, insufficient replication or sample size, missing heritability, and the difference between association and causation (PDF p. 16, Section 9.2). Table 1 combines separate studies with different populations and methods, so its counts should not be compared as if they came from one standardized analysis (PDF pp. 12–14, Table 1; **summary inference**).
+
+# Reproducible Implementation Details
+
+This is not an executable protocol. An exact command, software environment, phenotype transformations, genotype filters, LD cutoff, candidate-gene window, and independent validation plan for a single data set: Not reported. Figures 1–3 give conceptual steps; Table 1 points to the original studies for their individual settings (PDF pp. 3, 6, 8, 12–14).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** This is a possible background source for simitall documentation on plant GWAS design, LD, structure, and candidate-gene evidence. The review neither mentions simitall nor demonstrates performance of a simitall workflow (PDF pp. 1–18).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The review distinguishes biparental QTL mapping from GWAS of diverse lines. | Authors' comparison diagram and accompanying discussion. | PDF pp. 2–3, Figure 1 | High |
+| Phenotype quality, sample size, population structure, marker density, and LD affect GWAS mapping. | Methodological synthesis and factor diagram. | PDF pp. 6–8, Section 4, Figure 3 | High for author synthesis |
+| Table 1 collects published maize studies with different population sizes and reported locus counts. | Review table, with source-study references in individual rows. | PDF pp. 12–14, Table 1 | High for what the review tabulates; secondary evidence for each study |
+| The review describes Tassel version 5.0 and GAPIT in its survey, without reporting that the authors ran either. | Software mentions in methodological discussion; no review-level executed analysis. | PDF pp. 5–6, Section 3 | High |
+| GWAS associations do not by themselves establish a causal gene. | Authors' explicit limitation and call for experimental validation. | PDF p. 16, Section 9.2; p. 18, Section 11 | High for author interpretation |
+| The authors propose combining GWAS with multi-omics and functional validation. | Conclusions and future-prospects discussion. | PDF pp. 17–18, Sections 10–11 | High for author proposal; no demonstrated outcome |
+
+# Terminology
+
+- **GWAS:** Genome-wide association study relating genetic markers to phenotype variation across a population (PDF p. 4, Section 2).
+- **LD:** Linkage disequilibrium, the non-independent association of alleles at loci; its extent affects mapping resolution (PDF pp. 4, 7–8, Sections 2 and 4).
+- **QTL:** Quantitative trait locus, a genomic region associated with variation in a quantitative trait (PDF pp. 2–3, Figure 1).
+- **Pleiotropy:** Association of one genetic factor with multiple traits; the review distinguishes possible biological, mediated, and spurious explanations (PDF pp. 14–15, Section 8).
+
+# References
+
+Primary source: Sahito et al. (2024), cited above. The source studies underlying Table 1 appear in the review's References beginning on PDF p. 18; consult the row's cited original study before using its numeric results. No outside sources were used for this summary.

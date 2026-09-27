@@ -1,0 +1,64 @@
+---
+id: "paper_song_2023_scdesign3"
+document_type: "paper_summary"
+title: "scDesign3 generates realistic in silico data for multimodal single-cell and spatial omics"
+citation_key: "Song2023scDesign3"
+authors: "Song, D., et al."
+year: 2023
+doi: "10.1038/s41587-023-01772-1"
+journal: "Nature Biotechnology"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC11182337/"
+domains: ["single_cell_rnaseq", "spatial_omics", "simulation"]
+techniques: ["reference_based_simulation", "multimodal_omics", "spatial_transcriptomics"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Song, D., et al. (2023). *scDesign3 generates realistic in silico data for multimodal single-cell and spatial omics*. Nature Biotechnology. DOI: 10.1038/s41587-023-01772-1. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC11182337/](https://pmc.ncbi.nlm.nih.gov/articles/PMC11182337/).
+
+# One-Sentence Summary
+
+Presents scDesign3, a reference-based framework for realistic single-cell, multi-omic, and spatial-omics simulation.
+
+# Scope for simitall
+
+Use as an advanced, reference-based option when users have a real single-cell or spatial dataset and want technical realism beyond a parametric toy dataset.
+
+# Agent-Safe Takeaways
+
+- Reference-based simulation can retain complex feature and cell-level dependencies.
+- Covariates such as cell state, condition, and spatial location can be represented explicitly.
+- The reference dataset must be appropriate for the intended biological setting.
+
+# Inputs to Specify
+
+- Reference single-cell or spatial data
+- Cell metadata and covariates
+- Requested modality and sample design
+
+# Expected Outputs
+
+- Synthetic count or multimodal matrices
+- Cell-level covariates
+- Simulation configuration
+
+# Limitations and Guardrails
+
+- A simulator can reproduce reference patterns but cannot establish causal biology absent from the reference.
+- Avoid treating simulated spatial structure as experimentally validated tissue organization.
+
+# Questions This Record Can Ground
+
+- When should a workflow choose a reference-based scRNA-seq simulator?
+- What real data are needed for a credible spatial-omics simulation?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

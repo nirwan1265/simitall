@@ -13,8 +13,9 @@ Authors@R: c(
 Description: An R-first interface for coordinated genome, genome annotation,
     sequencing-read, hybrid-assembly, genome-wide association study,
     phenotype, bulk and single-cell RNA-sequencing, cell-type expression
-    quantitative trait locus, population-genetic, and breeding simulations.
-    The package produces
+    quantitative trait locus, population-genetic, and breeding simulations,
+    plus mixed-model association analysis, genomic prediction, parent
+    selection, and crossing-plan design. The package produces
     explicit truth sets and interoperable FASTA, FASTQ, VCF, GFF3, BED, TSV,
     and JSON outputs. External simulators and assemblers are orchestrated from
     R, while population evolution can be delegated to SimuPOP through
@@ -29,21 +30,26 @@ Imports:
     Matrix,
     reticulate
 Suggests:
+    BGLR,
     ChIPsim,
     data.table,
     pedtricks,
     Rsubread,
+    httr2,
     ggplot2,
     patchwork,
+    ranger,
+    rrBLUP,
     roxygen2,
     SingleCellExperiment,
     simplePHENOTYPES,
     simstudy,
     splatter,
+    shiny,
     SummarizedExperiment,
     testthat (>= 3.0.0)
 SystemRequirements: ART, PBSIM or PBSIM3, Badread, Unicycler, QUAST, pigz
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

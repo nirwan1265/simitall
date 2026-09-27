@@ -1,0 +1,38 @@
+---
+id: technique_chipseq
+document_type: technique
+status: starter
+domains: [ChIP_seq, epigenomics, regulatory_annotation]
+related_functions: [simulate_chipseq, plot_chipseq_results]
+source_priority: primary_and_official_docs
+last_reviewed: 2026-09-25
+---
+
+# ChIP-seq Simulation
+
+## Goal
+
+Simulate TF, histone-mark, or nucleosome enrichment around annotations such as
+promoters, enhancers, silencers, genes, and TSSs. `simitall` can produce peak
+truth, matched inputs, read FASTQs, differential-binding truth, and figures.
+
+## Experimental Design
+
+- Specify the target type and expected binding logic.
+- Include matched input controls and biological replicates.
+- State fragment-length distribution, read depth, duplicate behavior, and
+  whether different conditions alter occupancy.
+- Keep the annotation source and coordinate convention with the peak truth.
+
+## QC
+
+- Fraction of reads in peaks, enrichment against input, duplicate rate, and
+  coverage around expected regulatory features.
+- Peak precision and recall against simulation truth.
+- Differential-binding sensitivity and false discoveries when conditions are
+  simulated.
+
+## Limits
+
+ChIP-seq read density is not direct molecular occupancy. Peak calls depend on
+background, fragment model, depth, mappability, and the caller.

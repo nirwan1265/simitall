@@ -1,0 +1,62 @@
+---
+id: "paper_ono_2013_pbsim"
+document_type: "paper_summary"
+title: "PBSIM: PacBio reads simulator - toward accurate genome assembly"
+citation_key: "Ono2013PBSIM"
+authors: "Ono, Y., et al."
+year: 2013
+doi: "10.1093/bioinformatics/bts649"
+journal: "Bioinformatics"
+url: "https://pubmed.ncbi.nlm.nih.gov/23129296/"
+domains: ["sequencing", "simulation", "long_reads"]
+techniques: ["pacbio_simulation", "long_read_simulation", "assembly_benchmarking"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Ono, Y., et al. (2013). *PBSIM: PacBio reads simulator - toward accurate genome assembly*. Bioinformatics. DOI: 10.1093/bioinformatics/bts649. Source: [https://pubmed.ncbi.nlm.nih.gov/23129296/](https://pubmed.ncbi.nlm.nih.gov/23129296/).
+
+# One-Sentence Summary
+
+Introduces PBSIM for simulating PacBio reads to support genome-assembly evaluation.
+
+# Scope for simitall
+
+Use as a long-read backend for CLR or CCS-style benchmark scenarios where its installed version supports the requested data type. Persist data type, model, coverage, length behavior, and seed.
+
+# Agent-Safe Takeaways
+
+- Long-read simulation should distinguish read technology or accuracy regime.
+- Coverage alone is insufficient: length and error behavior determine repeat resolution.
+- A known simulated reference permits assembly evaluation against truth.
+
+# Inputs to Specify
+
+- Reference FASTA
+- Read type or error model
+- Depth, prefix, and seed
+
+# Expected Outputs
+
+- Long-read FASTQ and simulator artifacts
+
+# Limitations and Guardrails
+
+- PBSIM command-line options vary between versions.
+- A CCS-like simulation is an approximation and should be described with the exact tool version and model.
+
+# Questions This Record Can Ground
+
+- Why should CLR and HiFi-like simulations be analyzed separately?
+- Which long-read parameters should be stored for a hybrid-assembly benchmark?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

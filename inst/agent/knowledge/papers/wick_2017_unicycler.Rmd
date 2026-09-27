@@ -1,0 +1,64 @@
+---
+id: "paper_wick_2017_unicycler"
+document_type: "paper_summary"
+title: "Unicycler: resolving bacterial genome assemblies from short and long sequencing reads"
+citation_key: "Wick2017Unicycler"
+authors: "Wick, R. R., et al."
+year: 2017
+doi: "10.1371/journal.pcbi.1005595"
+journal: "PLoS Computational Biology"
+url: "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005595"
+domains: ["genome_assembly", "hybrid_assembly", "bacteria"]
+techniques: ["unicycler", "short_long_read_assembly", "assembly_graphs"]
+organisms: ["bacteria"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Wick, R. R., et al. (2017). *Unicycler: resolving bacterial genome assemblies from short and long sequencing reads*. PLoS Computational Biology. DOI: 10.1371/journal.pcbi.1005595. Source: [https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005595](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005595).
+
+# One-Sentence Summary
+
+Presents Unicycler, a bacterial hybrid assembler that integrates short-read assembly graphs with long reads to improve contiguity and resolve repeats.
+
+# Scope for simitall
+
+Use as the intended hybrid-assembly backend in the bacterial benchmark pipeline. Keep raw read generation, assembly execution, and reference-based evaluation as separate recorded stages.
+
+# Agent-Safe Takeaways
+
+- Short reads provide base accuracy while long reads help resolve graph ambiguity and repeats.
+- Hybrid assembly performance depends on both read sets, not only long-read depth.
+- Assembly results should be compared with a known truth reference using transparent QC metrics.
+
+# Inputs to Specify
+
+- Paired short reads
+- Long reads
+- Output directory, threads, and assembly mode
+
+# Expected Outputs
+
+- Assembly FASTA
+- Assembly graph and logs
+- Tool-specific diagnostics
+
+# Limitations and Guardrails
+
+- Designed for bacterial genomes and not a general eukaryotic assembly solution.
+- Contiguity alone is not evidence of correctness; use reference-aware quality assessment for simulations.
+
+# Questions This Record Can Ground
+
+- Why run a coverage grid for hybrid assembly?
+- Which output files from Unicycler should be retained for debugging and evaluation?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

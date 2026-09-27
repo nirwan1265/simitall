@@ -1,0 +1,111 @@
+---
+id: paper_nesari_2026_scrna_analysis_review
+document_type: paper_summary
+title: "Advances and challenges in single-cell RNA sequencing data analysis: a comprehensive review"
+citation_key: "nesari2026"
+authors: "Nesari et al."
+year: 2026
+doi: "10.1093/bib/bbaf723"
+journal: "Briefings in Bioinformatics"
+url: "https://doi.org/10.1093/bib/bbaf723"
+domains:
+  - single_cell_transcriptomics
+techniques:
+  - scRNA_seq_preprocessing
+  - clustering
+  - differential_expression
+  - cell_type_annotation
+  - multimodal_integration
+organisms:
+  - multiple_organisms
+evidence_status: unreviewed
+source_file: "Advances and challenges in single-cell RNA sequencing data analysis- a comprehensive review.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Nesari, A. M., MotieGhader, H., and Ghorbian, S. (2026). Advances and challenges in single-cell RNA sequencing data analysis: a comprehensive review. *Briefings in Bioinformatics* 27(1), bbaf723. https://doi.org/10.1093/bib/bbaf723 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review organizes scRNA-seq preprocessing, clustering, expression analysis, annotation, integration, and emerging spatial and machine-learning applications while discussing technical and translational limitations (PDF pp. 1–2, 8–16, Figures 1, 6, 9–10).
+
+# Research Question
+
+What computational tools and unresolved challenges affect practical and clinical interpretation of scRNA-seq data? This paraphrases the authors' stated aim and intended audience (PDF pp. 1–2, Introduction and “Structure of this review”).
+
+# Biological System
+
+Previously published single-cell studies of diverse biological and clinical systems, with examples in immune profiling, cancer, brain, and development (PDF pp. 6–7, Table 4; pp. 11–12, Tables 5–6). No original species-specific cohort or new biological samples: Not reported.
+
+# Study Design
+
+Narrative computational review with comparison tables, schematics, and previously reported case examples (PDF pp. 2–16, Figures 1–10, Tables 1–9). A systematic search strategy, original prospective study, or independently reproducible head-to-head benchmark: Not reported.
+
+# Data
+
+Published studies and tool descriptions are summarized in tables. Table 1 presents clustering comparison values, Tables 4–6 present cited biological or clinical examples, and Table 9 lists challenges and possible directions (PDF pp. 4, 7, 11–12, 16). These figures are **as reported in the review**, not values recalculated or independently verified for this summary. Raw expression matrices and accession identifiers for an original joint analysis: Not reported.
+
+# Methods
+
+- Outline QC, filtering, normalization, and batch-effect correction as distinct steps; list SCTransform and Harmony as examples (PDF pp. 2–3, Figure 2).
+- Compare dimensionality reduction and clustering methods including PCA, UMAP, t-SNE, Leiden, Louvain, and k-means (PDF pp. 3–6, Tables 1–3, Figure 3).
+- Survey differential gene-expression frameworks, trajectory inference, annotation, and integration across samples or modalities (PDF pp. 4, 6–9, Figures 4–6, Tables 3–4).
+- Describe spatial transcriptomics, neural-network approaches, and applications, then catalog technical and ethical issues (PDF pp. 9–16, Figures 7–10, Tables 5–9).
+
+# Software and Versions
+
+Named tools include Seurat, Scanpy, SCTransform, Harmony, BBKNN, MAST, NEBULA, Monocle3, Slingshot, CellTypist, scGPT, and scVI (PDF pp. 1–8, Tables 1–4; pp. 11, 16, Tables 5 and 9). Exact versions executed by these review authors: Not reported. Names or version labels in examples, such as Seurat v5 in Table 9, are part of the review's survey, not a review-level software environment (PDF p. 16, Table 9).
+
+# Important Parameters
+
+No universal mitochondrial-read cutoff, minimum UMI count, number of principal components, graph resolution, batch-correction setting, DEG threshold, or training/test split is specified for a new analysis: Not reported. Table 1 supplies *reported comparison values* for clustering, but does not give a complete common benchmark protocol for reproducing those values (PDF p. 4, Table 1).
+
+# Inputs and Outputs
+
+The conceptual workflow starts with sequencing reads or expression counts, carries out QC and normalization, then produces low-dimensional representations, clusters, differential-expression results, trajectories, and annotations; additional modalities can supply spatial or multimodal context (PDF pp. 2, 6–9, Figures 1–7). There is no newly generated data-release package or executable output set specified for this review: Not reported.
+
+# Main Results
+
+The authors identify sparse counts, batch variation, and high dimensionality as recurring obstacles, and survey specialized methods for preprocessing and downstream interpretation (PDF pp. 1–5, 14–16, Table 9). They argue for careful integration and evaluation to preserve biological heterogeneity (PDF p. 8, Figure 6). The review also presents clinical examples and proposed future directions, but these are **attributions and interpretations of cited work**, not newly conducted experiments (PDF pp. 7, 11–13, Tables 4–8).
+
+# Assumptions
+
+The depicted workflow assumes that technical variation can be separated from meaningful cell-state variation; the authors warn that integration can erase heterogeneity or introduce artifacts (PDF pp. 2, 7–8, Figures 2 and 6). Cell labels depend on reference quality, while trajectory and deep-learning analyses depend on modeling choices (PDF pp. 6–8, Sections “Cell type identification and annotation” and “Trajectory inference”; pp. 10–13, Tables 5–8).
+
+# Limitations
+
+The paper reports limited standardization of benchmarks and discusses sparsity, batch effects, scalability, interpretability, privacy, and bias (PDF p. 1, Abstract; pp. 12–16, Tables 7–9). It does not provide all datasets, settings, or versions needed to reproduce its table-level performance and clinical numbers: Not reported. Quantitative case-study claims should be checked in the cited original papers before independent use (**summary inference** from PDF pp. 4, 7, 11–13, Tables 1, 4–8).
+
+# Reproducible Implementation Details
+
+No end-to-end code, command sequence, environment lockfile, version-pinned software set, raw matrices, seed, or unified QC thresholds for this review: Not reported. Figure 1 is a conceptual pipeline; Tables 1–9 identify candidate methods and cited examples but do not constitute a fully specified computational run (PDF pp. 2–16).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The review might serve as an index of topics if simitall later covers scRNA-seq analysis. It does not mention simitall or demonstrate a simitall implementation (PDF pp. 1–16).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The paper surveys QC, normalization, batch correction, clustering, DE, trajectory analysis, and annotation. | Review outline and schematic; this describes scope, not a newly run pipeline. | PDF p. 2, Figure 1 and “Structure of this review” | High |
+| Table 1 reports Leiden ARI 0.85–0.92, Louvain 0.78–0.85, and k-means 0.65–0.75. | Values transcribed from the review's comparison table; common benchmark setup is not fully specified there. | PDF p. 4, Table 1 | High for transcription; Low for independent generalization |
+| The authors discuss possible overcorrection and loss of heterogeneity after integration. | Schematic caption and limitations discussion. | PDF p. 8, Figure 6 | High for author interpretation |
+| The paper lists published case examples in COVID-19, Alzheimer's, breast cancer, development, and inflammatory bowel disease. | Case-study table with individual citations. | PDF p. 7, Table 4 | High for table contents; secondary evidence for cases |
+| Spatial transcriptomics supplies tissue-position context absent from dissociated scRNA-seq. | Authors' discussion and spatial method schematic. | PDF p. 9, Figure 7 and “Spatial Transcriptomics” | High for author interpretation |
+| The authors identify sparsity, batch effects, cross-modal alignment, and scalability as open problems. | Consolidated challenge table. | PDF p. 16, Table 9 | High for author synthesis |
+
+# Terminology
+
+- **Dropout/sparsity:** Undetected or zero expression measurements discussed as challenges for single-cell analysis (PDF pp. 2, 15–16).
+- **Batch effect:** Differences introduced by technical variation rather than the biology being studied (PDF p. 1, Abstract; p. 2, Figure 2).
+- **Pseudotime:** An ordering of cells along an inferred biological progression, discussed with trajectory methods (PDF p. 8, Figure 5).
+- **Spatial transcriptomics:** Measurement of expression together with tissue location (PDF p. 9, Figure 7).
+
+# References
+
+Primary source: Nesari et al. (2026), cited above. Its References begin on PDF p. 17; case-study and benchmark results should be traced to their original cited papers. No outside sources were used for this summary.

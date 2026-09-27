@@ -1,0 +1,87 @@
+---
+id: technique_gwas
+document_type: technique
+status: starter
+domains: [GWAS, association_mapping, population_structure]
+related_functions: [simulate_gwas_cohort, analyze_gwas, benchmark_gwas, plot_gwas_results]
+source_priority: primary_and_official_docs
+last_reviewed: 2026-09-25
+---
+
+# Genome-Wide Association Studies
+
+## Goal
+
+GWAS tests whether marker genotypes are associated with trait variation across
+individuals. It is appropriate for diverse panels or simulated cohorts with
+historical recombination; it is not a substitute for linkage mapping in a
+controlled biparental population.
+
+## Required Inputs
+
+- A marker-by-sample dosage matrix or VCF.
+- One phenotype per biological individual.
+- Sample identifiers shared between genotype and phenotype data.
+- Population, family, batch, or environmental metadata when these may confound
+  the phenotype.
+
+## Core Decisions
+
+- Use an association model that controls relatedness and structure. In
+  `simitall`, `analyze_gwas()` uses `rrBLUP::GWAS()` with a realized kinship
+  matrix, optional fixed effects, and optional marker-derived principal
+  components.
+- Define minor-allele-frequency and missing-data filters before looking at
+  associations.
+- Use family-aware or population-aware validation rather than randomly mixing
+  close relatives into training and test groups.
+- Treat an associated marker as a linked signal, not automatically as a causal
+  allele or gene.
+
+## simitall Path
+
+```r
+cohort <- simulate_gwas_cohort(
+  genome_fa = "results/genome/simulated.fa",
+  out_prefix = "results/gwas/cohort",
+  n_samples = 300,
+  n_pops = 3,
+  fst = 0.10,
+  ld_block_size = 50000,
+  n_causal = 12,
+  seed = 101
+)
+
+fit <- analyze_gwas(
+  genotype_file = cohort$geno,
+  phenotype = cohort$pheno,
+  out_prefix = "results/gwas/association",
+  fixed_effects = "pop",
+  n_pcs = 3
+)
+benchmark_gwas(
+  fit$paths$results,
+  cohort$causal,
+  out_prefix = "results/gwas/benchmark",
+  window_bp = 10000
+)
+plot_gwas_results("results/gwas/benchmark.benchmark.tsv",
+                  "results/figures/gwas")
+```
+
+## QC and Truth Metrics
+
+- Inspect phenotype distributions, genotype missingness, MAF, and population
+  clustering before association testing.
+- Inspect QQ plots for inflation or deflation; they diagnose calibration but do
+  not prove correctness.
+- In simulation, report causal-variant recovery, precision, recall, F1, and
+  the genomic window used to define recovery.
+- In real data, report replication, functional evidence, and the distinction
+  between a lead marker and a causal mechanism.
+
+## Limits
+
+Power depends on sample size, effect size, allele frequency, LD, phenotype
+quality, and confounding control. A simulated truth set tests the workflow
+under its assumptions; it does not demonstrate validity in a real population.

@@ -1,0 +1,39 @@
+---
+id: species_rice
+document_type: species_note
+status: expanded
+domains: [rice, gwas, selfing, population_structure, haplotype_panels]
+related_functions: [generate_random_haplotype_panel, simulate_breeding, analyze_gwas]
+source_priority: primary_papers_and_panel_metadata
+last_reviewed: 2026-09-26
+---
+
+# Rice: Species and Panel Guidance
+
+## Biology That Changes Simulation
+
+Cultivated rice is diploid and largely self-pollinating. Diversity panels can
+contain deep subpopulation structure, including indica, japonica, aus,
+aromatic, and admixed accessions. A simulated diversity study should model or
+remove this structure intentionally, never accidentally.
+
+## 3K Rice Genomes Resource
+
+The 3,000 Rice Genomes Project is an empirical diversity resource, not a
+single homogeneous mapping population. When using a local subset, record the
+sample manifest, subgroup labels, reference build, chromosome selection,
+filtering thresholds, and imputation/phasing method.
+
+## Simulation Decisions
+
+- For a diversity GWAS, simulate phenotype effects, environment, and batch
+  independently from subgroup labels unless the benchmark intentionally tests
+  ancestry confounding.
+- For breeding populations, choose founders from known subgroups and retain
+  pedigree, ancestry tracts, and selfing generations.
+- For genomic selection, use family- or subgroup-aware validation to avoid
+  overstating accuracy through close relatives in both folds.
+
+## Key Source
+
+- 3,000 Rice Genomes Project (2014): DOI 10.1186/2047-217X-3-8.

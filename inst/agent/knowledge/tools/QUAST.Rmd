@@ -1,0 +1,33 @@
+---
+id: tool_quast
+document_type: tool
+status: starter
+software: QUAST
+related_functions: [run_quast_grid, summarize_quast]
+---
+
+# QUAST
+
+## Role
+
+QUAST evaluates one or more assemblies with or without a reference genome.
+Reference-aware results are most informative for `simitall` simulations because
+the truth genome is known.
+
+## Minimal Reference-Aware Run
+
+```bash
+quast.py -r simulated_truth.fa -o quast_output --threads 4 assembly.fasta
+```
+
+## Key Outputs
+
+- `report.tsv` for machine-readable metrics.
+- Genome fraction, total length, contig count, N50, misassemblies,
+  mismatches/100 kbp, and indels/100 kbp.
+- HTML report and optional Icarus visual summaries.
+
+## Guardrails
+
+N50 measures contiguity, not correctness. Always present it together with
+reference-aware error and misassembly metrics when a reference is available.

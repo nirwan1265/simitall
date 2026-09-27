@@ -1,0 +1,110 @@
+---
+id: paper_sharma_2023_meta_qtl_wheat
+document_type: paper_summary
+title: "Meta-QTL analysis in wheat: progress, challenges and opportunities"
+citation_key: "sharma2023metaqtlwheat"
+authors: "Sharma et al."
+year: 2023
+doi: "10.1007/s00122-023-04490-z"
+journal: "Theoretical and Applied Genetics"
+url: "https://doi.org/10.1007/s00122-023-04490-z"
+domains:
+  - wheat_genetics
+  - meta_qtl_analysis
+  - plant_breeding
+techniques:
+  - QTL_meta_analysis
+  - molecular_marker_mapping
+  - candidate_gene_prioritization
+organisms:
+  - wheat
+evidence_status: unreviewed
+source_file: "Meta-QTL analysis in wheat- progress, challenges and opportunities.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Sharma, D., Kumari, A., Sharma, P., et al. (2023). Meta-QTL analysis in wheat: progress, challenges and opportunities. *Theoretical and Applied Genetics* 136:247. https://doi.org/10.1007/s00122-023-04490-z (PDF p. 1).
+
+# One-Sentence Summary
+
+This review describes how meta-QTL analysis integrates independent wheat QTL studies to identify consensus loci, candidate genes and markers relevant to stress tolerance, yield, quality and nutrition (PDF pp. 1–25).
+
+# Research Question
+
+How has meta-QTL analysis advanced wheat genetics and breeding, what constraints affect QTL reliability, and what validation and future opportunities can improve its use? This paraphrases the review objectives (PDF pp. 2–4).
+
+# Biological System
+
+Wheat and wheat traits affected by biotic stresses, abiotic stresses, yield components, quality and nutritional composition are the biological focus (PDF pp. 1–8; Table 1). No new wheat population or experiment is reported.
+
+# Study Design
+
+Narrative review of published wheat QTL and meta-QTL studies, including methodological development, trait-specific MQTL progress, validation approaches and candidate-gene interpretation (PDF pp. 2–25). A new pooled statistical analysis by the review authors: Not reported.
+
+# Data
+
+The review synthesizes previously published QTL studies and reports MQTL counts, traits, mapping information and candidate genes from those studies. A unified raw genotype or phenotype matrix is not provided (PDF pp. 3–8, Table 1).
+
+# Methods
+
+- Describe projection of QTLs from independent studies onto a common genetic map and estimation of consensus intervals (PDF pp. 3–4, Fig. 1).
+- Discuss QTL congruency and meta-analysis procedures, including BioMercator and Meta-QTL software concepts (PDF pp. 3–4, Fig. 2).
+- Review MQTLs for biotic stress, abiotic stress, quality, yield and related traits (PDF pp. 5–20, Table 1).
+- Discuss candidate-gene identification, orthologous MQTLs, validation and marker-assisted breeding applications (PDF pp. 20–24).
+
+# Software and Versions
+
+BioMercator and Meta-QTL are named as tools used in QTL meta-analysis, and BioMercatorV4 is mentioned in the methodological discussion. No complete software environment or versioned analysis workflow is reported (PDF pp. 3–4).
+
+# Important Parameters
+
+The review identifies mapping population, molecular-marker density, environment, statistical model, map quality, QTL confidence interval and the number and quality of contributing studies as important factors (PDF pp. 2–4). Universal numerical thresholds: Not reported.
+
+# Inputs and Outputs
+
+Inputs are QTL positions, confidence intervals, genetic maps and trait information from independent studies. Outputs include consensus MQTL regions, flanking markers, candidate genes and possible orthologous regions (PDF pp. 3–4, 20–24).
+
+# Main Results
+
+The review reports that MQTL analysis can reduce uncertainty from individual QTL studies and identify stable, high-confidence regions for complex wheat traits (PDF pp. 1–4). It summarizes MQTLs for disease resistance, drought, salinity, quality, yield and nutrition, and argues that candidate genes and flanking markers can support targeted breeding (PDF pp. 5–20). These are author synthesis and interpretation, not a new benchmark.
+
+# Assumptions
+
+Meta-QTL interpretation assumes that QTLs from different studies can be projected to a comparable map and that consensus regions reflect reproducible genetic effects rather than only study-specific mapping artifacts (PDF pp. 3–4).
+
+# Limitations
+
+The review notes limitations caused by heterogeneous populations, environments, marker densities, statistical models, map quality and incomplete validation. Candidate-gene predictions require functional validation before causal claims (PDF pp. 2–4, 20–25).
+
+# Reproducible Implementation Details
+
+No complete input files, QTL projection settings, confidence-interval rules, software lockfile, candidate-gene annotation workflow or analysis script is supplied. Exact implementation details: Not reported (PDF pp. 3–4).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The workflow concepts could inform simitall support for QTL harmonization, consensus-region summaries and evidence tracking across studies. The paper does not mention or evaluate simitall (PDF pp. 1–25).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| MQTL analysis integrates QTL information from multiple independent studies. | Methodological description and workflow. | PDF pp. 2–4, Figures 1–2 | High |
+| QTL results are affected by population, marker density, environment and statistical model. | Limitations of conventional QTL mapping. | PDF p. 2 | High for author statement |
+| Wheat MQTL studies cover biotic, abiotic, quality and yield-related traits. | Review table and trait sections. | PDF pp. 5–20, Table 1 | High for review transcription |
+| Candidate genes and flanking markers may support marker-assisted breeding. | Abstract and applications discussion. | PDF pp. 1, 20–24 | High for author interpretation |
+| Functional validation is needed to establish candidate-gene roles. | Validation and future-opportunity discussion. | PDF pp. 20–25 | High |
+
+# Terminology
+
+- **QTL:** Genomic region associated with variation in a quantitative trait (PDF pp. 2–3).
+- **Meta-QTL (MQTL):** Consensus QTL region derived by integrating QTLs from multiple studies (PDF pp. 2–4).
+- **Candidate gene:** Gene prioritized within or near an MQTL for possible trait relevance (PDF pp. 1, 20–24).
+- **Flanking marker:** Marker bordering a QTL or MQTL interval and potentially useful for selection (PDF pp. 1, 20–24).
+
+# References
+
+Primary source: Sharma et al. (2023), cited above. The review’s cited studies are listed in its References section beginning on PDF p. 21. No outside sources were used.

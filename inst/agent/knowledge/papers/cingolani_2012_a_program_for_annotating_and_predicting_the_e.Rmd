@@ -1,0 +1,65 @@
+---
+id: "paper_cingolani_2012_a_program_for_annotating_and_predicting_the_e"
+document_type: "paper_summary"
+title: "A program for annotating and predicting the effects of single nucleotide polymorphisms, SnpEff"
+citation_key: "Cingolani2012"
+authors: "Cingolani, Pablo; Platts, Adrian; Wang, Le Lily; Coon, Melissa; Nguyen, Tung; Wang, Luan; Land, Susan J.; Lu, Xiangyi; et al."
+year: 2012
+doi: "10.4161/fly.19695"
+journal: "Fly"
+url: "https://doi.org/10.4161/fly.19695"
+domains: ["variant_annotation"]
+techniques: ["snpeff", "variant_annotation"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Cingolani, Pablo; Platts, Adrian; Wang, Le Lily; Coon, Melissa; Nguyen, Tung; Wang, Luan; Land, Susan J.; Lu, Xiangyi; et al. (2012). *A program for annotating and predicting the effects of single nucleotide polymorphisms, SnpEff*. Fly. DOI: 10.4161/fly.19695. Source: [https://doi.org/10.4161/fly.19695](https://doi.org/10.4161/fly.19695).
+
+# One-Sentence Summary
+
+Primary methodological record for functional annotation of genetic variants.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about functional annotation of genetic variants. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves variant annotation and snpeff, variant annotation.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for functional annotation of genetic variants?
+- When is snpeff, variant annotation an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

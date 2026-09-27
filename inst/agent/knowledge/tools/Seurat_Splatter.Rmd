@@ -1,0 +1,29 @@
+---
+id: tool_seurat_splatter
+document_type: tool
+status: starter
+software: [Seurat, Splatter, splatPop]
+related_functions: [simulate_scrnaseq_experiment, simulate_scrnaseq_from_gwas, aggregate_scrnaseq_pseudobulk, plot_scrnaseq_results]
+---
+
+# Seurat, Splatter, and splatPop
+
+## Roles
+
+- **Seurat**: preprocessing and analysis of single-cell data: QC,
+  normalization, variable features, PCA, neighbors, clusters, UMAP,
+  integration, and annotation.
+- **Splatter**: statistical simulation of scRNA-seq count data.
+- **splatPop**: population-aware scRNA-seq simulation with genetic variation.
+
+## simitall Position
+
+`simitall` produces controlled single-cell and donor-level truth data. It does
+not replace Seurat's downstream analysis ecosystem. Use pseudobulk functions
+before donor-level DE or eQTL inference.
+
+## Guardrails
+
+Do not use a fixed mitochondrial cutoff, PC count, or clustering resolution
+across species or assays. Do not call cell-level replicates independent donor
+replicates.

@@ -1,0 +1,65 @@
+---
+id: "paper_yang_2011_gcta_a_tool_for_genome_wide_complex_trait_ana"
+document_type: "paper_summary"
+title: "GCTA: A Tool for Genome-wide Complex Trait Analysis"
+citation_key: "Yang2011"
+authors: "Yang, Jian; Lee, S. Hong; Goddard, Michael E.; Visscher, Peter M."
+year: 2011
+doi: "10.1016/j.ajhg.2010.11.011"
+journal: "The American Journal of Human Genetics"
+url: "https://doi.org/10.1016/j.ajhg.2010.11.011"
+domains: ["genomic_selection"]
+techniques: ["gcta", "genomic_relationships", "heritability"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Yang, Jian; Lee, S. Hong; Goddard, Michael E.; Visscher, Peter M. (2011). *GCTA: A Tool for Genome-wide Complex Trait Analysis*. The American Journal of Human Genetics. DOI: 10.1016/j.ajhg.2010.11.011. Source: [https://doi.org/10.1016/j.ajhg.2010.11.011](https://doi.org/10.1016/j.ajhg.2010.11.011).
+
+# One-Sentence Summary
+
+Primary methodological record for genome-wide complex-trait analysis and genomic relationships.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about genome-wide complex-trait analysis and genomic relationships. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves genomic selection and gcta, genomic relationships.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for genome-wide complex-trait analysis and genomic relationships?
+- When is gcta, genomic relationships an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

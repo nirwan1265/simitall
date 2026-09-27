@@ -1,0 +1,20 @@
+---
+id: species_yeast
+document_type: species_note
+status: starter
+domains: [yeast, saccharomyces, population_genetics, rnaseq]
+related_functions: [simulate_genome, simulate_breeding, simulate_rnaseq_experiment]
+source_priority: species_specific_literature
+last_reviewed: 2026-09-26
+---
+
+# Saccharomyces cerevisiae: Species Guidance
+
+Budding yeast can be haploid or diploid and can switch between clonal growth,
+mating, sporulation, and tetrad-derived offspring. State ploidy, mating type,
+sexual-cycle frequency, and whether a simulation represents laboratory crosses
+or natural isolates. A diploid human-style population model is not a default.
+
+For cross simulations, tetrad/segregant design and marker segregation may be
+more informative than generic outbred GWAS assumptions. For expression studies,
+condition, growth phase, and batch effects should be recorded explicitly.

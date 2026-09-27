@@ -1,0 +1,118 @@
+---
+id: paper_huang_2022_integrated_genomics_crop_domestication
+document_type: paper_summary
+title: "The integrated genomics of crop domestication and breeding"
+citation_key: "huang2022cropdomestication"
+authors: "Huang, Huang, Han, and Li"
+year: 2022
+doi: "10.1016/j.cell.2022.04.036"
+journal: "Cell"
+url: "https://doi.org/10.1016/j.cell.2022.04.036"
+domains:
+  - crop_domestication
+  - plant_genomics
+  - plant_breeding
+techniques:
+  - genome_assembly
+  - population_genomics
+  - functional_genomics
+  - genome_editing
+  - pan_genomics
+organisms:
+  - crops
+  - rice
+  - wheat
+  - maize
+  - barley
+  - tomato
+  - soybean
+evidence_status: unreviewed
+source_file: "The integrated genomics of crop domestication and breeding.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Huang, X., Huang, S., Han, B., and Li, J. (2022). The integrated genomics of crop domestication and breeding. *Cell* 185, 2828–2839. https://doi.org/10.1016/j.cell.2022.04.036 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review integrates genome assembly, pan-genomics, population genetics, genetic mapping, functional genomics, machine learning and genome editing to explain crop domestication and accelerate breeding or re-domestication (PDF pp. 1–12).
+
+# Research Question
+
+How can genomic technologies and genetic analyses reveal domestication and improvement mechanisms and support faster crop design, breeding and de novo or re-domestication? This paraphrases the review summary and introduction (PDF pp. 1–2).
+
+# Biological System
+
+The review covers domesticated crops and their wild relatives, with examples from rice, wheat, maize, barley, tomato, soybean, sugarcane, alfalfa and other crop species (PDF pp. 1–8).
+
+# Study Design
+
+Narrative review of crop reference genomes, pan-genomes, population genomics, domestication genes, functional genomics, crop design and genome editing (PDF pp. 1–12, Figures 1–2). A new unified empirical analysis: Not reported.
+
+# Data
+
+The review discusses high-quality reference genomes, long-read sequencing, pan-genomes, population resequencing, genomic signatures of selection, omics profiles and functional assays. No single raw data set or accession list is supplied (PDF pp. 2–8).
+
+# Methods
+
+- Review crop reference-genome construction using long reads, Hi-C, optical mapping and de novo assembly tools (PDF pp. 2–3).
+- Describe linear and graph pan-genomes and structural-variant-aware population analysis (PDF pp. 3–4).
+- Discuss population-genomic signatures including reduced diversity, allele-frequency differentiation and extended haplotype homozygosity (PDF pp. 4–6, Figure 2).
+- Summarize genetic mapping, GWAS, functional genomics, machine learning, CRISPR-Cas9 and synthetic biology for crop improvement (PDF pp. 5–11, Figure 1).
+
+# Software and Versions
+
+The review names Canu, FALCON, Wtdbg2, NECAT, Hifiasm and All-HiC in the context of genome assembly or scaffolding, but does not define one reproducible software environment or version set (PDF pp. 2–3). Exact versions: Not reported.
+
+# Important Parameters
+
+Important parameters include long-read length and accuracy, assembly continuity, ploidy, structural-variant representation, reference bias, population structure, allele-frequency patterns, haplotype homozygosity and functional validation (PDF pp. 2–6). Universal thresholds: Not reported.
+
+# Inputs and Outputs
+
+Inputs include long- and short-read sequence data, genome assemblies, population genotypes, phenotypes, omics profiles and functional genetic experiments. Outputs include reference and pan-genomes, domestication or improvement loci, candidate genes, regulatory variants, structural variants and genome-editing targets (PDF pp. 2–11).
+
+# Main Results
+
+The review argues that high-quality reference genomes and pan-genomes provide the foundation for identifying domestication and improvement genes (PDF pp. 1–3). It reports examples in which pan-genomes reveal structural variants and hidden variation, including 238,490 structural variants in diverse tomato lines and a reported 24% increase in estimated heritability after adding causal structural variants in tomato (PDF p. 4). The authors propose integrating genomic reading, interpretation and writing—including CRISPR-Cas9—to accelerate crop design and re-domestication (PDF pp. 1–2, 9–11).
+
+# Assumptions
+
+The framework assumes that genomic variation, population-history signals and functional assays can be integrated to infer domestication mechanisms and that validated alleles or genes can be transferred or edited for breeding (PDF pp. 1–8).
+
+# Limitations
+
+The review notes challenges in assembling complex and polyploid genomes, resolving structural variation, reducing reference bias, developing pan-genome annotations and building utilities such as browsers and databases (PDF pp. 2–4). Transformation dependence and genotype dependency also limit routine genome editing (PDF pp. 9–10).
+
+# Reproducible Implementation Details
+
+No single sample set, assembly command, population-genomic statistic threshold, GWAS model, functional assay protocol or genome-editing design is reported. Exact implementation details: Not reported (PDF pp. 2–11).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The integrated framework could inform simitall records linking genome assemblies, structural variants, domestication signals, candidate genes and breeding targets. The paper does not mention or evaluate simitall (PDF pp. 1–12).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| Crop domestication and breeding involve selection of alleles affecting agronomic traits. | Introduction and summary. | PDF pp. 1–2 | High |
+| Long-read sequencing and assembly tools improve crop reference genomes. | Reference-genome section. | PDF pp. 2–3 | High |
+| Pan-genomes reduce reference bias and reveal additional variant information. | Pan-genome section. | PDF pp. 3–4 | High for author synthesis |
+| The review reports 238,490 structural variants in diverse tomato lines. | Tomato pan-genome example. | PDF p. 4 | High for transcription of cited result |
+| Integrating omics, genetic analysis and CRISPR-Cas9 can support crop redesign. | Conceptual framework. | PDF pp. 1–2, Figure 1 | High for author proposal |
+
+# Terminology
+
+- **Crop domestication:** Human-associated selection that transforms wild plants into cultivated crops (PDF pp. 1–2).
+- **Pan-genome:** Totality of genome sequences represented across a species or studied population (PDF pp. 3–4).
+- **Population genomics:** Analysis of genomic variation in relation to evolutionary forces such as drift and artificial selection (PDF pp. 4–6).
+- **De novo domestication:** Use of wild or semi-domesticated plants and targeted genetic changes to create improved crops (PDF pp. 1, 9–11).
+
+# References
+
+Primary source: Huang et al. (2022), cited above. The review’s cited studies are listed in its References section beginning on PDF p. 11. No outside sources were used.

@@ -1,0 +1,59 @@
+---
+id: "paper_flintgarcia_2005_maize_association_population_a_highresolution_pl"
+document_type: "paper_summary"
+title: "Maize association population: a highresolution platform for quantitative trait locus dissection"
+citation_key: "FlintGarcia2005"
+authors: "Sherry A. FlintGarcia; AnneCeline Thuillet; Jianming Yu; Gael Pressoir; Susan M. Romero; Sharon E. Mitchell; John Doebley; Stephen Kresovich; et al."
+year: 2005
+doi: "10.1111/j.1365-313X.2005.02591.x"
+journal: "The Plant Journal"
+url: "https://doi.org/10.1111/j.1365-313X.2005.02591.x"
+domains: ["maize"]
+techniques: ["association_panel", "population_structure", "gwas"]
+organisms: ["maize"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-26"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Sherry A. FlintGarcia; AnneCeline Thuillet; Jianming Yu; Gael Pressoir; Susan M. Romero; Sharon E. Mitchell; John Doebley; Stephen Kresovich; et al. (2005). *Maize association population: a highresolution platform for quantitative trait locus dissection*. The Plant Journal. DOI: 10.1111/j.1365-313X.2005.02591.x. Source: [https://doi.org/10.1111/j.1365-313X.2005.02591.x](https://doi.org/10.1111/j.1365-313X.2005.02591.x).
+
+# One-Sentence Summary
+
+Primary record for the Goodman or Flint-Garcia maize association population.
+
+# Scope for simitall
+
+Use this record to guide source selection, input requirements, and limitations
+for the Goodman or Flint-Garcia maize association population. It must not be used to imply that the associated panel, raw data,
+or external analysis software is packaged with simitall.
+
+# Agent-Safe Takeaways
+
+- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
+- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
+- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+
+# Inputs to Specify
+
+- Local data path or reproducible source/download version.
+- Reference build, chromosome naming, sample manifest, and filters.
+- The intended endpoint: GWAS, cross design, genomic selection, ancestry analysis, or benchmark.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- Panel properties are not transferable across different subsets, populations, species, or reference builds.
+- In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against
+Crossref on 2026-09-26. Replace or extend it with source-faithful,
+page-specific notes after reviewing the full text.

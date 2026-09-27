@@ -1,0 +1,35 @@
+---
+id: tool_pbsim3
+document_type: tool
+status: starter
+software: PBSIM3
+related_functions: [sim_pacbio, run_grid_both]
+---
+
+# PBSIM3
+
+## Role
+
+PBSIM3 simulates long reads for PacBio and ONT. It supports WGS, transcript,
+and template strategies plus model-based, sampling-based, and multi-pass modes.
+
+## Important HiFi Rule
+
+PBSIM3's documented multi-pass mode uses `--pass-num` and produces precursor
+read information, including BAM output. It does not directly turn a simple
+`HIFI` label into final CCS/HiFi FASTQ. Final HiFi consensus requires a
+subsequent PacBio CCS step. The agent must say this explicitly.
+
+## Core Controls
+
+- `--strategy`: WGS, transcript, or template.
+- `--method`: quality-score HMM, error HMM, or sampling.
+- `--depth`: requested coverage.
+- `--genome`: input FASTA.
+- `--qshmm` or `--errhmm`: instrument/error model.
+- `--pass-num`: multi-pass sequencing.
+
+## Guardrails
+
+The executable may be named `pbsim` even when PBSIM3 is installed. Detect the
+installed binary and its help text before constructing a command.

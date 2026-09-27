@@ -1,0 +1,25 @@
+---
+id: terminology_panels_ancestry_pedigrees
+document_type: terminology
+status: starter
+domains: [panels, ancestry, pedigree, population_structure]
+related_functions: [search_simitall_knowledge]
+source_priority: primary_papers_and_user_metadata
+last_reviewed: 2026-09-26
+---
+
+# Panel, Ancestry, and Pedigree Terms
+
+- **Diversity panel**: a collection of genetically diverse accessions or lines;
+  it often has population structure and historical LD.
+- **Mapping population**: an intentionally crossed population such as F2, RIL,
+  NAM, MAGIC, NIL, or DH.
+- **Founder panel**: the parental haplotypes used to generate a simulated cross.
+- **Global ancestry**: a genome-wide ancestry proportion for an individual.
+- **Local ancestry**: ancestry assignment along chromosome segments.
+- **Admixture mapping**: association testing of local ancestry, not ordinary SNP
+  GWAS with a population label.
+- **Pedigree**: recorded parent-offspring relationships.
+- **Kinship/GRM**: marker-derived genomic relatedness; it may disagree with a
+  pedigree because of error, selection, or Mendelian sampling.
+- **Phylogenetic tree**: a sequence-divergence model, not a pedigree.

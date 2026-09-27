@@ -1,0 +1,44 @@
+---
+id: workflow_single_cell_eqtl
+document_type: workflow
+status: starter
+inputs: [GWAS_genotype_TSV_or_VCF]
+outputs: [cell_count_matrix, cell_metadata, donor_pseudobulk, celltype_eQTL_truth, benchmark]
+related_functions: [simulate_scrnaseq_from_gwas, benchmark_celltype_eqtls, plot_scrnaseq_results]
+---
+
+# Donor-Aware Single-Cell eQTL Workflow
+
+## Objective
+
+Simulate cells from genotyped donors and benchmark cell-type eQTLs using donor-by-cell-type pseudobulk, avoiding pseudoreplication.
+
+```r
+library(simitall)
+
+sc <- simulate_scrnaseq_from_gwas(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  out_prefix = "results/scrna/gwas_linked",
+  cells_per_donor = 200,
+  cell_type_eqtl_fraction = 0.4,
+  doublet_rate = 0.03,
+  seed = 505
+)
+
+benchmark_celltype_eqtls(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  pseudobulk_expression = sc$pseudobulk_expression,
+  pseudobulk_metadata = sc$pseudobulk_metadata,
+  truth_file = sc$eqtl_truth,
+  out_prefix = "results/scrna/eqtl"
+)
+plot_scrnaseq_results(
+  scrna_prefix = "results/scrna/gwas_linked",
+  eqtl_prefix = "results/scrna/eqtl",
+  out_prefix = "results/figures/scrna"
+)
+```
+
+## Rule
+
+Cells are observations nested within donors. The donor, not the cell, is the biological replication unit for genotype association.

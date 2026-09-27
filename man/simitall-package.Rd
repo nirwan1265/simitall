@@ -22,5 +22,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Nirwan Tandukar \email{tandukar.nirwan@gmail.com}
 
+Authors:
+\itemize{
+  \item Nirwan Tandukar \email{tandukar.nirwan@gmail.com}
+}
+
 }
 \keyword{internal}

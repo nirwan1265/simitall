@@ -1,0 +1,109 @@
+---
+id: paper_cheng_2023_scrna_annotation_integration
+document_type: paper_summary
+title: "A Review of Single-Cell RNA-Seq Annotation, Integration, and Cell–Cell Communication"
+citation_key: "cheng2023"
+authors: "Cheng et al."
+year: 2023
+doi: "10.3390/cells12151970"
+journal: "Cells"
+url: "https://doi.org/10.3390/cells12151970"
+domains:
+  - single_cell_transcriptomics
+techniques:
+  - cell_type_annotation
+  - data_integration
+  - cell_cell_communication
+organisms:
+  - multiple_organisms
+evidence_status: unreviewed
+source_file: "A Review of Single-Cell RNA-Seq Annotation, Integration, and Cell–Cell Communication.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Cheng, C., Chen, W., Jin, H., and Chen, X. (2023). A Review of Single-Cell RNA-Seq Annotation, Integration, and Cell–Cell Communication. *Cells* 12, 1970. https://doi.org/10.3390/cells12151970 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review examines count models, cell-type annotation, single-cell and spatial data integration, and inference of cell–cell communication, emphasizing the assumptions behind each analysis (PDF pp. 4–5, 6–20, 20–29).
+
+# Research Question
+
+Which statistical models and computational methods are appropriate for single-cell annotation, integration, and communication analysis, and where can their assumptions fail? This paraphrases the review's stated scope (PDF pp. 1, 3–4).
+
+# Biological System
+
+Single cells and tissue sections from diverse organisms and tissues in published research; no new species-specific experiment or single study population is reported (PDF pp. 1–2, Table 1; p. 30, Data Availability Statement).
+
+# Study Design
+
+Narrative methods review with comparison tables and discussion of previously published benchmarking studies; a systematic search protocol, inclusion criteria, meta-analysis, and new experimental cohort are not reported (PDF pp. 1, 7, 10–11, 15–16, 21–22, 30).
+
+# Data
+
+Published descriptions of scRNA-seq, single-nucleus RNA-seq, spatial transcriptomics, and other single-cell modalities are the review's source material (PDF p. 2, Table 1). New raw data, accession numbers for a unified analysis, and sample sizes for an original cohort: Not reported (PDF p. 30, Data Availability Statement).
+
+# Methods
+
+- Contrast UMI count models with raw-read-count models; discuss negative binomial, Poisson, and zero-inflated alternatives by technology (PDF pp. 4–5, Section 2, Figure 1).
+- Survey marker-signature scoring, supervised classification, reference-based label transfer, and semi-supervised cell annotation (PDF pp. 6–14, Section 3, Tables 2–5).
+- Organize integration into mapping, deconvolution, multimodality fusion, and batch correction; summarize published benchmark comparisons (PDF pp. 14–20, Section 4, Table 6).
+- Compare ligand–receptor-based communication inference with downstream, cell-level, and spatial approaches (PDF pp. 20–28, Section 5, Table 7).
+
+# Software and Versions
+
+Methods named include Seurat, scANVI, scVI, Scanorama, Harmony, Cell2location, CellPhoneDB, CellChat, and NicheNet (PDF pp. 4, 15–19, 21, Tables 6–7). These are **tools discussed in a review**, not a documented execution environment. Version numbers for the review's own analyses: Not reported. The review specifically discusses Seurat V3 and CellPhoneDB v3 in cited-method contexts (PDF p. 19, Section 4.6; p. 27, Section 5.3).
+
+# Important Parameters
+
+No universal QC cutoffs, cluster resolutions, significance thresholds, or parameter settings for a reproducible new analysis are supplied: Not reported. The discussion treats cluster resolution, reference selection, and batch–biology confounding as context-dependent decisions (PDF pp. 12–14, Section 3; pp. 19–20, Section 4.7).
+
+# Inputs and Outputs
+
+Conceptual inputs are expression count matrices, reference cell labels or marker signatures, and, when available, spatial or other modality measurements; conceptual outputs are cell labels, integrated representations, deconvolved cell types, or inferred communication scores (PDF pp. 4–6, 9, 14–18, 20–27, Sections 2–5). No downloadable input and output files for a newly run pipeline are reported.
+
+# Main Results
+
+As a review, the paper reports conclusions from the literature rather than new benchmark results. The authors explain why UMI and amplified read counts may need different count models, why annotation depends on reference quality and cell-type hierarchy, and why integration results depend on correspondence and batch assumptions (PDF pp. 4–5, Section 2; pp. 12–14, Section 3; pp. 19–20, Section 4). They also describe limited agreement among communication methods and the value of spatial context (PDF pp. 27–28, Sections 5.3–5.4). These are **author interpretations of cited research**.
+
+# Assumptions
+
+UMI-based counts can be modeled without automatically requiring zero inflation, but models must reflect cell heterogeneity (PDF pp. 4–5, Figure 1). Integration may assume cell-type correspondence across data sets and batch effects largely independent of biology; these assumptions can fail (PDF pp. 19–20, Section 4.7). Ligand–receptor transcript expression is an indirect proxy for protein-mediated signaling (PDF p. 21, Section 5).
+
+# Limitations
+
+The review does not provide a reproducible original benchmark, harmonized raw data, or software environment (PDF p. 30, Data Availability Statement). Its cited methods can suffer from imperfect references, uncertain cluster resolution, overcorrection or false discoveries when batch and biology correlate, and uncertain ground truth for cell–cell communication (PDF p. 12, Section 3.2; pp. 19–20, Section 4.7; p. 28, Section 5.4). The last sentence summarizes limitations identified by the authors.
+
+# Reproducible Implementation Details
+
+No end-to-end script, version lockfile, seed, exact input accession list, or executable parameter specification for this review: Not reported. Before implementing a cited method, consult its original paper; the relevant method names and citations are indexed in Tables 2–7 (PDF pp. 7, 10–11, 15–16, 21–22).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The review could serve as background when documenting single-cell annotation, integration, or ligand–receptor inference in simitall. The paper does not discuss simitall or validate any simitall implementation (PDF pp. 1, 28–30).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The review differentiates modeling of UMI counts and amplified raw read counts. | Authors' methodological discussion and count-model schematic; synthesis of cited work, not a new empirical test. | PDF pp. 4–5, Section 2, Figure 1 | High for what the review states |
+| Reference quality and subjective resolution choices affect annotation. | Authors' discussion of classifier references and cell-type hierarchy. | PDF pp. 12–14, Sections 3.2–3.4 | High for author interpretation |
+| The review classifies integration approaches as mapping, deconvolution, multimodality fusion, and batch correction. | Section structure and comparative method table. | PDF pp. 14–19, Sections 4.1–4.5, Table 6 | High |
+| Batch correction can distort differential-expression findings when batch and biology correlate. | Authors' discussion of assumptions and a cited evaluation; no new test in this review. | PDF p. 20, Section 4.7 | Moderate; secondary evidence |
+| Spatial context can refine inferred cell–cell communication. | Spatial methods and rationale discussed by authors. | PDF p. 27, Section 5.3 | High for author interpretation |
+| Communication algorithms can produce divergent predictions with limited experimental ground truth. | Authors' discussion of benchmarking limitations. | PDF p. 28, Section 5.4 | Moderate; secondary evidence |
+
+# Terminology
+
+- **UMI:** Unique molecular identifier used to distinguish original captured molecules from PCR duplicates (PDF p. 4, Section 2).
+- **Label transfer:** Assigning identities to query cells with an annotated reference following integration (PDF p. 12, Section 3.3.1).
+- **Deconvolution:** Estimating cell-type composition from spatial or mixed expression measurements (PDF pp. 16–17, Section 4.2).
+- **Cell–cell communication:** In this review, often an inferred interaction based on ligand and receptor expression, sometimes supplemented with spatial information (PDF pp. 20–21, 27, Section 5).
+
+# References
+
+Primary source: Cheng et al. (2023), cited above. The review's full bibliography begins on PDF p. 30; individual original method and benchmark studies are cited in its Sections 2–5. No outside sources were used for this summary.

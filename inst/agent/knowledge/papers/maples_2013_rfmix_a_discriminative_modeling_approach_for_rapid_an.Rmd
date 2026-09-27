@@ -1,0 +1,59 @@
+---
+id: "paper_maples_2013_rfmix_a_discriminative_modeling_approach_for_rapid_an"
+document_type: "paper_summary"
+title: "RFMix: A Discriminative Modeling Approach for Rapid and Robust Local-Ancestry Inference"
+citation_key: "Maples2013"
+authors: "Brian K. Maples; Simon Gravel; Eimear E. Kenny; Carlos D. Bustamante"
+year: 2013
+doi: "10.1016/j.ajhg.2013.06.020"
+journal: "The American Journal of Human Genetics"
+url: "https://doi.org/10.1016/j.ajhg.2013.06.020"
+domains: ["human"]
+techniques: ["rfmix", "local_ancestry", "admixture"]
+organisms: ["human"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-26"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Brian K. Maples; Simon Gravel; Eimear E. Kenny; Carlos D. Bustamante (2013). *RFMix: A Discriminative Modeling Approach for Rapid and Robust Local-Ancestry Inference*. The American Journal of Human Genetics. DOI: 10.1016/j.ajhg.2013.06.020. Source: [https://doi.org/10.1016/j.ajhg.2013.06.020](https://doi.org/10.1016/j.ajhg.2013.06.020).
+
+# One-Sentence Summary
+
+Primary record for reference-panel-based local ancestry inference.
+
+# Scope for simitall
+
+Use this record to guide source selection, input requirements, and limitations
+for reference-panel-based local ancestry inference. It must not be used to imply that the associated panel, raw data,
+or external analysis software is packaged with simitall.
+
+# Agent-Safe Takeaways
+
+- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
+- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
+- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+
+# Inputs to Specify
+
+- Local data path or reproducible source/download version.
+- Reference build, chromosome naming, sample manifest, and filters.
+- The intended endpoint: GWAS, cross design, genomic selection, ancestry analysis, or benchmark.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- Panel properties are not transferable across different subsets, populations, species, or reference builds.
+- In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against
+Crossref on 2026-09-26. Replace or extend it with source-faithful,
+page-specific notes after reviewing the full text.

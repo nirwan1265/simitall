@@ -1,0 +1,17 @@
+---
+id: species_soybean
+document_type: species_note
+status: starter
+domains: [soybean, plant_breeding, selfing, paleopolyploidy]
+related_functions: [simulate_breeding, analyze_gwas, run_genomic_selection]
+source_priority: species_specific_literature
+last_reviewed: 2026-09-26
+---
+
+# Soybean: Species Guidance
+
+Soybean is commonly treated as diploid but has an ancient polyploid genome with
+duplicated content. It is predominantly self-pollinating, so breeding and
+diversity simulations should specify selfing history, cultivar versus landrace
+sampling, and whether duplicated/homeologous regions are retained or filtered.
+Use empirical marker panels when LD and maturity-group structure matter.

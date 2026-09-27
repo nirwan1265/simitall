@@ -1,0 +1,65 @@
+---
+id: "paper_liao_2014_featurecounts_an_efficient_general_purpose_pr"
+document_type: "paper_summary"
+title: "featureCounts: an efficient general purpose program for assigning sequence reads to genomic features"
+citation_key: "Liao2014"
+authors: "Liao, Yang; Smyth, Gordon K.; Shi, Wei"
+year: 2014
+doi: "10.1093/bioinformatics/btt656"
+journal: "Bioinformatics"
+url: "https://doi.org/10.1093/bioinformatics/btt656"
+domains: ["rnaseq"]
+techniques: ["featurecounts", "read_counting", "annotation"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Liao, Yang; Smyth, Gordon K.; Shi, Wei (2014). *featureCounts: an efficient general purpose program for assigning sequence reads to genomic features*. Bioinformatics. DOI: 10.1093/bioinformatics/btt656. Source: [https://doi.org/10.1093/bioinformatics/btt656](https://doi.org/10.1093/bioinformatics/btt656).
+
+# One-Sentence Summary
+
+Primary methodological record for featureCounts read assignment to genomic features.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about featureCounts read assignment to genomic features. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves rnaseq and featurecounts, read counting.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for featureCounts read assignment to genomic features?
+- When is featurecounts, read counting an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

@@ -1,0 +1,36 @@
+---
+id: tool_tractor
+document_type: tool_card
+status: starter
+software: Tractor
+language: command_line
+domains: [local_ancestry, ancestry_aware_gwas, admixed_cohorts]
+source_priority: official_docs_and_primary_paper
+last_reviewed: 2026-09-26
+---
+
+# Tractor
+
+## Role
+
+Tractor is an external local-ancestry-aware GWAS tool for admixed cohorts. It
+uses local ancestry together with ancestry-specific allele counts and covariates
+to estimate ancestry-aware association signals.
+
+## Required Preprocessing
+
+- QCed cohort genotype data and phenotype/covariate metadata.
+- Phasing and local-ancestry inference, for example with RFMix.
+- Harmonized sample IDs, genome build, chromosome names, alleles, and ancestry
+  labels across all intermediate files.
+
+## simitall Boundary
+
+simitall can create benchmark truth, preserve ancestry-tract outputs, validate
+input requirements, and generate a run plan. It does not yet install, execute,
+or wrap Tractor automatically.
+
+## Reference
+
+- Atkinson et al. (2021): DOI 10.1038/s41588-020-00766-y.
+- Official repository: https://github.com/Atkinson-Lab/Tractor

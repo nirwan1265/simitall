@@ -1,0 +1,108 @@
+---
+id: paper_panigrahi_2024_cattle_reproduction_qtls
+document_type: paper_summary
+title: "Genomic insights into key genes and QTLs involved in cattle reproduction"
+citation_key: "panigrahi2024cattlereproduction"
+authors: "Panigrahi et al."
+year: 2024
+doi: "10.1016/j.gene.2024.148465"
+journal: "Gene"
+url: "https://doi.org/10.1016/j.gene.2024.148465"
+domains:
+  - animal_genetics
+  - cattle_reproduction
+techniques:
+  - QTL_mapping
+  - GWAS
+  - molecular_markers
+organisms:
+  - cattle
+evidence_status: unreviewed
+source_file: "Genomic insights into key genes and QTLs involved in cattle reproduction.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Panigrahi, M., Rajawat, D., Nayak, S. S., Jain, K., Vaidhya, A., Prakash, R., Sharma, A., Parida, S., Bhushan, B., and Dutt, T. (2024). Genomic insights into key genes and QTLs involved in cattle reproduction. *Gene* 917, 148465. https://doi.org/10.1016/j.gene.2024.148465 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review compiles cattle reproductive traits, associated QTL regions and candidate genes across puberty, fertility, pregnancy, embryonic survival, calving and related phenotypes (PDF pp. 1–8, Figure 1).
+
+# Research Question
+
+Which genes and QTLs have been associated with economically important cattle reproductive traits, and how may these findings support breeding? This paraphrases the abstract and introduction (PDF p. 1).
+
+# Biological System
+
+Cattle breeds and populations represented in published reproductive-genetics studies, including dairy and beef cattle examples (PDF pp. 1–8). No new cattle cohort or original genotyping experiment is reported.
+
+# Study Design
+
+Narrative review organized by reproductive trait categories: mating, fertility, pregnancy, embryo and calving-related traits (PDF pp. 2–8, Figure 1). A systematic search protocol, meta-analysis or new QTL mapping study: Not reported.
+
+# Data
+
+The review summarizes previously reported QTLs, markers and candidate genes. The abstract reports **4,437 QTLs for calving ease**, **10,623 for age at puberty**, **10,498 for scrotal circumference**, and **2,476 for inseminations per conception** (PDF p. 1, Abstract). These counts are literature-derived and not recalculated by the review.
+
+# Methods
+
+- Explain QTL analysis as association of genotypic and phenotypic information and discuss molecular marker types (PDF pp. 1–2).
+- Organize reported loci by age at puberty, fertility, conception, pregnancy, embryo number or mortality, multiple birth, stillbirth and calving ease (PDF pp. 2–8, Figure 1).
+- Discuss candidate genes and their possible roles in reproductive phenotypes using cited cattle studies (PDF pp. 2–8).
+
+# Software and Versions
+
+Software, genome builds, statistical packages and versions used by the review authors: Not reported. The paper discusses QTL and marker-based analyses through cited studies but does not define one executable pipeline.
+
+# Important Parameters
+
+No common marker-density requirement, significance threshold, LD window, QTL interval definition or breed-specific model is reported for all summarized studies: Not reported. The QTL counts in the abstract retain their source-review context (PDF p. 1).
+
+# Inputs and Outputs
+
+Conceptual inputs are cattle genotypes/markers and reproductive phenotypes; outputs are QTL intervals, associated markers and candidate genes (PDF pp. 1–8). The review provides a literature synthesis rather than a new genotype or phenotype data file.
+
+# Main Results
+
+The review identifies extensive reported QTL associations across cattle reproductive traits and emphasizes their potential value for breeding and genetic improvement (PDF pp. 1–8). The numeric QTL totals are cited literature summaries, while the breeding implications are author interpretation (PDF p. 1, Abstract; p. 8, Conclusion).
+
+# Assumptions
+
+QTL associations are assumed to reflect genetic contributions to reproductive variation, while candidate-gene interpretation assumes that nearby or associated genes are biologically relevant. Association does not by itself prove causality (**summary inference** from PDF pp. 1–8).
+
+# Limitations
+
+Cross-study QTL counts may combine different breeds, phenotyping protocols, marker sets and mapping methods; the paper does not provide a common reanalysis or standardized validation (PDF pp. 1–8). Exact source-study settings must therefore be retained when using individual associations.
+
+# Reproducible Implementation Details
+
+No raw data, software environment, variant filters, QTL thresholds, scripts or unified candidate-gene prioritization procedure: Not reported. The cited original studies are required for reproducing any individual QTL result (PDF pp. 1–8).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** This review could support simitall indexing of animal QTL and reproductive-trait literature. It does not mention or evaluate simitall (PDF pp. 1–8).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| Reproductive traits in cattle are influenced by many genes and environmental factors. | Introduction and QTL framing. | PDF p. 1, Introduction | High for author statement |
+| The review reports 4,437 QTLs for calving ease and 10,623 for age at puberty. | Abstract totals. | PDF p. 1, Abstract | High for transcription; secondary for source data |
+| The review covers puberty, fertility, pregnancy, embryo and calving-related traits. | Section organization. | PDF pp. 2–8, Sections 3–6 | High |
+| QTL analysis combines genotypic markers with phenotypic measurements. | Methodological explanation. | PDF pp. 1–2, Introduction | High |
+| The paper presents potential breeding implications of reproductive QTLs. | Conclusion and abstract. | PDF p. 1; p. 8, Conclusion | High for author interpretation |
+
+# Terminology
+
+- **QTL:** Chromosomal region statistically associated with a quantitative trait (PDF p. 1).
+- **Age at puberty:** Reproductive timing trait reviewed in cattle (PDF pp. 2–3).
+- **Inseminations per conception:** Fertility phenotype included among QTL counts (PDF p. 1).
+- **Calving ease:** Trait category reviewed in relation to cattle QTLs (PDF pp. 7–8).
+
+# References
+
+Primary source: Panigrahi et al. (2024), cited above. The source studies are listed in the References beginning on PDF p. 8. No outside sources were used.

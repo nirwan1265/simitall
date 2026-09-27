@@ -1,0 +1,65 @@
+---
+id: "paper_gurevich_2013_quast_quality_assessment_tool_for_genome_asse"
+document_type: "paper_summary"
+title: "QUAST: quality assessment tool for genome assemblies"
+citation_key: "Gurevich2013"
+authors: "Gurevich, Alexey; Saveliev, Vladislav; Vyahhi, Nikolay; Tesler, Glenn"
+year: 2013
+doi: "10.1093/bioinformatics/btt086"
+journal: "Bioinformatics"
+url: "https://doi.org/10.1093/bioinformatics/btt086"
+domains: ["genome_assembly"]
+techniques: ["quast", "assembly_evaluation", "benchmarking"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Gurevich, Alexey; Saveliev, Vladislav; Vyahhi, Nikolay; Tesler, Glenn (2013). *QUAST: quality assessment tool for genome assemblies*. Bioinformatics. DOI: 10.1093/bioinformatics/btt086. Source: [https://doi.org/10.1093/bioinformatics/btt086](https://doi.org/10.1093/bioinformatics/btt086).
+
+# One-Sentence Summary
+
+Primary methodological record for reference-aware assembly quality assessment with QUAST.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about reference-aware assembly quality assessment with QUAST. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves genome assembly and quast, assembly evaluation.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for reference-aware assembly quality assessment with QUAST?
+- When is quast, assembly evaluation an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

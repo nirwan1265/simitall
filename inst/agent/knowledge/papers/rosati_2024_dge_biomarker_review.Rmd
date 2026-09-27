@@ -1,0 +1,110 @@
+---
+id: paper_rosati_2024_dge_biomarker_review
+document_type: paper_summary
+title: "Differential gene expression analysis pipelines and bioinformatic tools for the identification of specific biomarkers: A review"
+citation_key: "rosati2024dge"
+authors: "Rosati et al."
+year: 2024
+doi: "10.1016/j.csbj.2024.02.018"
+journal: "Computational and Structural Biotechnology Journal"
+url: "https://doi.org/10.1016/j.csbj.2024.02.018"
+domains:
+  - transcriptomics
+  - biomarker_discovery
+techniques:
+  - differential_gene_expression
+  - pathway_enrichment
+  - biomarker_evaluation
+organisms:
+  - multiple_biomedical_systems
+evidence_status: unreviewed
+source_file: "Differential gene expression analysis pipelines and bioinformatic tools for the identification of specific biomarkers- A review.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Rosati, D., Palmieri, M., Brunelli, G., Morrione, A., Iannelli, F., Frullanti, E., and Giordano, A. (2024). Differential gene expression analysis pipelines and bioinformatic tools for the identification of specific biomarkers: A review. *Computational and Structural Biotechnology Journal* 23, 1154–1168. https://doi.org/10.1016/j.csbj.2024.02.018 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review compares RNA-seq differential-expression methods and downstream enrichment tools for selecting and assessing putative biomedical biomarkers (PDF pp. 1–11, Tables 1–6).
+
+# Research Question
+
+Which differential-expression pipelines, pathway resources and biomarker evaluation steps are useful, and what are their strengths and limitations? This paraphrases the authors' abstract (PDF p. 1).
+
+# Biological System
+
+Published biomedical examples including vascular calcification, cancers, placental studies and other conditions; no new biological system or original case–control cohort is specified for the review (PDF pp. 4–5, 9–11, Sections 2, 5).
+
+# Study Design
+
+Narrative literature review, tool comparisons and illustrative published case studies (PDF pp. 1–11, Tables 1–6, Section 5). A new prospective diagnostic trial, pooled benchmark or independently replicated biomarker panel: Not reported.
+
+# Data
+
+The paper describes count-based RNA-seq comparisons and published DEG lists with follow-up pathway or network resources; individual case studies provide their own data and sample designs (PDF pp. 2–5, Sections 2–2.4; pp. 6–11, Sections 3–5). No new common FASTQ/count matrix or original patient manifest is reported.
+
+# Methods
+
+- Compare DGE tools and count distributions, normalization and statistical modeling, including edgeR and DESeq2 (PDF pp. 2–4, Tables 1–2, Sections 2–2.2).
+- Discuss adjusted significance, expression change, plots and heatmaps as parts of gene interpretation (PDF pp. 4–5, Section 2.4, Figure 2).
+- Survey pathway databases and enrichment/network tools, including WikiPathways, KEGG, Reactome and enrichment methods (PDF pp. 6–9, Tables 3–6, Section 3).
+- Discuss published biomarker case studies and statistical/clinical evaluation considerations (PDF pp. 8–11, Sections 4–6).
+
+# Software and Versions
+
+The review names DEGseq, edgeR, DESeq2, pheatmap, DAVID and multiple pathway tools or databases (PDF pp. 2–5, Tables 1–2, Figure 2; pp. 6–9, Tables 3–6). These are **reviewed software**, not an executed standardized workflow. Exact installed versions for the review authors' analyses: Not reported.
+
+# Important Parameters
+
+The paper discusses selecting adjusted-*p* and log2 fold-change cutoffs appropriate to the question, rather than prescribing one universal threshold (PDF pp. 3–4, Sections 2.2–2.4). Reported **P < 0.05** and other cutoffs in the case-study section belong to the individual original studies (PDF pp. 9–11, Section 5). A uniform FDR cutoff, minimum read depth, replicate count or held-out validation split for an original analysis: Not reported.
+
+# Inputs and Outputs
+
+Conceptual inputs include gene counts and group metadata; outputs are DEG lists, effect and adjusted-significance estimates, plots, enriched pathways, networks and candidate biomarkers (PDF pp. 2–9, Sections 2–4, Tables 1–6). These are outputs of **methods reviewed**, not one new downloadable result bundle.
+
+# Main Results
+
+The authors summarize trade-offs in DGE modeling, pathway annotation and biomarker testing, and show how published studies combined them (PDF pp. 2–11, Tables 1–6, Sections 4–5). They caution that variability, selection bias and model overfitting can mislead biomarker claims (PDF pp. 9–11, Sections 4–6). These are **author synthesis and evaluations of cited studies**, not discovery of a new validated biomarker in this review.
+
+# Assumptions
+
+Count-based DGE methods rely on models for dispersion and mean–variance structure; Table 2 describes negative-binomial modeling for DESeq2 and edgeR (PDF pp. 2–4, Tables 1–2). Downstream enrichment depends on the selected gene list and pathway resource, and diagnostic claims require suitable populations and evaluation design (PDF pp. 6–9, Sections 3–4).
+
+# Limitations
+
+The authors discuss biological variability, biased study populations and overfitting in biomarker prediction (PDF pp. 9–11, Sections 4 and 6). Tables juxtapose methods and case studies that have different inputs and designs, so they are not an original common benchmark (**summary inference** from PDF pp. 2–11, Tables 1–6).
+
+# Reproducible Implementation Details
+
+No single script, package-lock environment, raw data bundle, complete covariate design, fixed DEG cutoff or shared test set is provided for this narrative review: Not reported. The source's Tables 1–6 and Section 5 cite original tool and study papers needed for result-level reproduction (PDF pp. 2–11).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The article could supply background definitions and evidence pointers for simitall topics on DGE and enrichment. It does not discuss or evaluate simitall (PDF pp. 1–11).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The paper compares DGE tools and the models or normalization they describe. | Authors' tool comparison. | PDF pp. 2–3, Tables 1–2 | High for review content |
+| DESeq2 and edgeR are described as negative-binomial approaches. | Statistical-model entries and accompanying text. | PDF pp. 3–4, Table 2, Section 2.2 | High |
+| Differential expression is followed by visual summaries including volcano plots and heatmaps. | Figures and visualization section. | PDF pp. 4–5, Section 2.4, Figure 2 | High |
+| The review compares pathway databases and enrichment tools. | Cited resources and tool tables. | PDF pp. 6–9, Tables 3–6 | High |
+| Published case-study biomarker numbers are not a newly validated panel from this review. | Multiple cited examples in the case-study section. | PDF pp. 9–11, Section 5 | High for attribution |
+| Variability and overfitting are identified as biomarker-analysis limitations. | Authors' limitations section. | PDF p. 11, Section 6 | High for author interpretation |
+
+# Terminology
+
+- **DGE/DEG:** Differential gene expression and a gene identified as differentially expressed in a specified comparison (PDF pp. 1–2).
+- **FDR:** False discovery rate, discussed in the context of adjusted significance (PDF pp. 1, 3–4).
+- **ORA:** Over-representation analysis of a selected gene list (PDF pp. 1, 6–8).
+- **GSEA:** Gene set enrichment analysis, a pathway interpretation approach discussed alongside ORA (PDF pp. 1, 6–8).
+
+# References
+
+Primary source: Rosati et al. (2024), cited above. Its cited original methods and studies follow the article's main text (PDF pp. 11–16). No outside sources were used.

@@ -1,0 +1,17 @@
+---
+id: species_sorghum
+document_type: species_note
+status: starter
+domains: [sorghum, plant_breeding, gwas, genomic_selection]
+related_functions: [simulate_breeding, analyze_gwas, run_genomic_selection]
+source_priority: species_specific_literature
+last_reviewed: 2026-09-26
+---
+
+# Sorghum: Species Guidance
+
+Sorghum is a diploid cereal with diversity panels, structured germplasm, and
+breeding applications. Specify whether the study concerns grain, sweet,
+forage, broomcorn, or wild-related germplasm because population structure and
+trait architecture can differ. Use chromosome-specific maps and retain
+family/subpopulation labels for GWAS and genomic-selection validation.

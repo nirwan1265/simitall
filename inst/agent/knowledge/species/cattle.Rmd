@@ -1,0 +1,17 @@
+---
+id: species_cattle
+document_type: species_note
+status: starter
+domains: [cattle, animal_breeding, pedigree, genomic_selection]
+related_functions: [simulate_parental_effects, fit_genomic_model, run_genomic_selection]
+source_priority: species_specific_literature
+last_reviewed: 2026-09-26
+---
+
+# Cattle: Species Guidance
+
+Cattle breeding simulations should preserve pedigree, sex, cohort, herd,
+contemporary group, dam, sire, and repeated-record metadata. Dairy and beef
+populations can differ substantially in selection intensity, generation
+interval, family structure, and trait definitions. Genomic selection should be
+evaluated using time-aware and family-aware splits, not only random folds.

@@ -1,0 +1,65 @@
+---
+id: evaluation_ancestry_aware_gwas
+document_type: evaluation
+status: partially_executed
+domains: [ancestry, admixture, gwas, local_ancestry]
+related_functions: [simitall_ask]
+source_priority: executed_smoke_test_and_official_docs
+last_reviewed: 2026-09-26
+---
+
+# Ancestry-Aware GWAS Evaluation
+
+## Purpose
+
+Verify that simitall distinguishes ancestry-tract simulation, local-ancestry
+inference, admixture mapping, and ancestry-aware GWAS rather than describing
+all of them as a generic GWAS.
+
+## Executed Smoke Test
+
+Script: `inst/extdata/examples/ancestry_tract_smoke.R`
+
+On 2026-09-26, the script completed using `GenomeAdmixR` 2.1.12 in the
+repository-local ignored `.Rlib/` library. It simulated 20 diploid individuals
+from three founders across one Morgan for five generations, then wrote initial
+and final ancestry-frequency tables, a founder-frequency summary, metadata,
+and a PNG figure.
+
+The smoke test establishes only that simitall can execute a small R-side
+simulation with known ancestry truth. It does **not** establish local-ancestry
+inference accuracy or ancestry-aware GWAS validity.
+
+## External-Tool Boundary
+
+| Stage | Tool | Status in this evaluation |
+|---|---|---|
+| Ancestry-tract simulation | GenomeAdmixR | Executed |
+| Relatedness/structure or admixture mapping | GENESIS | Not installed; not executed |
+| Local-ancestry inference | RFMix | Not installed; not executed |
+| Ancestry-aware association | Tractor | Not installed; not executed |
+
+## Expected Agent Behavior
+
+- For synthetic ancestry questions, recommend `GenomeAdmixR` and retain tract
+  truth, parameters, source labels, and random seed.
+- For real local ancestry, require phased cohort data, a compatible reference
+  panel, a genetic map, and a versioned inference method before association.
+- Recommend `GENESIS` for R-side structure/relatedness or admixture-mapping
+  work after local ancestry is available.
+- Recommend Tractor only as an external ancestry-aware GWAS stage; do not claim
+  simitall has executed it unless its output files and version are supplied.
+- Never infer human identity, clinical meaning, or biological essentialism from
+  ancestry labels.
+
+## Rerun
+
+```r
+source("inst/extdata/examples/ancestry_tract_smoke.R")
+```
+
+Or from a terminal:
+
+```bash
+Rscript inst/extdata/examples/ancestry_tract_smoke.R results/ancestry_tract_smoke
+```

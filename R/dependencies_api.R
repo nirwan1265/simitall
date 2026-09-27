@@ -9,17 +9,22 @@
   )
   population <- data.frame(
     component = c(
-      "simplePHENOTYPES", "simstudy", "pedtricks", "SimuPOP"
+      "simplePHENOTYPES", "simstudy", "pedtricks", "rrBLUP", "BGLR",
+      "ranger", "SimuPOP"
     ),
-    kind = c(rep("R package", 3L), "Python module"),
+    kind = c(rep("R package", 6L), "Python module"),
     candidates = c(
-      "simplePHENOTYPES", "simstudy", "pedtricks", "simuPOP"
+      "simplePHENOTYPES", "simstudy", "pedtricks", "rrBLUP", "BGLR",
+      "ranger", "simuPOP"
     ),
     required_for = "population",
     install_hint = c(
       "remotes::install_github('samuelbfernandes/simplePHENOTYPES')",
       "install.packages('simstudy')",
       "install.packages('pedtricks')",
+      "install.packages('rrBLUP')",
+      "install.packages('BGLR')",
+      "install.packages('ranger')",
       "conda install -c conda-forge simupop"
     ),
     stringsAsFactors = FALSE

@@ -1,0 +1,64 @@
+---
+id: "paper_zappia_2017_splatter"
+document_type: "paper_summary"
+title: "Splatter: simulation of single-cell RNA sequencing data"
+citation_key: "Zappia2017Splatter"
+authors: "Zappia, L., Phipson, B., and Oshlack, A."
+year: 2017
+doi: "10.1186/s13059-017-1305-0"
+journal: "Genome Biology"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5596896/"
+domains: ["single_cell_rnaseq", "simulation"]
+techniques: ["scrnaseq", "dropout", "batch_effects", "cell_types"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Zappia, L., Phipson, B., and Oshlack, A. (2017). *Splatter: simulation of single-cell RNA sequencing data*. Genome Biology. DOI: 10.1186/s13059-017-1305-0. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC5596896/](https://pmc.ncbi.nlm.nih.gov/articles/PMC5596896/).
+
+# One-Sentence Summary
+
+Introduces Splatter, a framework for simulating single-cell RNA-seq count data with biological and technical variability.
+
+# Scope for simitall
+
+Use as a reference and possible backend for generic single-cell count simulations. simitall should add genotype, family, condition, and eQTL truth before handing off to a technical simulator.
+
+# Agent-Safe Takeaways
+
+- Single-cell simulation should expose library size, dispersion, dropout, and group effects.
+- A count matrix needs cell-level metadata and known cell-type labels for evaluation.
+- Generic scRNA-seq variation is not the same as genotype-linked variation.
+
+# Inputs to Specify
+
+- Gene and cell counts
+- Cell-type or group configuration
+- Expression and technical-noise parameters
+
+# Expected Outputs
+
+- Gene-by-cell count matrix
+- Cell metadata
+- Simulation parameters
+
+# Limitations and Guardrails
+
+- Reference-free simulators can miss dataset-specific correlation and protocol effects.
+- Use independent QC to evaluate sparsity, depth, and cell-type separation.
+
+# Questions This Record Can Ground
+
+- What technical artifacts should a scRNA-seq simulation include?
+- How is a genotype-aware scRNA-seq workflow different from a generic Splatter run?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

@@ -1,0 +1,57 @@
+---
+id: workflow_simulate_and_run_gwas
+document_type: workflow
+status: starter
+inputs: [genome_FASTA]
+outputs: [VCF, genotype_TSV, phenotype_TSV, causal_truth_TSV, GWAS_TSV, benchmark_TSV, figures]
+related_functions: [simulate_gwas_cohort, analyze_gwas, benchmark_gwas, plot_gwas_results]
+---
+
+# Simulate and Run a GWAS
+
+## Objective
+
+Create a structured cohort, simulate causal variants and phenotypes, run a mixed-model GWAS, and benchmark recovery against known truth.
+
+```r
+library(simitall)
+dir.create("results/gwas", recursive = TRUE, showWarnings = FALSE)
+
+simulate_gwas_cohort(
+  genome_fa = "results/genome/simulated.fa",
+  out_prefix = "results/gwas/cohort",
+  n_samples = 300,
+  ploidy = 2,
+  snp_rate = 0.001,
+  n_pops = 3,
+  fst = 0.10,
+  ld_block_size = 50000,
+  n_causal = 12,
+  effect_sd = 0.4,
+  seed = 101
+)
+
+gwas <- analyze_gwas(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  phenotype = "results/gwas/cohort.pheno.tsv",
+  out_prefix = "results/gwas/association",
+  trait = "trait",
+  fixed_effects = "pop",
+  n_pcs = 3,
+  min_maf = 0.05
+)
+
+benchmark <- benchmark_gwas(
+  gwas$paths$results,
+  "results/gwas/cohort.causal.tsv",
+  out_prefix = "results/gwas/benchmark",
+  fdr_threshold = 0.05,
+  window_bp = 10000
+)
+
+plot_gwas_results(benchmark$paths$results, "results/gwas/association_plot")
+```
+
+## Report
+
+State cohort size, ploidy, LD and structure settings, phenotype architecture, filters, association model, recovery window, precision, recall, and F1. Do not describe a recovered simulated locus as a newly discovered biological locus.

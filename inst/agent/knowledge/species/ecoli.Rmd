@@ -1,0 +1,24 @@
+---
+id: species_ecoli
+document_type: species_note
+status: starter
+domains: [ecoli, bacteria, assembly, bacterial_gwas, plasmids]
+related_functions: [simulate_genome, simulate_annotations, run_grid_both, run_unicycler_grid, run_quast_grid]
+source_priority: reference_genomes_and_primary_papers
+last_reviewed: 2026-09-26
+---
+
+# Escherichia coli: Species Guidance
+
+E. coli is usually modeled as a haploid bacterium with a circular chromosome.
+Important scenario variables include strain background, plasmids, mobile
+elements, operons, repeat/rRNA architecture, homologous recombination, and
+horizontal gene transfer. It is excellent for hybrid-assembly truth benchmarks
+because a compact, known reference can be modified reproducibly.
+
+For bacterial GWAS, do not reuse diploid human GWAS defaults. Strong clonal
+lineage structure, accessory genes, k-mers, and recombination can confound
+association. Treat bacterial GWAS as a separate analysis design requiring
+lineage-aware covariates and a declared variant representation.
+
+Useful reference: E. coli K-12 MG1655 genome, DOI 10.1126/science.277.5331.1453.

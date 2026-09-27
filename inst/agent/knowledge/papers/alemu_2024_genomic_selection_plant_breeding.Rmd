@@ -1,0 +1,112 @@
+---
+id: paper_alemu_2024_genomic_selection_plant_breeding
+document_type: paper_summary
+title: "Genomic selection in plant breeding: Key factors shaping two decades of progress"
+citation_key: "alemu2024genomicselection"
+authors: "Alemu et al."
+year: 2024
+doi: "10.1016/j.molp.2024.03.007"
+journal: "Molecular Plant"
+url: "https://doi.org/10.1016/j.molp.2024.03.007"
+domains:
+  - plant_breeding
+  - genomic_selection
+  - genomic_prediction
+techniques:
+  - genomic_prediction
+  - training_population_optimization
+  - machine_learning
+organisms:
+  - wheat
+  - maize
+  - potato
+evidence_status: unreviewed
+source_file: "Genomic-selection-in-plant-breeding--Key-factors-s.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Alemu, A., Åstrand, J., Montesinos-López, O. A., Isidro y Sánchez, J., Fernández-González, J., Tadesse, W., Vetukuri, R. R., Carlsson, A. S., Ceplitis, A., Crossa, J., Ortiz, R., and Chawade, A. (2024). Genomic selection in plant breeding: Key factors shaping two decades of progress. *Molecular Plant* 17, 552–578. https://doi.org/10.1016/j.molp.2024.03.007 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review evaluates how training-population design, markers, LD, heritability, models and non-additive effects shape genomic-prediction accuracy and genetic gain in plant breeding (PDF pp. 1–21, Figures 1–5).
+
+# Research Question
+
+Which factors determine genomic-prediction accuracy and training-population efficiency, and how can optimization and new models improve genomic selection? This paraphrases the abstract (PDF p. 1).
+
+# Biological System
+
+Plant breeding examples with emphasis on wheat, maize and potato, alongside broader crop studies (PDF pp. 1, 7–21). No new single crop trial or original genotyping experiment is reported.
+
+# Study Design
+
+Holistic review of two decades of genomic prediction and selection research, with conceptual figures and cited examples comparing training populations, marker sets, models and validation schemes (PDF pp. 1–21, Figures 1–5). A new meta-analysis or common benchmark: Not reported.
+
+# Data
+
+The review discusses genotype and phenotype data used to build training populations and predict breeding-population performance. It emphasizes training-population size, genetic diversity, relationship to the target population and trait heritability (PDF pp. 1–7, Figures 1–3). No unified raw data matrix or accession list: Not reported.
+
+# Methods
+
+- Explain genomic prediction model building and cross-validation (PDF pp. 2–5, Figures 1–2).
+- Discuss training-population optimization, genetic diversity and diminishing returns from additional individuals (PDF pp. 5–10, Figure 3).
+- Review marker density, LD, trait architecture, heritability, statistical and machine-learning models, and non-additive effects (PDF pp. 10–15, Figure 4).
+- Discuss omics integration, deep learning and practical breeding implications (PDF pp. 15–21).
+
+# Software and Versions
+
+The review discusses statistical and machine-learning model classes but does not define one software environment or package-version set used by the authors (PDF pp. 11–15, Figure 4). Exact software versions: Not reported.
+
+# Important Parameters
+
+The paper treats training-population size and composition, marker density, LD, heritability and validation design as key parameters, but does not prescribe universal numerical cutoffs (PDF pp. 1–10, Figures 1–3). The theoretical maximum of Pearson-correlation accuracy is described as **one** in the abstract, not as an achieved universal result (PDF p. 1).
+
+# Inputs and Outputs
+
+Inputs are genotypes and phenotypes from a training population, with target-population genotypes for prediction. Outputs are predicted genetic values, prediction accuracy and selection decisions (PDF pp. 2–5, Figure 1). No new prediction file or evaluated breeding population is reported.
+
+# Main Results
+
+The authors conclude that training-population optimization is central, that prediction accuracy can show diminishing returns with larger training sets, and that markers, LD, heritability, model choice and non-additive effects all matter (PDF pp. 1–15). They propose combining optimized data, omics and deep-learning methods to approach higher accuracy, but state that current performance remains suboptimal for many traits (PDF p. 1, Abstract; pp. 15–21). These are review synthesis and author hypothesis.
+
+# Assumptions
+
+Prediction assumes that the training population represents the breeding population sufficiently in genetic composition and LD, and that phenotypes are measured reliably. Cross-validation estimates depend on how training and validation sets are related (PDF pp. 1–7, Figures 1–2).
+
+# Limitations
+
+The authors emphasize diminishing returns, limited transferability when populations differ, low-heritability traits, marker and model limitations, and non-additive effects (PDF pp. 1–15). The review does not provide one standardized benchmark across all cited crops and traits.
+
+# Reproducible Implementation Details
+
+No single data set, genotype filter, phenotype protocol, marker density, cross-validation split, model hyperparameter set or software lockfile is reported: Not reported. Figure 1 supplies a conceptual workflow, and individual cited studies must be consulted for exact settings (PDF pp. 2–5).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** This review could support simitall documentation of genomic prediction, training-population optimization and validation design. It does not mention or evaluate simitall (PDF pp. 1–21).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| Genomic selection applies genomic-prediction models to select candidates. | Abstract definition. | PDF p. 1, Abstract | High |
+| Training-population size and genetic diversity affect prediction accuracy. | Review synthesis and optimization figures. | PDF pp. 1–10, Figures 1–3 | High for author synthesis |
+| Prediction accuracy can show diminishing returns beyond an optimum training size. | Abstract and training-population discussion. | PDF p. 1; pp. 5–10 | High for author interpretation |
+| Marker density, LD, heritability and model choice are important factors. | Factor discussion and model figure. | PDF pp. 10–15, Figure 4 | High |
+| The authors propose omics and deep learning as future support for genomic prediction. | Abstract and perspectives. | PDF p. 1; pp. 15–21 | High for proposal; not a demonstrated result |
+
+# Terminology
+
+- **Genomic prediction (GP):** Prediction of genetic merit from genome-wide markers (PDF pp. 1–3).
+- **Training population:** Individuals with genotype and phenotype information used to fit a prediction model (PDF pp. 2–10).
+- **Breeding population:** Target individuals for which genomic predictions guide selection (PDF pp. 2–5).
+- **Prediction accuracy:** Association between predicted and observed or genetic values, often assessed by correlation (PDF p. 1).
+
+# References
+
+Primary source: Alemu et al. (2024), cited above. The review's cited studies appear in the References beginning on PDF p. 22. No outside sources were used.

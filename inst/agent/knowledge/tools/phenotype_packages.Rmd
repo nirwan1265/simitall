@@ -1,0 +1,32 @@
+---
+id: tool_phenotype_packages
+document_type: tool
+status: starter
+software: [simplePHENOTYPES, simstudy, pedtricks]
+related_functions: [simulate_phenotypes, simulate_count_trait, simulate_ordinal_trait, simulate_family_effects, simulate_parental_effects]
+---
+
+# Phenotype Simulation Packages
+
+## simplePHENOTYPES
+
+Use for genetic architectures with additive, dominance, epistatic, pleiotropic,
+and GxE effects. `simulate_phenotypes()` is the `simitall` wrapper.
+
+## simstudy
+
+Use for study-level outcome mechanisms such as ordinal categories, Poisson or
+negative-binomial counts, repeatable family effects, and covariate structures.
+`simulate_ordinal_trait()`, `simulate_count_trait()`, and
+`simulate_family_effects()` provide focused wrappers.
+
+## pedtricks
+
+Use for direct, maternal, and paternal pedigree effects. `simulate_parental_effects()`
+records those components as explicit truth outputs.
+
+## Guardrails
+
+Heritability, effect sizes, prevalence, and family structure must be stated.
+Do not claim simulated trait realism without comparing summary distributions to
+the target organism and experiment.

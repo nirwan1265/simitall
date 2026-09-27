@@ -1,0 +1,65 @@
+---
+id: "paper_heffner_2009_genomic_selection_for_crop_improvement"
+document_type: "paper_summary"
+title: "Genomic Selection for Crop Improvement"
+citation_key: "Heffner2009"
+authors: "Heffner, Elliot L.; Sorrells, Mark E.; Jannink, JeanLuc"
+year: 2009
+doi: "10.2135/cropsci2008.08.0512"
+journal: "Crop Science"
+url: "https://doi.org/10.2135/cropsci2008.08.0512"
+domains: ["genomic_selection"]
+techniques: ["plant_breeding", "genomic_prediction", "selection"]
+organisms: ["plants"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Heffner, Elliot L.; Sorrells, Mark E.; Jannink, JeanLuc (2009). *Genomic Selection for Crop Improvement*. Crop Science. DOI: 10.2135/cropsci2008.08.0512. Source: [https://doi.org/10.2135/cropsci2008.08.0512](https://doi.org/10.2135/cropsci2008.08.0512).
+
+# One-Sentence Summary
+
+Primary methodological record for genomic selection for crop improvement.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about genomic selection for crop improvement. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves genomic selection and plant breeding, genomic prediction.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for genomic selection for crop improvement?
+- When is plant breeding, genomic prediction an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

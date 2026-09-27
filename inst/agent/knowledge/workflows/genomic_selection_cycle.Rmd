@@ -1,0 +1,48 @@
+---
+id: workflow_genomic_selection_cycle
+document_type: workflow
+status: starter
+inputs: [genotype_TSV_or_VCF, phenotype_TSV, optional_family_metadata]
+outputs: [CV_metrics, model_RDS, GEBVs, selected_parents, crossing_plan]
+related_functions: [cross_validate_genomic_prediction, run_genomic_selection]
+---
+
+# One Genomic-Selection Cycle
+
+## Objective
+
+Evaluate genomic prediction honestly, then select a diverse parent set and write a reproducible crossing plan.
+
+```r
+library(simitall)
+
+cv <- cross_validate_genomic_prediction(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  phenotype = "results/gwas/cohort.pheno.tsv",
+  model = "gblup",
+  folds = 5,
+  split = "group",
+  group = "family",
+  true_value = "true_breeding_value",
+  seed = 202
+)
+
+selection <- run_genomic_selection(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  phenotype = "results/gwas/cohort.pheno.tsv",
+  out_prefix = "results/selection/cycle1",
+  model = "gblup",
+  n_parents = 12,
+  n_crosses = 30,
+  mating = "minimum_kinship",
+  diversity_penalty = 0.25,
+  family_data = "results/gwas/cohort.pheno.tsv",
+  family_col = "family",
+  max_per_family = 3,
+  seed = 202
+)
+```
+
+## Interpretation
+
+Use group-aware CV to estimate deployment performance. Report prediction accuracy, calibration, selected-parent mean GEBV, mean kinship, family representation, and selection differential. This workflow writes one cycle; offspring generation and repeated-cycle genetic gain are a separate step.

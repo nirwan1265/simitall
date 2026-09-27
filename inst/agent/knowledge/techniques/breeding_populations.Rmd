@@ -1,0 +1,51 @@
+---
+id: technique_breeding_populations
+document_type: technique
+status: starter
+domains: [breeding, recombination, mapping_populations]
+related_functions: [generate_random_haplotype_panel, simulate_breeding, simupop_api]
+source_priority: primary_and_official_docs
+last_reviewed: 2026-09-25
+---
+
+# Breeding and Mapping Populations
+
+## Goal
+
+Generate explicit founder haplotypes and recombination histories for F1, F2,
+backcross, selfed, RIL, NIL, doubled-haploid, NAM, and MAGIC designs. Choose a
+design based on the biological question: locus discovery, introgression,
+recombination mapping, or recurrent selection.
+
+## Essential Inputs
+
+- Founder haplotypes, supplied as a FASTA panel or generated synthetically.
+- Chromosome-aware genetic maps or a documented synthetic recombination model.
+- Mating design, population size, generations, and selection rules.
+- Intended ploidy and whether selfing, sex-specific maps, or independent
+  assortment are biologically appropriate.
+
+## QC Targets
+
+- Per-line heterozygosity and residual heterozygosity.
+- Breakpoint counts and ancestry tract lengths per chromosome.
+- Founder contribution and family balance.
+- LD decay and marker segregation ratios.
+- For NILs: donor fraction, target introgression length, and off-target donor
+  tracts.
+
+## simitall and SimuPOP
+
+`simulate_breeding()` provides explicit designed-cross simulation and outputs
+FASTA, ancestry, breakpoint, recombination-map, and structural-variant truth.
+`simupop_api()` is the bridge for advanced forward-time evolution, migration,
+selection, demographic change, and predefined mating schemes.
+
+Use the simplest engine that expresses the question. A hand-designed F2 or RIL
+does not require a complex forward-time model; a population with migration,
+selection, and repeated generations often does.
+
+## Limits
+
+Synthetic maps and generic crossover models are assumptions. For organism-level
+claims, use measured chromosome-specific maps and inspect output tract lengths.

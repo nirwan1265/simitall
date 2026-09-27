@@ -1,0 +1,37 @@
+---
+id: technique_relationship_trees
+document_type: technique
+status: starter
+domains: [phylogeny, kinship, pedigree, population_structure]
+related_functions: [simulate_breeding, calculate_genomic_kinship]
+source_priority: package_docs_and_user_data
+last_reviewed: 2026-09-26
+---
+
+# Trees, Dendrograms, and Pedigree Graphs
+
+## Three Different Objects
+
+- A **pedigree graph** follows known parent-offspring relationships.
+- A **kinship dendrogram** clusters samples using a genomic relationship or
+  distance matrix.
+- A **phylogenetic tree** estimates sequence divergence under a chosen marker
+  alignment and tree method.
+
+They can look similar but answer different questions. The agent must name the
+object requested and state the input data and method.
+
+## Safe Defaults
+
+- For breeding: export a pedigree/cross graph and founder-contribution table.
+- For GWAS: use PCA and kinship summaries before a dendrogram; tree displays are
+  descriptive and do not replace a structure-aware association model.
+- For species/panel comparisons: require the user to provide the exact sample
+  set and filtered genotype/sequence alignment. Do not bundle or invent a
+  "maize tree" or "human ancestry tree".
+
+## Reproducibility Fields
+
+Record sample manifest, reference build, marker filtering, distance model or
+kinship method, clustering/tree algorithm, root/outgroup choice if any, and
+whether branch lengths are meaningful.

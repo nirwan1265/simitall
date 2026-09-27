@@ -1,0 +1,112 @@
+---
+id: paper_xu_2022_smart_breeding_igep
+document_type: paper_summary
+title: "Smart breeding driven by big data, artificial intelligence, and integrated genomic-enviromic prediction"
+citation_key: "xu2022smartbreeding"
+authors: "Xu et al."
+year: 2022
+doi: "10.1016/j.molp.2022.09.001"
+journal: "Molecular Plant"
+url: "https://doi.org/10.1016/j.molp.2022.09.001"
+domains:
+  - smart_breeding
+  - genomic_prediction
+  - enviromics
+techniques:
+  - genomic_selection
+  - machine_learning
+  - deep_learning
+  - multiomics_integration
+  - environmental_prediction
+organisms:
+  - crop plants
+evidence_status: unreviewed
+source_file: "Smart breeding driven by big data, artificial intelligence, and integrated genomic-enviromic prediction.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Xu, Y., Zhang, X., Li, H., Zheng, H., Zhang, J., Olsen, M. S., Varshney, R. K., Prasanna, B. M., and Qian, Q. (2022). Smart breeding driven by big data, artificial intelligence, and integrated genomic-enviromic prediction. *Molecular Plant* 15, 1664–1695. https://doi.org/10.1016/j.molp.2022.09.001 (PDF p. 1).
+
+# One-Sentence Summary
+
+This perspective proposes integrated genomic-enviromic prediction (iGEP) as a smart-breeding extension of genomic prediction that combines genotype, phenotype, environment, multiomics, big data and artificial intelligence across space and time (PDF pp. 1–32).
+
+# Research Question
+
+How can multidimensional genotype–phenotype–environment information, big-data systems and AI be integrated to improve predictive breeding, crop redesign and genetic gain? This paraphrases the article’s stated scope (PDF p. 1).
+
+# Biological System
+
+The paper addresses crop breeding broadly, including crops, breeding populations, target and non-target environments, and crop relatives rather than one species or trial (PDF pp. 1, 6–9, 25–32).
+
+# Study Design
+
+Perspective and conceptual review of predictive breeding technologies, multidimensional breeding data, iGEP model classes, crop redesign and integrative breeding platforms (PDF pp. 1–32, Figures 1–3, Tables 1–4). A new unified empirical benchmark by the authors: Not reported.
+
+# Data
+
+The article discusses genotype, phenotype, envirotype and multiomics data, including genomics, phenomics, epigenomics, transcriptomics, proteomics, metabolomics, microbiomics and metagenomics (PDF pp. 1, 6–9, 21–25). No single raw data set is supplied.
+
+# Methods
+
+- Compare conventional and smart-breeding data properties and pipelines (PDF pp. 4–7, Tables 1–2).
+- Describe genotype–phenotype–environment data integration, environmental indices, multi-environment trials and spatiotemporal models (PDF pp. 6–15).
+- Classify five iGEP model categories, from genomic prediction across environments to multiomics and spatiotemporal prediction (PDF pp. 14–18, Table 3).
+- Discuss machine learning, deep learning, cross-species prediction, crop redesign and integrated breeding platforms (PDF pp. 11–15, 24–32).
+
+# Software and Versions
+
+The article discusses model classes and data systems but does not provide one executable software environment or package-version set. Exact software versions: Not reported (PDF pp. 11–18).
+
+# Important Parameters
+
+Important variables include selection differential, heritability, prediction accuracy, additive variance, breeding-cycle time, marker density, sample size, linkage disequilibrium, GEI and environmental covariates (PDF pp. 2, 14–18). Universal hyperparameter values: Not reported.
+
+# Inputs and Outputs
+
+Inputs are genotype, phenotype, envirotype and multiomics data collected across environments and time. Outputs include predicted phenotypes or breeding values, selection decisions, environmental recommendations, crop designs and breeding-platform decisions (PDF pp. 6–18, Figure 2).
+
+# Main Results
+
+The authors propose that iGEP can improve predictive breeding by adding environmental and multiomics information to genomic prediction and by using machine or deep learning for complex relationships (PDF pp. 1, 14–18). They cite examples in which marker–environment interactions increased prediction accuracy by 17%–34% in wheat, and models involving maize genotype-by-environment effects increased accuracy by 12%–22% (PDF p. 17). These numerical examples are reported from cited studies, not new experiments by the authors.
+
+# Assumptions
+
+The framework assumes that genotype, phenotype and environmental data can be collected, standardized, integrated and linked to breeding outcomes, and that sufficiently representative data improve prediction of target environments (PDF pp. 6–12, 14–18).
+
+# Limitations
+
+Challenges include missing data, heterogeneous formats, data silos, noisy and complex multiomics data, class imbalance, insufficient data quantity and variability, computational requirements, data management and limited model transferability (PDF pp. 7–13, 28–32).
+
+# Reproducible Implementation Details
+
+No single training data set, preprocessing protocol, model formula beyond conceptual equations, cross-validation design, hyperparameter set, software version or code repository is supplied. Exact implementation details: Not reported (PDF pp. 2, 14–18).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The iGEP framework could inform simitall metadata for genotype, environment, phenotype, multiomics and prediction-model provenance. The paper does not mention or evaluate simitall (PDF pp. 1–32).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| Plant phenotype is modeled as a function of genotype, environment and genotype-by-environment interaction. | Introduction and predictive-breeding framework. | PDF pp. 1–2 | High |
+| iGEP extends genomic prediction by integrating multiomics and enviromic information. | Abstract and iGEP methods. | PDF pp. 1, 14–18 | High for author proposal |
+| The paper describes five categories of iGEP models. | Model classification and table. | PDF pp. 14–18, Table 3 | High |
+| Cited wheat and maize examples show higher prediction accuracy when GEI is modeled. | Review of cited examples. | PDF p. 17 | High for transcription of cited results |
+| Smart breeding requires data management, AI, computational capacity and interdisciplinary integration. | Challenges and platform sections. | PDF pp. 7–13, 28–32, Figure 3 | High for author synthesis |
+
+# Terminology
+
+- **Envirotype:** Environmental information relevant to plant performance and genotype-by-environment interactions (PDF pp. 1, 6–9).
+- **iGEP:** Integrated genomic-enviromic prediction using genomic, multiomics and environmental information (PDF pp. 1, 14–18).
+- **GEI:** Genotype-by-environment interaction affecting phenotype and prediction (PDF pp. 1–2, 17–18).
+- **Smart breeding:** Data- and AI-supported breeding that integrates multidimensional information and predictive models (PDF pp. 4–7).
+
+# References
+
+Primary source: Xu et al. (2022), cited above. The article’s cited studies are listed in its References section beginning on PDF p. 28. No outside sources were used.

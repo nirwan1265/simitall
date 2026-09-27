@@ -20,6 +20,12 @@ test_that("a small GWAS cohort is generated", {
   expect_true(file.exists(paste0(prefix, ".vcf")))
   expect_true(file.exists(paste0(prefix, ".geno.tsv")))
   expect_true(file.exists(paste0(prefix, ".pheno.tsv")))
+  expect_true(file.exists(paste0(prefix, ".causal.tsv")))
+  truth <- read.delim(paste0(prefix, ".causal.tsv"))
+  phenotype <- read.delim(paste0(prefix, ".pheno.tsv"))
+  expect_equal(nrow(truth), 2L)
+  expect_true(all(c("marker_id", "effect", "phenotype") %in% names(truth)))
+  expect_true("true_breeding_value" %in% names(phenotype))
 })
 
 test_that("a small F2 population is generated", {

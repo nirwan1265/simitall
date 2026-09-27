@@ -1,0 +1,28 @@
+---
+id: tool_badread
+document_type: tool
+status: starter
+software: Badread
+related_functions: [sim_nanopore]
+---
+
+# Badread
+
+## Role
+
+Badread simulates error-prone long reads with user-controlled artifacts. It is
+well suited for ONT stress tests and for bacterial plasmid behavior.
+
+## Key Controls
+
+- `--quantity`: bases or requested depth.
+- `--length`: mean and SD of fragment lengths.
+- `--identity`: identity or quality-score distribution.
+- `--error_model`, `--qscore_model`: sequencing error behavior.
+- `--chimeras`, `--junk_reads`, `--random_reads`, `--glitches`: artifacts.
+- `--small_plasmid_bias`: underrepresentation of small circular plasmids.
+
+## Guardrails
+
+Badread's flexibility is a strength, not a claim that its defaults reproduce
+every platform. Match parameters to a real target read set when realism matters.

@@ -1,0 +1,37 @@
+---
+id: workflow_chipseq_from_annotations
+document_type: workflow
+status: starter
+inputs: [genome_FASTA, annotation_GFF3]
+outputs: [peak_truth_BED, matched_input_FASTQ, ChIP_FASTQ, differential_binding_truth, figures]
+related_functions: [simulate_chipseq, plot_chipseq_results]
+---
+
+# Annotation-Aware ChIP-seq
+
+## Objective
+
+Use genome annotations to create binding or histone-mark peaks and matched input/ChIP libraries with explicit truth.
+
+```r
+library(simitall)
+
+simulate_chipseq(
+  genome_fa = "results/genome/simulated.fa",
+  annotation_gff3 = "results/annotation/genome.gff3",
+  out_prefix = "results/chipseq/tf_demo",
+  assay_type = "TF",
+  biological_replicates = 3,
+  n_reads = 1000000,
+  conditions = c("control", "stress"),
+  seed = 606
+)
+plot_chipseq_results(
+  chip_prefix = "results/chipseq/tf_demo",
+  out_prefix = "results/figures/chipseq"
+)
+```
+
+## Report
+
+Record target type, feature-selection rules, fragment/read model, control libraries, replicate design, peak truth, and condition-specific effects.

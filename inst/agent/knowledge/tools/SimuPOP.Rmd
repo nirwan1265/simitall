@@ -1,0 +1,35 @@
+---
+id: tool_simupop
+document_type: tool
+status: starter
+software: SimuPOP
+related_functions: [simupop_api, simulate_breeding]
+---
+
+# SimuPOP
+
+## Role
+
+SimuPOP is a Python forward-time population-genetics simulator. `simitall`
+uses `reticulate` to expose carefully selected mating and evolution patterns
+without attempting to reproduce the full SimuPOP API in R.
+
+## Supported Concepts
+
+- Population structure, loci, chromosome positions, ploidy, and information
+  fields.
+- Mutation, recombination, migration, selection, demography, and pedigree
+  tracking.
+- Random, monogamous, polygamous, selfing, hermaphroditic, and controlled
+  random mating.
+
+## Guardrails
+
+SimuPOP is powerful enough to encode unrealistic models easily. The agent must
+ask for generation count, chromosome map units, population size, mating design,
+and whether selection changes fitness before constructing a forward-time run.
+
+## Citation
+
+Peng B and Kimmel M (2005), *simuPOP: a forward-time population genetics
+simulation environment*.

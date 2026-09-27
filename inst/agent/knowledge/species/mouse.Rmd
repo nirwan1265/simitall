@@ -1,0 +1,18 @@
+---
+id: species_mouse
+document_type: species_note
+status: starter
+domains: [mouse, complex_traits, pedigree, multiparent_populations]
+related_functions: [simulate_breeding, simulate_parental_effects, analyze_gwas]
+source_priority: species_specific_literature
+last_reviewed: 2026-09-26
+---
+
+# Mouse: Species Guidance
+
+Mouse simulations should state whether the material represents inbred strains,
+outbred stocks, recombinant inbred lines, Diversity Outbred, Collaborative
+Cross, or a controlled cross. Sex chromosomes, sex-specific recombination,
+known pedigree, cage/litter effects, and maternal effects can all affect trait
+and association simulations. Preserve animal, dam, sire, litter, generation,
+and cage metadata separately.

@@ -1,0 +1,12 @@
+---
+id: species_bacteria
+document_type: species_note
+status: starter
+organisms: [bacteria, Escherichia_coli]
+---
+
+# Bacterial Genomes
+
+Bacterial simulations are commonly haploid and may include circular chromosomes, plasmids, operons, rRNA operons, CRISPR arrays, mobile elements, and strong local repeat effects. Use a real reference or explicitly label a genome as synthetic. For assembly benchmarks, circularity, plasmid copy depth, repeat length, and long-read length are central design variables.
+
+Do not transfer diploid GWAS coding or eukaryotic enhancer assumptions without an explicit biological reason.

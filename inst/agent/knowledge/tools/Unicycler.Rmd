@@ -1,0 +1,31 @@
+---
+id: tool_unicycler
+document_type: tool
+status: starter
+software: Unicycler
+related_functions: [run_unicycler_grid]
+---
+
+# Unicycler
+
+## Role
+
+Unicycler is a bacterial assembly pipeline for short-read, long-read, and
+short-read-first hybrid assembly. In hybrid mode it builds an Illumina graph
+and uses long reads to resolve graph paths and repeats.
+
+## Required Inputs
+
+```bash
+unicycler -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz \
+  -l long_reads.fastq.gz -o assembly_dir -t 8 --mode normal
+```
+
+Key outputs are `assembly.fasta`, `assembly.gfa`, and `unicycler.log`.
+
+## Guardrails
+
+Unicycler is designed for bacterial genomes. Read length relative to repeat
+length is central: reads must span repeats with enough flanking unique sequence.
+`conservative`, `normal`, and `bold` modes trade contiguity against risk of
+misassembly; report the chosen mode.

@@ -1,0 +1,60 @@
+---
+id: "paper_schep_2017_chromvar_inferring_transcription_factor_associated_acc"
+document_type: "paper_summary"
+title: "chromVAR: inferring transcription-factor-associated accessibility from single-cell epigenomic data"
+citation_key: "Schep2017"
+authors: "Alicia N Schep; Beijing Wu; Jason D Buenrostro; William J Greenleaf"
+year: 2017
+doi: "10.1038/nmeth.4401"
+journal: "Nature Methods"
+url: "https://doi.org/10.1038/nmeth.4401"
+domains: ["epigenomics"]
+techniques: ["chromvar", "single_cell_atac", "motifs"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Alicia N Schep; Beijing Wu; Jason D Buenrostro; William J Greenleaf (2017). *chromVAR: inferring transcription-factor-associated accessibility from single-cell epigenomic data*. Nature Methods. DOI: 10.1038/nmeth.4401. Source: [https://doi.org/10.1038/nmeth.4401](https://doi.org/10.1038/nmeth.4401).
+
+# One-Sentence Summary
+
+Primary methodological record for motif accessibility analysis for sparse single-cell epigenomic data.
+
+# Scope for simitall
+
+Use this record to ground recommendations about motif accessibility analysis for sparse single-cell epigenomic data. Preserve tool version, inputs, parameter settings, and a validation design in all generated workflow recipes.
+
+# Agent-Safe Takeaways
+
+- The method belongs in a workflow only after the biological question and input data are resolved.
+- Keep analysis or simulation parameters separate from biological truth so each can be audited.
+- Use appropriate quality control and benchmark outputs rather than relying on a single headline metric.
+
+# Inputs to Specify
+
+- Versioned input data and reference or coordinate metadata.
+- Method-specific parameters and random seed when simulation is involved.
+- A validation target, known truth, or independent held-out design.
+
+# Expected Outputs
+
+- Reproducible result files and an explicit configuration record.
+- Quality-control summaries appropriate to the method.
+- Benchmark or held-out validation metrics when available.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that the tool or resource is installed, bundled, or appropriate for every organism.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. Replace or extend it with source-faithful, page-specific notes after reviewing the full text.

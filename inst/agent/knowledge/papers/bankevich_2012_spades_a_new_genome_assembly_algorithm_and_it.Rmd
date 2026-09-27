@@ -1,0 +1,65 @@
+---
+id: "paper_bankevich_2012_spades_a_new_genome_assembly_algorithm_and_it"
+document_type: "paper_summary"
+title: "SPAdes: A New Genome Assembly Algorithm and Its Applications to Single-Cell Sequencing"
+citation_key: "Bankevich2012"
+authors: "Bankevich, Anton; Nurk, Sergey; Antipov, Dmitry; Gurevich, Alexey A.; Dvorkin, Mikhail; Kulikov, Alexander S.; Lesin, Valery M.; Nikolenko, Sergey I.; et al."
+year: 2012
+doi: "10.1089/cmb.2012.0021"
+journal: "Journal of Computational Biology"
+url: "https://doi.org/10.1089/cmb.2012.0021"
+domains: ["genome_assembly"]
+techniques: ["spades", "short_read_assembly", "assembly_graph"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Bankevich, Anton; Nurk, Sergey; Antipov, Dmitry; Gurevich, Alexey A.; Dvorkin, Mikhail; Kulikov, Alexander S.; Lesin, Valery M.; Nikolenko, Sergey I.; et al. (2012). *SPAdes: A New Genome Assembly Algorithm and Its Applications to Single-Cell Sequencing*. Journal of Computational Biology. DOI: 10.1089/cmb.2012.0021. Source: [https://doi.org/10.1089/cmb.2012.0021](https://doi.org/10.1089/cmb.2012.0021).
+
+# One-Sentence Summary
+
+Primary methodological record for short-read assembly with SPAdes.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about short-read assembly with SPAdes. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves genome assembly and spades, short read assembly.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for short-read assembly with SPAdes?
+- When is spades, short read assembly an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

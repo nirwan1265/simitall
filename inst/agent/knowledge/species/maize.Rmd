@@ -1,0 +1,62 @@
+---
+id: species_maize
+document_type: species_note
+status: expanded
+domains: [maize, breeding, gwas, population_structure, pangenome]
+related_functions: [generate_random_haplotype_panel, simulate_breeding, analyze_gwas, run_genomic_selection]
+source_priority: primary_papers_and_panel_metadata
+last_reviewed: 2026-09-26
+---
+
+# Maize: Species and Panel Guidance
+
+## Biology That Changes Simulation
+
+Maize is diploid but has a large, repeat-rich genome, substantial structural
+variation, high diversity, and strong heterogeneity among breeding materials.
+Use chromosome-specific maps, founder haplotypes, and family-aware validation.
+Do not use one generic LD setting across tropical, temperate, landrace, NAM, or
+elite breeding materials.
+
+## Important Resources and Their Meanings
+
+| Resource | Correct use in simitall | Do not assume |
+|---|---|---|
+| Maize NAM | Common parent crossed with multiple founders; retain family and founder-ancestry truth. | That it is an unrelated diversity panel. |
+| Goodman or Flint-Garcia association panel | Historically described as 302 inbreds; many later analyses use a genotyped subset often called the "282" panel. | That "242", "282", and "302" are identical sample sets. Ask for the exact sample manifest. |
+| Ames panel | Large USDA inbred resource; a well-known GBS study used 2,815 inbreds. | That its LD, relatedness, or allele frequencies match NAM or Goodman-panel data. |
+| HapMap or pangenome resources | Empirical haplotypes and structural variation for founder-panel construction. | That a FASTA alone preserves all phase and sample metadata. |
+
+## Simulation Decisions
+
+- Use a real panel when the question concerns empirical LD, founder diversity,
+  allele-frequency spectra, or population structure.
+- Use NAM, MAGIC, RIL, DH, backcross, or recurrent-selection designs when
+  pedigree and recombination history are central to the question.
+- Use a structured diversity-panel simulation for population GWAS, with
+  explicit subpopulation labels and an environment correlated with structure
+  only when testing confounding control.
+- Keep structural variants and copy-number differences as an explicit scenario;
+  they should not be added as undocumented random noise.
+
+## Trees and Relationship Displays
+
+A maize panel can support three distinct graphs, which must not be conflated:
+
+1. A **pedigree/cross graph** records breeding parents and generations.
+2. A **kinship dendrogram or PCA** summarizes genetic similarity among samples.
+3. A **phylogenetic tree** summarizes sequence divergence and depends on the
+   chosen markers, filtering, and tree method.
+
+Save the input sample manifest, marker filters, and method before treating any
+of these graphs as biological evidence.
+
+## Key Sources
+
+- Yu et al. (2008), maize NAM: DOI 10.1534/genetics.107.074245.
+- Flint-Garcia et al. (2005), maize association population: DOI
+  10.1111/j.1365-313X.2005.02591.x.
+- Romay et al. (2013), US maize inbred seed bank: DOI
+  10.1186/gb-2013-14-6-r55.
+- Bukowski et al. (2018), maize haplotype diversity: DOI
+  10.1126/science.aao1680.

@@ -1,0 +1,47 @@
+---
+id: workflow_gwas_linked_rnaseq
+document_type: workflow
+status: starter
+inputs: [GWAS_genotype_TSV_or_VCF, optional_annotation_GFF3]
+outputs: [count_matrix, expression_truth, eQTL_truth, eQTL_benchmark, figures]
+related_functions: [simulate_rnaseq_from_gwas, benchmark_eqtl, plot_rnaseq_eqtl_results]
+---
+
+# GWAS-Linked Bulk RNA-seq and eQTLs
+
+## Objective
+
+Use the same donor genotypes for trait and expression simulation, then assess eQTL recovery against known causal effects.
+
+```r
+library(simitall)
+
+simulate_rnaseq_from_gwas(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  out_prefix = "results/rnaseq/gwas_linked",
+  annotation_gff3 = "results/annotation/genome.gff3",
+  n_genes = 500,
+  n_cis_eqtl = 50,
+  n_trans_eqtl = 20,
+  condition_levels = c("control", "stress"),
+  batch_levels = c("batch1", "batch2"),
+  seed = 404
+)
+
+benchmark_eqtl(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  expression_file = "results/rnaseq/gwas_linked.expression.tsv",
+  sample_metadata = "results/rnaseq/gwas_linked.sample_metadata.tsv",
+  truth_file = "results/rnaseq/gwas_linked.eqtl_truth.tsv",
+  out_prefix = "results/rnaseq/eqtl"
+)
+plot_rnaseq_eqtl_results(
+  rnaseq_prefix = "results/rnaseq/gwas_linked",
+  eqtl_prefix = "results/rnaseq/eqtl",
+  out_prefix = "results/figures/gwas_rnaseq"
+)
+```
+
+## Report
+
+Record donor count, biological replicates, conditions, batch assignment, eQTL architecture, read simulation status, and the causal truth definition.

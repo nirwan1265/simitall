@@ -1,0 +1,56 @@
+---
+id: species_arabidopsis
+document_type: species_note
+status: expanded
+domains: [arabidopsis, gwas, selfing, population_structure, haplotype_panels]
+related_functions: [generate_random_haplotype_panel, simulate_breeding, analyze_gwas]
+source_priority: primary_papers_and_panel_metadata
+last_reviewed: 2026-09-26
+---
+
+# Arabidopsis thaliana: Species and Panel Guidance
+
+## Biology That Changes Simulation
+
+Arabidopsis is a compact diploid genome and predominantly selfing. Its natural
+accessions can have substantial geographic and population structure. Simulated
+selfing, heterozygosity, LD, and family structure should therefore be stated
+explicitly rather than borrowed from outcrossing crops or humans.
+
+## 1001 Genomes and 1001G+
+
+The original 1001 Genomes project reported variation from 1,135 accessions.
+The resource is valuable for empirical SNP/haplotype diversity, but the
+original short-read phase primarily reports simple variants and does not fully
+represent complex structural variation. The later 1001G+ effort adds
+long-read-based genome assemblies.
+
+A recipe claiming to use this resource must require:
+
+- A local, versioned VCF, haplotype panel, or selected accession FASTAs.
+- The reference assembly and coordinate build.
+- An accession manifest and the chromosome/interval subset.
+- Explicit handling of selfing, missing data, and population structure.
+
+The package does not bundle the full resource.
+
+## Appropriate Designs
+
+- Diversity-panel GWAS: use empirical accessions, PCs or kinship, and a
+  phenotype/environment design that tests structure-aware analysis.
+- RIL or F2 simulation: use two identified founders and an Arabidopsis-appropriate
+  recombination model.
+- Multi-accession regulatory simulations: use curated annotations, not generic
+  bacterial promoter assumptions.
+
+## Relationship Outputs
+
+For accessions, generate a kinship/PCA display or a marker-derived tree only
+from the exact filtered subset used in simulation. For crosses, generate a
+pedigree graph separately.
+
+## Key Sources
+
+- 1001 Genomes Consortium (2016): DOI 10.1016/j.cell.2016.05.063.
+- Hudson et al. (2010), population structure: DOI
+  10.1371/journal.pgen.1000843.

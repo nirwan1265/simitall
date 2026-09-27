@@ -1,0 +1,64 @@
+---
+id: "paper_1001_genomes_2016_arabidopsis"
+document_type: "paper_summary"
+title: "1,135 genomes reveal the global pattern of polymorphism in Arabidopsis thaliana"
+citation_key: "Arabidopsis1001Genomes2016"
+authors: "The 1001 Genomes Consortium"
+year: genomes
+doi: "10.1016/j.cell.2016.05.063"
+journal: "Cell"
+url: "https://discovery.ucl.ac.uk/id/eprint/1503762/"
+domains: ["arabidopsis", "haplotype_panels", "population_genetics"]
+techniques: ["reference_panels", "population_structure", "genetic_diversity"]
+organisms: ["Arabidopsis_thaliana"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+The 1001 Genomes Consortium (genomes). *1,135 genomes reveal the global pattern of polymorphism in Arabidopsis thaliana*. Cell. DOI: 10.1016/j.cell.2016.05.063. Source: [https://discovery.ucl.ac.uk/id/eprint/1503762/](https://discovery.ucl.ac.uk/id/eprint/1503762/).
+
+# One-Sentence Summary
+
+Reports a large Arabidopsis thaliana genome panel that supports studies of natural variation, population structure, and haplotype diversity.
+
+# Scope for simitall
+
+Use as a data-source reference when an agent or user asks for an Arabidopsis 1001 Genomes-derived panel. The agent must request an actual local VCF or FASTA panel or a verified data path; it must not claim the package bundles the full resource.
+
+# Agent-Safe Takeaways
+
+- Real haplotype panels preserve empirical allele-frequency and LD patterns better than a toy random panel.
+- Population structure and source accession metadata are important for analysis design.
+- Reference data require version, coordinate build, sample filter, and chromosome selection provenance.
+
+# Inputs to Specify
+
+- Downloaded and filtered panel data
+- Reference genome build
+- Selected accessions and chromosome intervals
+
+# Expected Outputs
+
+- Local subset panel
+- Sample metadata
+- Provenance and filtering record
+
+# Limitations and Guardrails
+
+- A full public resource may be too large for package distribution.
+- Panel use is subject to resource terms and correct coordinate/build handling.
+
+# Questions This Record Can Ground
+
+- What must a user provide to simulate from Arabidopsis 1001 Genomes data?
+- Why is a real panel preferred for empirical LD?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

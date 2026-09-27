@@ -1,0 +1,64 @@
+---
+id: "paper_fernandes_2020_simplephenotypes"
+document_type: "paper_summary"
+title: "simplePHENOTYPES: an R package to simulate pleiotropic, linked and epistatic phenotypes"
+citation_key: "Fernandes2020simplePHENOTYPES"
+authors: "Fernandes, S. B., and Lipka, A. E."
+year: 2020
+doi: "10.1186/s12859-020-03804-y"
+journal: "BMC Bioinformatics"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7603745/"
+domains: ["phenotype_simulation", "gwas", "quantitative_genetics"]
+techniques: ["pleiotropy", "epistasis", "linked_qtls", "heritability"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Fernandes, S. B., and Lipka, A. E. (2020). *simplePHENOTYPES: an R package to simulate pleiotropic, linked and epistatic phenotypes*. BMC Bioinformatics. DOI: 10.1186/s12859-020-03804-y. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC7603745/](https://pmc.ncbi.nlm.nih.gov/articles/PMC7603745/).
+
+# One-Sentence Summary
+
+Introduces an R package for simulating complex traits from genotype data with linked QTLs, pleiotropy, epistasis, and controlled genetic architecture.
+
+# Scope for simitall
+
+Use as an optional phenotype-generation backend when genotype inputs already exist. simitall should preserve causal-locus and effect-size truth in a stable package-level format.
+
+# Agent-Safe Takeaways
+
+- Trait simulations need explicit QTL architecture rather than only a target heritability.
+- Pleiotropy and epistasis create useful multi-trait and non-additive benchmark settings.
+- Truth tables are necessary for meaningful GWAS or prediction benchmarking.
+
+# Inputs to Specify
+
+- Genotype matrix
+- Causal-locus count and effect distributions
+- Heritability and optional pleiotropic or epistatic design
+
+# Expected Outputs
+
+- Phenotype matrix
+- Causal-QTL truth
+- Trait-architecture metadata
+
+# Limitations and Guardrails
+
+- A statistical phenotype simulator does not simulate biological regulatory mechanisms.
+- Check that generated distributions and effect sizes match the intended benchmark scenario.
+
+# Questions This Record Can Ground
+
+- How can a GWAS phenotype have linked, pleiotropic, and epistatic effects?
+- Which truth files should be retained for phenotype benchmarking?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

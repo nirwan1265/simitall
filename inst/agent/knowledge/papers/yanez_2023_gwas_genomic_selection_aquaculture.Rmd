@@ -1,0 +1,111 @@
+---
+id: paper_yanez_2023_gwas_genomic_selection_aquaculture
+document_type: paper_summary
+title: "Genome-wide association and genomic selection in aquaculture"
+citation_key: "yanez2023aquaculture"
+authors: "Yáñez et al."
+year: 2023
+doi: "10.1111/raq.12750"
+journal: "Reviews in Aquaculture"
+url: "https://doi.org/10.1111/raq.12750"
+domains:
+  - aquaculture_genetics
+  - genomic_prediction
+techniques:
+  - GWAS
+  - marker_assisted_selection
+  - genomic_selection
+  - selection_signatures
+organisms:
+  - fish_and_shellfish
+evidence_status: unreviewed
+source_file: "Genome-wide association and genomic selection in aquaculture.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Yáñez, J. M., Barría, A., López, M. E., Moen, T., Garcia, B. F., Yoshida, G. M., and Xu, P. (2023). Genome-wide association and genomic selection in aquaculture. *Reviews in Aquaculture* 15, 645–675. https://doi.org/10.1111/raq.12750 (PDF p. 1). The PDF notes receipt and acceptance in 2022 but prints the journal volume as **2023** (PDF p. 1).
+
+# One-Sentence Summary
+
+This review surveys genomic resources, GWAS loci, genomic selection accuracy and selection signatures in fish and shellfish breeding programs (PDF pp. 1–22, Tables 2–6).
+
+# Research Question
+
+How have marker technologies been used to identify trait-associated regions and improve genomic prediction and selective breeding in aquaculture? This paraphrases the abstract (PDF p. 1).
+
+# Biological System
+
+Previously studied aquaculture fish and shellfish, including salmonids, other farmed fish and mollusks or crustaceans; their trait definitions and breeding populations vary by study (PDF pp. 4–12, Tables 3 and 5; pp. 14–16, Table 6).
+
+# Study Design
+
+Literature review with resource and method comparisons, a multi-species GWAS table and a multi-species genomic prediction table (PDF pp. 3–16, Tables 2–6). New genotyping, phenotyping, a pooled meta-analysis and a common head-to-head model benchmark: Not reported.
+
+# Data
+
+Table 2 surveys reference genomes, Table 3 SNP arrays, Table 5 trait-specific GWAS studies and Table 6 reported genomic-prediction assessments (PDF pp. 3–4, 9–12, 14–16). Values in these tables come from different cited publications and cannot be treated as measurements of one uniform cohort (**summary inference**).
+
+# Methods
+
+- Review reference sequences, arrays and other genotyping resources for aquatic species (PDF pp. 3–4, Section 2, Tables 2–3).
+- Compare reported GWAS applications in salmonids, non-salmonid fish and shellfish, plus validation requirements (PDF pp. 5–13, Section 3, Tables 4–5).
+- Explain genomic estimated breeding values and summarize prediction studies across fish and shellfish (PDF pp. 13–18, Section 4, Table 6).
+- Discuss selection signatures, whole-genome data and future implementation issues (PDF pp. 19–22, Sections 5–8).
+
+# Software and Versions
+
+The review lists statistical **model families**, including GBLUP, ssGBLUP, weighted ssGBLUP, BayesB, BayesC and other BLUP/Bayesian approaches (PDF p. 7, Table 4; pp. 14–16, Table 6). A specific software implementation, versions and executable environment shared by the reviewed studies: Not reported.
+
+# Important Parameters
+
+The review's tables preserve **study-specific** SNP counts, phenotype definitions and methods. For example, Table 6 reports an Atlantic salmon growth study using marker panels of **0.5, 1, 5, 10, 20, 33 and 112 K** and **GBLUP** (PDF p. 14, Table 6). These values describe a cited study, not an optimal panel for all species. A universal LD threshold, kinship specification, minor-allele-frequency cutoff or validation split: Not reported.
+
+# Inputs and Outputs
+
+Conceptual inputs are phenotypes, genotypes and breeding population information; GWAS outputs marker associations and candidate regions, while genomic selection estimates genome-wide marker-based breeding values for candidates (PDF pp. 1–3, Figure 1; pp. 13–18, Section 4). No new downloadable per-animal genotype, phenotype or breeding-value file is reported for this review.
+
+# Main Results
+
+The authors compile published GWAS loci for traits such as disease resistance, growth and product quality and prediction reports for varied species and traits (PDF pp. 5–16, Tables 5–6). They argue that genomic selection is particularly relevant for polygenic traits and traits that cannot be measured directly on breeding candidates (PDF pp. 1–2, 13, 18, Abstract and Section 4). These are **author synthesis and previously reported findings**, not a new breeding response measured by the review.
+
+# Assumptions
+
+An associated marker may tag a causal locus without itself being causal; LD, family structure and population structure affect interpretation and transferability (PDF pp. 2, 12–13, Sections 1 and 3.4). Prediction accuracy depends on reference-population size, trait heritability and genetic architecture (PDF p. 18, Section 4.4).
+
+# Limitations
+
+The authors discuss poor transfer of family-specific marker–QTL linkage, incompletely explained heritability, genotyping costs, differences among statistical methods and limited validation of some associations (PDF pp. 2, 12–13, 18–19, Sections 1, 3.4, 4.4). Table 6 combines **percentage increases** and other accuracy measures marked by footnotes, so its numeric entries must retain their row-specific definitions (PDF pp. 14–16, Table 6; **summary inference**).
+
+# Reproducible Implementation Details
+
+The review gives source-study references, genotyping scales and model labels but no common raw data, package versions, code, seed, marker filter, cross-validation partition or operational breeding protocol covering all rows: Not reported (PDF pp. 4, 7, 9–16, Tables 3–6). To reproduce a specific prediction, follow that row's reference and outcome definition (**summary inference**).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The article may be background for simitall summaries of GWAS versus genomic selection in aquatic species. It does not mention or evaluate simitall (PDF pp. 1–22).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The paper is a review of aquaculture genomic technologies and breeding. | Authors' abstract and article designation. | PDF p. 1, Abstract | High |
+| Table 3 catalogs fish and shellfish SNP-array resources. | Published resource table. | PDF p. 4, Table 3 | High for table content |
+| Table 5 collates GWAS studies with different species, traits, marker counts and methods. | Study-specific entries and references. | PDF pp. 9–12, Table 5 | High for table description; secondary for results |
+| An Atlantic salmon prediction row compares 0.5 through 112 K marker panels using GBLUP. | Study-specific row, not a pooled method setting. | PDF p. 14, Table 6 | High for transcription; secondary for outcome |
+| The authors describe genomic selection as useful for polygenic and hard-to-measure breeding traits. | Abstract and genomic selection discussion. | PDF pp. 1, 13, Section 4 | High for author interpretation |
+| Prediction accuracy depends on population and trait properties. | Authors' general discussion. | PDF p. 18, Section 4.4 | High for author synthesis |
+
+# Terminology
+
+- **GWAS:** Genome-wide association study used to locate marker–trait associations (PDF pp. 1, 5, Section 3).
+- **MAS:** Marker-assisted selection using markers linked to mapped QTL (PDF pp. 1–2).
+- **GEBV:** Genomic estimated breeding value using information across the genome (PDF pp. 1, 13, Section 4).
+- **ssGBLUP:** Single-step genomic BLUP among model classes compared in the review (PDF p. 7, Table 4).
+
+# References
+
+Primary source: Yáñez et al. (2023), cited above. The source studies for Tables 2–6 appear in the References beginning on PDF p. 23. No outside sources were used.

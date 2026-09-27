@@ -1,0 +1,112 @@
+---
+id: paper_singh_2026_qtl_mapping_plants_genomic_era
+document_type: paper_summary
+title: "QTL mapping in plants: challenges and opportunities in the genomic era"
+citation_key: "singh2026qtlmappingplants"
+authors: "Singh et al."
+year: 2026
+doi: "10.1007/s10681-025-03661-x"
+journal: "Euphytica"
+url: "https://doi.org/10.1007/s10681-025-03661-x"
+domains:
+  - plant_genetics
+  - QTL_mapping
+  - genomics
+techniques:
+  - linkage_mapping
+  - association_mapping
+  - multi_parent_mapping
+  - NGS_genotyping
+  - machine_learning
+organisms:
+  - crop plants
+evidence_status: unreviewed
+source_file: "QTL mapping in plants- challenges and opportunities in the genomic era.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Singh, A. K., Banerjee, N., Rai, R., Shikha, K., Singh, S., Lin, Y.-p., Nair, R. M., and Kumar, S. (2026). QTL mapping in plants: challenges and opportunities in the genomic era. *Euphytica* 222:14. https://doi.org/10.1007/s10681-025-03661-x (PDF p. 1).
+
+# One-Sentence Summary
+
+This review examines how mapping populations, population size, marker density, heritability, QTL effects, genotype-by-environment interactions, statistical methods and genomic tools affect the precision of plant QTL mapping (PDF pp. 1–26).
+
+# Research Question
+
+Which biological, experimental, statistical and computational factors determine the accuracy and reliability of QTL mapping in the genomic era, and what opportunities can improve marker-assisted breeding? This paraphrases the abstract and introduction (PDF pp. 1–2).
+
+# Biological System
+
+The review addresses crop plants and quantitative agronomic traits such as yield, quality and tolerance to biotic or abiotic stresses; it is not restricted to one species or population (PDF pp. 1–3).
+
+# Study Design
+
+Narrative review covering the evolution of family-based QTL mapping, association and multi-parent populations, NGS-based genotyping, phenomics, statistical procedures, machine learning and limitations (PDF pp. 1–26, Figure 1, Table 1). A new empirical benchmark: Not reported.
+
+# Data
+
+The review discusses genotype and phenotype data from segregating, recombinant inbred, doubled-haploid, nested association mapping (NAM), MAGIC and association-mapping populations. No common raw data set or accession list is reported (PDF pp. 2–6).
+
+# Methods
+
+- Compare linkage mapping, association mapping and multi-parent mapping populations (PDF pp. 2–5).
+- Discuss population size, marker density and marker type, trait heritability, QTL effects and genetic interactions (PDF pp. 5–8).
+- Review interval mapping, composite interval mapping, multiple interval mapping, Bayesian methods, permutation tests and mixed models (PDF pp. 8–12, Table 1).
+- Discuss NGS, phenomics, machine learning and deep-learning opportunities for QTL detection and prediction (PDF pp. 2, 12–24).
+
+# Software and Versions
+
+Statistical methods and software are discussed at the level of method classes and packages, but no single versioned software environment is specified for a reproducible analysis. Exact software versions: Not reported (PDF pp. 8–12).
+
+# Important Parameters
+
+The review identifies mapping-population size, marker density and coverage, trait heritability, confidence-interval width, QTL effect size, genetic architecture, G × E and G × G interactions, and model assumptions as important parameters (PDF pp. 2–8). Universal cutoffs: Not reported.
+
+# Inputs and Outputs
+
+Inputs are genotype-marker data and phenotype measurements from mapping populations or diverse panels, together with map and environmental information. Outputs are QTL positions, confidence intervals, effect estimates, variance explained and markers for downstream selection (PDF pp. 2–12).
+
+# Main Results
+
+The authors conclude that QTL accuracy depends jointly on population design, sample size, marker density, heritability, statistical procedures, QTL effect distribution and genotype-by-environment interactions (PDF pp. 1–8, Figure 1). They describe NGS and multi-parent populations as improving genome coverage and genetic diversity, while Bayesian, mixed-model and machine-learning approaches can address complex genetic architectures (PDF pp. 2, 8–24). These are review synthesis statements.
+
+# Assumptions
+
+QTL mapping assumes that marker information and phenotypes are sufficiently informative, that the mapping population captures relevant recombination and variation, and that statistical-model assumptions are appropriate for the trait and population (PDF pp. 2–12).
+
+# Limitations
+
+The review highlights limited population size, low marker density, low heritability, broad confidence intervals, polyploidy, complex traits, G × E interactions, model assumptions and incomplete exploitation of QTLs in breeding as key limitations (PDF pp. 1–8, 12–24).
+
+# Reproducible Implementation Details
+
+No single data set, marker-filtering threshold, map-construction protocol, QTL significance cutoff, software version set or executable workflow is reported. Exact implementation details: Not reported (PDF pp. 2–12).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The factor framework could inform simitall metadata for populations, marker density, heritability, model choice, G × E and QTL evidence. The paper does not mention or evaluate simitall (PDF pp. 1–26).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| QTL mapping identifies genomic regions associated with quantitative traits. | Abstract and introduction. | PDF pp. 1–2 | High |
+| Mapping population, size and marker density affect QTL accuracy. | Factors-affecting-QTL sections. | PDF pp. 2–8, Figure 1 | High |
+| NGS and multi-parent populations expand genotyping and genetic diversity. | Introduction and mapping-population discussion. | PDF pp. 2–5 | High for author synthesis |
+| Heritability and QTL effect size influence detectability and interpretation. | Heritability and QTL-effect sections. | PDF pp. 5–8 | High |
+| Bayesian, mixed-model and machine-learning methods are discussed as opportunities for complex traits. | Statistical-methods and genomic-era sections. | PDF pp. 8–12, 20–24, Table 1 | High for author synthesis |
+
+# Terminology
+
+- **QTL mapping:** Mapping genomic regions associated with quantitative phenotypic variation (PDF pp. 1–2).
+- **Linkage mapping:** Family-based mapping using recombination in a segregating population (PDF pp. 2–4).
+- **Association mapping:** Marker–trait analysis using diverse populations and genotype–phenotype data (PDF pp. 2–4).
+- **NAM/MAGIC:** Multi-parent mapping designs that increase sampled genetic diversity and recombination (PDF pp. 4–5).
+
+# References
+
+Primary source: Singh et al. (2026), cited above. The review’s cited studies are listed in its References section beginning on PDF p. 24. No outside sources were used.

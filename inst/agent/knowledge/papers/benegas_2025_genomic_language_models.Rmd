@@ -1,0 +1,109 @@
+---
+id: paper_benegas_2025_genomic_language_models
+document_type: paper_summary
+title: "Genomic language models: opportunities and challenges"
+citation_key: "benegas2025glms"
+authors: "Benegas et al."
+year: 2025
+doi: "10.1016/j.tig.2024.11.013"
+journal: "Trends in Genetics"
+url: "https://doi.org/10.1016/j.tig.2024.11.013"
+domains:
+  - computational_genomics
+  - machine_learning
+techniques:
+  - genomic_language_models
+  - self_supervised_learning
+  - transfer_learning
+  - sequence_design
+organisms:
+  - multiple_species
+evidence_status: unreviewed
+source_file: "Genomic language models- opportunities and challenges.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Benegas, G., Ye, C., Albors, C., Canal Li, J., and Song, Y. S. (2025). Genomic language models: opportunities and challenges. *Trends in Genetics* 41, 286–302. https://doi.org/10.1016/j.tig.2024.11.013 (PDF pp. 1, 17).
+
+# One-Sentence Summary
+
+This review explains DNA language-model architectures, genomic applications, transfer learning, sequence design and evaluation challenges, with emphasis on long genomes and generalization (PDF pp. 1–14, Boxes 1–3, Table 1).
+
+# Research Question
+
+What opportunities do genomic language models offer, and what technical and evaluation challenges must be addressed for reliable genomic use? This paraphrases the abstract and highlights (PDF p. 1).
+
+# Biological System
+
+DNA sequences from multiple organisms and genomic contexts represented in published model studies; no new biological cohort or experimental organism is analyzed in this review (PDF pp. 1–14, Table 1).
+
+# Study Design
+
+Conceptual and methods review of genomic language models and cited model evaluations, including a table of existing models and boxes describing general language-model frameworks and transfer learning (PDF pp. 1–14, Boxes 1–3, Table 1). A new model trained by the review authors: Not reported.
+
+# Data
+
+Reviewed models use DNA sequence data, reference genomes and task-specific functional labels or assays. The review does not provide one common training corpus, split, accession list or newly generated benchmark data: Not reported (PDF pp. 2–14).
+
+# Methods
+
+- Explain self-supervised sequence modeling and adaptation of language-model concepts from natural language to DNA (PDF pp. 1–3, Box 1).
+- Survey functional constraint and variant-effect prediction, sequence design and transfer learning (PDF pp. 2–8, Box 2, Table 1).
+- Discuss model scale, long-context architectures, cross-species learning and evaluation of generalization (PDF pp. 8–14, Box 3, Table 1).
+
+# Software and Versions
+
+Model names and architectures are summarized in Table 1 and the surrounding text; a single software repository or version-pinned environment used by the review authors: Not reported (PDF pp. 8–10, Table 1).
+
+# Important Parameters
+
+The review discusses sequence length, model scale, context length, species composition and evaluation design as important factors, but no universal training hyperparameters, tokenization scheme, data split or threshold is prescribed (PDF pp. 8–14, Box 3). Model-specific details remain attached to the cited papers in Table 1.
+
+# Inputs and Outputs
+
+Inputs are DNA sequences and, depending on the task, functional annotations or experimental labels. Outputs may be sequence likelihoods, variant-effect predictions, designed sequences or transferable representations (PDF pp. 1–8, Boxes 1–2). No new model output files are reported.
+
+# Main Results
+
+The authors identify three central opportunities: functional constraint/variant-effect prediction, sequence design and transfer learning (PDF p. 1, Highlights; pp. 2–8). They emphasize that effective genomic models face long-range context, genome complexity, data quality and generalization challenges (PDF pp. 8–14, Box 3). These are review synthesis and cited model results, not a new benchmark.
+
+# Assumptions
+
+Self-supervised models assume that large unlabeled DNA collections contain learnable sequence regularities. Transfer learning assumes that representations learned in one genomic context can support another task or species, which the authors treat as an empirical question requiring evaluation (PDF pp. 1–3, 5–8, Box 2).
+
+# Limitations
+
+The paper identifies long genomic sequences, computational cost, interpretability, species-specific variation and weak evaluation of out-of-distribution generalization as limitations (PDF pp. 8–14, Box 3). Model comparisons are heterogeneous because published systems use different data, architectures and tasks (**summary inference** from PDF pp. 8–14, Table 1).
+
+# Reproducible Implementation Details
+
+No unified code, model checkpoint, training corpus, hardware specification, random seed or hyperparameter set is reported for a new analysis: Not reported. Reproduction requires the original model papers summarized in Table 1 and the relevant cited references (PDF pp. 8–17).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** This review could be indexed as background for future genomic foundation-model or sequence-prediction components in simitall. It does not mention or evaluate simitall (PDF pp. 1–14).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| Genomic language models are language-model-style systems trained on DNA sequences. | Abstract and motivation section. | PDF p. 1 | High |
+| The review highlights variant-effect prediction, sequence design and transfer learning. | Highlights and application sections. | PDF p. 1; pp. 2–8 | High |
+| Long, complex genomes create special modeling challenges. | Challenges discussion. | PDF pp. 8–14 | High for author synthesis |
+| Transfer learning is presented as a way to improve downstream genomic prediction. | Transfer-learning box and application discussion. | PDF pp. 5–8, Box 2 | High |
+| Generalization requires explicit evaluation beyond the training distribution. | Evaluation discussion and Box 3. | PDF pp. 12–14, Box 3 | High for author guidance |
+
+# Terminology
+
+- **gLM:** Genomic language model trained on DNA sequences (PDF p. 1).
+- **Self-supervised learning:** Learning sequence representations from unlabeled data through a prediction objective (PDF pp. 1–3, Box 1).
+- **Transfer learning:** Reusing learned representations for another genomic task or context (PDF pp. 5–8, Box 2).
+- **Variant-effect prediction:** Estimating how sequence changes may affect function (PDF pp. 1–4).
+
+# References
+
+Primary source: Benegas et al. (2025), cited above. The cited model papers appear in the References beginning on PDF p. 15. No outside sources were used.

@@ -1,0 +1,42 @@
+---
+id: technique_scrnaseq
+document_type: technique
+status: starter
+domains: [single_cell_RNA_seq, pseudobulk, cell_type_eQTL]
+related_functions: [simulate_scrnaseq_experiment, simulate_scrnaseq_from_gwas, aggregate_scrnaseq_pseudobulk, simulate_celltype_eqtls, benchmark_celltype_eqtls, plot_scrnaseq_results]
+source_priority: primary_and_official_docs
+last_reviewed: 2026-09-25
+---
+
+# Single-Cell RNA-seq
+
+## Goal
+
+Generate or analyze cell-resolved expression while preserving the distinction
+between cells and biological donors. `simitall` supports standalone cell
+experiments and GWAS-linked donor simulations with cell types, marker programs,
+pseudotime, dropout, ambient RNA, doublets, and cell-type-specific eQTLs.
+
+## Analysis Principles
+
+- Perform cell QC, normalization, variable-feature selection, dimension
+  reduction, graph construction, clustering, and annotation in that order.
+- Do not treat cells from one donor as independent biological replicates.
+- For donor-level differential expression or eQTLs, aggregate cells to
+  donor-by-cell-type pseudobulk.
+- Validate integration carefully: removing batch variation can also remove
+  biological signal.
+
+## QC
+
+- Cell library size, detected genes, mitochondrial fraction, doublet rate, and
+  ambient-RNA burden.
+- Cell-type abundance by donor, condition, and batch.
+- Donor-level pseudobulk replicate counts before eQTL testing.
+- Cluster stability and annotation evidence, not just UMAP separation.
+
+## Limits
+
+Cell labels and trajectories are model outputs, not ground truth in real data.
+In simulations, ground truth permits benchmarking, but parameter choices still
+determine apparent difficulty.

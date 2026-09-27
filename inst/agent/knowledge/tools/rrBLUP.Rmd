@@ -1,0 +1,36 @@
+---
+id: tool_rrBLUP
+document_type: tool
+status: starter
+software: rrBLUP
+related_functions: [analyze_gwas, calculate_genomic_kinship, fit_genomic_model]
+---
+
+# rrBLUP
+
+## Role
+
+`rrBLUP` supplies the mixed-model GWAS, additive relationship, GBLUP, and
+ridge-regression backends used by `simitall`.
+
+## Key Functions
+
+- `A.mat()`: estimates a realized additive relationship matrix.
+- `GWAS()`: mixed-model marker scan with kinship and optional PCs.
+- `kin.blup()`: relationship-matrix GBLUP.
+- `mixed.solve()`: ridge-regression marker effects.
+
+## simitall Mapping
+
+`analyze_gwas()` calls `GWAS()`. `calculate_genomic_kinship()` calls `A.mat()`.
+`fit_genomic_model(model = "gblup")` uses `kin.blup()`, while
+`model = "rrblup"` uses `mixed.solve()`.
+
+## Guardrails
+
+Confirm genotype coding and ploidy before analysis. Kinship, PCs, and fixed
+effects address confounding but do not replace careful study design.
+
+## Citation
+
+Endelman JB (2011), *Ridge Regression and Other Kernels for Genomic Selection*.

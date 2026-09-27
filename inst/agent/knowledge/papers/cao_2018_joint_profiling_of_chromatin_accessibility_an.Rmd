@@ -1,0 +1,65 @@
+---
+id: "paper_cao_2018_joint_profiling_of_chromatin_accessibility_an"
+document_type: "paper_summary"
+title: "Joint profiling of chromatin accessibility and gene expression in thousands of single cells"
+citation_key: "Cao2018"
+authors: "Cao, Junyue; Cusanovich, Darren A.; Ramani, Vijay; Aghamirzaie, Delasa; Pliner, Hannah A.; Hill, Andrew J.; Daza, Riza M.; McFaline-Figueroa, Jose L.; et al."
+year: 2018
+doi: "10.1126/science.aau0730"
+journal: "Science"
+url: "https://doi.org/10.1126/science.aau0730"
+domains: ["epigenomics"]
+techniques: ["single_cell_atac", "chromatin_accessibility", "cell_types"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Cao, Junyue; Cusanovich, Darren A.; Ramani, Vijay; Aghamirzaie, Delasa; Pliner, Hannah A.; Hill, Andrew J.; Daza, Riza M.; McFaline-Figueroa, Jose L.; et al. (2018). *Joint profiling of chromatin accessibility and gene expression in thousands of single cells*. Science. DOI: 10.1126/science.aau0730. Source: [https://doi.org/10.1126/science.aau0730](https://doi.org/10.1126/science.aau0730).
+
+# One-Sentence Summary
+
+Primary methodological record for large-scale single-cell chromatin-accessibility profiling.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about large-scale single-cell chromatin-accessibility profiling. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves epigenomics and single cell atac, chromatin accessibility.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for large-scale single-cell chromatin-accessibility profiling?
+- When is single cell atac, chromatin accessibility an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

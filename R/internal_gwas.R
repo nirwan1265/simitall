@@ -26,6 +26,7 @@ usage <- function() {
   cat("\nOutputs:\n")
   cat("  --geno_tsv_out <path>         override genotype TSV path\n")
   cat("  --pheno_tsv_out <path>        override phenotype TSV path\n")
+  cat("  --causal_tsv_out <path>       override causal-variant truth path\n")
   cat("\nMisc:\n")
   cat("  --seed <int>                 default 1\n")
   quit(status = 1)
@@ -96,6 +97,7 @@ if (recomb_hotspot_mult < 1) recomb_hotspot_mult <- 1
 vcf_out <- paste0(out_prefix, ".vcf")
 geno_out <- get_arg("--geno_tsv_out", paste0(out_prefix, ".geno.tsv"))
 pheno_out <- get_arg("--pheno_tsv_out", paste0(out_prefix, ".pheno.tsv"))
+causal_out <- get_arg("--causal_tsv_out", paste0(out_prefix, ".causal.tsv"))
 
 # FASTA reader (single contig)
 read_fasta_one <- function(path) {
@@ -321,12 +323,39 @@ if (ld_block_size > 0) {
 }
 
 # Phenotype
-pheno <- data.frame(sample = samples, pop = pop_ids, trait = NA, stringsAsFactors = FALSE)
+pheno <- data.frame(
+  sample = samples,
+  pop = pop_ids,
+  trait = NA_real_,
+  true_breeding_value = NA_real_,
+  stringsAsFactors = FALSE
+)
+causal_truth <- data.frame(
+  marker_id = character(),
+  seqname = character(),
+  pos = integer(),
+  ref = character(),
+  alt = character(),
+  effect = numeric(),
+  phenotype = character(),
+  stringsAsFactors = FALSE
+)
 if (phenotype != "none") {
   n_causal <- min(n_causal, nrow(variants))
   causal_idx <- sample(seq_len(nrow(variants)), n_causal, replace = FALSE)
   effects <- rnorm(n_causal, mean = 0, sd = effect_sd)
   genetic_score <- as.numeric(t(effects) %*% G[causal_idx, , drop = FALSE])
+  pheno$true_breeding_value <- genetic_score
+  causal_truth <- data.frame(
+    marker_id = variants$id[causal_idx],
+    seqname = seqname,
+    pos = variants$pos[causal_idx],
+    ref = variants$ref[causal_idx],
+    alt = variants$alt[causal_idx],
+    effect = effects,
+    phenotype = phenotype,
+    stringsAsFactors = FALSE
+  )
 
   if (phenotype == "quantitative") {
     pop_shift <- (pop_index - 1) * pop_effect_shift
@@ -399,9 +428,18 @@ write.table(geno_df, geno_out, sep = "\t", row.names = FALSE, quote = FALSE)
 if (phenotype != "none") {
   write.table(pheno, pheno_out, sep = "\t", row.names = FALSE, quote = FALSE)
 }
+dir.create(dirname(causal_out), recursive = TRUE, showWarnings = FALSE)
+write.table(
+  causal_truth,
+  causal_out,
+  sep = "\t",
+  row.names = FALSE,
+  quote = FALSE
+)
 
 cat("Wrote:\n")
 cat("  VCF:   ", vcf_out, "\n", sep = "")
 cat("  Geno:  ", geno_out, "\n", sep = "")
 if (phenotype != "none") cat("  Pheno: ", pheno_out, "\n", sep = "")
+cat("  Truth:  ", causal_out, "\n", sep = "")
 }

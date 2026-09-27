@@ -1,0 +1,20 @@
+---
+id: terminology_core
+document_type: terminology
+status: starter
+---
+
+# Core Terminology
+
+| Term | Meaning in simitall |
+|---|---|
+| Truth set | Known simulated causes, coordinates, parameters, or ancestry used for benchmarking. |
+| Causal variant | Variant deliberately assigned an effect in a simulation; a lead GWAS marker may only be linked to it. |
+| GEBV | Genomic estimated breeding value predicted from genome-wide markers. |
+| LD | Non-random association between alleles at loci; it controls mapping resolution. |
+| Pseudobulk | Counts aggregated across cells within a biological donor and usually a cell type. |
+| Biological replicate | Independently sampled biological unit; not an additional sequencing library or cell from the same donor. |
+| CLR | PacBio continuous long read, typically error-prone relative to HiFi. |
+| HiFi/CCS | High-accuracy PacBio consensus read produced through circular consensus sequencing. |
+| N50 | Length for which half of assembled bases occur in contigs at least that long; it is not an accuracy metric. |
+| F1/F2/RIL/NIL/DH | Standard breeding populations: first hybrid, selfed hybrid generation, recombinant inbred line, near-isogenic line, and doubled haploid. |

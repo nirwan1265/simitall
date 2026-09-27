@@ -1,0 +1,65 @@
+---
+id: "paper_krueger_2011_bismark_a_flexible_aligner_and_methylation_ca"
+document_type: "paper_summary"
+title: "Bismark: a flexible aligner and methylation caller for Bisulfite-Seq applications"
+citation_key: "Krueger2011"
+authors: "Krueger, Felix; Andrews, Simon R."
+year: 2011
+doi: "10.1093/bioinformatics/btr167"
+journal: "Bioinformatics"
+url: "https://doi.org/10.1093/bioinformatics/btr167"
+domains: ["epigenomics"]
+techniques: ["bismark", "bisulfite_seq", "methylation"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Krueger, Felix; Andrews, Simon R. (2011). *Bismark: a flexible aligner and methylation caller for Bisulfite-Seq applications*. Bioinformatics. DOI: 10.1093/bioinformatics/btr167. Source: [https://doi.org/10.1093/bioinformatics/btr167](https://doi.org/10.1093/bioinformatics/btr167).
+
+# One-Sentence Summary
+
+Primary methodological record for alignment and methylation calling for bisulfite sequencing.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about alignment and methylation calling for bisulfite sequencing. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves epigenomics and bismark, bisulfite seq.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for alignment and methylation calling for bisulfite sequencing?
+- When is bismark, bisulfite seq an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

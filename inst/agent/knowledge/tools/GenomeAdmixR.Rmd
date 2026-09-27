@@ -1,0 +1,39 @@
+---
+id: tool_genomeadmixr
+document_type: tool_card
+status: starter
+software: GenomeAdmixR
+language: R
+domains: [admixture_simulation, ancestry_tracts, population_genetics]
+source_priority: official_docs_and_primary_paper
+last_reviewed: 2026-09-26
+---
+
+# GenomeAdmixR
+
+## Role
+
+`GenomeAdmixR` is an R package for forward-time, individual-based simulation of
+admixture and ancestry along genomes. It is a candidate backend for synthetic
+ancestry-tract benchmarks, not an inference tool for real local ancestry.
+
+## Appropriate simitall Use
+
+- Simulate an admixed cohort with known source labels, generations since
+  admixture, mating model, recombination map, and ancestry tracts.
+- Retain the simulated local-ancestry truth for benchmarking downstream
+  inference or association methods.
+- Generate scenario grids that vary reference-panel mismatch, admixture time,
+  source divergence, or phenotype-effect architecture.
+
+## Do Not Use It For
+
+- Calling local ancestry in a real cohort.
+- Replacing a real reference panel when the question is empirical.
+- Claiming that arbitrary source populations reproduce human demographic
+  history without calibration and validation.
+
+## References
+
+- CRAN package page: https://CRAN.R-project.org/package=GenomeAdmixR
+- Janzen et al. (2021): DOI 10.1111/2041-210X.13612.

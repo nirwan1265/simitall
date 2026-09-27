@@ -1,0 +1,65 @@
+---
+id: "paper_li_2009_the_sequence_alignment_map_format_and_samtool"
+document_type: "paper_summary"
+title: "The Sequence Alignment/Map format and SAMtools"
+citation_key: "Li2009"
+authors: "Li, Heng; Handsaker, Bob; Wysoker, Alec; Fennell, Tim; Ruan, Jue; Homer, Nils; Marth, Gabor; Abecasis, Goncalo; et al."
+year: 2009
+doi: "10.1093/bioinformatics/btp352"
+journal: "Bioinformatics"
+url: "https://doi.org/10.1093/bioinformatics/btp352"
+domains: ["sequence_alignment"]
+techniques: ["samtools", "bam", "variant_analysis"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Li, Heng; Handsaker, Bob; Wysoker, Alec; Fennell, Tim; Ruan, Jue; Homer, Nils; Marth, Gabor; Abecasis, Goncalo; et al. (2009). *The Sequence Alignment/Map format and SAMtools*. Bioinformatics. DOI: 10.1093/bioinformatics/btp352. Source: [https://doi.org/10.1093/bioinformatics/btp352](https://doi.org/10.1093/bioinformatics/btp352).
+
+# One-Sentence Summary
+
+Primary methodological record for SAM/BAM alignment manipulation with SAMtools.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about SAM/BAM alignment manipulation with SAMtools. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves sequence alignment and samtools, bam.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for SAM/BAM alignment manipulation with SAMtools?
+- When is samtools, bam an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

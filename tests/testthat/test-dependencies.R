@@ -7,7 +7,8 @@ test_that("dependency profiles contain the expected components", {
 
   expect_setequal(minimal$component, c("jsonlite", "Matrix", "reticulate"))
   expect_true(all(c(
-    "simplePHENOTYPES", "simstudy", "pedtricks", "SimuPOP"
+    "simplePHENOTYPES", "simstudy", "pedtricks", "rrBLUP", "BGLR",
+    "ranger", "SimuPOP"
   ) %in% population$component))
   expect_true(all(c("Rsubread", "ChIPsim", "splatter") %in% omics$component))
   expect_true(all(c("ART", "PBSIM/PBSIM3", "QUAST") %in%

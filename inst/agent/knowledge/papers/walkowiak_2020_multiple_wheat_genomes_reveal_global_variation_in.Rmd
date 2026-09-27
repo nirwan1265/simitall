@@ -1,0 +1,59 @@
+---
+id: "paper_walkowiak_2020_multiple_wheat_genomes_reveal_global_variation_in"
+document_type: "paper_summary"
+title: "Multiple wheat genomes reveal global variation in modern breeding"
+citation_key: "Walkowiak2020"
+authors: "Sean Walkowiak; Liangliang Gao; Cecile Monat; Georg Haberer; Mulualem T. Kassa; Jemima Brinton; Ricardo H. Ramirez-Gonzalez; Markus C. Kolodziej; et al."
+year: 2020
+doi: "10.1038/s41586-020-2961-x"
+journal: "Nature"
+url: "https://doi.org/10.1038/s41586-020-2961-x"
+domains: ["wheat"]
+techniques: ["pangenome", "structural_variation", "polyploidy"]
+organisms: ["wheat"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-26"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Sean Walkowiak; Liangliang Gao; Cecile Monat; Georg Haberer; Mulualem T. Kassa; Jemima Brinton; Ricardo H. Ramirez-Gonzalez; Markus C. Kolodziej; et al. (2020). *Multiple wheat genomes reveal global variation in modern breeding*. Nature. DOI: 10.1038/s41586-020-2961-x. Source: [https://doi.org/10.1038/s41586-020-2961-x](https://doi.org/10.1038/s41586-020-2961-x).
+
+# One-Sentence Summary
+
+Primary record for wheat multi-genome/pangenome-informed simulation.
+
+# Scope for simitall
+
+Use this record to guide source selection, input requirements, and limitations
+for wheat multi-genome/pangenome-informed simulation. It must not be used to imply that the associated panel, raw data,
+or external analysis software is packaged with simitall.
+
+# Agent-Safe Takeaways
+
+- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
+- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
+- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+
+# Inputs to Specify
+
+- Local data path or reproducible source/download version.
+- Reference build, chromosome naming, sample manifest, and filters.
+- The intended endpoint: GWAS, cross design, genomic selection, ancestry analysis, or benchmark.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- Panel properties are not transferable across different subsets, populations, species, or reference builds.
+- In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against
+Crossref on 2026-09-26. Replace or extend it with source-faithful,
+page-specific notes after reviewing the full text.

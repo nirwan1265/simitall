@@ -1,0 +1,65 @@
+---
+id: "paper_stuart_2019_comprehensive_integration_of_single_cell_data"
+document_type: "paper_summary"
+title: "Comprehensive Integration of Single-Cell Data"
+citation_key: "Stuart2019"
+authors: "Stuart, Tim; Butler, Andrew; Hoffman, Paul; Hafemeister, Christoph; Papalexi, Efthymia; Mauck, William M.; Hao, Yuhan; Stoeckius, Marlon; et al."
+year: 2019
+doi: "10.1016/j.cell.2019.05.031"
+journal: "Cell"
+url: "https://doi.org/10.1016/j.cell.2019.05.031"
+domains: ["single_cell_rnaseq"]
+techniques: ["seurat", "integration", "multimodal"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Stuart, Tim; Butler, Andrew; Hoffman, Paul; Hafemeister, Christoph; Papalexi, Efthymia; Mauck, William M.; Hao, Yuhan; Stoeckius, Marlon; et al. (2019). *Comprehensive Integration of Single-Cell Data*. Cell. DOI: 10.1016/j.cell.2019.05.031. Source: [https://doi.org/10.1016/j.cell.2019.05.031](https://doi.org/10.1016/j.cell.2019.05.031).
+
+# One-Sentence Summary
+
+Primary methodological record for integration of single-cell datasets across conditions and technologies.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about integration of single-cell datasets across conditions and technologies. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves single cell rnaseq and seurat, integration.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for integration of single-cell datasets across conditions and technologies?
+- When is seurat, integration an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

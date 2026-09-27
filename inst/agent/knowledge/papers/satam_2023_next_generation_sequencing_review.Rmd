@@ -1,0 +1,114 @@
+---
+id: paper_satam_2023_next_generation_sequencing_review
+document_type: paper_summary
+title: "Next-Generation Sequencing Technology: Current Trends and Advancements"
+citation_key: "satam2023ngs"
+authors: "Satam et al."
+year: 2023
+doi: "10.3390/biology12070997"
+journal: "Biology"
+url: "https://doi.org/10.3390/biology12070997"
+domains:
+  - sequencing
+  - genomics
+  - bioinformatics
+techniques:
+  - next_generation_sequencing
+  - short_read_sequencing
+  - long_read_sequencing
+  - whole_genome_sequencing
+  - RNA_sequencing
+organisms:
+  - human
+  - microbes
+  - not restricted to one organism
+evidence_status: unreviewed
+source_file: "Next-Generation Sequencing Technology- Current Trends and Advancements.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Satam, H., Joshi, K., Mangrolia, U., Waghoo, S., Zaidi, G., Rawool, S., Thakare, R. P., Banday, S., Mishra, A. K., Das, G., et al. (2023). Next-Generation Sequencing Technology: Current Trends and Advancements. *Biology* 12, 997. https://doi.org/10.3390/biology12070997 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review surveys sequencing generations, short- and long-read platforms, genomic and transcriptomic applications, bioinformatic analysis, diagnostics, research uses and future challenges of NGS (PDF pp. 1–25).
+
+# Research Question
+
+What are the current sequencing technologies, applications, analytical approaches, limitations and future directions of NGS? This paraphrases the review scope (PDF pp. 1–2, 24–25).
+
+# Biological System
+
+The review spans human disease, cancer, infectious disease, microbiome, population genetics, genomics, transcriptomics and epigenomics rather than one biological system (PDF pp. 1–2, 12–23).
+
+# Study Design
+
+Broad narrative review organized by sequencing generation, sequencing approaches, bioinformatic analysis, applications and future prospects (PDF pp. 2–25). A new experimental dataset or benchmark: Not reported.
+
+# Data
+
+The paper discusses DNA, RNA, epigenomic, metagenomic and diagnostic sequencing data types and summarizes prior applications. No original sample set, accession list or raw sequencing data is reported (PDF pp. 1–2, 8–23).
+
+# Methods
+
+- Compare first-, second- and third-generation sequencing technologies and their principles, read lengths and limitations (PDF pp. 2–5, Table 1).
+- Describe short-read and long-read sequencing approaches (PDF pp. 8–12).
+- Review whole-genome, whole-exome and targeted sequencing, transcriptomics, epigenomics and metagenomics (PDF pp. 12–17).
+- Summarize bioinformatic processing and applications in research, diagnostics and forensics (PDF pp. 17–24).
+
+# Software and Versions
+
+Bioinformatic approaches are discussed conceptually, but the review does not provide one reproducible software stack or package-version list. Exact software versions: Not reported (PDF pp. 17–19).
+
+# Important Parameters
+
+The review emphasizes read length, sequencing accuracy, throughput, sensitivity, cost, amplification strategy and platform-specific limitations (PDF pp. 2–5, Table 1). Universal parameter values or cutoffs: Not reported.
+
+# Inputs and Outputs
+
+Inputs include DNA, RNA, methylated DNA, chromatin-associated material and microbial or clinical samples, depending on the application. Outputs include sequence reads, variants, expression profiles, epigenetic profiles, microbial profiles and diagnostic information (PDF pp. 1–2, 12–24).
+
+# Main Results
+
+The review presents NGS as a high-throughput approach capable of sequencing millions of fragments and supporting genome, transcriptome, epigenome and microbiome studies (PDF pp. 1–2). It contrasts short-read platforms with long-read PacBio and Oxford Nanopore approaches and identifies accuracy, sensitivity, scalability, cost and data-analysis algorithms as continuing challenges (PDF pp. 2–5, 24–25). These are review-level synthesis statements.
+
+# Assumptions
+
+The review assumes that platform characteristics and analytical methods determine the quality and usefulness of downstream genomic results, and that application-specific workflow choices are needed (PDF pp. 2–5, 17–19).
+
+# Limitations
+
+Reported limitations include sequencing errors, platform-specific biases, short-read difficulty with complex genomic regions, computational burden and the need for improved accuracy, sensitivity and scalable analysis (PDF pp. 2–5, 24–25).
+
+# Reproducible Implementation Details
+
+No sample preparation protocol, read filtering thresholds, alignment settings, variant-calling parameters, software versions or code repository for a single analysis is provided. Exact implementation details: Not reported (PDF pp. 17–19).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The review could provide background for simitall modules that document sequencing inputs, variant-generation workflows and downstream genomic data types. It does not mention or evaluate simitall (PDF pp. 1–25).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| NGS enables parallel sequencing of millions of DNA fragments. | Abstract and introduction. | PDF pp. 1–2 | High |
+| The review compares first-, second- and third-generation sequencing. | Generations sections and comparison table. | PDF pp. 2–5, Table 1 | High |
+| PacBio and Oxford Nanopore provide long-read sequencing approaches. | Third-generation discussion. | PDF pp. 3–5 | High |
+| NGS supports genomics, transcriptomics, epigenomics and metagenomics. | Applications sections. | PDF pp. 1–2, 12–17 | High |
+| Accuracy, sensitivity, scalable analysis and cost remain future challenges. | Future prospects and conclusion. | PDF pp. 24–25 | High for author synthesis |
+
+# Terminology
+
+- **NGS:** High-throughput sequencing technology for parallel analysis of many DNA fragments (PDF pp. 1–2).
+- **Short-read sequencing:** Sequencing approach producing shorter reads, often with high throughput (PDF pp. 3–5, 8–12).
+- **Long-read sequencing:** Sequencing approach producing substantially longer reads, including PacBio and Nanopore approaches (PDF pp. 3–5, 8–12).
+- **Whole-exome sequencing:** Sequencing focused on genomic exons rather than the complete genome (PDF pp. 13–14).
+
+# References
+
+Primary source: Satam et al. (2023), cited above. The review’s cited studies are listed in its References section beginning on PDF p. 25. No outside sources were used.

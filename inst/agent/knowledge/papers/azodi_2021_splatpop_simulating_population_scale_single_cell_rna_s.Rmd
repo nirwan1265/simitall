@@ -1,0 +1,60 @@
+---
+id: "paper_azodi_2021_splatpop_simulating_population_scale_single_cell_rna_s"
+document_type: "paper_summary"
+title: "splatPop: simulating population scale single-cell RNA sequencing data"
+citation_key: "Azodi2021"
+authors: "Christina B. Azodi; Luke Zappia; Alicia Oshlack; Davis J. McCarthy"
+year: 2021
+doi: "10.1186/s13059-021-02546-1"
+journal: "Genome Biology"
+url: "https://doi.org/10.1186/s13059-021-02546-1"
+domains: ["single_cell_rnaseq"]
+techniques: ["splatpop", "population_simulation", "eqtl"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Christina B. Azodi; Luke Zappia; Alicia Oshlack; Davis J. McCarthy (2021). *splatPop: simulating population scale single-cell RNA sequencing data*. Genome Biology. DOI: 10.1186/s13059-021-02546-1. Source: [https://doi.org/10.1186/s13059-021-02546-1](https://doi.org/10.1186/s13059-021-02546-1).
+
+# One-Sentence Summary
+
+Primary methodological record for population-scale single-cell simulation with eQTL and batch effects.
+
+# Scope for simitall
+
+Use this record to ground recommendations about population-scale single-cell simulation with eQTL and batch effects. Preserve tool version, inputs, parameter settings, and a validation design in all generated workflow recipes.
+
+# Agent-Safe Takeaways
+
+- The method belongs in a workflow only after the biological question and input data are resolved.
+- Keep analysis or simulation parameters separate from biological truth so each can be audited.
+- Use appropriate quality control and benchmark outputs rather than relying on a single headline metric.
+
+# Inputs to Specify
+
+- Versioned input data and reference or coordinate metadata.
+- Method-specific parameters and random seed when simulation is involved.
+- A validation target, known truth, or independent held-out design.
+
+# Expected Outputs
+
+- Reproducible result files and an explicit configuration record.
+- Quality-control summaries appropriate to the method.
+- Benchmark or held-out validation metrics when available.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that the tool or resource is installed, bundled, or appropriate for every organism.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. Replace or extend it with source-faithful, page-specific notes after reviewing the full text.

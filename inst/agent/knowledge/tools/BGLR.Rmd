@@ -1,0 +1,37 @@
+---
+id: tool_BGLR
+document_type: tool
+status: starter
+software: BGLR
+related_functions: [fit_genomic_model, cross_validate_genomic_prediction]
+---
+
+# BGLR
+
+## Role
+
+`BGLR` fits Bayesian generalized linear regression models. `simitall` exposes
+Bayesian ridge, BayesA, BayesB, BayesC, and Bayesian Lasso marker models.
+
+## Key Inputs
+
+- Phenotype vector; missing candidate phenotypes can be predicted.
+- Centered marker matrix.
+- Model choice and MCMC controls: iterations, burn-in, thinning, and seed.
+
+## simitall Mapping
+
+Use `fit_genomic_model(model = "bayes_ridge")`, `"bayes_a"`, `"bayes_b"`,
+`"bayes_c"`, or `"bayesian_lasso"`. Assess prediction with
+`cross_validate_genomic_prediction()` before selecting parents.
+
+## Guardrails
+
+MCMC convergence is not guaranteed by a successful run. Record seeds, inspect
+diagnostics where available, and do not compare models using random folds that
+split close relatives across training and testing sets.
+
+## Citation
+
+Pérez P and de los Campos G (2014), *Genome-wide regression and prediction
+with the BGLR statistical package*.

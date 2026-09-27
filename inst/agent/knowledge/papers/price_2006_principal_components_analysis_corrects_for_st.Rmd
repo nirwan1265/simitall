@@ -1,0 +1,65 @@
+---
+id: "paper_price_2006_principal_components_analysis_corrects_for_st"
+document_type: "paper_summary"
+title: "Principal components analysis corrects for stratification in genome-wide association studies"
+citation_key: "Price2006"
+authors: "Price, Alkes L; Patterson, Nick J; Plenge, Robert M; Weinblatt, Michael E; Shadick, Nancy A; Reich, David"
+year: 2006
+doi: "10.1038/ng1847"
+journal: "Nature Genetics"
+url: "https://doi.org/10.1038/ng1847"
+domains: ["gwas"]
+techniques: ["principal_components", "population_structure", "gwas"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Price, Alkes L; Patterson, Nick J; Plenge, Robert M; Weinblatt, Michael E; Shadick, Nancy A; Reich, David (2006). *Principal components analysis corrects for stratification in genome-wide association studies*. Nature Genetics. DOI: 10.1038/ng1847. Source: [https://doi.org/10.1038/ng1847](https://doi.org/10.1038/ng1847).
+
+# One-Sentence Summary
+
+Primary methodological record for principal-component correction for population structure.
+
+# Scope for simitall
+
+This primary-method record grounds agent guidance about principal-component correction for population structure. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+
+# Agent-Safe Takeaways
+
+- Use this source when a request involves gwas and principal components, population structure.
+- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
+- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+
+# Inputs to Specify
+
+- A clearly defined biological or technical scenario
+- Versioned input data and coordinate/reference metadata
+- Method-specific parameter choices and validation design
+
+# Expected Outputs
+
+- Method results and reproducible configuration
+- Quality-control summaries
+- Truth, benchmark, or held-out validation metrics when available
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
+
+# Questions This Record Can Ground
+
+- Which inputs and validation checks are required for principal-component correction for population structure?
+- When is principal components, population structure an appropriate method choice?
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.

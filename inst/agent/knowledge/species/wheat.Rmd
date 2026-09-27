@@ -1,0 +1,44 @@
+---
+id: species_wheat
+document_type: species_note
+status: starter
+domains: [wheat, polyploidy, breeding, gwas, pangenome]
+related_functions: [generate_random_haplotype_panel, simulate_breeding, analyze_gwas, run_genomic_selection]
+source_priority: primary_papers_and_panel_metadata
+last_reviewed: 2026-09-26
+---
+
+# Bread Wheat: Species and Panel Guidance
+
+## Biology That Changes Simulation
+
+Bread wheat is commonly allohexaploid (AABBDD), not a standard diploid crop.
+Homeologous A, B, and D subgenomes, genome size, repetitive sequence, structural
+variation, and breeding history make diploid defaults unsafe. A simulation must
+state whether it models true polyploid inheritance, a diploidized marker model,
+or one selected subgenome/chromosome.
+
+## Useful Resource Types
+
+- Multiple wheat reference assemblies and pangenome resources capture gene
+  content and structural variation across breeding material.
+- Wheat diversity panels and breeder arrays supply marker data for GWAS and
+  genomic selection.
+- Pedigree records are particularly useful in breeding programs, but must be
+  reconciled with cultivar aliases, line generations, and uncertain parentage.
+
+## Required Choices
+
+- Species and ploidy: bread wheat, durum wheat, or a defined progenitor.
+- Genome scope: all subgenomes, selected chromosomes, or a diploidized test.
+- Marker namespace: chromosome names must preserve subgenome identity.
+- Recombination and inheritance model: do not imply random pairing among all
+  homeologs unless that is the explicit biological scenario.
+- Phenotype design: location/year/environment and family structure often matter
+  as much as marker effects.
+
+## Key Sources
+
+- Walkowiak et al. (2020), multiple wheat genomes: DOI
+  10.1038/s41586-020-2961-x.
+- Allen et al. (2017), Wheat Breeders' Array: DOI 10.1111/pbi.12635.

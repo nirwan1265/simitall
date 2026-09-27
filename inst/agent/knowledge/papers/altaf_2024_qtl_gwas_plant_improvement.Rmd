@@ -1,0 +1,112 @@
+---
+id: paper_altaf_2024_qtl_gwas_plant_improvement
+document_type: paper_summary
+title: "Advancements in QTL Mapping and GWAS Applications in Plant Improvement"
+citation_key: "altaf2024"
+authors: "Altaf et al."
+year: 2024
+doi: "10.55730/1300-008X.2824"
+journal: "Turkish Journal of Botany"
+url: "https://doi.org/10.55730/1300-008X.2824"
+domains:
+  - plant_genetics
+  - plant_breeding
+techniques:
+  - QTL_mapping
+  - GWAS
+  - genomic_selection
+  - high_throughput_phenotyping
+organisms:
+  - multiple_crop_species
+evidence_status: unreviewed
+source_file: "Advancements in QTL Mapping and GWAS Application in Plant Improvement .pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Altaf, M. T., Tatar, M., Ali, A., Liaqat, W., Mortazvi, P., et al. (2024). Advancements in QTL mapping and GWAS applications in plant improvement. *Turkish Journal of Botany* 48, 376–426. https://doi.org/10.55730/1300-008X.2824 (PDF pp. 1, 3). The citation's *et al.* abbreviates the longer author list printed on PDF pp. 2–3.
+
+# One-Sentence Summary
+
+This review compares QTL mapping and GWAS across crops and surveys their links with genomic selection, molecular markers, and high-throughput phenotyping (PDF pp. 3–4, 6, 14, 22–31).
+
+# Research Question
+
+How can QTL mapping, GWAS, and complementary molecular and phenotyping approaches be used to identify trait-linked regions and support crop improvement? This paraphrases the authors' stated review scope (PDF p. 3, Abstract; p. 4, Section 1).
+
+# Biological System
+
+Published examples from multiple crop species, including maize, wheat, rice, sorghum, and other crops; no single experimental population or species was studied anew (PDF pp. 4, 7–11, 15–20, Tables 1–5).
+
+# Study Design
+
+Narrative review and tabulation of previously published QTL, GWAS, and genomic selection studies. Tables 1–2 survey QTL studies, Tables 3–5 survey GWAS studies, and Table 6 surveys genomic selection studies (PDF pp. 7–12, 15–20, 27–29). Systematic search criteria and a new cross-study reanalysis: Not reported.
+
+# Data
+
+The tables collect crop names, phenotypes, mapping populations or genotype sets, marker types, loci, reported thresholds where available, and source-study citations (PDF pp. 7–11, Tables 1–2; pp. 15–20, Tables 3–5; pp. 27–29, Table 6). A new unified genotype–phenotype data set, accession, or downloadable matrix: Not reported.
+
+# Methods
+
+- Survey biparental populations including F2, backcross, recombinant inbred, and doubled-haploid designs, then discuss nested association mapping and MAGIC populations (PDF pp. 12–14, Section 3.3, Figure 2).
+- Compare QTL mapping with GWAS; list GWAS prerequisites such as defined phenotypes, adequate sample size, quality genotypes, population-structure control, and multiple-testing correction (PDF p. 14, Sections 4–4.1; PDF p. 21, Figures 3–4).
+- Discuss single-locus mixed models and multiple-locus approaches, including mrMLM and ISIS EM-BLASSO, as literature methods (PDF pp. 14, 20, Section 4.2).
+- Review marker-assisted selection, genomic prediction, and high-throughput phenotyping with imaging and sensor traits (PDF pp. 21–30, Sections 5–8, Figures 5–6).
+
+# Software and Versions
+
+The review names statistical approaches and tools such as mrMLM, ISIS EM-BLASSO, BLUP, G-BLUP, RR-BLUP, and SmartGrain when discussing source studies (PDF pp. 20, 23–29, Sections 4.2, 7–8, Table 6). A software stack and exact versions executed by the review authors: Not reported.
+
+# Important Parameters
+
+No shared genome-wide threshold, minor-allele-frequency filter, imputation setting, kinship model, LD window, phenotyping interval, or genomic prediction validation split is specified for a new analysis: Not reported. Thresholds shown for individual published studies in Tables 3–5 must remain attached to those original rows and are not universal recommendations (PDF pp. 15–20, Tables 3–5).
+
+# Inputs and Outputs
+
+Conceptual QTL mapping inputs include genotyped mapping populations and phenotypes, while GWAS uses genotypes and phenotypes from an association population with structure control; reported outputs include trait-linked regions, markers, and candidate genes (PDF pp. 12–14, Sections 3.3–4.1, Figures 2–4). Genomic prediction additionally uses a phenotyped training population to estimate genetic values in breeding candidates (PDF pp. 23–26, Section 7, Figure 6). These describe methods reviewed, not executed deliverables.
+
+# Main Results
+
+The authors synthesize literature reporting trait-associated QTL and SNPs for stress, disease, yield, and nutrient traits across crops (PDF pp. 7–11, 15–20, Tables 1–5). They describe trade-offs between controlled-cross QTL mapping and association populations, explain how genomic selection draws on genome-wide markers, and present high-throughput phenotyping as a way to obtain richer trait measurements (PDF pp. 12–14, Sections 3.3–4; pp. 23–26, Section 7; pp. 29–31, Section 8). These are **author synthesis and interpretation**, not new discovery or validation by the review.
+
+# Assumptions
+
+Association analyses depend on well-defined traits, high-quality marker data, enough samples, appropriate models and multiple-testing control, and correction of population stratification (PDF p. 14, Section 4.1). The suitability of QTL mapping versus GWAS depends on population design, available variation, and trait architecture (PDF pp. 4, 12–14, Sections 1, 3.3–4).
+
+# Limitations
+
+Biparental QTL mapping samples limited parental alleles and recombination; complex traits and environmental interactions complicate locus localization and repeatability (PDF pp. 12–14, Sections 3.3–4). The review compiles heterogeneous source studies and does not provide a common benchmarking protocol; cross-study comparisons need the original methods (**summary inference** from PDF pp. 7–11, 15–20, 27–29, Tables 1–6).
+
+# Reproducible Implementation Details
+
+No runnable QTL/GWAS pipeline, complete phenotype and genotype files, universal marker filtering, significance threshold, random seed, or package versions for an original analysis: Not reported. Figures 1–6 are conceptual or adapted diagrams; Tables 1–6 give citations to original studies from which implementation details would have to be retrieved (PDF pp. 4, 7–11, 13, 15–21, 23–24, 27–29).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The paper may be useful background for describing mapping-population choice, GWAS prerequisites, and phenotyping in a plant genetics component of simitall. It does not mention simitall or test a simitall implementation (PDF pp. 3–31).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The review surveys QTL results for abiotic and biotic stress across crops. | Literature tables with source-study citations. | PDF pp. 7–12, Tables 1–2 | High for the review's scope; secondary for individual results |
+| Biparental and multiparent designs differ in parental diversity and recombination. | Authors' discussion of F2/RIL/DH, NAM, and MAGIC designs. | PDF pp. 12–14, Section 3.3, Figure 2 | High for author synthesis |
+| GWAS prerequisites include trait quality, sample size, genotype quality, population structure, and multiple-testing control. | Explicit methodological list. | PDF p. 14, Section 4.1 | High |
+| The review lists single-locus and multiple-locus GWAS models. | Named models and discussion. | PDF pp. 14, 20, Section 4.2 | High |
+| Its genomic selection table contains distinct crops, models, and marker counts from prior studies. | Table rows cite different primary studies; no review-level pooled prediction result. | PDF pp. 27–29, Table 6 | High for table description |
+| The authors argue that high-throughput phenotyping can improve trait measurement for mapping. | Discussion and published imaging/sensor examples. | PDF pp. 29–31, Section 8 | High for author interpretation; no new test |
+
+# Terminology
+
+- **QTL mapping:** Linking trait variation to genomic intervals within a mapping population (PDF pp. 6, 12–13, Section 3).
+- **GWAS:** Testing marker–trait associations across a diverse population while addressing confounding (PDF p. 14, Sections 4–4.1).
+- **NAM:** Nested association mapping, described as crosses of multiple inbred lines with a common reference parent (PDF p. 13, Section 3.3.2).
+- **MAGIC:** Multiparent advanced generation intercross involving intermating of multiple founders (PDF pp. 13–14, Section 3.3.2).
+- **GEBV:** Genomic estimated breeding value used in genomic selection (PDF pp. 24–25, Section 7.5).
+
+# References
+
+Primary source: Altaf et al. (2024), cited above. The original studies summarized in Tables 1–6 are listed in the paper's references beginning on PDF p. 32. No outside sources were used for this summary.

@@ -1,0 +1,64 @@
+---
+id: "paper_peng_2005_simupop"
+document_type: "paper_summary"
+title: "simuPOP: a forward-time population genetics simulation environment"
+citation_key: "Peng2005simuPOP"
+authors: "Peng, B., and Kimmel, M."
+year: 2005
+doi: "10.1093/bioinformatics/bti584"
+journal: "Bioinformatics"
+url: "https://academic.oup.com/bioinformatics/article/21/18/3686/202296"
+domains: ["population_genetics", "breeding", "simulation"]
+techniques: ["forward_simulation", "mating_schemes", "recombination", "selection"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Peng, B., and Kimmel, M. (2005). *simuPOP: a forward-time population genetics simulation environment*. Bioinformatics. DOI: 10.1093/bioinformatics/bti584. Source: [https://academic.oup.com/bioinformatics/article/21/18/3686/202296](https://academic.oup.com/bioinformatics/article/21/18/3686/202296).
+
+# One-Sentence Summary
+
+Introduces simuPOP, a forward-time population-genetics framework with configurable genotype structures, operators, population subdivision, selection, and mating schemes.
+
+# Scope for simitall
+
+Use as the cited engine behind the optional Python bridge. simitall remains responsible for R-facing validation, workflow design, provenance, and R-native outputs.
+
+# Agent-Safe Takeaways
+
+- A population can include subpopulations, explicit loci, ploidy, chromosome positions, and individual information fields.
+- Evolution is composed from initialization, pre-mating, mating, post-mating, and final operators.
+- Built-in mating schemes include random mating, selfing, monogamy, polygamy, cloning, and controlled allele-frequency trajectories.
+
+# Inputs to Specify
+
+- Genotype structure and locus positions
+- Population or subpopulation sizes
+- Mating, mutation, migration, selection, and recombination operators
+
+# Expected Outputs
+
+- Evolved genotypes
+- Individual and family metadata
+- Pedigree-compatible ancestry information when configured
+
+# Limitations and Guardrails
+
+- A simulation engine does not make a parameterization biologically realistic by itself.
+- Users must choose map positions, founder variation, demography, and selection assumptions deliberately.
+
+# Questions This Record Can Ground
+
+- Which simuPOP mating preset matches an F2, selfing, or random-mating design?
+- How should an R workflow pass loci and recombination information to simuPOP?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

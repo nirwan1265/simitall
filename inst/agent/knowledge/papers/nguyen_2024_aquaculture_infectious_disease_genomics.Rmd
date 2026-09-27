@@ -1,0 +1,112 @@
+---
+id: paper_nguyen_2024_aquaculture_infectious_disease_genomics
+document_type: paper_summary
+title: "Genetics and Genomics of Infectious Diseases in Key Aquaculture Species"
+citation_key: "nguyen2024aquaculture"
+authors: "Nguyen"
+year: 2024
+doi: "10.3390/biology13010029"
+journal: "Biology"
+url: "https://doi.org/10.3390/biology13010029"
+domains:
+  - aquaculture_genetics
+  - infectious_disease_resistance
+techniques:
+  - quantitative_genetics
+  - selective_breeding
+  - GWAS
+  - genomic_prediction
+organisms:
+  - white_leg_shrimp
+  - striped_catfish
+  - yellowtail_kingfish
+evidence_status: unreviewed
+source_file: "Genetics and Genomics of Infectious Diseases in Key Aquaculture Species.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Nguyen, N. H. (2024). Genetics and Genomics of Infectious Diseases in Key Aquaculture Species. *Biology* 13, 29. https://doi.org/10.3390/biology13010029 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review synthesizes the author's published breeding and genomic studies of pathogen resistance in shrimp, striped catfish and yellowtail kingfish, and discusses future surveillance and omics work (PDF pp. 1, 4–15, Tables 1–4).
+
+# Research Question
+
+What do the author's research programs show about heritable resistance, response to selection and genomic prediction for infectious diseases in three aquaculture species? This paraphrases the review's stated focus (PDF pp. 1, 4).
+
+# Biological System
+
+White leg shrimp (*Litopenaeus vannamei*) challenged with White Spot Syndrome Virus (WSSV), striped catfish (*Pangasianodon hypophthalmus*) affected by bacillary necrosis of Pangasius (BNP), and yellowtail kingfish (*Seriola lalandi*) affected by skin fluke (PDF pp. 1, 4, Table 1). **Table 4 separately labels its white-shrimp genomic-prediction values as banana white shrimp (*Penaeus merguiensis*)**; these should not be silently attributed to *L. vannamei* (PDF p. 10, Table 4 footnote).
+
+# Study Design
+
+Review of the author's existing challenge tests, pedigree-based selection and genomic studies, rather than a newly described single prospective experiment (PDF pp. 1, 4–10, Tables 1–4). The reported source studies used species-specific challenges and field tests; disease outcomes were binary (**absence = 0, presence = 1**) or time to mortality in **days** (PDF p. 4, Section 2.1). The review also includes future proposals that have not yet generated results (PDF pp. 11–15, Sections 7–9).
+
+# Data
+
+Table 1 compiles previously reported disease-resistance heritability estimates and sample sizes. For example, a white leg shrimp entry reports **n = 15,000; h² = 0.130; S.E. = 0.028**, and a striped catfish entry reports **n = 398,234; h² = 0.168; S.E. = 0.044** (PDF p. 4, Table 1). Yellowtail kingfish entries report **n = 752** with **h² = 0.020 (S.E. = 0.030)** and **h² = 0.022 (S.E. = 0.035)** (PDF p. 4, Table 1). The table entries derive from distinct cited studies and should not be treated as a common new experiment.
+
+# Methods
+
+- Describe standardized disease challenge/field tests and pedigree-based estimation of heritability, genetic correlations and breeding values; the author says continuous outcomes were analyzed with linear mixed models and binary outcomes with generalized linear mixed models (PDF pp. 4–6, Sections 2–3, Tables 1–2).
+- Summarize between- and within-family selection and comparisons against generation-matched controls (PDF pp. 5–6, Section 3.1).
+- Discuss earlier variant association analyses and genomic prediction with GBLUP, Bayes R and machine/deep learning, along with transcriptomic and other omics directions (PDF pp. 8–12, Sections 5–8, Figure 1, Table 4).
+
+# Software and Versions
+
+Methods and model families including LMM, GLMM, GBLUP, Bayes R, multilayer perceptron (MLP) and convolutional neural network (CNN) appear in the review (PDF pp. 4, 9–10, Table 4). Executed software names, package versions, seeds and command lines for one new common analysis: Not reported.
+
+# Important Parameters
+
+Outcome coding (**0/1**) and survival time (**days**) are specified for the reviewed challenge tests (PDF p. 4, Section 2.1). The breeding programs averaged approximately **150 full- and half-sib families per generation** (PDF p. 5, Section 3.1). Population-specific SNP filters, GWAS significance criteria, cross-validation splits and sequencing-depth settings sufficient to reproduce each underlying analysis: Not reported in a unified form. The Figure 1 catfish GWAS is explicitly labeled **unpublished results** (PDF p. 9, Figure 1).
+
+# Inputs and Outputs
+
+Inputs in the reviewed studies include pedigrees, disease challenge phenotypes, genotypes and, for some analyses, immune or transcriptomic measurements; outputs include breeding values, heritabilities, correlations, selected lines and genomic prediction accuracies (PDF pp. 4–10, Tables 1–4). No new unified machine-readable dataset is identified for this review: Not reported.
+
+# Main Results
+
+The author reports heritable disease-resistance variation for the studied populations, but Table 1's **yellowtail kingfish h² estimates are near zero with S.E. larger than the estimates**, so that qualification should accompany the abstract's broad language (PDF pp. 1, 4, Table 1; **summary inference**). Selection response is described as averaging **12.9% per generation** in the body, attributed to earlier work; the abstract rounds this to about **10%** (PDF pp. 1, 5, Section 3.1). Table 4 reports prediction accuracies by model and species from different source studies, including **GBLUP 0.51 ± 0.08** for striped catfish and **0.23 ± 0.05** for yellowtail kingfish (PDF p. 10, Table 4). These are **reviewed prior findings**, not a fresh uniform benchmark.
+
+# Assumptions
+
+The selection-response comparison depends on connected pedigrees and separating genetic from environmental effects across generations (PDF p. 6, Section 3.1). Genetic associations and prediction accuracy depend on each species, disease, data and method; host, pathogen and environment all contribute to observed resistance (PDF pp. 10, 12–14, Table 4, Figures 2–3).
+
+# Limitations
+
+The author notes limited immune-trait sample sizes, insufficient reliability for some immune heritabilities, uncertainty about growth correlations, and the need to assess genotype-by-environment and other-pathogen effects (PDF pp. 5–8). The short RAD-seq reads and unpublished association figure limit variant interpretation (PDF pp. 8–9, Figure 1). Distinct shrimp species and source studies in Tables 1 and 4 should be kept separate (PDF pp. 4, 10).
+
+# Reproducible Implementation Details
+
+The review states phenotype coding, model classes and some sample sizes, but does not include a complete protocol, individual-level data, software versions, genomic reference, filtering rules or cross-validation partitions for each cited experiment: Not reported (PDF pp. 4–10, Tables 1–4). Refer to each table row's original citation for reproduction; Figure 1 is identified as unpublished (PDF p. 9).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** The article could be background for simitall topics on heritability, disease GWAS and genomic prediction, provided species and study provenance remain separate. The author does not mention or evaluate simitall (PDF pp. 1–15).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| The review summarizes WSSV, BNP and skin-fluke resistance in three named aquaculture species. | Stated scope and species table. | PDF pp. 1, 4, Table 1 | High |
+| A cited yellowtail kingfish estimate is h² = 0.020 with S.E. = 0.030 and n = 752. | Original-study entry compiled by the review. | PDF p. 4, Table 1 | High for table value; secondary for original estimate |
+| Disease traits were recorded as binary 0/1 or time to mortality in days. | Authors' methods description of prior tests. | PDF p. 4, Section 2.1 | High for described design |
+| The body reports mean selection response of 12.9% per generation. | Authors' account of prior breeding program. | PDF p. 5, Section 3.1 | High for report; secondary for causal estimate |
+| Table 4's white shrimp is banana white shrimp rather than the white leg shrimp of Table 1. | Explicit species footnote. | PDF p. 10, Table 4 footnote; p. 4, Table 1 | High |
+| The catfish association Manhattan plot is labeled unpublished results. | Figure caption. | PDF p. 9, Figure 1 | High |
+
+# Terminology
+
+- **h²:** Heritability of a disease-resistance phenotype as tabulated from the source studies (PDF p. 4, Table 1).
+- **EBV:** Estimated breeding value used to select candidates on predicted inherited merit (PDF p. 3; p. 6, Section 3.1).
+- **WSSV:** White Spot Syndrome Virus, the shrimp pathogen discussed (PDF pp. 1, 4).
+- **GBLUP:** Genomic best linear unbiased prediction, one reviewed prediction method (PDF pp. 9–10, Table 4).
+
+# References
+
+Primary source: Nguyen (2024), cited above. Source studies for individual table rows are identified in Tables 1–4 and in the bibliography beginning on PDF p. 15. No outside sources were used.

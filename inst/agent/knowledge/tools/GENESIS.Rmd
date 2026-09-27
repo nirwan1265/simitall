@@ -1,0 +1,37 @@
+---
+id: tool_genesis
+document_type: tool_card
+status: starter
+software: GENESIS
+language: R_Bioconductor
+domains: [gwas, population_structure, relatedness, admixture_mapping]
+source_priority: official_docs
+last_reviewed: 2026-09-26
+---
+
+# GENESIS
+
+## Role
+
+`GENESIS` is a Bioconductor R package for genetic association testing, population
+structure and relatedness inference. Its documentation includes admixture
+mapping functions that use local-ancestry results such as RFMix output.
+
+## Appropriate simitall Use
+
+- Structure- and relatedness-aware association analysis in R.
+- PC-AiR and relatedness-aware population-structure summaries.
+- Admixture mapping after valid local-ancestry input has been created and
+  converted to a supported genotype representation.
+
+## Required Boundary
+
+GENESIS does not infer local ancestry from raw unphased cohort genotypes. A
+local-ancestry inference step and an appropriate reference panel are still
+required before `admixMap()`-style analyses.
+
+## References
+
+- Official package page: https://bioconductor.org/packages/GENESIS/
+- `admixMap()` documentation describes use with local-ancestry results such as
+  RFMix output.

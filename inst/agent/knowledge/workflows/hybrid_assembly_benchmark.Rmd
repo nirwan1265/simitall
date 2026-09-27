@@ -1,0 +1,39 @@
+---
+id: workflow_hybrid_assembly_benchmark
+document_type: workflow
+status: starter
+inputs: [truth_FASTA]
+outputs: [Illumina_FASTQ, long_read_FASTQ, assemblies, QUAST_reports, summary_CSV]
+related_functions: [sim_illumina_art, sim_pacbio, sim_nanopore, run_grid_both, run_unicycler_grid, run_quast_grid, summarize_quast]
+---
+
+# Hybrid Assembly Benchmark
+
+## Objective
+
+Measure how Illumina and long-read depth affect assembly accuracy and contiguity against a known simulated genome.
+
+```r
+library(simitall)
+
+simref <- "results/genome/repeat_stress.fa"
+run_grid_both(
+  simref_fa = simref,
+  tag = "repeat_stress",
+  ill_covs = c(20, 40, 60),
+  pb_covs = c(10, 20, 30),
+  seed = 303
+)
+run_unicycler_grid("repeat_stress", threads = 8, reads_dir = "reads")
+run_quast_grid("repeat_stress", ref_fa = simref, threads = 4,
+               assemblies_dir = "assemblies", output_dir = "evaluation")
+summarize_quast("evaluation/repeat_stress", "results/summary/repeat_stress.csv")
+```
+
+## Important Constraint
+
+For HiFi simulation, verify whether the installed simulator creates final HiFi reads or multi-pass precursors requiring PacBio CCS. Do not label precursor reads as final CCS/HiFi reads.
+
+## Report
+
+Show genome fraction, misassemblies, mismatches, indels, contig count, N50, read-length distribution, actual depth, repeat settings, and a chosen minimum-depth rule.

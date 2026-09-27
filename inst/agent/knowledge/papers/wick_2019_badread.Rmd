@@ -1,0 +1,63 @@
+---
+id: "paper_wick_2019_badread"
+document_type: "paper_summary"
+title: "Badread: simulation of error-prone long reads"
+citation_key: "Wick2019Badread"
+authors: "Wick, R. R."
+year: 2019
+doi: "10.21105/joss.01316"
+journal: "Journal of Open Source Software"
+url: "https://joss.theoj.org/papers/10.21105/joss.01316.pdf"
+domains: ["sequencing", "simulation", "long_reads"]
+techniques: ["long_read_simulation", "error_models", "assembly_benchmarking"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Wick, R. R. (2019). *Badread: simulation of error-prone long reads*. Journal of Open Source Software. DOI: 10.21105/joss.01316. Source: [https://joss.theoj.org/papers/10.21105/joss.01316.pdf](https://joss.theoj.org/papers/10.21105/joss.01316.pdf).
+
+# One-Sentence Summary
+
+Describes Badread, a configurable simulator for error-prone long sequencing reads.
+
+# Scope for simitall
+
+Document as an alternative long-read simulator when users need configurable read length, identity, chimeras, or adapter artifacts beyond a PBSIM workflow.
+
+# Agent-Safe Takeaways
+
+- Long-read benchmarks are sensitive to read-length and error distributions.
+- Chimeras and artifact settings can create more challenging assembly conditions.
+- A simulation scenario should state whether it aims for idealized or stress-test data.
+
+# Inputs to Specify
+
+- Reference FASTA
+- Read-length, identity, and artifact models
+- Coverage and random seed
+
+# Expected Outputs
+
+- Simulated long-read FASTQ
+- Scenario parameter record
+
+# Limitations and Guardrails
+
+- More complex error models are not automatically more realistic for every instrument or sample.
+- Choose parameters from matched empirical data when possible.
+
+# Questions This Record Can Ground
+
+- When is Badread preferable to PBSIM for a long-read benchmark?
+- How should an assembly stress-test scenario be reported?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

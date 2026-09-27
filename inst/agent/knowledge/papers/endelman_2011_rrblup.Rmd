@@ -1,0 +1,64 @@
+---
+id: "paper_endelman_2011_rrblup"
+document_type: "paper_summary"
+title: "Ridge regression and other kernels for genomic selection with R package rrBLUP"
+citation_key: "Endelman2011rrBLUP"
+authors: "Endelman, J. B."
+year: 2011
+doi: "10.3835/plantgenome2011.08.0024"
+journal: "The Plant Genome"
+url: "https://acsess.onlinelibrary.wiley.com/doi/full/10.3835/plantgenome2011.08.0024"
+domains: ["genomic_selection", "statistics", "r_package"]
+techniques: ["rrblup", "gblup", "kinship", "genomic_prediction"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Endelman, J. B. (2011). *Ridge regression and other kernels for genomic selection with R package rrBLUP*. The Plant Genome. DOI: 10.3835/plantgenome2011.08.0024. Source: [https://acsess.onlinelibrary.wiley.com/doi/full/10.3835/plantgenome2011.08.0024](https://acsess.onlinelibrary.wiley.com/doi/full/10.3835/plantgenome2011.08.0024).
+
+# One-Sentence Summary
+
+Describes rrBLUP methods and an R implementation for ridge-regression and kernel-based genomic prediction.
+
+# Scope for simitall
+
+Use as the reference and optional backend for simitall genomic-prediction workflows when an R-native ridge-regression or GBLUP-style model is requested.
+
+# Agent-Safe Takeaways
+
+- Marker-effect and relationship-matrix formulations are closely related genomic-prediction approaches.
+- Prediction requires aligned genotype and phenotype samples with transparent missing-data handling.
+- Cross-validation must respect intended deployment, especially relatedness and family structure.
+
+# Inputs to Specify
+
+- Numeric marker matrix or relationship matrix
+- Phenotype vector
+- Covariates and validation folds
+
+# Expected Outputs
+
+- Model estimates
+- Predicted values
+- Accuracy and error summaries
+
+# Limitations and Guardrails
+
+- Prediction accuracy is design-dependent and should not be generalized beyond the simulated relationship structure.
+- Ridge regression is one baseline, not a universal best model.
+
+# Questions This Record Can Ground
+
+- How does rrBLUP fit into a genomic-selection cycle?
+- Why should family-aware folds be preferred for related breeding lines?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

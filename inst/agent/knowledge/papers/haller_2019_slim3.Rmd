@@ -1,0 +1,64 @@
+---
+id: "paper_haller_2019_slim3"
+document_type: "paper_summary"
+title: "SLiM 3: Forward genetic simulations beyond the Wright-Fisher model"
+citation_key: "Haller2019SLiM3"
+authors: "Haller, B. C., and Messer, P. W."
+year: 2019
+doi: "10.1093/molbev/msy228"
+journal: "Molecular Biology and Evolution"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6389312/"
+domains: ["population_genetics", "simulation"]
+techniques: ["forward_simulation", "non_wright_fisher", "demography", "selection"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Haller, B. C., and Messer, P. W. (2019). *SLiM 3: Forward genetic simulations beyond the Wright-Fisher model*. Molecular Biology and Evolution. DOI: 10.1093/molbev/msy228. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC6389312/](https://pmc.ncbi.nlm.nih.gov/articles/PMC6389312/).
+
+# One-Sentence Summary
+
+Describes SLiM 3, a flexible forward genetic simulator that supports models beyond standard Wright-Fisher assumptions.
+
+# Scope for simitall
+
+Document as an advanced external engine for users who require detailed demography, selection, spatial processes, or custom life histories beyond the first simitall breeding presets.
+
+# Agent-Safe Takeaways
+
+- Forward simulation can represent selection and demography in detail but needs careful parameterization.
+- Non-Wright-Fisher life cycles allow more realistic individual-based models.
+- Complex models benefit from independently checked summaries of diversity, LD, and demography.
+
+# Inputs to Specify
+
+- Genome model and mutation/recombination assumptions
+- Demographic and life-history model
+- Selection and migration rules
+
+# Expected Outputs
+
+- Tree sequences or simulated genetic data
+- Population-level summaries
+- Custom event records when coded
+
+# Limitations and Guardrails
+
+- SLiM is powerful but not a drop-in substitute for a simple breeding workflow.
+- Agent plans should recommend it only when its added model complexity is justified.
+
+# Questions This Record Can Ground
+
+- When is SLiM more appropriate than a simplified breeding simulator?
+- What validation summaries should a forward population-genetics simulation report?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

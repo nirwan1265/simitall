@@ -1,0 +1,111 @@
+---
+id: paper_ciochetti_2023_gwas_physiology
+document_type: paper_summary
+title: "Genome-wide association studies: utility and limitations for research in physiology"
+citation_key: "ciochetti2023gwasphysiology"
+authors: "Ciochetti et al."
+year: 2023
+doi: "10.1113/JP284241"
+journal: "The Journal of Physiology"
+url: "https://doi.org/10.1113/JP284241"
+domains:
+  - human_genetics
+  - physiology
+  - genome_wide_association_studies
+techniques:
+  - GWAS
+  - polygenic_scores
+  - QTL_analysis
+  - Mendelian_randomization
+organisms:
+  - humans
+evidence_status: unreviewed
+source_file: "Genome-wide association studies- utility and limitations for research in physiology.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Ciochetti, N. P., Lugli-Moraes, B., da Silva, B. S., and Rovaris, D. L. (2023). Genome-wide association studies: utility and limitations for research in physiology. *The Journal of Physiology* 601, 2771–2799. https://doi.org/10.1113/JP284241 (PDF p. 1).
+
+# One-Sentence Summary
+
+This topical review explains how GWAS and downstream analyses can connect genetic variation with physiological traits while emphasizing association, causation, interpretation and equity limitations (PDF pp. 1–8, Figures 1–5; p. 20, Limitations).
+
+# Research Question
+
+How can GWAS contribute to physiological research, and what limitations must be considered when interpreting associations and downstream causal or predictive analyses? This paraphrases the review's abstract and scope (PDF p. 1).
+
+# Biological System
+
+Human physiological traits, molecular phenotypes and diseases represented in published GWAS and biobank studies; no new cohort or experiment is reported (PDF pp. 1–2, 4–20).
+
+# Study Design
+
+Topical narrative review with conceptual figures and examples from large published GWAS, polygenic-score, QTL and Mendelian-randomization studies (PDF pp. 1–20). A systematic search protocol, new association analysis or pooled meta-analysis: Not reported.
+
+# Data
+
+The review discusses published GWAS summary statistics, physiological measurements, molecular QTLs and large biobank studies. One cited example involved more than **5.1 million individuals** and nearly **5,000 GWAS across almost 3,500 phenotypes** (PDF p. 4, Box 1). These are source-study values, not a new data set analyzed by the authors.
+
+# Methods
+
+- Explain the GWAS association framework and the continuum from genetic variants to physiology (PDF pp. 1–4, Figure 1).
+- Discuss functional annotation, genetic correlation, QTLs, mediation, Mendelian randomization and causal interpretation (PDF pp. 6–8, Figures 2–3).
+- Describe polygenic scores and endophenotypes as downstream uses (PDF pp. 8–9, Figures 4–5).
+- Review physiological examples involving cardiopulmonary, metabolic, anthropometric and psychiatric traits, then discuss limitations (PDF pp. 10–20).
+
+# Software and Versions
+
+Specific software packages and versions used by the review authors: Not reported. Named analytical concepts and resources include GWAS, QTL/pQTL/eQTL analyses, polygenic scores and Mendelian randomization (PDF pp. 6–11).
+
+# Important Parameters
+
+No common SNP filter, genome-wide significance threshold, LD threshold, polygenic-score construction rule or instrument-selection criterion is prescribed for a new analysis: Not reported. Numerical study sizes and locus counts belong to the cited studies (PDF pp. 4, 10–19).
+
+# Inputs and Outputs
+
+Conceptual inputs include genotype markers and physiological, molecular or disease phenotypes. Outputs may include associated loci, QTLs, genetic correlations, causal estimates and polygenic scores (PDF pp. 1–9, Figures 1–5). No original output files are reported.
+
+# Main Results
+
+The review presents GWAS as useful for identifying loci and generating mechanistic hypotheses, while stressing that association alone does not establish causation (PDF pp. 1, 6–8). It describes downstream analyses for correlation, mediation, causal inference and prediction, and highlights limitations including confounding, pleiotropy, missing heritability and potential health disparities from polygenic scores (PDF pp. 7–9, 20, Limitations). These are author synthesis and cited findings, not new GWAS results.
+
+# Assumptions
+
+Interpretation assumes that population structure, relatedness and environmental or behavioral confounding are adequately addressed. Causal analyses require additional assumptions beyond association, and polygenic scores depend on ancestry and portability (PDF pp. 6–9, 20, Limitations).
+
+# Limitations
+
+The paper identifies association–causation ambiguity, pleiotropy, confounding, incomplete explained variance and limited transferability of polygenic scores as limitations (PDF pp. 6–9, 20). The review itself provides no unified benchmark or executable workflow.
+
+# Reproducible Implementation Details
+
+An original data set, software environment, command sequence, variant filters and parameter lockfile: Not reported. Reproduction requires the original cited GWAS or downstream-study publications (PDF pp. 1–20).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** This review could provide background for documenting GWAS interpretation, polygenic scores and causal-inference claims in simitall. It does not mention or evaluate simitall (PDF pp. 1–20).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| GWAS surveys many variants to associate genetic variation with physiological or disease traits. | Review definition and framing. | PDF p. 1, Abstract | High |
+| A cited example included more than 5.1 million individuals and almost 5,000 GWAS. | Box 1 literature example. | PDF p. 4, Box 1 | High for source-study report |
+| GWAS associations require downstream work to explore function and causation. | Conceptual figures and discussion. | PDF pp. 6–8, Figures 2–3 | High for author interpretation |
+| Polygenic scores summarize effects across many variants. | Polygenic-score discussion and diagram. | PDF pp. 8–9, Figure 4 | High |
+| The review identifies limitations related to confounding, pleiotropy and portability. | Dedicated limitations discussion. | PDF p. 20, Limitations | High |
+
+# Terminology
+
+- **GWAS:** Genome-wide association study relating genetic variants to traits (PDF p. 1).
+- **QTL:** Quantitative trait locus associated with a quantitative phenotype (PDF pp. 6–7).
+- **Polygenic score:** A score aggregating effects across many genetic variants (PDF p. 8, Figure 4).
+- **Mendelian randomization:** A downstream causal-inference framework discussed by the review (PDF pp. 6–8).
+
+# References
+
+Primary source: Ciochetti et al. (2023), cited above. The review's cited studies are listed in the References beginning on PDF p. 21. No outside sources were used.

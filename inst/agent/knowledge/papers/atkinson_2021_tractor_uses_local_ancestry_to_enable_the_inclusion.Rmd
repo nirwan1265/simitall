@@ -1,0 +1,59 @@
+---
+id: "paper_atkinson_2021_tractor_uses_local_ancestry_to_enable_the_inclusion"
+document_type: "paper_summary"
+title: "Tractor uses local ancestry to enable the inclusion of admixed individuals in GWAS and to boost power"
+citation_key: "Atkinson2021"
+authors: "Elizabeth G. Atkinson; Adam X. Maihofer; Masahiro Kanai; Alicia R. Martin; Konrad J. Karczewski; Marcos L. Santoro; Jacob C. Ulirsch; Yoichiro Kamatani; et al."
+year: 2021
+doi: "10.1038/s41588-020-00766-y"
+journal: "Nature Genetics"
+url: "https://doi.org/10.1038/s41588-020-00766-y"
+domains: ["human"]
+techniques: ["tractor", "ancestry_aware_gwas", "local_ancestry"]
+organisms: ["human"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-26"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Elizabeth G. Atkinson; Adam X. Maihofer; Masahiro Kanai; Alicia R. Martin; Konrad J. Karczewski; Marcos L. Santoro; Jacob C. Ulirsch; Yoichiro Kamatani; et al. (2021). *Tractor uses local ancestry to enable the inclusion of admixed individuals in GWAS and to boost power*. Nature Genetics. DOI: 10.1038/s41588-020-00766-y. Source: [https://doi.org/10.1038/s41588-020-00766-y](https://doi.org/10.1038/s41588-020-00766-y).
+
+# One-Sentence Summary
+
+Primary record for local-ancestry-aware GWAS and ancestry-specific effects.
+
+# Scope for simitall
+
+Use this record to guide source selection, input requirements, and limitations
+for local-ancestry-aware GWAS and ancestry-specific effects. It must not be used to imply that the associated panel, raw data,
+or external analysis software is packaged with simitall.
+
+# Agent-Safe Takeaways
+
+- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
+- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
+- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+
+# Inputs to Specify
+
+- Local data path or reproducible source/download version.
+- Reference build, chromosome naming, sample manifest, and filters.
+- The intended endpoint: GWAS, cross design, genomic selection, ancestry analysis, or benchmark.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- Panel properties are not transferable across different subsets, populations, species, or reference builds.
+- In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against
+Crossref on 2026-09-26. Replace or extend it with source-faithful,
+page-specific notes after reviewing the full text.

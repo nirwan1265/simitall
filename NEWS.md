@@ -1,5 +1,18 @@
 # simitall 0.1.0
 
+- Added a retrieval-grounded, read-only agent interface through
+  `search_simitall_knowledge()`, `simitall_ask()`, and
+  `simitall_agent_tools()`. Added an optional local Shiny chat interface that
+  uses a locally stored OpenAI API key and never executes simulations.
+
+- Added mixed-model GWAS analysis, Manhattan/QQ plotting, and causal-truth
+  benchmarking through `rrBLUP`.
+- Added GBLUP, RR-BLUP, Bayesian, and random-forest genomic prediction,
+  cross-validation, genomic kinship, diversity-aware parent selection,
+  crossing-plan design, and one-round genomic-selection orchestration.
+- GWAS cohort simulation now writes causal-variant truth and per-sample true
+  breeding values.
+
 * Added package-backed breeding phenotype wrappers: `simstudy` provides
   ordinal, Poisson, negative-binomial, and shared family effects, while
   `pedtricks` provides direct, maternal, and paternal pedigree effects with

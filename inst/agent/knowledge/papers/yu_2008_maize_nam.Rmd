@@ -1,0 +1,64 @@
+---
+id: "paper_yu_2008_maize_nam"
+document_type: "paper_summary"
+title: "The nested association mapping population: a powerful resource for the dissection of complex traits in maize"
+citation_key: "Yu2008MaizeNAM"
+authors: "Yu, J., et al."
+year: 2008
+doi: "10.1534/genetics.107.074245"
+journal: "Genetics"
+url: "https://www.ars.usda.gov/ARSUserFiles/60701500/Publications/Holland/HollandYuGenetics08.pdf"
+domains: ["maize", "breeding", "qtl_mapping", "gwas"]
+techniques: ["nested_association_mapping", "multiparent_population", "linkage_mapping"]
+organisms: ["maize"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Yu, J., et al. (2008). *The nested association mapping population: a powerful resource for the dissection of complex traits in maize*. Genetics. DOI: 10.1534/genetics.107.074245. Source: [https://www.ars.usda.gov/ARSUserFiles/60701500/Publications/Holland/HollandYuGenetics08.pdf](https://www.ars.usda.gov/ARSUserFiles/60701500/Publications/Holland/HollandYuGenetics08.pdf).
+
+# One-Sentence Summary
+
+Presents the maize nested association mapping design, which combines multiple biparental families sharing a common parent to obtain both structured linkage information and broader founder diversity.
+
+# Scope for simitall
+
+Use as the primary conceptual reference for simitall NAM workflows. A simulated NAM population should preserve family labels, shared-parent design, chromosome-specific recombination, and founder ancestry truth.
+
+# Agent-Safe Takeaways
+
+- NAM is not an unstructured diversity panel: family membership is central to analysis and validation.
+- A common parent crossed to diverse founders creates multiple related recombinant families.
+- Association or QTL workflows must account for both family structure and marker effects.
+
+# Inputs to Specify
+
+- Common-parent and founder haplotypes
+- Family sizes and selfing or advancement design
+- Chromosome-specific maps and marker panel
+
+# Expected Outputs
+
+- Family labels
+- Founder ancestry and breakpoint truth
+- Chromosome-aware genotypes suitable for structured mapping
+
+# Limitations and Guardrails
+
+- A synthetic NAM population should not be described as a reproduction of a real panel without real founder haplotypes and recombination maps.
+- Population size allocation across families affects power and balance.
+
+# Questions This Record Can Ground
+
+- What data are required before simulating a maize NAM population?
+- Why must family labels be retained in NAM GWAS or QTL analysis?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

@@ -113,7 +113,7 @@ if [[ "$PROFILE" == "population" || "$PROFILE" == "full" ]]; then
   "$CONDA_EXE" run -n "$ENV_NAME" Rscript -e \
     'if (!requireNamespace("simplePHENOTYPES", quietly=TRUE)) remotes::install_github("samuelbfernandes/simplePHENOTYPES", dependencies=TRUE, upgrade="never")'
   "$CONDA_EXE" run -n "$ENV_NAME" Rscript -e \
-    'needed <- c("simstudy", "pedtricks"); missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly=TRUE)]; if (length(missing)) install.packages(missing, repos="https://cloud.r-project.org")'
+    'needed <- c("simstudy", "pedtricks", "rrBLUP", "BGLR", "ranger"); missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly=TRUE)]; if (length(missing)) install.packages(missing, repos="https://cloud.r-project.org")'
 fi
 
 if [[ "$PROFILE" == "omics" || "$PROFILE" == "full" ]]; then

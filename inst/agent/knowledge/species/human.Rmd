@@ -1,0 +1,50 @@
+---
+id: species_human
+document_type: species_note
+status: expanded
+domains: [human, gwas, ancestry, admixture, local_ancestry, ethics]
+related_functions: [simulate_gwas_cohort, analyze_gwas]
+source_priority: primary_papers_official_docs_and_ethics_guidance
+last_reviewed: 2026-09-26
+---
+
+# Human: Species and Ancestry-Aware GWAS Guidance
+
+## Non-Negotiable Modeling Context
+
+Human simulations are diploid, chromosome-aware, and sensitive to population
+structure, admixture, sex chromosomes, recombination maps, relatedness,
+phenotype ascertainment, and ethical handling of real data. Synthetic data are
+useful for method benchmarks; they must not be presented as a clinical cohort,
+a real ancestry group, or evidence of medical validity.
+
+## Global Versus Local Ancestry
+
+- **Global ancestry** summarizes genome-wide ancestry proportions and is often
+  represented by PCs, admixture proportions, or population labels.
+- **Local ancestry** labels ancestry along each chromosome segment. It requires
+  phased cohort haplotypes and suitable reference panels.
+- **Admixture mapping** tests local-ancestry variation for association with a
+  phenotype; it is distinct from a standard SNP GWAS.
+- **Ancestry-aware GWAS** may model local ancestry and ancestry-specific allele
+  effects. It is not accomplished merely by adding a generic `pop` column.
+
+## Required Inputs for Ancestry-Aware Analyses
+
+- Cohort VCF/genotypes with consistent build and allele conventions.
+- Sample metadata, phenotype definition, covariates, and relatedness handling.
+- Phased haplotypes where required.
+- A documented reference-panel choice and ancestry labels.
+- Local ancestry calls plus uncertainty when doing local-ancestry association.
+
+The current simitall agent can plan these workflows and check their required
+inputs. It must not claim to run RFMix, Tractor, or clinical association
+inference unless an installed, versioned external workflow is provided.
+
+## Key Sources
+
+- 1000 Genomes Project Consortium (2015): DOI 10.1038/nature15393.
+- Maples et al. (2013), RFMix: DOI 10.1016/j.ajhg.2013.06.020.
+- Atkinson et al. (2021), Tractor: DOI 10.1038/s41588-020-00766-y.
+- Sun et al. (2025), local-ancestry association review: DOI
+  10.1016/j.ajhg.2025.03.004.

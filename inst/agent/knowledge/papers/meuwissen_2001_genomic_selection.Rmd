@@ -1,0 +1,64 @@
+---
+id: "paper_meuwissen_2001_genomic_selection"
+document_type: "paper_summary"
+title: "Prediction of total genetic value using genome-wide dense marker maps"
+citation_key: "Meuwissen2001GenomicSelection"
+authors: "Meuwissen, T. H. E., Hayes, B. J., and Goddard, M. E."
+year: 2001
+doi: null
+journal: "Genetics"
+url: "https://academic.oup.com/genetics/article/157/4/1819/6048119"
+domains: ["genomic_selection", "quantitative_genetics", "breeding"]
+techniques: ["genomic_prediction", "marker_effect_models", "training_validation"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Meuwissen, T. H. E., Hayes, B. J., and Goddard, M. E. (2001). *Prediction of total genetic value using genome-wide dense marker maps*. Genetics. DOI: not assigned in this starter record. Source: [https://academic.oup.com/genetics/article/157/4/1819/6048119](https://academic.oup.com/genetics/article/157/4/1819/6048119).
+
+# One-Sentence Summary
+
+Establishes the core genomic-selection idea: use dense genome-wide markers to predict total genetic value and select candidates before complete phenotyping.
+
+# Scope for simitall
+
+Use as the foundational reference for training/testing splits, genomic estimated breeding values, selection decisions, and multi-cycle gain evaluation.
+
+# Agent-Safe Takeaways
+
+- Prediction performance depends on the relationship between training and candidate populations.
+- Genome-wide marker models can rank candidates even when individual causal loci are not identified.
+- Selection workflows require explicit separation of model fitting, prediction, candidate selection, and crossing.
+
+# Inputs to Specify
+
+- Marker genotypes
+- Training phenotypes
+- Validation design and selection intensity
+
+# Expected Outputs
+
+- Predicted genetic values
+- Prediction accuracy metrics
+- Selected candidate sets
+
+# Limitations and Guardrails
+
+- Random train/test splits can overstate practical breeding accuracy when relatives span folds.
+- Selection gain should be reported alongside inbreeding and diversity changes.
+
+# Questions This Record Can Ground
+
+- How should genomic-selection training and candidate populations be split?
+- Which metrics should accompany genetic gain in a multi-cycle simulation?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

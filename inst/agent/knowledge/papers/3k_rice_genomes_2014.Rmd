@@ -1,0 +1,64 @@
+---
+id: "paper_3k_rice_genomes_2014"
+document_type: "paper_summary"
+title: "The 3,000 rice genomes project"
+citation_key: "3KRiceGenomes2014"
+authors: "The 3,000 Rice Genomes Project"
+year: rice
+doi: "10.1186/2047-217X-3-8"
+journal: "GigaScience"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4035669/"
+domains: ["rice", "haplotype_panels", "population_genetics"]
+techniques: ["reference_panels", "genome_diversity", "population_structure"]
+organisms: ["Oryza_sativa"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+The 3,000 Rice Genomes Project (rice). *The 3,000 rice genomes project*. GigaScience. DOI: 10.1186/2047-217X-3-8. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC4035669/](https://pmc.ncbi.nlm.nih.gov/articles/PMC4035669/).
+
+# One-Sentence Summary
+
+Describes the 3,000 Rice Genomes Project, a broad rice diversity resource for genomic analyses.
+
+# Scope for simitall
+
+Use as the data-source reference for rice panel workflows. A simitall recipe should require a locally downloaded, documented subset rather than assume remote access or distribute the full project data.
+
+# Agent-Safe Takeaways
+
+- Diversity panels enable realistic founder differences and population structure.
+- Subset choices can strongly change allele spectra and LD.
+- Sample origin and subgroup labels are scientifically relevant metadata.
+
+# Inputs to Specify
+
+- Panel genotype or haplotype data
+- Reference build and chromosome selection
+- Subpopulation and quality-control filters
+
+# Expected Outputs
+
+- Panel subset
+- Sample and subgroup metadata
+- Filtering provenance
+
+# Limitations and Guardrails
+
+- A resource-scale panel is not a ready-to-run package example.
+- Do not mix coordinate systems or reference assemblies across inputs.
+
+# Questions This Record Can Ground
+
+- How should a 3K rice panel be subset for a simulation?
+- Which provenance fields should accompany an empirical haplotype panel?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

@@ -1,0 +1,60 @@
+---
+id: "paper_bradbury_2007_tassel_software_for_association_mapping_of_complex"
+document_type: "paper_summary"
+title: "TASSEL: software for association mapping of complex traits in diverse samples"
+citation_key: "Bradbury2007"
+authors: "Peter J. Bradbury; Zhiwu Zhang; Dallas E. Kroon; Terry M. Casstevens; Yogesh Ramdoss; Edward S. Buckler"
+year: 2007
+doi: "10.1093/bioinformatics/btm308"
+journal: "Bioinformatics"
+url: "https://doi.org/10.1093/bioinformatics/btm308"
+domains: ["gwas"]
+techniques: ["tassel", "association_mapping", "mixed_models"]
+organisms: ["plants", "general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-25"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Peter J. Bradbury; Zhiwu Zhang; Dallas E. Kroon; Terry M. Casstevens; Yogesh Ramdoss; Edward S. Buckler (2007). *TASSEL: software for association mapping of complex traits in diverse samples*. Bioinformatics. DOI: 10.1093/bioinformatics/btm308. Source: [https://doi.org/10.1093/bioinformatics/btm308](https://doi.org/10.1093/bioinformatics/btm308).
+
+# One-Sentence Summary
+
+Primary methodological record for TASSEL workflows for association and linkage analysis.
+
+# Scope for simitall
+
+Use this record to ground recommendations about TASSEL workflows for association and linkage analysis. Preserve tool version, inputs, parameter settings, and a validation design in all generated workflow recipes.
+
+# Agent-Safe Takeaways
+
+- The method belongs in a workflow only after the biological question and input data are resolved.
+- Keep analysis or simulation parameters separate from biological truth so each can be audited.
+- Use appropriate quality control and benchmark outputs rather than relying on a single headline metric.
+
+# Inputs to Specify
+
+- Versioned input data and reference or coordinate metadata.
+- Method-specific parameters and random seed when simulation is involved.
+- A validation target, known truth, or independent held-out design.
+
+# Expected Outputs
+
+- Reproducible result files and an explicit configuration record.
+- Quality-control summaries appropriate to the method.
+- Benchmark or held-out validation metrics when available.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- The agent must not infer that the tool or resource is installed, bundled, or appropriate for every organism.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. Replace or extend it with source-faithful, page-specific notes after reviewing the full text.

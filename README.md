@@ -1,22 +1,91 @@
 # simitall
 
-`simitall` (SIMulate IT ALL) is an R-first toolkit for building coordinated,
-truth-aware genomics simulations. It connects genome and annotation generation,
-DNA read simulation, hybrid assembly evaluation, GWAS cohorts, phenotype
-architectures, standalone or GWAS-linked RNA-seq experiments, breeding
-designs, donor-aware single-cell experiments, cell-type eQTLs, and SimuPOP
-mating schemes through one R API.
+`simitall` (SIMulate IT ALL) is an R-first framework for creating coordinated,
+truth-aware genomics simulations and evaluating the analyses performed on them.
+It connects genome and annotation generation, DNA read simulation and hybrid
+assembly, breeding populations, GWAS and genomic selection, bulk and
+single-cell RNA-seq/eQTLs, ChIP-seq, and benchmark reports through one
+reproducible R API.
 
-The goal is not to replace mature simulators. `simitall` provides a reproducible
-R layer that makes those tools work together, keeps parameters in one analysis,
-and emits compatible truth files for benchmarking.
+The project is designed to make a complete study easier to reason about: define
+biological truth once, generate linked data modalities from the same individuals
+where appropriate, run an analysis, and compare its result with the known
+truth. `simitall` orchestrates established scientific tools rather than trying
+to replace them, while keeping parameters, seeds, provenance, and compatible
+truth outputs together.
+
+**Start here:** [Tutorial map](#tutorial-map) | [Results and validation](docs/VALIDATION.md) | [Agentic planning and chat](#agentic-planning-and-chat)
+
+## What simitall can do
+
+- **Simulate:** genomes, annotations, reads, assemblies, founder panels,
+  breeding populations, phenotypes, GWAS cohorts, RNA-seq, single-cell RNA-seq,
+  eQTLs, and ChIP-seq.
+- **Analyze and benchmark:** GWAS, eQTL, genomic-selection, and assembly
+  outputs against the simulated causal, ancestry, feature, or reference truth.
+- **Plan with an agent:** retrieve versioned project knowledge, identify missing
+  inputs, propose a reviewable workflow, and optionally provide a
+  package-verified R recipe.
+
+## Results and validation
+
+Reproducible example figures, their input settings, source-data tables, and the
+scope of each validation are collected in **[Results and Validation](docs/VALIDATION.md)**.
+The page distinguishes implementation checks against known synthetic truth from
+claims of biological realism, and links each figure to the script that generated
+it.
+
+## Agentic planning and chat
+
+The `simitall` agent is a **retrieval-grounded planning assistant**, not an
+unreviewed autonomous analysis runner. It uses the versioned knowledge library
+shipped with the package to interpret a question, prioritize relevant workflows
+and species notes, flag missing inputs, and return the documents that grounded
+its response. It can help formulate a runnable plan, but users remain in
+control of executing simulations and analyses.
+
+The default chat mode is free and offline: it returns a transparent local
+evidence briefing without an API key, account, model download, or GitHub
+connection.
+
+```r
+library(simitall)
+
+answer <- simitall_ask(
+  "Plan a multi-chromosome maize NAM population for GWAS and genomic selection."
+)
+print(answer)
+```
+
+For local natural-language inference, use a free Ollama model installed on the
+same computer. The model receives retrieved project context, while the package
+keeps the grounding documents alongside the answer:
+
+```bash
+ollama pull llama3.2
+```
+
+```r
+answer <- simitall_ask(
+  "What should I simulate first for a maize NAM GWAS and RNA-seq study?",
+  provider = "ollama",
+  data_source = "synthetic",
+  include_code = TRUE
+)
+```
+
+`include_code = TRUE` requests a package-verified recipe only when the input
+requirements have been resolved. If a user names a real panel or resource that
+is not available locally, the agent should ask for its path or explicitly offer
+a synthetic alternative instead of silently substituting toy data. See
+[Agent Knowledge Base](#agent-knowledge-base) for the guardrails and backends.
 
 ## Project architecture
 
 `simitall` is organized around three connected components. The simulation
 engine generates biological truth and synthetic datasets, the analysis engine
 processes either simulated or real datasets, and the agent layer translates a
-scientific request into a reproducible plan that it can run and explain. When
+scientific request into a reproducible plan that it can explain. When
 simulation truth is available, analysis results can be benchmarked
 automatically before reports, figures, and quality-control summaries are
 created.
@@ -29,7 +98,7 @@ flowchart TB
   AGENT["Agent"]
   SIMDESC["Generate biological truth<br/>and datasets"]
   ANADESC["Analyze simulated<br/>or real datasets"]
-  AGENTDESC["Understand requests;<br/>plan, run, and explain"]
+  AGENTDESC["Understand requests;<br/>plan and explain"]
   BENCH["Benchmark against truth"]
   OUTPUT["Reports, figures, and QC"]
 
@@ -50,6 +119,115 @@ scientific software. Every workflow should remain callable directly from R,
 record its parameters and random seeds, and produce outputs that can be rerun
 without the agent.
 
+## Agent Knowledge Base
+
+The package ships a versioned, retrieval-ready knowledge base under
+`inst/agent/knowledge/`. It keeps source-traceable paper summaries separate
+from synthesized technique guides, tool cards, organism notes, direct R
+workflows, definitions, and agent-behavior evaluations. This lets a future
+agent explain a method and recommend a reproducible `simitall` workflow without
+pretending that a paper summary or software default is a universal rule.
+
+```text
+inst/agent/knowledge/
+  papers/        # evidence-linked summaries of individual papers
+  techniques/    # GWAS, selection, breeding, RNA-seq, scRNA-seq, ChIP-seq
+  tools/         # R packages and external software used by simitall
+  species/       # bacteria, human, maize, rice, and Arabidopsis notes
+  workflows/     # complete reproducible simulation and analysis recipes
+  terminology/   # concise domain definitions and aliases
+  evaluations/   # expected safe and evidence-aware agent behavior
+```
+
+See `inst/agent/knowledge/README.md` for the evidence hierarchy and authoring
+rules.
+
+### Local agent and Shiny interface
+
+The first agent release is deliberately **answer-and-plan only**. It performs
+local retrieval over the versioned knowledge base and can optionally ask a
+local Ollama or paid OpenAI model to answer using that context. It returns the
+grounding documents alongside its answer. It cannot execute R code, shell
+commands, downloads, or simulations. That separation keeps a proposed
+workflow reviewable before a user runs it.
+
+Retrieval prioritizes `workflows/`, `techniques/`, organism-specific
+`species/` notes, and `tools/` over broad review papers. By default, model
+answers are **plan-only**: they cannot include code, package installation, or
+external tool recommendations. The prompt contains an explicit allowlist of
+high-level `simitall` functions, and an answer that violates the guardrails is
+replaced with a transparent local evidence briefing. This is intentional: a
+local model may still hallucinate, so users should treat every plan as advice
+to review rather than as an executed analysis.
+
+The default backend is **free and offline**. It generates a transparent
+evidence briefing from the local knowledge library; no account, API key,
+GitHub connection, or model download is needed:
+
+```r
+library(simitall)
+
+answer <- simitall_ask(
+  "Plan a multi-chromosome maize NAM population for GWAS and genomic selection."
+)
+print(answer)
+```
+
+For a free local language model, install Ollama on the computer, download a
+model once, and select the Ollama backend:
+
+```bash
+ollama pull llama3.2
+```
+
+```r
+answer <- simitall_ask(
+  "What should I simulate first for a maize NAM GWAS and RNA-seq study?",
+  provider = "ollama"
+)
+```
+
+For a package-verified code recipe, request it explicitly. This is safer than
+asking a language model to write new code; currently a complete NAM recipe is
+available when the question asks about NAM:
+
+```r
+answer <- simitall_ask(
+  "Plan a 500-line maize NAM population for GWAS, RNA-seq, and genomic selection.",
+  provider = "ollama",
+  data_source = "synthetic",
+  include_code = TRUE
+)
+```
+
+With the default `data_source = "auto"`, a breeding request receives an
+input-dependent code skeleton plus a focused request for a founder panel and
+map; it will never silently replace a named real resource (for example, an
+Arabidopsis 1001 Genomes panel) with toy data. Supply real input paths through
+`input_files`, or explicitly choose `data_source = "synthetic"` when a
+synthetic panel is appropriate.
+
+An optional **local** Shiny interface is included for interactive questions:
+
+```r
+install.packages(c("shiny", "httr2"))
+launch_simitall_agent()
+```
+
+Shiny does not need a GitHub connection. It runs on the user's own R session,
+and defaults to the free local evidence briefing. It can also use an Ollama
+model running on the same computer. Long simulations should later run in a
+separate queued execution service, rather than inside an interactive Shiny
+worker.
+
+The OpenAI backend is optional and paid. Only use it after adding API billing
+and setting `OPENAI_API_KEY` locally. A ChatGPT or Codex subscription/login
+does not provide API usage:
+
+```r
+simitall_ask("Explain LD blocks for GWAS.", provider = "openai")
+```
+
 ## What it can simulate
 
 - Random genomes or reference-derived genomes with tandem and motif repeats
@@ -59,6 +237,10 @@ without the agent.
   clusters, riboswitches, CRISPR arrays, plasmids, and regulatory elements
 - GWAS cohorts with LD blocks, recombination maps, subpopulations, and
   quantitative or binary phenotypes
+- Mixed-model GWAS with kinship, principal components, fixed effects,
+  Manhattan/QQ plots, and causal-variant recovery benchmarks
+- GBLUP, RR-BLUP, Bayesian, and random-forest genomic prediction with
+  leakage-aware cross-validation, parent selection, and crossing plans
 - Advanced quantitative and binary phenotype architectures through
   `simplePHENOTYPES`
 - Ordinal and count traits plus shared breeding-family effects through
@@ -197,7 +379,7 @@ bash install_simitall_linux.sh full
 | Profile | Installed capabilities |
 |---|---|
 | `minimal` | Core R package, genome/annotation simulation, and required R/Python runtime |
-| `population` | Minimal plus SimuPOP, GWAS, breeding, `simplePHENOTYPES`, `simstudy`, and `pedtricks` |
+| `population` | Minimal plus SimuPOP, GWAS, breeding, genomic selection, `rrBLUP`, `BGLR`, `ranger`, `simplePHENOTYPES`, `simstudy`, and `pedtricks` |
 | `omics` | Minimal plus bulk RNA-seq, single-cell, ChIP-seq, Rsubread, Splatter, and ChIPsim |
 | `sequencing` | Minimal plus ART, PBSIM/PBSIM3, Badread, Unicycler, QUAST, samtools, seqkit, and pigz |
 | `full` | Population, omics, sequencing, assembly, evaluation, and all optional backends |
@@ -384,6 +566,84 @@ Important GWAS controls are `n_samples`, SNP/indel rates, `n_pops`, `fst`, LD
 block size, recombination maps, trait type, causal-locus count, and effect-size
 distribution. The cohort writes VCF, genotype, phenotype, population-label,
 recombination, and causal-truth files that can feed the later omics sections.
+
+### 4.1 Run and benchmark a GWAS
+
+`analyze_gwas()` uses the mixed model implemented by `rrBLUP::GWAS()`. It can
+control relatedness with a genomic relationship matrix and population
+structure with fixed effects or marker-derived principal components:
+
+```r
+gwas <- analyze_gwas(
+  genotype_file = "results/gwas/demo.geno.tsv",
+  phenotype = "results/gwas/demo.pheno.tsv",
+  out_prefix = "results/gwas/demo_analysis",
+  trait = "trait",
+  fixed_effects = "pop",
+  n_pcs = 2,
+  min_maf = 0.05
+)
+
+benchmark <- benchmark_gwas(
+  gwas_results = gwas$results,
+  truth = "results/gwas/demo.causal.tsv",
+  out_prefix = "results/gwas/demo_benchmark",
+  fdr_threshold = 0.05,
+  window_bp = 10000
+)
+
+plot_gwas_results(
+  benchmark$results,
+  out_prefix = "results/figures/demo_gwas"
+)
+```
+
+The simulator now records `*.causal.tsv` and `true_breeding_value` truth so
+association power and genomic-prediction accuracy can be measured directly.
+
+### 4.2 Fit genomic models and select parents
+
+Fit GBLUP or RR-BLUP with `rrBLUP`, Bayesian models with `BGLR`, or random
+forest with `ranger`. Candidate samples may have missing phenotypes as long as
+their genotypes are present:
+
+```r
+fit <- fit_genomic_model(
+  genotype_file = "results/gwas/demo.geno.tsv",
+  phenotype = "results/gwas/demo.pheno.tsv",
+  model = "gblup"
+)
+
+predictions <- predict_genomic_values(fit)
+
+cv <- cross_validate_genomic_prediction(
+  genotype_file = "results/gwas/demo.geno.tsv",
+  phenotype = "results/gwas/demo.pheno.tsv",
+  model = "gblup",
+  folds = 5,
+  true_value = "true_breeding_value"
+)
+```
+
+Run one complete prediction-selection-cross-planning round:
+
+```r
+selection <- run_genomic_selection(
+  genotype_file = "results/gwas/demo.geno.tsv",
+  phenotype = "results/gwas/demo.pheno.tsv",
+  out_prefix = "results/selection/cycle1",
+  model = "gblup",
+  n_parents = 10,
+  n_crosses = 20,
+  mating = "minimum_kinship",
+  diversity_penalty = 0.25
+)
+```
+
+The round writes predictions, selected parents, genomic kinship, a crossing
+plan, a fitted-model RDS, and a JSON summary. Recombinant offspring generation
+from selected diploid parents remains a separate breeding step; the package
+does not yet claim an automatic multi-cycle closed loop.
 
 ## 5. Simulate breeding populations
 

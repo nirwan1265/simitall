@@ -1,0 +1,64 @@
+---
+id: "paper_gaynor_2021_alphasimr"
+document_type: "paper_summary"
+title: "AlphaSimR: an R package for breeding program simulations"
+citation_key: "Gaynor2021AlphaSimR"
+authors: "Gaynor, R. C., et al."
+year: 2021
+doi: "10.1093/g3journal/jkab130"
+journal: "G3: Genes, Genomes, Genetics"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8022926/"
+domains: ["plant_breeding", "genomic_selection", "simulation"]
+techniques: ["breeding_program_simulation", "crossing", "selection", "quantitative_genetics"]
+organisms: ["plants", "animals", "general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Gaynor, R. C., et al. (2021). *AlphaSimR: an R package for breeding program simulations*. G3: Genes, Genomes, Genetics. DOI: 10.1093/g3journal/jkab130. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC8022926/](https://pmc.ncbi.nlm.nih.gov/articles/PMC8022926/).
+
+# One-Sentence Summary
+
+Describes AlphaSimR, an R framework for stochastic breeding-program simulation that models genomes, crosses, traits, selection, and breeding operations.
+
+# Scope for simitall
+
+Use as a complementary breeding-engine option, especially for multi-cycle selection experiments. simitall should expose a stable higher-level workflow rather than duplicate every engine feature.
+
+# Agent-Safe Takeaways
+
+- Breeding simulation separates founder generation, meiosis, crossing, phenotyping, selection, and advancement.
+- Quantitative traits can include multiple genetic-effect classes and environmental variation.
+- Simulation is most useful when output QC is compared with intended breeding-population properties.
+
+# Inputs to Specify
+
+- Founder haplotypes or simulated founder genomes
+- Genetic maps and chromosome structure
+- Trait architecture and breeding-cycle design
+
+# Expected Outputs
+
+- Line genotypes and pedigrees
+- Phenotypes and breeding values
+- Selection and genetic-gain summaries
+
+# Limitations and Guardrails
+
+- Engine defaults are not a substitute for species-specific recombination and trait assumptions.
+- Validate simulated LD, heterozygosity, family structure, and response to selection.
+
+# Questions This Record Can Ground
+
+- When should a workflow use AlphaSimR versus the simuPOP bridge?
+- Which outputs are needed to evaluate genetic gain and diversity across cycles?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

@@ -1,0 +1,27 @@
+---
+id: tool_chipsim
+document_type: tool
+status: starter
+software: ChIPsim
+related_functions: [simulate_chipseq, plot_chipseq_results]
+---
+
+# ChIPsim
+
+## Role
+
+ChIPsim is a Bioconductor framework for simulation of ChIP-seq experiments. It
+can generate features, derive read-density profiles, sample read start sites,
+and export reads. Its worked introduction demonstrates nucleosome positioning
+and describes extension to TF-binding experiments.
+
+## simitall Position
+
+`simulate_chipseq()` connects simulated genome annotations to peak truth,
+matched inputs, reads, and evaluation figures. ChIPsim is an optional backend
+and a reference for realistic read-density mechanics.
+
+## Guardrails
+
+Feature density, fragment length, background reads, and read depth each affect
+peak-call performance. Record all four in the truth metadata.

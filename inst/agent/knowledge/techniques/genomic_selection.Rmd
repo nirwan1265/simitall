@@ -1,0 +1,78 @@
+---
+id: technique_genomic_selection
+document_type: technique
+status: starter
+domains: [genomic_selection, genomic_prediction, breeding]
+related_functions: [calculate_genomic_kinship, fit_genomic_model, cross_validate_genomic_prediction, select_parents, design_parent_crosses, run_genomic_selection]
+source_priority: primary_and_official_docs
+last_reviewed: 2026-09-25
+---
+
+# Genomic Selection
+
+## Goal
+
+Genomic selection predicts the genetic merit of unphenotyped candidates from
+genome-wide markers and a phenotyped training population. It differs from GWAS:
+the objective is useful prediction and selection, not inference about a small
+set of significant loci.
+
+## Available Models
+
+- `gblup`: relationship-matrix prediction via `rrBLUP::kin.blup()`.
+- `rrblup`: ridge-regression marker effects via `rrBLUP::mixed.solve()`.
+- `bayes_ridge`, `bayes_a`, `bayes_b`, `bayes_c`, `bayesian_lasso`: Bayesian
+  marker models via `BGLR`.
+- `random_forest`: nonlinear prediction baseline via `ranger`.
+
+## Validation
+
+Random cross-validation can overestimate deployment performance when close
+relatives occur in both folds. Use `split = "group"` with a family, generation,
+or subpopulation column whenever selection targets a related future cohort.
+
+```r
+cv <- cross_validate_genomic_prediction(
+  "results/gwas/cohort.geno.tsv",
+  "results/gwas/cohort.pheno.tsv",
+  model = "gblup",
+  folds = 5,
+  split = "group",
+  group = "family",
+  true_value = "true_breeding_value"
+)
+```
+
+## One Selection Round
+
+```r
+selection <- run_genomic_selection(
+  genotype_file = "results/gwas/cohort.geno.tsv",
+  phenotype = "results/gwas/cohort.pheno.tsv",
+  out_prefix = "results/selection/cycle1",
+  model = "gblup",
+  n_parents = 12,
+  n_crosses = 30,
+  diversity_penalty = 0.25,
+  family_data = "results/gwas/cohort.pheno.tsv",
+  family_col = "family"
+)
+```
+
+This writes a fitted model, candidate predictions, selected parents, a crossing
+plan, kinship matrix, and summary. It does not automatically create offspring
+or run closed multi-cycle selection yet.
+
+## Report
+
+- Predictive correlation, rank correlation, RMSE, MAE, and calibration slope.
+- Correlation of GEBV with simulated true breeding value when available.
+- Selection differential, selected-parent coancestry, family representation,
+  and predicted diversity loss.
+- The training population, target population, model, marker preprocessing, and
+  split design.
+
+## Limits
+
+Prediction accuracy does not transfer automatically across environments,
+generations, species, genotyping platforms, or unrelated populations.

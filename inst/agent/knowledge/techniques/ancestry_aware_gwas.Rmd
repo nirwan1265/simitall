@@ -1,0 +1,54 @@
+---
+id: technique_ancestry_aware_gwas
+document_type: technique
+status: starter
+domains: [gwas, global_ancestry, local_ancestry, admixture_mapping, human_genetics]
+related_functions: [analyze_gwas, search_simitall_knowledge, simitall_ask]
+source_priority: primary_papers_and_official_tool_docs
+last_reviewed: 2026-09-26
+---
+
+# Ancestry-Aware GWAS and Admixture Mapping
+
+## Goal
+
+Separate a standard structure-adjusted SNP GWAS from analyses that explicitly
+use global ancestry, local ancestry, or ancestry-specific allele effects.
+
+## Decision Tree
+
+1. If a cohort is not admixed and the goal is ordinary association testing, use
+   genotype QC, a kinship model, and PCs or justified fixed covariates.
+2. If the cohort contains ancestry structure but no local ancestry calls, model
+   global structure and relatedness; do not call this admixture mapping.
+3. If the goal is local ancestry or ancestry-specific effects, require phased
+   cohort haplotypes, reference panels, an ancestry-label definition, and a
+   local-ancestry inference plan.
+4. If the goal is a method benchmark, simulate known ancestry tracts and retain
+   the tract truth, global proportions, causal variants, and effect model.
+
+## Required Inputs
+
+- Genome build, chromosome naming, allele encoding, and genotype QC record.
+- Phenotype, covariates, sample identifiers, and relatedness information.
+- For local ancestry: phased data, reference panels, panel/sample manifests,
+  ancestry labels, and uncertainty-aware segment calls.
+- A pre-specified test: SNP association, admixture mapping, or ancestry-specific
+  SNP effects.
+
+## QC and Reporting
+
+- Report global-ancestry distributions, PCs, relatedness, phenotype balance,
+  and missingness by ancestry/group.
+- Validate local ancestry against known simulated truth when benchmarking.
+- Report reference-panel composition and acknowledge imperfect reference
+  matching.
+- Do not interpret an ancestry label as a biological essence or a clinical
+  conclusion.
+
+## simitall Status
+
+`simitall` can simulate structured cohorts, retain simulated subpopulation
+labels, and run a structure-aware GWAS. It does **not** currently provide an
+end-to-end RFMix/Tractor runner. The agent should emit an input checklist and
+external workflow boundary, not invent a `run_ancestry_gwas()` function.

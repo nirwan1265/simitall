@@ -1,0 +1,116 @@
+---
+id: paper_shi_2023_plant_pan_genomics
+document_type: paper_summary
+title: "Plant pan-genomics and its applications"
+citation_key: "shi2023plantpangenomics"
+authors: "Shi, Tian, Lai, and Huang"
+year: 2023
+doi: "10.1016/j.molp.2022.12.009"
+journal: "Molecular Plant"
+url: "https://doi.org/10.1016/j.molp.2022.12.009"
+domains:
+  - plant_genomics
+  - pan_genomics
+  - structural_variation
+techniques:
+  - genome_assembly
+  - graph_genome
+  - long_read_sequencing
+  - structural_variant_detection
+organisms:
+  - plants
+  - Arabidopsis
+  - rice
+  - maize
+  - wheat
+  - soybean
+evidence_status: unreviewed
+source_file: "Plant pan-genomics and its applications.pdf"
+summarized_by: "Codex (GPT-6)"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Shi, J., Tian, Z., Lai, J., and Huang, X. (2023). Plant pan-genomics and its applications. *Molecular Plant* 16, 168–186. https://doi.org/10.1016/j.molp.2022.12.009 (PDF p. 1).
+
+# One-Sentence Summary
+
+This review explains how plant pan-genomes capture core and variable DNA, how structural variation and genome-assembly methods shape them, and how pan-genomes can improve genetic studies and breeding (PDF pp. 1–19).
+
+# Research Question
+
+What drives variable plant genome sequences, how can plant pan-genomes be represented and completed, and what applications do they enable in genetics and breeding? This paraphrases the review scope (PDF pp. 1–3).
+
+# Biological System
+
+The subject is plant species and their intra-specific genome diversity, with examples from Arabidopsis, rice, maize, soybean, wheat, barley, tomato, potato, cotton and other crops (PDF pp. 1–6, Table 1).
+
+# Study Design
+
+Narrative review of plant pan-genome construction, structural variation, assembly representation, gapless or telomere-to-telomere genomes and genetic/breeding applications (PDF pp. 1–19, Figures 1–3). A new comparative pan-genome analysis by the authors: Not reported.
+
+# Data
+
+The review synthesizes published assemblies, resequencing studies, structural-variation analyses and pan-genome resources. It reports examples of population sizes and pan-genome representations in Table 1, but provides no unified raw data matrix (PDF pp. 5–10, Table 1).
+
+# Methods
+
+- Describe structural-variation sources including transposable elements, non-allelic homologous recombination, introgression or horizontal gene transfer and fractionation after polyploidization (PDF pp. 3–5, Figure 1).
+- Review short-read structural-variant detection, map-to-pan construction, high-quality assembly comparison and graph-based pan-genomes (PDF pp. 5–10, Figure 2).
+- Summarize gapless or telomere-to-telomere plant genome progress (PDF pp. 10–15, Table 2).
+- Discuss applications to genetic mapping, missing heritability, epigenomic mapping, genome editing and de novo domestication (PDF pp. 15–18, Figure 3).
+
+# Software and Versions
+
+The review discusses computational strategies and tools in the cited literature but does not specify one software environment or version set used by the authors. Exact software versions: Not reported (PDF pp. 5–10).
+
+# Important Parameters
+
+Important considerations include genome assembly quality, read length, structural-variant size and complexity, representation method, reference bias, population size and the degree of sequence diversity captured (PDF pp. 3–10). Universal numerical thresholds: Not reported.
+
+# Inputs and Outputs
+
+Inputs include genome assemblies, short- and long-read sequence data, population resequencing data and annotation resources. Outputs include core and variable genome sequences, structural-variant calls, graph or linear pan-genome representations and candidate loci for genetics or breeding (PDF pp. 1–10, 15–18).
+
+# Main Results
+
+The review defines a plant pan-genome as the collection of core and variable DNA sequences in a species and emphasizes that plant genomes contain substantial sequence diversity (PDF pp. 1–3). It identifies transposable elements, non-allelic homologous recombination, introgression or horizontal transfer and fractionation as major drivers of variable sequences (PDF pp. 3–5, Figure 1). The authors argue that graph and high-quality pan-genome references can reduce reference bias, reveal additional loci and support breeding applications (PDF pp. 10–18, Figure 3).
+
+# Assumptions
+
+Pan-genome applications assume that additional assemblies and structural variants capture biologically meaningful diversity and that improved references reduce biases present in a single linear reference (PDF pp. 1–3, 15–18).
+
+# Limitations
+
+The review notes that complex structural variants are difficult to detect and represent, non-genic regions remain incomplete in draft assemblies, and graph or pan-genome analysis requires substantial sequencing and computational resources (PDF pp. 5–12).
+
+# Reproducible Implementation Details
+
+No single accession set, assembly pipeline, structural-variant caller, graph-construction command, filtering threshold or software lockfile is reported. Exact implementation details: Not reported (PDF pp. 5–12).
+
+# Relevance to simitall
+
+**Inference, not an author recommendation:** Pan-genome concepts could inform simitall support for structural-variant-aware references, reference-bias documentation and genotype-to-trait evidence. The paper does not mention or evaluate simitall (PDF pp. 1–19).
+
+# Claims and Evidence
+
+| Claim | Evidence | Source location | Confidence |
+|---|---|---|---|
+| A plant pan-genome includes core and variable DNA sequences from a species. | Abstract and introduction. | PDF pp. 1–3 | High |
+| Transposable elements, NAHR, introgression/HGT and fractionation drive variable sequences. | Structural-variation section and figure. | PDF pp. 3–5, Figure 1 | High for author synthesis |
+| Map-to-pan, assembly comparison and graph approaches are major representation strategies. | Methodological development section. | PDF pp. 5–10, Figure 2 | High |
+| Pan-genomes may reveal loci missed by a single linear reference. | Applications figure and discussion. | PDF pp. 15–18, Figure 3 | High for author interpretation |
+| Plant pan-genomics has applications in genetic studies and breeding. | Applications discussion. | PDF pp. 15–18, Figure 3 | High |
+
+# Terminology
+
+- **Pan-genome:** Collection of all non-redundant DNA sequences in a species, including core and variable regions (PDF pp. 1–3).
+- **Core genome:** Sequences shared broadly among individuals of a species (PDF pp. 1–3).
+- **Variable or dispensable genome:** Sequences present in only a subset of individuals (PDF pp. 1–3).
+- **Graph pan-genome:** Genome representation that uses alternative paths to represent sequence diversity (PDF pp. 5–10, Figure 2).
+
+# References
+
+Primary source: Shi et al. (2023), cited above. The review’s cited studies are listed in its References section beginning on PDF p. 18. No outside sources were used.

@@ -1,0 +1,53 @@
+---
+id: technique_pedigree_breeding
+document_type: technique
+status: starter
+domains: [breeding, pedigree, parentage, maternal_effects, genomic_selection]
+related_functions: [simulate_breeding, simupop_api, simulate_parental_effects]
+source_priority: package_docs_and_primary_papers
+last_reviewed: 2026-09-26
+---
+
+# Pedigree-Aware Breeding
+
+## Goal
+
+Use recorded parentage as an input to breeding simulation, phenotype simulation,
+relationship analysis, and validation design. A pedigree graph is not the same
+as a marker-derived kinship matrix; both can be useful and they should be
+retained separately.
+
+## Pedigree Input Contract
+
+A minimum pedigree table has unique `id`, `sire`, and `dam` columns. Missing
+parents should be explicit missing values. Every non-missing parent ID must
+also appear as an individual ID. Store optional generation, sex, family,
+location, cross, and source columns without changing parent identifiers.
+
+Before use, check:
+
+- duplicate individual IDs;
+- unknown parents;
+- cycles or children older than parents where generation data exist;
+- aliases/synonyms for cultivars or inbred lines;
+- missingness and disconnected families.
+
+## simitall Paths
+
+- `simulate_breeding()` creates explicit designed crosses and writes family,
+  ancestry, breakpoint, and cross-graph outputs.
+- `simulate_parental_effects()` accepts an arbitrary pedigree and uses
+  `pedtricks` for direct, maternal, and paternal phenotype effects.
+- `simupop_api()` supports advanced `PedigreeMating`, but currently requires a
+  user-supplied Python hook that constructs the SimuPOP pedigree object.
+
+Therefore, the package already supports pedigree-aware phenotype simulation and
+advanced SimuPOP pedigree evolution, but an R-only TSV-to-PedigreeMating helper
+is a future convenience feature, not a present promise.
+
+## QC Outputs
+
+- Pedigree graph and generation/family summary.
+- Founder contributions and inbreeding/relatedness summaries when defined.
+- Genotype-pedigree concordance checks when markers are available.
+- Family-aware training/test folds for prediction and GWAS sensitivity checks.

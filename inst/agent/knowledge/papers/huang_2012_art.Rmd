@@ -1,0 +1,63 @@
+---
+id: "paper_huang_2012_art"
+document_type: "paper_summary"
+title: "ART: a next-generation sequencing read simulator"
+citation_key: "Huang2012ART"
+authors: "Huang, W., et al."
+year: 2012
+doi: "10.1093/bioinformatics/btr708"
+journal: "Bioinformatics"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3278762/"
+domains: ["sequencing", "simulation", "illumina"]
+techniques: ["short_read_simulation", "illumina_reads", "error_profiles"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Huang, W., et al. (2012). *ART: a next-generation sequencing read simulator*. Bioinformatics. DOI: 10.1093/bioinformatics/btr708. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC3278762/](https://pmc.ncbi.nlm.nih.gov/articles/PMC3278762/).
+
+# One-Sentence Summary
+
+Introduces ART, a simulator for next-generation sequencing reads with technology-specific empirical error profiles.
+
+# Scope for simitall
+
+Use as the short-read backend in simitall hybrid-assembly workflows. Record the ART profile, read length, insert distribution, coverage, and random seed as required provenance.
+
+# Agent-Safe Takeaways
+
+- Illumina simulation requires a platform profile, paired-end configuration, read length, insert distribution, and coverage.
+- Read-level errors affect assembly and variant-calling benchmarks.
+- Simulation parameters must be reported to make an assembly benchmark reproducible.
+
+# Inputs to Specify
+
+- Reference FASTA
+- Sequencing-system profile
+- Read length, paired-end insert model, coverage, and seed
+
+# Expected Outputs
+
+- FASTQ reads
+- Tool log and parameter record
+
+# Limitations and Guardrails
+
+- An empirical error profile does not represent every instrument, library preparation, or batch effect.
+- Do not equate nominal coverage with effective genome coverage without QC.
+
+# Questions This Record Can Ground
+
+- Which parameters are essential for a paired-end ART simulation?
+- What provenance should accompany synthetic Illumina reads?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

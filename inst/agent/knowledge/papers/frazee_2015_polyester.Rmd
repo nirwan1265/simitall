@@ -1,0 +1,64 @@
+---
+id: "paper_frazee_2015_polyester"
+document_type: "paper_summary"
+title: "Polyester: simulating RNA-seq datasets with differential transcript expression"
+citation_key: "Frazee2015Polyester"
+authors: "Frazee, A. C., et al."
+year: 2015
+doi: "10.1093/bioinformatics/btv272"
+journal: "Bioinformatics"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4635655/"
+domains: ["rnaseq", "simulation"]
+techniques: ["bulk_rnaseq", "read_simulation", "differential_expression", "isoforms"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Frazee, A. C., et al. (2015). *Polyester: simulating RNA-seq datasets with differential transcript expression*. Bioinformatics. DOI: 10.1093/bioinformatics/btv272. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC4635655/](https://pmc.ncbi.nlm.nih.gov/articles/PMC4635655/).
+
+# One-Sentence Summary
+
+Introduces Polyester for simulation of RNA-seq reads with transcript-level differential expression and replicate-aware count generation.
+
+# Scope for simitall
+
+Use as a sequencing-read layer after simitall generates sample-level expression truth. Keep biological expression effects and technical FASTQ simulation as separate, traceable stages.
+
+# Agent-Safe Takeaways
+
+- Read simulation should start from a declared transcriptome and expression design.
+- Replicates, condition effects, and transcript-level effects should be saved as truth metadata.
+- Count-level and FASTQ-level simulations answer different benchmarking questions.
+
+# Inputs to Specify
+
+- Transcript sequences or annotation
+- Sample-level expression design
+- Read and fragment settings
+
+# Expected Outputs
+
+- Simulated RNA-seq reads
+- Expression or count truth
+- Replicate and condition metadata
+
+# Limitations and Guardrails
+
+- FASTQ realism depends on the chosen transcriptome and technical parameters.
+- Polyester alone does not create genotype-linked eQTL architecture.
+
+# Questions This Record Can Ground
+
+- How should simulated GWAS genotypes be connected to RNA-seq expression truth?
+- When are read-level RNA-seq outputs necessary instead of a count matrix?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

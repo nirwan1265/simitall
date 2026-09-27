@@ -1,0 +1,18 @@
+---
+id: species_potato
+document_type: species_note
+status: starter
+domains: [potato, tetraploid, breeding, clonal_propagation]
+related_functions: [simulate_breeding, simulate_parental_effects]
+source_priority: species_specific_literature
+last_reviewed: 2026-09-26
+---
+
+# Potato: Species Guidance
+
+Cultivated potato is commonly autotetraploid and clonally propagated. A diploid
+simulation can be a useful simplified scenario, but it must be labeled as such.
+For a realistic breeding design, specify ploidy, allele dosage representation,
+multivalent versus bivalent pairing assumptions, clonal propagation, and
+parental pedigree. Do not use diploid Mendelian genotype-frequency expectations
+for a tetraploid model.

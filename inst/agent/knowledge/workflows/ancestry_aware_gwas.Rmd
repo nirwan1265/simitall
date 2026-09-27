@@ -1,0 +1,36 @@
+---
+id: workflow_ancestry_aware_gwas
+document_type: workflow
+status: starter
+domains: [human_gwas, ancestry, admixture_mapping]
+related_functions: [analyze_gwas, simitall_ask]
+source_priority: primary_papers_and_official_tool_docs
+last_reviewed: 2026-09-26
+---
+
+# Ancestry-Aware GWAS Workflow Boundary
+
+## Use When
+
+Use this workflow for an admixed or multi-ancestry cohort when global structure,
+local ancestry, or ancestry-specific effects are part of the question.
+
+## Stages
+
+1. Lock the reference build, sample manifest, phenotype definition, and QC plan.
+2. Perform genotype QC and relatedness assessment.
+3. Estimate global structure and decide whether a conventional mixed-model GWAS
+   answers the question.
+4. For local ancestry, phase the cohort and infer ancestry using versioned
+   reference panels and an external validated method such as RFMix.
+5. Run the selected test: standard SNP GWAS with PCs/kinship, admixture mapping,
+   or ancestry-specific association using an external tool such as Tractor.
+6. Validate calibration, sensitivity to reference panels/covariates, and, for
+   simulations, local-ancestry and causal-effect recovery.
+
+## Package Boundary
+
+The current package may create a structured synthetic benchmark and run its
+ordinary mixed-model GWAS. It does not automatically phase cohorts, infer local
+ancestry, or execute Tractor. That boundary should be shown clearly in agent
+answers and reports.

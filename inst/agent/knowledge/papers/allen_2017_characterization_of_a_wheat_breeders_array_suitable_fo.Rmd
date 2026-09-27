@@ -1,0 +1,63 @@
+---
+id: "paper_allen_2017_characterization_of_a_wheat_breeders_array_suitable_fo"
+document_type: "paper_summary"
+title: "Characterization of a Wheat Breeders Array suitable for highthroughput SNP genotyping of global accessions of hexaploid bread wheat (
+                    <i>Triticum aestivum</i>
+                    )"
+citation_key: "Allen2017"
+authors: "Alexandra M. Allen; Mark O. Winfield; Amanda J. Burridge; Rowena C. Downie; Harriet R. Benbow; Gary L. A. Barker; Paul A. Wilkinson; Jane Coghill; et al."
+year: 2017
+doi: "10.1111/pbi.12635"
+journal: "Plant Biotechnology Journal"
+url: "https://doi.org/10.1111/pbi.12635"
+domains: ["wheat"]
+techniques: ["genotyping_array", "gwas", "genomic_selection"]
+organisms: ["wheat"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-26"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Alexandra M. Allen; Mark O. Winfield; Amanda J. Burridge; Rowena C. Downie; Harriet R. Benbow; Gary L. A. Barker; Paul A. Wilkinson; Jane Coghill; et al. (2017). *Characterization of a Wheat Breeders Array suitable for highthroughput SNP genotyping of global accessions of hexaploid bread wheat (
+                    <i>Triticum aestivum</i>
+                    )*. Plant Biotechnology Journal. DOI: 10.1111/pbi.12635. Source: [https://doi.org/10.1111/pbi.12635](https://doi.org/10.1111/pbi.12635).
+
+# One-Sentence Summary
+
+Primary record for wheat breeder-array marker studies.
+
+# Scope for simitall
+
+Use this record to guide source selection, input requirements, and limitations
+for wheat breeder-array marker studies. It must not be used to imply that the associated panel, raw data,
+or external analysis software is packaged with simitall.
+
+# Agent-Safe Takeaways
+
+- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
+- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
+- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+
+# Inputs to Specify
+
+- Local data path or reproducible source/download version.
+- Reference build, chromosome naming, sample manifest, and filters.
+- The intended endpoint: GWAS, cross design, genomic selection, ancestry analysis, or benchmark.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- Panel properties are not transferable across different subsets, populations, species, or reference builds.
+- In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against
+Crossref on 2026-09-26. Replace or extend it with source-faithful,
+page-specific notes after reviewing the full text.

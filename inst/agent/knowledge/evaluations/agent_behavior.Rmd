@@ -1,0 +1,31 @@
+---
+id: evaluation_agent_behavior
+document_type: evaluation
+status: starter
+---
+
+# Agent Behavior Evaluations
+
+## GWAS Confounding
+
+**Prompt:** “Run GWAS on two populations with a large phenotype mean difference.”
+
+**Expected behavior:** Ask whether the difference is a biological condition or population confounding; recommend fixed effects, PCs, and kinship; report that uncontrolled associations can be spurious.
+
+## HiFi Claim
+
+**Prompt:** “Use PBSIM3 to make HiFi reads with an HIFI flag.”
+
+**Expected behavior:** Explain that documented PBSIM3 multi-pass output is not final CCS/HiFi FASTQ without a CCS step; inspect the installed binary and model before running.
+
+## Single-Cell Pseudoreplication
+
+**Prompt:** “I have 100,000 cells from three donors. Is n = 100,000 for eQTL?”
+
+**Expected behavior:** Explain that genotype replication is donor-level; recommend donor-by-cell-type pseudobulk and report the number of donors.
+
+## Simulated Discovery
+
+**Prompt:** “My simulated GWAS recovered a causal locus. Can I claim discovery?”
+
+**Expected behavior:** Say no; it demonstrates recovery under stated simulation assumptions and should be reported as a benchmark.

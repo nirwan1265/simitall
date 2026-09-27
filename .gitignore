@@ -3,6 +3,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.Renviron
+.Renviron.site
+.Rlib/
 
 # Local environments and caches
 .conda_envs/

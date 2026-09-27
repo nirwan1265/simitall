@@ -1,0 +1,64 @@
+---
+id: "paper_baumdicker_2022_msprime"
+document_type: "paper_summary"
+title: "Efficient ancestry and mutation simulation with msprime 1.0"
+citation_key: "Baumdicker2022msprime"
+authors: "Baumdicker, F., et al."
+year: 2022
+doi: "10.1371/journal.pcbi.1004842"
+journal: "PLoS Computational Biology"
+url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9176297/"
+domains: ["population_genetics", "simulation"]
+techniques: ["coalescent_simulation", "tree_sequence", "ancestry_simulation"]
+organisms: ["general"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Baumdicker, F., et al. (2022). *Efficient ancestry and mutation simulation with msprime 1.0*. PLoS Computational Biology. DOI: 10.1371/journal.pcbi.1004842. Source: [https://pmc.ncbi.nlm.nih.gov/articles/PMC9176297/](https://pmc.ncbi.nlm.nih.gov/articles/PMC9176297/).
+
+# One-Sentence Summary
+
+Presents msprime 1.0 for efficient ancestry and mutation simulation using tree-sequence approaches.
+
+# Scope for simitall
+
+Use as a potential future engine for large neutral or demographic simulations and as a source of founder haplotypes. It is complementary to designed-cross breeding simulations.
+
+# Agent-Safe Takeaways
+
+- Coalescent simulation can generate large ancestry datasets efficiently.
+- Tree sequences compactly represent correlated genealogical histories.
+- Demographic assumptions must be explicit before treating a simulated panel as realistic.
+
+# Inputs to Specify
+
+- Sample configuration
+- Demographic model
+- Recombination and mutation rates
+
+# Expected Outputs
+
+- Ancestry tree sequences
+- Mutated genotype data
+- Population-genetic summaries
+
+# Limitations and Guardrails
+
+- Coalescent panels do not automatically reflect a real breeding pedigree or selected population.
+- Use real haplotype panels when empirical LD and allele spectra matter.
+
+# Questions This Record Can Ground
+
+- When should a synthetic founder panel use a coalescent engine?
+- What differs between ancestry simulation and a designed mating scheme?
+
+# Curation Note
+
+This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.

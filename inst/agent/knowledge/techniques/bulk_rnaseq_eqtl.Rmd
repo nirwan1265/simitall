@@ -1,0 +1,44 @@
+---
+id: technique_bulk_rnaseq_eqtl
+document_type: technique
+status: starter
+domains: [bulk_RNA_seq, eQTL, multi_omics]
+related_functions: [simulate_rnaseq_experiment, simulate_rnaseq_from_gwas, simulate_rnaseq_reads, benchmark_eqtl, plot_rnaseq_eqtl_results]
+source_priority: primary_and_official_docs
+last_reviewed: 2026-09-25
+---
+
+# Bulk RNA-seq and eQTL Simulation
+
+## Goal
+
+Simulate expression for either independent samples or the same individuals
+used for GWAS. The GWAS-linked mode models baseline expression, cis and trans
+eQTLs, condition effects, genotype-by-condition interactions, batches, latent
+confounders, residual noise, and optional allele-specific expression.
+
+## Design Principles
+
+- Biological replicates, not technical libraries, determine inference.
+- Batch should be balanced across condition and population whenever possible.
+- eQTL testing requires donor-level genotype and expression alignment.
+- A read simulator creates technical observations; it does not fix an
+  underpowered donor design.
+
+## simitall Outputs
+
+The RNA-seq simulators write count matrices, sample and gene metadata, eQTL
+truth, expression truth, optional FASTQs, benchmark tables, and figures. Use
+`benchmark_eqtl()` only when a simulation truth set exists.
+
+## QC
+
+- Library size, zero fraction, dispersion, and mean-variance relationship.
+- Principal components by batch, condition, and genotype group.
+- Replicate correlation and donor balance.
+- eQTL precision/recall and effect-direction agreement against truth.
+
+## Limits
+
+The current model is a useful controlled data generator, not a replacement for
+a validated tissue-specific transcriptional regulatory model.

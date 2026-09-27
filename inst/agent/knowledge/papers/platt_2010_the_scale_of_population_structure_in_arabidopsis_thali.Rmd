@@ -1,0 +1,59 @@
+---
+id: "paper_platt_2010_the_scale_of_population_structure_in_arabidopsis_thali"
+document_type: "paper_summary"
+title: "The Scale of Population Structure in Arabidopsis thaliana"
+citation_key: "Platt2010"
+authors: "Alexander Platt; Matthew Horton; Yu S. Huang; Yan Li; Alison E. Anastasio; Ni Wayan Mulyati; Jon Agren; Oliver Bossdorf; et al."
+year: 2010
+doi: "10.1371/journal.pgen.1000843"
+journal: "PLoS Genetics"
+url: "https://doi.org/10.1371/journal.pgen.1000843"
+domains: ["arabidopsis"]
+techniques: ["population_structure", "selfing", "phylogeography"]
+organisms: ["Arabidopsis_thaliana"]
+evidence_status: "starter_summary"
+source_priority: "primary_paper"
+source_file: null
+crossref_checked_at: "2026-09-26"
+summarized_by: "simitall curated starter record"
+reviewed_by: null
+last_reviewed: null
+---
+
+# Citation
+
+Alexander Platt; Matthew Horton; Yu S. Huang; Yan Li; Alison E. Anastasio; Ni Wayan Mulyati; Jon Agren; Oliver Bossdorf; et al. (2010). *The Scale of Population Structure in Arabidopsis thaliana*. PLoS Genetics. DOI: 10.1371/journal.pgen.1000843. Source: [https://doi.org/10.1371/journal.pgen.1000843](https://doi.org/10.1371/journal.pgen.1000843).
+
+# One-Sentence Summary
+
+Primary record for Arabidopsis population structure and selfing-aware simulations.
+
+# Scope for simitall
+
+Use this record to guide source selection, input requirements, and limitations
+for Arabidopsis population structure and selfing-aware simulations. It must not be used to imply that the associated panel, raw data,
+or external analysis software is packaged with simitall.
+
+# Agent-Safe Takeaways
+
+- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
+- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
+- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+
+# Inputs to Specify
+
+- Local data path or reproducible source/download version.
+- Reference build, chromosome naming, sample manifest, and filters.
+- The intended endpoint: GWAS, cross design, genomic selection, ancestry analysis, or benchmark.
+
+# Limitations and Guardrails
+
+- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- Panel properties are not transferable across different subsets, populations, species, or reference builds.
+- In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
+
+# Curation Note
+
+This is a curated starter record with bibliographic metadata verified against
+Crossref on 2026-09-26. Replace or extend it with source-faithful,
+page-specific notes after reviewing the full text.

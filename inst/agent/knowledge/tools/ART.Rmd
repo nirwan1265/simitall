@@ -1,0 +1,36 @@
+---
+id: tool_art
+document_type: tool
+status: starter
+software: ART
+related_functions: [sim_illumina_art, run_grid_both]
+---
+
+# ART
+
+## Role
+
+ART simulates short sequencing reads with platform-specific error profiles.
+`simitall::sim_illumina_art()` uses `art_illumina` for paired-end reads.
+
+## Core Parameters
+
+- `-ss`: sequencing-system profile.
+- `-p`: paired-end mode.
+- `-l`: read length.
+- `-f`: fold coverage.
+- `-m`, `-s`: mean and SD of insert size.
+
+## simitall Default
+
+The default is 150-bp paired-end reads with a 350-bp mean insert and 50-bp SD.
+These are study choices, not universal recommendations.
+
+## Guardrails
+
+Always record the ART version and platform profile. Validate achieved read
+counts and depth instead of assuming requested fold coverage is exact.
+
+## Citation
+
+Huang W et al. (2012), *ART: a next-generation sequencing read simulator*.
