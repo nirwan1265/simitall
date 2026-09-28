@@ -22,6 +22,11 @@ library(simitall)
 launch_simitall_agent()
 ```
 
+The interface uses a one-line chat-style prompt. **Include verified runnable
+code** is enabled by default, so supported requests return their deterministic
+R recipe directly in the answer panel; data-source and local-file options stay
+under **Optional input details**.
+
 **Start here:** [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Results and validation](docs/VALIDATION.md)
 
 ## What simitall can do
