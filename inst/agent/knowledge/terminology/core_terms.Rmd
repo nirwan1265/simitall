@@ -18,3 +18,15 @@ status: starter
 | HiFi/CCS | High-accuracy PacBio consensus read produced through circular consensus sequencing. |
 | N50 | Length for which half of assembled bases occur in contigs at least that long; it is not an accuracy metric. |
 | F1/F2/RIL/NIL/DH | Standard breeding populations: first hybrid, selfed hybrid generation, recombinant inbred line, near-isogenic line, and doubled haploid. |
+
+## Query Aliases
+
+The local agent preserves the original query words and also maps common
+inflections to a canonical retrieval term using the versioned
+`inst/agent/aliases.tsv` table. Examples include `inbred` to `inbreeding`,
+`epistatic` to `epistasis`, `heterozygous` to `heterozygosity`, `homozygous`
+to `homozygosity`, and `recombined` to `recombination`. The initial table was
+curated from the package knowledge and the supplied QTL/GWAS, breeding,
+RNA-seq, single-cell, ATAC-seq, and sequencing reviews. New candidate aliases
+should be reviewed before inclusion; this is not an attempt to infer
+scientific meaning from arbitrary spelling or terminology.

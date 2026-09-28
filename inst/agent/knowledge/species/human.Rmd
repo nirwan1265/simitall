@@ -18,6 +18,33 @@ phenotype ascertainment, and ethical handling of real data. Synthetic data are
 useful for method benchmarks; they must not be presented as a clinical cohort,
 a real ancestry group, or evidence of medical validity.
 
+## Chromosome Input Policy
+
+Do not silently replace a chromosome-specific request with a synthetic
+chromosome. When a user asks to **use**, **analyze**, or **model** a real human
+chromosome or region, require the original local input files and retain their
+genome build. For a genotype/pedigree analysis, the essential input is usually
+a phased VCF/BCF plus index; a reference FASTA is additionally needed for
+sequence-aware operations. A compatible recombination map and a de-identified
+pedigree table are needed when the design depends on recombination and known
+parentage.
+
+Synthetic chromosome generation is appropriate only when the user explicitly
+asks to simulate or generate a chromosome, or explicitly chooses a synthetic
+input mode. It must label the chromosome coordinates and allele frequencies as
+synthetic rather than GRCh38-derived.
+
+## Inbreeding Interpretation
+
+At a neutral locus, inbreeding changes genotype frequencies rather than the
+expected allele frequency: heterozygosity decreases and homozygosity increases.
+Allele frequencies can still fluctuate in finite pedigrees through genetic
+drift, and can change directionally under selection, mutation, or migration.
+For a chromosome-specific real-data workflow, report allele-frequency and
+heterozygosity trajectories separately, identify the pedigree relationship at
+each generation, and avoid presenting a finite-pedigree fluctuation as a
+general human allele-frequency effect.
+
 ## Global Versus Local Ancestry
 
 - **Global ancestry** summarizes genome-wide ancestry proportions and is often

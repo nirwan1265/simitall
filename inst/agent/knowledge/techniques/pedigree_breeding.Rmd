@@ -32,6 +32,19 @@ Before use, check:
 - aliases/synonyms for cultivars or inbred lines;
 - missingness and disconnected families.
 
+## Real Versus Synthetic Chromosomes
+
+For a real chromosome-specific pedigree simulation, keep the supplied data as
+the source of truth: use a build-matched phased VCF/BCF (with index), an
+appropriate recombination map, and the pedigree table. A FASTA is useful when
+the workflow needs sequence-aware outputs, but it is not a substitute for
+phased genotype data. Do not create a random chromosome merely because a user
+mentions `chr10` or another chromosome name.
+
+Generate a synthetic chromosome only when explicitly requested. Record its
+marker-generation parameters, allele-frequency model, random seed, and
+coordinate convention so that it cannot be mistaken for a real reference.
+
 ## simitall Paths
 
 - `simulate_breeding()` creates explicit designed crosses and writes family,

@@ -28,6 +28,14 @@ data and parameters remain the primary record.
 - Record the seed, input paths, simulator/backend versions, thresholds, and
   figure dimensions.
 
+## Figure Selection
+
+Use `validation_figures.Rmd` to choose a figure based on the mechanism being
+checked: ancestry and LD for population design, heterozygosity and breakpoints
+for breeding, Manhattan/QQ and recovery metrics for GWAS, count/PCA/eQTL panels
+for RNA-seq, UMAP/dropout/pseudobulk panels for single-cell data, enrichment
+profiles for ChIP-seq, and truth-referenced QUAST metrics for assembly.
+
 ## Agent Boundary
 
 The agent may recommend an existing plotting function or append a

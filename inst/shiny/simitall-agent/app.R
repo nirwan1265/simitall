@@ -38,10 +38,12 @@ ui <- fluidPage(
       .advanced-grid .form-group { margin-bottom:0; }
       .advanced-grid label { font-size:12px; }
       .advanced-grid .form-control { font-size:13px; height:38px; }
-      .source-panel { margin-top:18px; }
-      .source-panel table { background:var(--card); font-size:12px; }
-      .source-panel th { color:var(--forest-dark); }
-      @media (max-width:700px) { .container-fluid { padding:22px 14px 40px; } .agent-header { display:block; } .privacy-note { display:inline-block; margin-top:14px; } .composer-row { align-items:stretch; flex-direction:column; } .send-button { width:100%; } .advanced-grid { grid-template-columns:1fr; } }
+      .parameter-panel { margin-top:18px; }
+      .parameter-grid { display:grid; gap:12px; grid-template-columns:repeat(3, 1fr); margin-top:10px; }
+      .parameter-card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
+      .parameter-card strong { color:var(--forest-dark); display:block; font-size:12px; margin-bottom:4px; }
+      .parameter-card span { font-size:12px; line-height:1.4; }
+      @media (max-width:700px) { .container-fluid { padding:22px 14px 40px; } .agent-header { display:block; } .privacy-note { display:inline-block; margin-top:14px; } .composer-row { align-items:stretch; flex-direction:column; } .send-button { width:100%; } .advanced-grid, .parameter-grid { grid-template-columns:1fr; } }
     ")),
     tags$script(HTML("\
       $(document).on('keydown', '#question', function(event) {
@@ -79,20 +81,59 @@ ui <- fluidPage(
         tags$summary("Optional input details"),
         div(
           class = "advanced-grid",
-          selectInput("data_source", "Data source", choices = c("Ask for required data" = "auto", "I supplied local files" = "provided", "Generate synthetic inputs" = "synthetic", "Use package demo only" = "package_demo"), selected = "auto"),
+          selectInput("data_source", "Data source", choices = c("Ask for required data" = "auto", "Generate synthetic inputs" = "synthetic", "I supplied local files" = "provided", "Use package demo only" = "package_demo"), selected = "auto"),
           textInput("input_files", "Local input file paths", placeholder = "Comma-separated paths; files stay on this computer"),
           numericInput("n_context", "Knowledge documents", value = 6, min = 1, max = 12)
         )
       )
     ),
-    tags$details(class = "source-panel", tags$summary("Grounding documents used for the latest answer"), tableOutput("sources"))
+    tags$details(
+      class = "parameter-panel",
+      tags$summary("Parameters you can tune in generated recipes"),
+      div(
+        class = "parameter-grid",
+        div(class = "parameter-card", tags$strong("Population"), tags$span("Sample size, founder count, number of generations or inbreeding rounds, and family structure.")),
+        div(class = "parameter-card", tags$strong("Genome and variation"), tags$span("Chromosome length, marker density, allele-frequency bounds, SNP/indel rates, and ploidy.")),
+        div(class = "parameter-card", tags$strong("Recombination and LD"), tags$span("Genetic-map positions, hotspots/cold spots, interference, and designed high-LD intervals.")),
+        div(class = "parameter-card", tags$strong("Trait and omics"), tags$span("Heritability, QTL counts and effects, environments, batches, expression programs, and eQTLs.")),
+        div(class = "parameter-card", tags$strong("Technical error"), tags$span("Missingness, genotype error, sequencing coverage, read type, library depth, and random seed.")),
+        div(class = "parameter-card", tags$strong("Outputs and QC"), tags$span("VCF/FASTA/GFF3/BED/TSV paths, truth files, figures, and pass criteria."))
+      )
+    )
   )
 )
+
+.simitall_shiny_hide_grounding <- function(answer) {
+  answer <- gsub("[[:space:]]*\\[SOURCE: [^]]+\\]", "", answer)
+  marker <- "\n\nGrounding documents:\n"
+  start <- regexpr(marker, answer, fixed = TRUE)[1L]
+  if (start < 0L) return(answer)
+  before <- substr(answer, 1L, start - 1L)
+  remainder <- substr(answer, start + nchar(marker), nchar(answer))
+  recipe_start <- regexpr(
+    "\n\n(?:Verified |Synthetic human |Input-dependent )", remainder,
+    perl = TRUE
+  )[1L]
+  if (recipe_start < 0L) return(before)
+  paste0(before, substr(remainder, recipe_start, nchar(remainder)))
+}
 
 server <- function(input, output, session) {
   response <- eventReactive(input$ask, {
     question <- trimws(input$question)
     req(nzchar(question))
+    data_source <- input$data_source
+    # In the chat interface, an explicit request to simulate a chromosome is
+    # consent to a labelled synthetic chromosome. All other chromosome prompts
+    # keep the conservative "ask for data" policy unless the user chooses a
+    # different source mode themselves.
+    explicit_chromosome_simulation <- grepl(
+      "\\bsimulate\\s+(?:a\\s+)?(?:synthetic\\s+)?(?:human\\s+)?(?:chromosome\\s*\\d+|chr\\s*\\d+|chr\\d+)",
+      tolower(question), perl = TRUE
+    )
+    if (identical(data_source, "auto") && explicit_chromosome_simulation) {
+      data_source <- "synthetic"
+    }
     raw_input_files <- input$input_files
     if (is.null(raw_input_files)) raw_input_files <- ""
     input_files <- trimws(unlist(strsplit(raw_input_files, "[,\\n]")))
@@ -104,7 +145,7 @@ server <- function(input, output, session) {
         n_context = input$n_context,
         include_code = isTRUE(input$include_code),
         input_files = input_files,
-        data_source = input$data_source
+        data_source = data_source
       ),
       error = function(e) structure(
         list(
@@ -123,18 +164,8 @@ server <- function(input, output, session) {
     if (is.null(response())) {
       return(div(class = "empty-answer", "I am ready when you are. Try: 'Plan a synthetic 500-line maize NAM population for chromosome 10 with a high-LD region, GWAS, RNA-seq, and genomic selection.'"))
     }
-    tags$pre(class = "assistant-answer", response()$answer)
+    tags$pre(class = "assistant-answer", .simitall_shiny_hide_grounding(response()$answer))
   })
-
-  output$sources <- renderTable({
-    req(response())
-    sources <- response()$sources
-    required <- c("category", "title", "path")
-    if (!all(required %in% names(sources))) {
-      sources <- data.frame(category = character(), title = character(), path = character(), stringsAsFactors = FALSE)
-    }
-    sources[, required, drop = FALSE]
-  }, striped = TRUE, bordered = TRUE, spacing = "s")
 }
 
 shinyApp(ui, server)

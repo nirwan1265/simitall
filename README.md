@@ -25,7 +25,9 @@ launch_simitall_agent()
 The interface uses a one-line chat-style prompt. **Include verified runnable
 code** is enabled by default, so supported requests return their deterministic
 R recipe directly in the answer panel; data-source and local-file options stay
-under **Optional input details**.
+under **Optional input details**. A chromosome-specific request keeps the
+conservative real-data policy unless the prompt explicitly asks to simulate a
+chromosome or the user explicitly selects synthetic inputs.
 
 **Start here:** [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Results and validation](docs/VALIDATION.md)
 

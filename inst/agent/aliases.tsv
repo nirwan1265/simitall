@@ -1,0 +1,106 @@
+alias	canonical_term	category	source	confidence
+inbred	inbreeding	pedigree	user vocabulary + curated terminology	high
+inbreeding	inbreeding	pedigree	user vocabulary + curated terminology	high
+epistatic	epistasis	trait architecture	user vocabulary + curated terminology	high
+epistasis	epistasis	trait architecture	user vocabulary + curated terminology	high
+gene gene interaction	epistasis	trait architecture	user vocabulary + curated terminology	high
+gene by gene interaction	epistasis	trait architecture	curated synonym	medium
+heterozygous	heterozygosity	population genetics	population genomics papers; curated	high
+homozygous	homozygosity	population genetics	population genomics papers; curated	high
+recombined	recombination	breeding	QTL and breeding papers; curated	high
+recombining	recombination	breeding	QTL and breeding papers; curated	
+genome wide association study	gwas	association mapping	GWAS papers	high
+genome wide association studies	gwas	association mapping	GWAS papers	high
+association mapping	gwas	association mapping	GWAS and QTL papers	medium
+quantitative trait locus	qtl	trait mapping	QTL mapping papers	high
+quantitative trait loci	qtl	trait mapping	QTL mapping papers	high
+qtl mapping	qtl	trait mapping	QTL mapping papers	high
+marker assisted selection	marker assisted selection	breeding	plant breeding papers	high
+marker assisted backcross breeding	backcross	breeding	plant breeding papers	high
+backcrossed	backcross	breeding	curated morphology	high
+recurrent parent	recurrent parent	breeding	user vocabulary + curated terminology	high
+introgression line	introgression	breeding	plant breeding papers	high
+introgression lines	introgression	breeding	plant breeding papers	high
+recombinant inbred line	ril	breeding	QTL mapping papers	high
+recombinant inbred lines	ril	breeding	QTL mapping papers	high
+doubled haploid	dh	breeding	plant breeding papers	high
+doubled haploids	dh	breeding	plant breeding papers	high
+nested association mapping	nam	breeding	maize NAM literature	high
+multi parent advanced generation intercross	magic	breeding	plant breeding literature	high
+selfed	selfing	breeding	user vocabulary + curated terminology	high
+single seed descent	ssd	breeding	plant breeding literature	high
+linkage disequilibrium	ld	population genetics	GWAS and population genomics papers	high
+population stratification	population stratification	association mapping	user vocabulary + curated terminology	high
+population structure	population stratification	association mapping	user vocabulary + curated terminology	high
+principal components	pca	association mapping	GWAS papers	high
+principal component analysis	pca	association mapping	GWAS papers	high
+kinship matrix	relatedness	association mapping	user vocabulary + curated terminology	high
+relatedness	relatedness	association mapping	user vocabulary + curated terminology	high
+genomic estimated breeding value	gebv	genomic selection	genomic selection papers	high
+genomic prediction	genomic prediction	genomic selection	genomic selection papers	high
+genome based selection	genomic selection	genomic selection	genomic selection papers	medium
+genomic selection	genomic selection	genomic selection	genomic selection papers	high
+single cell rna seq	scrnaseq	single cell	Single-cell RNA-seq papers	high
+single cell rna sequencing	scrnaseq	single cell	Single-cell RNA-seq papers	high
+scrna seq	scrnaseq	single cell	Single-cell RNA-seq papers	high
+sc rna seq	scrnaseq	single cell	Single-cell RNA-seq papers	high
+single cell transcriptomics	scrnaseq	single cell	Single-cell RNA-seq papers	medium
+pseudo bulk	pseudobulk	single cell	Single-cell RNA-seq papers	high
+pseudobulk	pseudobulk	single cell	user vocabulary + curated terminology	high
+zero inflated	zero inflation	single cell	user vocabulary + curated terminology	high
+zero inflation	zero inflation	single cell	user vocabulary + curated terminology	high
+dropouts	dropout	single cell	Single-cell RNA-seq papers	high
+batch effects	batch effect	omics	RNA-seq and single-cell papers	high
+cell type annotation	cell annotation	single cell	Single-cell RNA-seq papers	high
+differentially expressed genes	differential expression	RNA-seq	RNA-seq papers	high
+differential gene expression	differential expression	RNA-seq	RNA-seq papers	high
+differentially expressed	differential expression	RNA-seq	user vocabulary + curated terminology	high
+degs	differential expression	RNA-seq	curated abbreviation	medium
+allele specific expression	ase	RNA-seq	third-generation sequencing paper	high
+chromatin accessibility	atacseq	chromatin	ATAC-seq paper	high
+atac seq	atacseq	chromatin	ATAC-seq paper	high
+chip seq	chipseq	chromatin	curated standard spelling	high
+next generation sequencing	ngs	sequencing	sequencing technology papers	high
+third generation sequencing	tgs	sequencing	third-generation sequencing paper	high
+long read	long read sequencing	sequencing	user vocabulary + curated terminology	high
+long reads	long read sequencing	sequencing	user vocabulary + curated terminology	high
+pacbio hifi	high fidelity reads	sequencing	user vocabulary + curated terminology	high
+hifi reads	high fidelity reads	sequencing	user vocabulary + curated terminology	high
+circular consensus sequencing	circular consensus sequencing	sequencing	user vocabulary + curated terminology	high
+clr reads	continuous long reads	sequencing	user vocabulary + curated terminology	high
+oxford nanopore	nanopore	sequencing	third-generation sequencing paper	high
+ont reads	nanopore	sequencing	curated platform abbreviation	medium
+whole genome sequencing	wgs	genome sequencing	whole-genome sequencing paper	high
+pan genome	pangenome	genome sequencing	plant pan-genomics paper	high
+pangenome	pangenome	genome sequencing	plant pan-genomics paper	high
+de novo assembly	assembly	assembly	sequencing technology papers	high
+hybrid assembly	hybrid assembly	assembly	user vocabulary + curated terminology	high
+selfing	selfing	breeding	user vocabulary + curated terminology	high
+introgression	introgression	breeding	user vocabulary + curated terminology	high
+introgressed	introgression	breeding	user vocabulary + curated terminology	high
+kinship	relatedness	association mapping	user vocabulary + curated terminology	high
+genotype	genotype	genetics	user vocabulary + curated terminology	high
+genotypic	genotype	genetics	user vocabulary + curated terminology	high
+phenotype	phenotype	phenotyping	user vocabulary + curated terminology	high
+phenotypic	phenotype	phenotyping	user vocabulary + curated terminology	high
+polygenic	polygenicity	trait architecture	user vocabulary + curated terminology	high
+polygenicity	polygenicity	trait architecture	user vocabulary + curated terminology	high
+admixture	admixture	population genetics	user vocabulary + curated terminology	high
+admixed	admixture	population genetics	user vocabulary + curated terminology	high
+deg	differential expression	RNA-seq	user vocabulary + curated terminology	high
+differential expression	differential expression	RNA-seq	user vocabulary + curated terminology	high
+transcript abundance	transcript abundance	RNA-seq	user vocabulary + curated terminology	high
+dropout	dropout	single cell	user vocabulary + curated terminology	high
+hifi	high fidelity reads	sequencing	user vocabulary + curated terminology	high
+ccs	circular consensus sequencing	sequencing	user vocabulary + curated terminology	high
+clr	continuous long reads	sequencing	user vocabulary + curated terminology	high
+figure	figure validation	visualization	package validation-figure guidance	high
+figures	figure validation	visualization	package validation-figure guidance	high
+plot	figure validation	visualization	package validation-figure guidance	high
+plots	figure validation	visualization	package validation-figure guidance	high
+visualization	figure validation	visualization	package validation-figure guidance	high
+validate	figure validation	visualization	package validation-figure guidance	high
+validation	figure validation	visualization	package validation-figure guidance	high
+benchmark	figure validation	visualization	package validation-figure guidance	high
+benchmarking	figure validation	visualization	package validation-figure guidance	high
+qc	figure validation	visualization	package validation-figure guidance	high

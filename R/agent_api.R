@@ -19,6 +19,26 @@
   )
 }
 
+.simitall_agent_aliases <- function() {
+  installed <- system.file("agent", "aliases.tsv", package = "simitall")
+  source_tree <- file.path("inst", "agent", "aliases.tsv")
+  path <- if (nzchar(installed) && file.exists(installed)) installed else source_tree
+  if (!file.exists(path)) {
+    return(data.frame(alias = character(), canonical_term = character()))
+  }
+  aliases <- utils::read.delim(
+    path, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE
+  )
+  required <- c("alias", "canonical_term")
+  if (!all(required %in% names(aliases))) {
+    stop("Agent alias table must contain: ", paste(required, collapse = ", "))
+  }
+  aliases$alias <- tolower(trimws(aliases$alias))
+  aliases$canonical_term <- tolower(trimws(aliases$canonical_term))
+  aliases[nzchar(aliases$alias) & nzchar(aliases$canonical_term), required,
+          drop = FALSE]
+}
+
 .simitall_agent_terms <- function(x) {
   x <- tolower(enc2utf8(paste(x, collapse = " ")))
   x <- gsub("[^a-z0-9]+", " ", x)
@@ -32,7 +52,18 @@
     "would", "you", "your", "first", "lines", "line", "plan", "simulate",
     "simulation", "500"
   )
-  unique(terms[nchar(terms) >= 2L & !terms %in% stop_terms])
+  terms <- terms[nchar(terms) >= 2L & !terms %in% stop_terms]
+  # Preserve the user's wording, then append audited canonical terms from the
+  # versioned alias table. Phrase aliases are matched before retrieval.
+  aliases <- .simitall_agent_aliases()
+  padded_query <- paste0(" ", x, " ")
+  matched <- vapply(
+    aliases$alias,
+    function(alias) grepl(paste0(" ", alias, " "), padded_query, fixed = TRUE),
+    logical(1)
+  )
+  canonical <- aliases$canonical_term[matched]
+  unique(c(terms, canonical))
 }
 
 .simitall_agent_has_term <- function(text, term) {
@@ -510,6 +541,8 @@ simitall_agent_tools <- function() {
   is_nam <- "nam" %in% terms
   is_human_irf6 <- "irf6" %in% terms &&
     any(c("human", "pedigree", "liability", "cleft") %in% terms)
+  is_human_inbreeding <- .simitall_agent_species(question) == "human" &&
+    grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
   is_biparental <- grepl("biparental|bi[ -]?parental", tolower(question)) &&
     any(c("backcross", "selfing", "cross") %in% terms)
   if (!identical(preflight$status, "ready") ||
@@ -556,6 +589,85 @@ simitall_agent_tools <- function() {
   }
 
   if (!identical(preflight$data_source, "synthetic")) return("")
+
+  if (is_human_inbreeding) {
+    return(paste(
+      "Synthetic human chromosome-10 inbreeding recipe:",
+      "This is a fully synthetic marker simulation. It does not use real human variants, model a real family, or estimate clinical risk. Each round builds first-cousin-descendant pedigrees from the preceding synthetic population, so marker homozygosity is expected to increase on average.",
+      "",
+      "```r",
+      "# Tune these values before running.",
+      "out_dir <- \"results/human_chr10_inbreeding\"",
+      "seed <- 2026",
+      "chr_length_bp <- 10000000L   # Synthetic chr10 interval length.",
+      "n_markers <- 500L            # Independent synthetic biallelic markers.",
+      "n_lines <- 200L              # Individuals retained per round.",
+      "n_rounds <- 3L               # Repeated first-cousin-pedigree rounds.",
+      "maf_min <- 0.10; maf_max <- 0.40",
+      "",
+      "dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)",
+      "set.seed(seed)",
+      "marker_truth <- data.frame(",
+      "  chromosome = \"chr10\",",
+      "  position_bp = sort(sample.int(chr_length_bp, n_markers)),",
+      "  alternate_allele_frequency = runif(n_markers, maf_min, maf_max)",
+      ")",
+      "draw_population <- function(n) {",
+      "  matrix(rbinom(n * n_markers, 2, rep(marker_truth$alternate_allele_frequency, each = n)),",
+      "         nrow = n, byrow = FALSE)",
+      "}",
+      "gamete <- function(genotype) rbinom(length(genotype), 1, genotype / 2)",
+      "make_child <- function(parent_a, parent_b) gamete(parent_a) + gamete(parent_b)",
+      "make_cousin_round <- function(pool, n) {",
+      "  offspring <- matrix(NA_integer_, n, ncol(pool))",
+      "  for (i in seq_len(n)) {",
+      "    grandparents <- pool[sample.int(nrow(pool), 2, replace = TRUE), , drop = FALSE]",
+      "    sibling_a <- make_child(grandparents[1, ], grandparents[2, ])",
+      "    sibling_b <- make_child(grandparents[1, ], grandparents[2, ])",
+      "    partners <- pool[sample.int(nrow(pool), 2, replace = TRUE), , drop = FALSE]",
+      "    cousin_a <- make_child(sibling_a, partners[1, ])",
+      "    cousin_b <- make_child(sibling_b, partners[2, ])",
+      "    offspring[i, ] <- make_child(cousin_a, cousin_b)",
+      "  }",
+      "  offspring",
+      "}",
+      "summarize_round <- function(genotypes, round) {",
+      "  data.frame(",
+      "    sample = sprintf(\"round%02d_%03d\", round, seq_len(nrow(genotypes))),",
+      "    round = round,",
+      "    marker_homozygosity = rowMeans(genotypes == 0L | genotypes == 2L)",
+      "  )",
+      "}",
+      "",
+      "population <- draw_population(n_lines)",
+      "individuals <- summarize_round(population, 0L)",
+      "for (round in seq_len(n_rounds)) {",
+      "  population <- make_cousin_round(population, n_lines)",
+      "  individuals <- rbind(individuals, summarize_round(population, round))",
+      "}",
+      "round_summary <- aggregate(marker_homozygosity ~ round, individuals, mean)",
+      "write.table(marker_truth, file.path(out_dir, \"marker_truth.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+      "write.table(individuals, file.path(out_dir, \"individual_homozygosity.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+      "write.table(round_summary, file.path(out_dir, \"round_summary.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+      "png(file.path(out_dir, \"chr10_inbreeding_homozygosity.png\"), width = 1500, height = 850, res = 160)",
+      "par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1))",
+      "plot(round_summary$round, round_summary$marker_homozygosity, type = \"b\", pch = 16, col = \"#0D5F4C\",",
+      "     xlab = \"Synthetic cousin-pedigree round\", ylab = \"Mean marker homozygosity\",",
+      "     main = \"A. Homozygosity across rounds\")",
+      "boxplot(marker_homozygosity ~ round, data = individuals, col = \"#DFF0E7\",",
+      "        xlab = \"Round\", ylab = \"Marker homozygosity\",",
+      "        main = \"B. Individual distributions\")",
+      "dev.off()",
+      "",
+      "# Pass criterion for this programmed synthetic design:",
+      "stopifnot(tail(round_summary$marker_homozygosity, 1) > round_summary$marker_homozygosity[1])",
+      "round_summary",
+      "```",
+      "",
+      "Tune `n_rounds`, `n_lines`, `n_markers`, allele-frequency bounds, chromosome length, and seed. The final `stopifnot()` checks only the expected direction of the synthetic mechanism: more related pedigree rounds should yield greater mean marker homozygosity than round 0.",
+      sep = "\n"
+    ))
+  }
 
   if (is_biparental && !is_nam) {
     return(paste(
@@ -716,6 +828,70 @@ simitall_agent_tools <- function() {
 
 .simitall_agent_code_skeleton <- function(question, preflight) {
   terms <- .simitall_agent_terms(question)
+  is_human_inbreeding <- .simitall_agent_species(question) == "human" &&
+    grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
+  if (is_human_inbreeding) {
+    generation_match <- regexec(
+      "([0-9]+)\\s*(?:generations?|rounds?)", tolower(question), perl = TRUE
+    )
+    generation_value <- regmatches(tolower(question), generation_match)[[1L]]
+    n_rounds <- if (length(generation_value) > 1L) generation_value[2L] else "10"
+    return(paste(
+      "Input-dependent human chr10 inbreeding code template:",
+      "This template requires a real, build-matched chromosome-10 VCF/BCF. It reads observed allele frequencies from that input, then performs an allele-frequency-only finite-population pedigree approximation. It does not preserve phased haplotypes or LD; use a haplotype-aware pedigree engine for that extension.",
+      "",
+      "```r",
+      "# Required: real chr10 VCF/BCF with INFO/AF and a bcftools installation.",
+      "vcf <- \"PATH_TO_CHR10_VCF.gz\"",
+      "out_dir <- \"results/human_chr10_inbreeding\"",
+      "seed <- 2026",
+      paste0("n_rounds <- ", n_rounds, "L"),
+      "n_lines <- 200L",
+      "maf_min <- 0.10; maf_max <- 0.40",
+      "stopifnot(file.exists(vcf), nzchar(Sys.which(\"bcftools\")))",
+      "dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)",
+      "set.seed(seed)",
+      "query_file <- tempfile(fileext = \".tsv\")",
+      "command <- paste(\"bcftools query -f\", shQuote(\"%CHROM\\t%POS\\t%INFO/AF\\n\"), shQuote(vcf), \">\", shQuote(query_file))",
+      "stopifnot(system(command) == 0L)",
+      "markers <- read.delim(query_file, header = FALSE, sep = \"\\t\", stringsAsFactors = FALSE)",
+      "names(markers) <- c(\"chromosome\", \"position_bp\", \"af\")",
+      "markers$af <- suppressWarnings(as.numeric(markers$af))",
+      "markers <- markers[markers$chromosome %in% c(\"10\", \"chr10\") & is.finite(markers$af) & markers$af >= maf_min & markers$af <= maf_max, ]",
+      "stopifnot(nrow(markers) >= 20L)",
+      "markers <- markers[sort(sample.int(nrow(markers), min(500L, nrow(markers)))), ]",
+      "draw_population <- function(n) matrix(rbinom(n * nrow(markers), 2, rep(markers$af, each = n)), nrow = n, byrow = FALSE)",
+      "gamete <- function(g) rbinom(length(g), 1, g / 2)",
+      "child <- function(a, b) gamete(a) + gamete(b)",
+      "cousin_round <- function(pool, n) {",
+      "  out <- matrix(NA_integer_, n, ncol(pool))",
+      "  for (i in seq_len(n)) {",
+      "    gp <- pool[sample.int(nrow(pool), 2L, replace = TRUE), , drop = FALSE]",
+      "    sib1 <- child(gp[1, ], gp[2, ]); sib2 <- child(gp[1, ], gp[2, ])",
+      "    partners <- pool[sample.int(nrow(pool), 2L, replace = TRUE), , drop = FALSE]",
+      "    out[i, ] <- child(child(sib1, partners[1, ]), child(sib2, partners[2, ]))",
+      "  }; out",
+      "}",
+      "population <- draw_population(n_lines)",
+      "summary <- data.frame(round = 0L, mean_af = mean(population) / 2, mean_homozygosity = mean(population == 0L | population == 2L))",
+      "for (round in seq_len(n_rounds)) {",
+      "  population <- cousin_round(population, n_lines)",
+      "  summary <- rbind(summary, data.frame(round = round, mean_af = mean(population) / 2, mean_homozygosity = mean(population == 0L | population == 2L)))",
+      "}",
+      "write.table(markers, file.path(out_dir, \"input_marker_frequencies.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+      "write.table(summary, file.path(out_dir, \"round_summary.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+      "png(file.path(out_dir, \"allele_frequency_and_homozygosity.png\"), width = 1500, height = 750, res = 160)",
+      "par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1))",
+      "plot(summary$round, summary$mean_af, type = \"b\", pch = 16, col = \"#156E8A\", xlab = \"Pedigree round\", ylab = \"Mean alternate-allele frequency\", main = \"A. Allele frequency: no directional expectation\")",
+      "plot(summary$round, summary$mean_homozygosity, type = \"b\", pch = 16, col = \"#B4422B\", xlab = \"Pedigree round\", ylab = \"Mean marker homozygosity\", main = \"B. Expected increase in homozygosity\")",
+      "dev.off()",
+      "summary",
+      "```",
+      "",
+      "Interpretation: without selection, mutation, or migration, allele frequencies have no directional expectation under inbreeding; observed changes in this finite simulation are genetic drift. The robust expected signal is increased homozygosity and reduced heterozygosity.",
+      sep = "\n"
+    ))
+  }
   if (!"nam" %in% terms) return("")
   paste(
     "Input-dependent NAM code skeleton:",
@@ -781,7 +957,8 @@ simitall_agent_tools <- function() {
 .simitall_agent_preflight <- function(question, input_files, data_source) {
   terms <- .simitall_agent_terms(question)
   species <- .simitall_agent_species(question)
-  needs_panel <- any(c("breeding", "nam", "magic", "ril", "nil", "f1", "f2", "backcross", "selfing", "cross") %in% terms)
+  needs_panel <- any(c("breeding", "nam", "magic", "ril", "nil", "f1", "f2", "backcross", "selfing", "cross") %in% terms) ||
+    grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
   input_files <- input_files %||% character()
   input_files <- as.character(input_files)
   supplied <- input_files[nzchar(input_files)]
@@ -823,7 +1000,9 @@ simitall_agent_tools <- function() {
 .simitall_local_answer <- function(question, retrieval) {
   terms <- .simitall_agent_terms(question)
   has_any <- function(words) any(words %in% terms)
-  is_pedigree <- has_any(c("pedigree", "parentage", "maternal", "paternal"))
+  is_human_inbreeding <- .simitall_agent_species(question) == "human" &&
+    grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
+  is_pedigree <- has_any(c("pedigree", "parentage", "maternal", "paternal")) || is_human_inbreeding
   is_breeding <- has_any(c("breeding", "nam", "magic", "ril", "nil", "f1", "f2", "backcross", "selfing", "cross")) || is_pedigree
   is_ancestry_tools <- has_any(c("rfmix", "tractor", "genesis", "genomeadmixr"))
   # "local" commonly describes a file on disk (for example, a local GRCh38
@@ -842,6 +1021,20 @@ simitall_agent_tools <- function() {
   required <- character()
   truth <- character()
   limits <- "This is a simulation plan, not evidence that a synthetic population reproduces real biology. Use measured maps, founder panels, and population metadata when making organism-level claims."
+
+  if (is_human_inbreeding) {
+    stages <- c(
+      stages,
+      paste0(
+        "1. Separate allele frequency from genotype frequency: inbreeding alone does not systematically change the expected allele frequency at a neutral locus, but it reduces heterozygosity and increases homozygosity. Finite population size, selection, mutation, or migration can change allele frequencies.",
+        source("Human|Pedigree")
+      ),
+      paste0(
+        "2. Define the mating relationship for each generation (for example, repeated first-cousin unions) and simulate or analyze chromosome-10 genotypes while retaining allele-frequency and heterozygosity summaries separately.",
+        source("Pedigree")
+      )
+    )
+  }
 
   if (is_ancestry) {
     stages <- c(
@@ -911,6 +1104,27 @@ simitall_agent_tools <- function() {
     ))
     required <- c(required, "A pedigree table with unique id, sire, and dam columns; optional family, generation, sex, and source metadata.")
     truth <- c(truth, "Validated pedigree, cross graph, family/generation summaries, and genotype-pedigree concordance checks when markers are available.")
+  }
+  if (is_human_inbreeding) {
+    stages <- c(stages, paste0(
+      length(stages) + 1L,
+      ". Choose the data mode explicitly: use a synthetic marker panel for a mechanism check, or provide build-matched real chromosome-10 genotypes and a pedigree for a data-grounded simulation.",
+      source("Human|Pedigree")
+    ))
+    required <- c(
+      required,
+      "Synthetic mode: no external chromosome file is required; the recipe generates independent synthetic chr10 markers and allele frequencies.",
+      "Real-data mode: a genome-build-matched chr10 reference FASTA is useful for sequence-aware simulation, but a phased VCF/BCF plus index is the essential genotype input; also provide a compatible recombination map with chromosome, position, and cM columns.",
+      "For a pedigree-grounded design: a de-identified pedigree table with id, sire, dam, and generation fields, plus documented consent/governance appropriate to the source data."
+    )
+    truth <- c(
+      truth,
+      "Data-mode label, genome build, input-file checksums, marker/allele-frequency truth for synthetic mode, and realized homozygosity by pedigree round."
+    )
+    limits <- paste(
+      limits,
+      "The built-in generic chr10 inbreeding recipe is synthetic and labels chr10 only as a coordinate namespace; it does not read real GRCh38 chromosome-10 sequence or human genotypes. Use supplied, build-matched VCF/BCF and map files for a data-grounded extension."
+    )
   }
   if (has_any(c("gwas", "qtl", "association"))) {
     if (is_ancestry) {

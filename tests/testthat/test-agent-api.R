@@ -17,6 +17,32 @@ test_that("local knowledge search ranks matching documents", {
   expect_gt(found$score, 0)
 })
 
+test_that("versioned alias table normalizes biology terminology", {
+  aliases <- simitall:::.simitall_agent_aliases()
+  expect_gte(nrow(aliases), 70L)
+  terms <- simitall:::.simitall_agent_terms(
+    paste(
+      "Use epistatic, polygenic effects in an admixed genome-wide association study",
+      "with DEG transcript abundance from zero-inflated pseudo-bulk scRNA-seq",
+      "and long-read HiFi CCS CLR data."
+    )
+  )
+  expect_true(all(c(
+    "epistasis", "polygenicity", "admixture", "gwas", "differential expression",
+    "transcript abundance", "zero inflation", "pseudobulk", "scrnaseq",
+    "long read sequencing", "high fidelity reads", "circular consensus sequencing",
+    "continuous long reads"
+  ) %in% terms))
+})
+
+test_that("figure terminology retrieves validation guidance", {
+  found <- search_simitall_knowledge(
+    "Which figures validate LD, breeding, GWAS, RNA-seq, and ChIP-seq?",
+    n_results = 3
+  )
+  expect_true(any(basename(found$path) == "validation_figures.Rmd"))
+})
+
 test_that("retrieval prioritizes workflow knowledge over repeated paper text", {
   knowledge <- file.path(tempdir(), "simitall-agent-priority")
   dir.create(file.path(knowledge, "workflows"), recursive = TRUE)
