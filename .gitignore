@@ -16,6 +16,7 @@
 *.tar.gz
 
 # Generated simulations and downloaded references
+data/
 results/
 references/
 reads/

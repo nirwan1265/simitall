@@ -546,6 +546,67 @@ simulate_breeding(
 )
 ```
 
+### Agent worked example: biparental BC2S7 with an allele-frequency figure
+
+The agent can return a package-verified recipe when the request is explicit
+about using synthetic input. This is useful for turning a natural-language
+request into a reviewable starting point, but it does **not** make the agent an
+autonomous executor. Named maize NAM founders are not bundled: use real input
+files for a biological NAM claim.
+
+```r
+answer <- simitall_ask(
+  "Simulate a synthetic biparental cross for chromosome 10 with 2 backcrosses and 7 selfing generations, then show final allele frequencies.",
+  provider = "ollama",
+  data_source = "synthetic",
+  include_code = TRUE
+)
+cat(answer$answer)
+```
+
+The deterministic code supplied by `include_code = TRUE` follows this design:
+F1, two backcrosses to parent 1, then seven selfing generations
+(`F1,BC:P1:2,SELF:7`). It writes final haplotypes, metadata, VCF genotypes,
+ancestry and breakpoint truth, a per-site allele-frequency table, and a PNG
+figure. A complete fixed-seed implementation is versioned in
+[`analysis/paper_fig/fig10_biparental_bc2s7_allele_frequency.R`](../analysis/paper_fig/fig10_biparental_bc2s7_allele_frequency.R):
+
+```bash
+Rscript analysis/paper_fig/fig10_biparental_bc2s7_allele_frequency.R \
+  --out_dir analysis/results/biparental_bc2s7 --seed 72
+```
+
+The bundled demonstration uses two **synthetic** founders relabelled as `chr10`.
+At its 29 polymorphic sites, the final mean alternate-allele frequency was 0.10.
+The dashed expectation is 1/8 = 0.125: after an F1 and two backcrosses to
+parent 1, the unselected mean donor allele fraction is expected to be one
+quarter of the F1 donor contribution. Seven selfing generations change
+heterozygosity but not that expected mean ancestry proportion.
+
+![Synthetic biparental BC2S7 final allele frequencies](../analysis/example_figures/figure10_biparental_bc2s7_allele_frequency.png)
+
+### Human IRF6-region synthetic pedigree-liability example
+
+The human example is deliberately a **simulation and visualization exercise**,
+not a clinical predictor. It uses the user-supplied GRCh38 IRF6-region VCF only
+to select anonymous common markers and their population frequencies. Their
+effects are simulated; the script does not label any marker as causal or use
+real participant outcomes.
+
+```bash
+Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \
+  --data_dir data/raw/human_irf6 \
+  --out_dir analysis/results/human_irf6_synthetic_liability --seed 81
+```
+
+The analysis constructs random-mating comparison lineages and a synthetic
+first-cousin-descendant branch (`F = 1/16`), writes individual- and group-level
+synthetic liability tables, and creates the figure below. It is suitable for
+testing provenance, inheritance, figure generation, and explicit limitations;
+it must not be used for diagnosis, counselling, or real-person risk estimates.
+
+![Synthetic human IRF6-region pedigree liability](../analysis/example_figures/figure11_human_irf6_synthetic_liability.png)
+
 ### 4.6 NAM and MAGIC populations
 
 A NAM population uses the first selected founder as the common parent and

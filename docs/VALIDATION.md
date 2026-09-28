@@ -85,6 +85,50 @@ Rscript analysis/paper_fig/fig8_chipseq_simulation.R \
   --out_dir analysis/results/chipseq_example --seed 62 --backend native
 ```
 
+### Synthetic biparental BC2S7 allele frequencies
+
+![Synthetic biparental BC2S7 final allele frequencies](../analysis/example_figures/figure10_biparental_bc2s7_allele_frequency.png)
+
+This fixed-seed demonstration verifies the designed-cross and VCF-to-frequency
+path. Two synthetic founders are relabelled as `chr10`, crossed as F1, then
+backcrossed twice to parent 1 and selfed for seven generations. The final run
+contains 200 lines and 29 polymorphic VCF sites; the mean alternate-allele
+frequency is 0.10. The dashed 0.125 line is the unselected donor expectation
+after two backcrosses, not a guarantee for every finite simulation or locus.
+
+Reproduce it:
+
+```bash
+Rscript analysis/paper_fig/fig10_biparental_bc2s7_allele_frequency.R \
+  --out_dir analysis/results/biparental_bc2s7 --seed 72
+```
+
+The run writes FASTA, VCF, metadata, ancestry and breakpoint truth, a
+per-site allele-frequency TSV, a summary TSV, and the figure. It is a
+synthetic interface check, not an analysis of real NAM varieties.
+
+### Synthetic human IRF6-region pedigree liability
+
+![Synthetic human IRF6-region pedigree liability](../analysis/example_figures/figure11_human_irf6_synthetic_liability.png)
+
+This demonstration uses public 1000 Genomes allele-frequency information from
+the GRCh38 `chr1:209,000,000-211,000,000` window to choose anonymous common
+markers surrounding `IRF6`. All marker effects, environmental noise, and
+phenotype probabilities are illustrative simulation parameters; they are not
+variant pathogenicity assertions, a disease model, or a clinical prediction.
+
+The fixed-seed run selected 12 common markers, tracked 160 random-mating
+individuals per generation across generations 0--3, and compared 40 synthetic
+first-cousin descendants at generation 3 (`F = 1/16`). It writes marker truth,
+individual-level synthetic liabilities, group summaries, metadata, and the
+four-panel figure.
+
+```bash
+Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \
+  --data_dir data/raw/human_irf6 \
+  --out_dir analysis/results/human_irf6_synthetic_liability --seed 81
+```
+
 ### Ancestry-tract smoke test
 
 ![GenomeAdmixR ancestry-tract smoke test](../analysis/example_figures/figure9_ancestry_tract_smoke.png)

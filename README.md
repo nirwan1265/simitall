@@ -35,6 +35,30 @@ The page distinguishes implementation checks against known synthetic truth from
 claims of biological realism, and links each figure to the script that generated
 it.
 
+### Human IRF6-region example
+
+`simitall` includes a reproducible, **synthetic** human-pedigree demonstration
+for an `IRF6`-centered GRCh38 chromosome-1 window. It reads a locally supplied
+1000 Genomes VCF only to obtain anonymous common-marker frequencies, constructs
+random-mating and first-cousin-descendant pedigree branches, and writes marker
+truth, synthetic liabilities, probability summaries, and a four-panel figure.
+
+The raw human inputs remain local under `data/raw/human_irf6/` and are ignored
+by Git. This example is designed to test data provenance, inheritance,
+inbreeding summaries, and figure generation. Its effects and probabilities are
+explicitly simulated: it is **not** a clinical cleft-lip predictor, a claim of
+variant causality, or a substitute for genetic counselling.
+
+```bash
+Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \
+  --data_dir data/raw/human_irf6 \
+  --out_dir analysis/results/human_irf6_synthetic_liability --seed 81
+```
+
+See the [detailed tutorial](docs/TUTORIAL.md#human-irf6-region-synthetic-pedigree-liability-example)
+for interpretation and the [validation page](docs/VALIDATION.md#synthetic-human-irf6-region-pedigree-liability)
+for the result figure and output definitions.
+
 ## Agentic planning and chat
 
 The `simitall` agent is a **retrieval-grounded planning assistant**, not an
@@ -79,6 +103,25 @@ requirements have been resolved. If a user names a real panel or resource that
 is not available locally, the agent should ask for its path or explicitly offer
 a synthetic alternative instead of silently substituting toy data. See
 [Agent Knowledge Base](#agent-knowledge-base) for the guardrails and backends.
+
+For a figure-producing breeding example, ask for a synthetic biparental BC2S7
+population. The answer includes package-verified R code and writes VCF,
+ancestry, breakpoint, allele-frequency, and PNG outputs:
+
+```r
+answer <- simitall_ask(
+  "Simulate a synthetic biparental cross for chromosome 10 with 2 backcrosses and 7 selfing generations, then show final allele frequencies.",
+  provider = "ollama",
+  data_source = "synthetic",
+  include_code = TRUE
+)
+cat(answer$answer)
+```
+
+Named NAM varieties are not bundled with the package, so an agent must ask for
+the corresponding founder haplotypes and chromosome-10 map rather than claim
+that synthetic founders are real NAM lines. The fully executed demonstration
+and its figure are in the [detailed tutorial](docs/TUTORIAL.md#agent-worked-example-biparental-bc2s7-with-an-allele-frequency-figure).
 
 ## Project architecture
 

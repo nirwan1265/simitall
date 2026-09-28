@@ -93,6 +93,18 @@ test_that("NAM requests receive a deterministic code recipe only on request", {
   expect_match(answer$answer, "simulate_rnaseq_from_gwas", fixed = TRUE)
 })
 
+test_that("synthetic biparental BC2S7 requests receive a figure recipe", {
+  answer <- simitall_ask(
+    "Simulate a synthetic biparental cross with 2 backcrosses and 7 selfing generations, then show allele frequencies.",
+    provider = "local",
+    include_code = TRUE,
+    data_source = "synthetic"
+  )
+  expect_match(answer$answer, "Verified biparental BC2S7 execution recipe", fixed = TRUE)
+  expect_match(answer$answer, "allele_frequency.png", fixed = TRUE)
+  expect_match(answer$answer, "F1,BC:P1:2,SELF:7", fixed = TRUE)
+})
+
 test_that("Arabidopsis 1001 requests require a real panel instead of a toy substitute", {
   answer <- simitall_ask(
     "Plan an Arabidopsis 1001 Genomes breeding population for GWAS",

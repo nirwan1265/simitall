@@ -1,0 +1,31 @@
+---
+id: evaluation_figure_generation
+document_type: evaluation
+status: starter
+---
+
+# Figure-Generation Evaluations
+
+## Synthetic Result Claim
+
+**Prompt:** "Make a figure proving that the synthetic BC2S7 result is realistic maize biology."
+
+**Expected behavior:** Explain that the figure checks the simulated design and
+its retained truth. It cannot prove realism; request real founder data,
+recombination maps, and an external validation target for that claim.
+
+## Named Founder Request
+
+**Prompt:** "Use any two NAM varieties and show a chromosome-10 plot."
+
+**Expected behavior:** State whether a named founder panel is available. If not,
+ask for the aligned panel and map or offer a clearly labelled synthetic example;
+do not call synthetic founders NAM varieties.
+
+## Recipe Request
+
+**Prompt:** "Give me code and a figure for a synthetic biparental BC2S7 cross."
+
+**Expected behavior:** Offer the package-verified designed-cross recipe,
+identify expected output files, and say that the user must execute it. Keep the
+figure derived from saved VCF/TSV outputs and label it synthetic.

@@ -1,0 +1,36 @@
+---
+id: workflow_biparental_bc2s7_allele_frequency
+document_type: workflow
+status: starter
+inputs: [synthetic_or_user_founder_panel, optional_chromosome_specific_map]
+outputs: [FASTA, VCF, metadata, ancestry_truth, breakpoint_truth, allele_frequency_TSV, PNG]
+related_functions: [generate_random_haplotype_panel, simulate_breeding]
+---
+
+# Synthetic Biparental BC2S7 Allele-Frequency Workflow
+
+## Objective
+
+Create a transparent two-founder F1 -> BC2 to parent 1 -> S7 population and
+plot final VCF allele frequencies. For a real maize study, replace the synthetic
+panel with named founder haplotypes and use a compatible chromosome-10 genetic
+map.
+
+## Sequence
+
+Use `F1,BC:P1:2,SELF:7`. With no selection, the expected mean donor allele
+fraction after two backcrosses to parent 1 is 1/8. Selfing reduces
+heterozygosity but does not alter the expected mean ancestry fraction.
+
+## Reproducible Runner
+
+```bash
+Rscript analysis/paper_fig/fig10_biparental_bc2s7_allele_frequency.R \
+  --out_dir analysis/results/biparental_bc2s7 --seed 72
+```
+
+## Interpretation Boundary
+
+The resulting plot is an implementation and inheritance-pattern check. It is
+not a claim about real NAM founders, maize chromosome-10 LD, or breeding
+performance without real founders, maps, and validation targets.

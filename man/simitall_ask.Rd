@@ -46,7 +46,8 @@ restricted to the explicit \code{simitall} function allowlist.}
 \item{include_code}{Logical; append a deterministic, package-verified code
 recipe when \code{simitall} recognizes a supported workflow request. This is
 safer than asking a language model to invent executable code. Currently,
-a full NAM breeding-to-omics recipe is supplied for NAM questions.}
+recipes are supplied for synthetic NAM breeding-to-omics requests and
+synthetic biparental BC2S7 allele-frequency requests.}
 
 \item{input_files}{Optional named or unnamed paths to user-supplied data.
 For example, supply a founder FASTA panel and recombination map when
