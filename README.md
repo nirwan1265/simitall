@@ -71,6 +71,7 @@ answer <- simitall_ask(
   "I have a local GRCh38 IRF6-region VCF. Plan a synthetic multi-generation human pedigree with an inbreeding scenario and an IRF6-region liability figure.",
   provider = "local",
   data_source = "provided",
+  include_code = TRUE,
   input_files = c(
     "data/raw/human_irf6/irf6_1kgp_grch38_chr1_209M_211M.vcf.gz",
     "data/raw/human_irf6/irf6_grch38_chr1_209M_211M.recombination_map.tsv"
@@ -79,15 +80,62 @@ answer <- simitall_ask(
 cat(answer$answer)
 ```
 
-**Grounded answer and output**
+**Agent output**
 
-The agent should identify that a VCF supports inherited-marker and pedigree
-simulation, while gene activation requires an additional expression or
-regulatory model. The accompanying fixed-seed runner uses anonymous common
-markers in the `IRF6` region, simulates random-mating and first-cousin-
-descendant branches, then writes marker truth, synthetic liability tables, and
-a four-panel figure. All effects are synthetic: this is not a clinical cleft-
-lip predictor or a claim that selected markers are causal.
+The returned answer below is the local agent's deterministic, retrieval-grounded
+plan. The `Grounding documents` list is intentionally omitted here to keep the
+front page readable; it is still returned in R so users can inspect provenance.
+
+<details>
+<summary>View the IRF6 planning answer</summary>
+
+**Proposed stages**
+
+1. Define the founder haplotypes and a chromosome-specific recombination map.
+2. Create a designed pedigree while retaining family labels, ancestry tracts,
+   breakpoints, and map truth.
+3. Validate IDs, parent IDs, unknown parents, pedigree cycles, aliases, and
+   generations before simulating phenotype outcomes.
+
+**Required inputs**
+
+- A supplied founder/genotype panel, genetic map, mating design, and sample size.
+- A pedigree table with unique `id`, `sire`, and `dam` columns; optional family,
+  generation, sex, and source columns.
+
+**Truth and QC outputs**
+
+- Per-chromosome ancestry, breakpoints, founder contributions, heterozygosity,
+  and LD/segregation QC.
+- A validated pedigree, cross graph, family/generation summaries, and
+  genotype-pedigree concordance checks when markers are available.
+
+**Limitation**
+
+This is a synthetic demonstration, not evidence that a simulated pedigree
+reproduces human biology. The supplied VCF selects anonymous common-marker
+frequencies only. The simulated liability effects and outcomes are illustrative,
+not a clinical cleft-lip predictor or a claim of variant causality.
+
+**Verified execution recipe**
+
+With `include_code = TRUE`, the agent appends this runner and then returns the
+complete versioned R implementation from
+`analysis/paper_fig/fig11_human_irf6_synthetic_liability.R`:
+
+```r
+system2("Rscript", c(
+  "analysis/paper_fig/fig11_human_irf6_synthetic_liability.R",
+  "--data_dir", "data/raw/human_irf6",
+  "--out_dir", "analysis/results/human_irf6_synthetic_liability",
+  "--seed", "81"
+))
+```
+
+Expected outputs are marker-truth, individual synthetic-liability, and group
+summary TSV files; a metadata JSON file; and the validation figure.
+
+</details>
 
 ```bash
 Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \

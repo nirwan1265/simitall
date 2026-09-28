@@ -492,13 +492,70 @@ simitall_agent_tools <- function() {
   .simitall_agent_safe_fallback(question, retrieval, labels)
 }
 
+.simitall_agent_source_file <- function(...) {
+  relative_path <- file.path(...)
+  here <- normalizePath(getwd(), mustWork = TRUE)
+  for (i in 0:6) {
+    candidate <- file.path(here, relative_path)
+    if (file.exists(candidate)) return(candidate)
+    parent <- dirname(here)
+    if (identical(parent, here)) break
+    here <- parent
+  }
+  NULL
+}
+
 .simitall_agent_code_recipe <- function(question, preflight) {
   terms <- .simitall_agent_terms(question)
   is_nam <- "nam" %in% terms
+  is_human_irf6 <- "irf6" %in% terms &&
+    any(c("human", "pedigree", "liability", "cleft") %in% terms)
   is_biparental <- grepl("biparental|bi[ -]?parental", tolower(question)) &&
     any(c("backcross", "selfing", "cross") %in% terms)
   if (!identical(preflight$status, "ready") ||
-      !identical(preflight$data_source, "synthetic")) return("")
+      !preflight$data_source %in% c("synthetic", "provided")) return("")
+
+  if (is_human_irf6 && identical(preflight$data_source, "provided")) {
+    script_path <- .simitall_agent_source_file(
+      "analysis", "paper_fig", "fig11_human_irf6_synthetic_liability.R"
+    )
+    script_body <- if (!is.null(script_path)) {
+      paste(readLines(script_path, warn = FALSE), collapse = "\n")
+    } else {
+      NULL
+    }
+
+    if (!is.null(script_body)) {
+      return(paste(
+        "Verified human IRF6-region execution recipe:",
+        "The complete implementation below is read directly from the versioned simitall runner in this checkout. The VCF is used only to select anonymous common-marker frequencies. Liability effects and outcomes are synthetic; this is not a clinical risk predictor or a claim of variant causality.",
+        "",
+        "Run it directly from the repository root:",
+        "",
+        "```r",
+        "system2(\"Rscript\", c(",
+        "  \"analysis/paper_fig/fig11_human_irf6_synthetic_liability.R\",",
+        "  \"--data_dir\", \"data/raw/human_irf6\",",
+        "  \"--out_dir\", \"analysis/results/human_irf6_synthetic_liability\",",
+        "  \"--seed\", \"81\"",
+        "))",
+        "```",
+        "",
+        "Full versioned R implementation:",
+        "",
+        "```r",
+        script_body,
+        "```",
+        "",
+        "Expected outputs: marker-truth TSV, individual synthetic-liability TSV, group summary TSV, metadata JSON, and `figure11_human_irf6_synthetic_liability.png`.",
+        sep = "\n"
+      ))
+    }
+
+    return("The IRF6 runner is unavailable from this installation. Run this request from a simitall source checkout containing `analysis/paper_fig/fig11_human_irf6_synthetic_liability.R` to retrieve the full verified implementation.")
+  }
+
+  if (!identical(preflight$data_source, "synthetic")) return("")
 
   if (is_biparental && !is_nam) {
     return(paste(
@@ -769,7 +826,10 @@ simitall_agent_tools <- function() {
   is_pedigree <- has_any(c("pedigree", "parentage", "maternal", "paternal"))
   is_breeding <- has_any(c("breeding", "nam", "magic", "ril", "nil", "f1", "f2", "backcross", "selfing", "cross")) || is_pedigree
   is_ancestry_tools <- has_any(c("rfmix", "tractor", "genesis", "genomeadmixr"))
-  is_ancestry <- has_any(c("ancestry", "admixed", "admixture", "local")) || is_ancestry_tools
+  # "local" commonly describes a file on disk (for example, a local GRCh38
+  # VCF). Only treat it as an ancestry request when the phrase is explicit.
+  is_ancestry <- has_any(c("ancestry", "admixed", "admixture")) ||
+    grepl("local[[:space:]-]+ancestry", tolower(question)) || is_ancestry_tools
   is_bacterial <- has_any(c("bacteria", "bacterial", "ecoli", "coli", "escherichia"))
   is_assembly <- has_any(c("assembly", "hybrid", "unicycler", "quast", "illumina", "pacbio", "hifi", "clr"))
   is_polyploid <- has_any(c("polyploid", "tetraploid", "hexaploid", "potato", "wheat"))

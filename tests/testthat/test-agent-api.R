@@ -105,6 +105,16 @@ test_that("synthetic biparental BC2S7 requests receive a figure recipe", {
   expect_match(answer$answer, "F1,BC:P1:2,SELF:7", fixed = TRUE)
 })
 
+test_that("provided IRF6 requests include the versioned implementation", {
+  recipe <- simitall:::.simitall_agent_code_recipe(
+    "Plan a human IRF6 pedigree liability simulation",
+    list(status = "ready", data_source = "provided")
+  )
+  expect_match(recipe, "Full versioned R implementation", fixed = TRUE)
+  expect_match(recipe, "make_unrelated <- function", fixed = TRUE)
+  expect_match(recipe, "synthetic_cleft_probability", fixed = TRUE)
+})
+
 test_that("Arabidopsis 1001 requests require a real panel instead of a toy substitute", {
   answer <- simitall_ask(
     "Plan an Arabidopsis 1001 Genomes breeding population for GWAS",
