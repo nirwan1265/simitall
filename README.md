@@ -258,6 +258,26 @@ Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \
 
 ![Synthetic human IRF6-region pedigree liability](analysis/example_figures/figure11_human_irf6_synthetic_liability.png)
 
+**What this figure tests, and did it work?**
+
+- **Panel A** checks that the runner selected common, biallelic markers from
+  the supplied GRCh38 `chr1:209-211 Mb` VCF window and places the annotated
+  `IRF6` coordinate in that same window. It does not test disease-causing
+  variants.
+- **Panels B and C** check the programmed synthetic liability model. The
+  first-cousin-descendant group has `F = 1/16` and is assigned an explicit
+  positive inbreeding contribution, so its mean synthetic probability is
+  expected to be higher than the generation-3 random-mating comparison.
+- **Panel D** independently checks the pedigree/genotype mechanism: the
+  first-cousin-descendant group should be more homozygous at the selected
+  markers than the random-mating group.
+
+For the fixed seed shown, both programmed checks pass: the first-cousin group
+has a higher mean synthetic probability in panel B and a higher median marker
+homozygosity in panel D. That validates agreement with this simulation's
+*programmed truth*; it does not validate a real IRF6 disease mechanism or
+human clinical risk prediction.
+
 ### 2. Maize NAM planning recipe
 
 **Question to the agent**
@@ -407,6 +427,29 @@ panel and recombination map with measured resources for organism-level claims.
 
 See the [detailed NAM workflow](docs/TUTORIAL.md#46-nam-and-magic-populations)
 and [validation examples](docs/VALIDATION.md) for output expectations.
+
+**How to judge the NAM result after running it**
+
+- The map should have a much smaller cumulative-cM slope from **45-55 Mb**
+  than in the flanking intervals. This is the deliberately programmed
+  recombination cold spot.
+- The ancestry and breakpoint truth files should show fewer recombination
+  breakpoints in that interval, and genotype LD should be higher there than in
+  the flanks. Those are the direct checks that the intended high-LD region was
+  created.
+- The metadata should contain 500 final lines with NAM family labels; the VCF,
+  phenotype table, RNA-seq metadata, and genomic-selection inputs should all
+  use those same sample IDs.
+- GWAS, eQTL, and genomic-selection outputs test that the downstream analyses
+  can consume one consistent simulated cohort. The current breeding-first NAM
+  route does not yet produce the standardized causal-truth schema required for
+  a quantitative `benchmark_gwas()` recovery score.
+
+The NAM block in this README is a verified recipe, but it is not yet a
+fixed-seed completed 100-Mb validation result with a figure. We therefore
+cannot honestly label it a scientific "pass" yet. Its recipe-generation path
+is tested; after the full run, the map, breakpoint, LD, sample-ID, and
+downstream-output checks above determine whether the requested design passed.
 
 ## What it can simulate
 
