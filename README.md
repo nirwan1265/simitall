@@ -1,13 +1,13 @@
 # SimItAll
 
-`SimItAll` (SIMulate IT ALL) is an R-first framework for building linked,
+`SimItAll` (SIMulate IT ALL) is an R framework for building
 truth-aware genomics simulations, analyzing their outputs, and benchmarking
 results against the truth used to generate them. It connects genome and
 annotation generation, DNA read simulation and assembly, breeding populations,
 GWAS and genomic selection, bulk and single-cell RNA-seq/eQTLs, ChIP-seq, and
-reproducible reports through one R API.
+reproducible reports through one R API. In short, simulate all seq analysis.
 
-The aim is not to replace mature scientific software. `SimItAll` provides the
+The aim of is be able to provide easy simulated data for researchers while also providing a platform where researchers can use an agentic AI model to ask questions and even have their data analyzed using known available software. `SimItAll` provides the
 reproducible layer around those tools: it keeps inputs, parameters, random
 seeds, provenance, and compatible truth outputs together so that an entire
 study can be rerun and checked.
@@ -54,8 +54,8 @@ flowchart TB
   BENCH --> OUTPUT
 ```
 
-The agent is an orchestration and explanation layer, not an autonomous
-analysis runner. The user remains in control of running code, downloads, and
+The agent is an planning and an explanation layer, not an autonomous
+analysis runner for now. Developments are taking place. The user remains in control of running code, downloads, and
 simulations. Free offline retrieval is the default; optional Ollama inference
 runs a local model with retrieved `SimItAll` context, while the OpenAI backend
 is optional and paid.
