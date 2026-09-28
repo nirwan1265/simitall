@@ -1,144 +1,41 @@
-# simitall
+# SimItAll
 
-`simitall` (SIMulate IT ALL) is an R-first framework for creating coordinated,
-truth-aware genomics simulations and evaluating the analyses performed on them.
-It connects genome and annotation generation, DNA read simulation and hybrid
-assembly, breeding populations, GWAS and genomic selection, bulk and
-single-cell RNA-seq/eQTLs, ChIP-seq, and benchmark reports through one
-reproducible R API.
+`SimItAll` (SIMulate IT ALL) is an R-first framework for building linked,
+truth-aware genomics simulations, analyzing their outputs, and benchmarking
+results against the truth used to generate them. It connects genome and
+annotation generation, DNA read simulation and assembly, breeding populations,
+GWAS and genomic selection, bulk and single-cell RNA-seq/eQTLs, ChIP-seq, and
+reproducible reports through one R API.
 
-The project is designed to make a complete study easier to reason about: define
-biological truth once, generate linked data modalities from the same individuals
-where appropriate, run an analysis, and compare its result with the known
-truth. `simitall` orchestrates established scientific tools rather than trying
-to replace them, while keeping parameters, seeds, provenance, and compatible
-truth outputs together.
+The aim is not to replace mature scientific software. `SimItAll` provides the
+reproducible layer around those tools: it keeps inputs, parameters, random
+seeds, provenance, and compatible truth outputs together so that an entire
+study can be rerun and checked.
 
-**Start here:** [Install](#1-install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Results and validation](docs/VALIDATION.md) | [Agentic planning and chat](#agentic-planning-and-chat)
+An optional local Shiny interface makes the retrieval-grounded agent easy to
+use interactively. It runs in the user's own R session, does not require a
+GitHub connection, and defaults to the free offline knowledge briefing:
+
+```r
+install.packages(c("shiny", "httr2"))
+library(simitall)
+launch_simitall_agent()
+```
+
+**Start here:** [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Results and validation](docs/VALIDATION.md)
 
 ## What simitall can do
 
-- **Simulate:** genomes, annotations, reads, assemblies, founder panels,
-  breeding populations, phenotypes, GWAS cohorts, RNA-seq, single-cell RNA-seq,
-  eQTLs, and ChIP-seq.
-- **Analyze and benchmark:** GWAS, eQTL, genomic-selection, and assembly
-  outputs against the simulated causal, ancestry, feature, or reference truth.
-- **Plan with an agent:** retrieve versioned project knowledge, identify missing
-  inputs, propose a reviewable workflow, and optionally provide a
-  package-verified R recipe.
-
-## Results and validation
-
-Reproducible example figures, their input settings, source-data tables, and the
-scope of each validation are collected in **[Results and Validation](docs/VALIDATION.md)**.
-The page distinguishes implementation checks against known synthetic truth from
-claims of biological realism, and links each figure to the script that generated
-it.
-
-### Human IRF6-region example
-
-`simitall` includes a reproducible, **synthetic** human-pedigree demonstration
-for an `IRF6`-centered GRCh38 chromosome-1 window. It reads a locally supplied
-1000 Genomes VCF only to obtain anonymous common-marker frequencies, constructs
-random-mating and first-cousin-descendant pedigree branches, and writes marker
-truth, synthetic liabilities, probability summaries, and a four-panel figure.
-
-The raw human inputs remain local under `data/raw/human_irf6/` and are ignored
-by Git. This example is designed to test data provenance, inheritance,
-inbreeding summaries, and figure generation. Its effects and probabilities are
-explicitly simulated: it is **not** a clinical cleft-lip predictor, a claim of
-variant causality, or a substitute for genetic counselling.
-
-```bash
-Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \
-  --data_dir data/raw/human_irf6 \
-  --out_dir analysis/results/human_irf6_synthetic_liability --seed 81
-```
-
-See the [detailed tutorial](docs/TUTORIAL.md#human-irf6-region-synthetic-pedigree-liability-example)
-for interpretation and the [validation page](docs/VALIDATION.md#synthetic-human-irf6-region-pedigree-liability)
-for the result figure and output definitions.
-
-## Agentic planning and chat
-
-The `simitall` agent is a **retrieval-grounded planning assistant**, not an
-unreviewed autonomous analysis runner. It uses the versioned knowledge library
-shipped with the package to interpret a question, prioritize relevant workflows
-and species notes, flag missing inputs, and return the documents that grounded
-its response. It can help formulate a runnable plan, but users remain in
-control of executing simulations and analyses.
-
-The default chat mode is free and offline: it returns a transparent local
-evidence briefing without an API key, account, model download, or GitHub
-connection.
-
-```r
-library(simitall)
-
-answer <- simitall_ask(
-  "Plan a multi-chromosome maize NAM population for GWAS and genomic selection."
-)
-print(answer)
-```
-
-For local natural-language inference, use a free Ollama model installed on the
-same computer. The model receives retrieved project context, while the package
-keeps the grounding documents alongside the answer:
-
-```bash
-ollama pull llama3.2
-```
-
-```r
-answer <- simitall_ask(
-  "What should I simulate first for a maize NAM GWAS and RNA-seq study?",
-  provider = "ollama",
-  data_source = "synthetic",
-  include_code = TRUE
-)
-```
-
-`include_code = TRUE` requests a package-verified recipe only when the input
-requirements have been resolved. If a user names a real panel or resource that
-is not available locally, the agent should ask for its path or explicitly offer
-a synthetic alternative instead of silently substituting toy data. See
-[Agent Knowledge Base](#agent-knowledge-base) for the guardrails and backends.
-
-For a figure-producing breeding example, ask for a synthetic biparental BC2S7
-population. The answer includes package-verified R code and writes VCF,
-ancestry, breakpoint, allele-frequency, and PNG outputs:
-
-```r
-answer <- simitall_ask(
-  "Simulate a synthetic biparental cross for chromosome 10 with 2 backcrosses and 7 selfing generations, then show final allele frequencies.",
-  provider = "ollama",
-  data_source = "synthetic",
-  include_code = TRUE
-)
-cat(answer$answer)
-```
-
-Named NAM varieties are not bundled with the package, so an agent must ask for
-the corresponding founder haplotypes and chromosome-10 map rather than claim
-that synthetic founders are real NAM lines. The fully executed demonstration
-and its figure are in the [detailed tutorial](docs/TUTORIAL.md#agent-worked-example-biparental-bc2s7-with-an-allele-frequency-figure).
-
-## Project architecture
-
-`simitall` is organized around three connected components. The simulation
-engine generates biological truth and synthetic datasets, the analysis engine
-processes either simulated or real datasets, and the agent layer translates a
-scientific request into a reproducible plan that it can explain. When
-simulation truth is available, analysis results can be benchmarked
-automatically before reports, figures, and quality-control summaries are
-created.
+| `SIMULATE` | `ANALYZE` | `AGENTIC AI` |
+| --- | --- | --- |
+| Create genomes, annotations, reads, founder panels, pedigrees, populations, phenotypes, and multi-omics truth. | Run and benchmark assembly, GWAS, eQTL, and genomic-selection analyses against known simulated truth. | Retrieve project knowledge, identify missing inputs, propose a reviewable workflow, and provide deterministic package recipes when supported. |
 
 ```mermaid
 flowchart TB
-  S["simitall"]
+  S["SimItAll"]
   SIM["Simulation"]
   ANA["Analysis"]
-  AGENT["Agent"]
+  AGENT["Agentic AI"]
   SIMDESC["Generate biological truth<br/>and datasets"]
   ANADESC["Analyze simulated<br/>or real datasets"]
   AGENTDESC["Understand requests;<br/>plan and explain"]
@@ -157,119 +54,75 @@ flowchart TB
   BENCH --> OUTPUT
 ```
 
-The agent is an orchestration layer rather than a replacement for established
-scientific software. Every workflow should remain callable directly from R,
-record its parameters and random seeds, and produce outputs that can be rerun
-without the agent.
+The agent is an orchestration and explanation layer, not an autonomous
+analysis runner. The user remains in control of running code, downloads, and
+simulations. Free offline retrieval is the default; optional Ollama inference
+runs a local model with retrieved `SimItAll` context, while the OpenAI backend
+is optional and paid.
 
-## Agent Knowledge Base
+## Worked examples
 
-The package ships a versioned, retrieval-ready knowledge base under
-`inst/agent/knowledge/`. It keeps source-traceable paper summaries separate
-from synthesized technique guides, tool cards, organism notes, direct R
-workflows, definitions, and agent-behavior evaluations. This lets a future
-agent explain a method and recommend a reproducible `simitall` workflow without
-pretending that a paper summary or software default is a universal rule.
+### 1. Human IRF6-region synthetic pedigree liability
 
-```text
-inst/agent/knowledge/
-  papers/        # evidence-linked summaries of individual papers
-  techniques/    # GWAS, selection, breeding, RNA-seq, scRNA-seq, ChIP-seq
-  tools/         # R packages and external software used by simitall
-  species/       # bacteria, human, maize, rice, and Arabidopsis notes
-  workflows/     # complete reproducible simulation and analysis recipes
-  terminology/   # concise domain definitions and aliases
-  evaluations/   # expected safe and evidence-aware agent behavior
-```
-
-See `inst/agent/knowledge/README.md` for the evidence hierarchy and authoring
-rules.
-
-### Local agent and Shiny interface
-
-The first agent release is deliberately **answer-and-plan only**. It performs
-local retrieval over the versioned knowledge base and can optionally ask a
-local Ollama or paid OpenAI model to answer using that context. It returns the
-grounding documents alongside its answer. It cannot execute R code, shell
-commands, downloads, or simulations. That separation keeps a proposed
-workflow reviewable before a user runs it.
-
-Retrieval prioritizes `workflows/`, `techniques/`, organism-specific
-`species/` notes, and `tools/` over broad review papers. By default, model
-answers are **plan-only**: they cannot include code, package installation, or
-external tool recommendations. The prompt contains an explicit allowlist of
-high-level `simitall` functions, and an answer that violates the guardrails is
-replaced with a transparent local evidence briefing. This is intentional: a
-local model may still hallucinate, so users should treat every plan as advice
-to review rather than as an executed analysis.
-
-The default backend is **free and offline**. It generates a transparent
-evidence briefing from the local knowledge library; no account, API key,
-GitHub connection, or model download is needed:
+**Question to the agent**
 
 ```r
-library(simitall)
-
 answer <- simitall_ask(
-  "Plan a multi-chromosome maize NAM population for GWAS and genomic selection."
+  "I have a local GRCh38 IRF6-region VCF. Plan a synthetic multi-generation human pedigree with an inbreeding scenario and an IRF6-region liability figure.",
+  provider = "local",
+  data_source = "provided",
+  input_files = c(
+    "data/raw/human_irf6/irf6_1kgp_grch38_chr1_209M_211M.vcf.gz",
+    "data/raw/human_irf6/irf6_grch38_chr1_209M_211M.recombination_map.tsv"
+  )
 )
-print(answer)
+cat(answer$answer)
 ```
 
-For a free local language model, install Ollama on the computer, download a
-model once, and select the Ollama backend:
+**Grounded answer and output**
+
+The agent should identify that a VCF supports inherited-marker and pedigree
+simulation, while gene activation requires an additional expression or
+regulatory model. The accompanying fixed-seed runner uses anonymous common
+markers in the `IRF6` region, simulates random-mating and first-cousin-
+descendant branches, then writes marker truth, synthetic liability tables, and
+a four-panel figure. All effects are synthetic: this is not a clinical cleft-
+lip predictor or a claim that selected markers are causal.
 
 ```bash
-ollama pull llama3.2
+Rscript analysis/paper_fig/fig11_human_irf6_synthetic_liability.R \
+  --data_dir data/raw/human_irf6 \
+  --out_dir analysis/results/human_irf6_synthetic_liability --seed 81
 ```
+
+![Synthetic human IRF6-region pedigree liability](analysis/example_figures/figure11_human_irf6_synthetic_liability.png)
+
+### 2. Maize NAM planning recipe
+
+**Question to the agent**
 
 ```r
 answer <- simitall_ask(
-  "What should I simulate first for a maize NAM GWAS and RNA-seq study?",
-  provider = "ollama"
-)
-```
-
-For a package-verified code recipe, request it explicitly. This is safer than
-asking a language model to write new code; currently a complete NAM recipe is
-available when the question asks about NAM:
-
-```r
-answer <- simitall_ask(
-  "Plan a 500-line maize NAM population for GWAS, RNA-seq, and genomic selection.",
-  provider = "ollama",
+  "Plan a synthetic 500-line maize NAM population for chromosome 10 with a high-LD region, GWAS, RNA-seq, and genomic selection.",
+  provider = "local",
   data_source = "synthetic",
   include_code = TRUE
 )
+cat(answer$answer)
 ```
 
-With the default `data_source = "auto"`, a breeding request receives an
-input-dependent code skeleton plus a focused request for a founder panel and
-map; it will never silently replace a named real resource (for example, an
-Arabidopsis 1001 Genomes panel) with toy data. Supply real input paths through
-`input_files`, or explicitly choose `data_source = "synthetic"` when a
-synthetic panel is appropriate.
+**Grounded answer and output**
 
-An optional **local** Shiny interface is included for interactive questions:
+For this supported request, `include_code = TRUE` appends a deterministic,
+package-verified R recipe rather than relying on model-written code. The recipe
+creates synthetic founders, a chromosome-specific recombination map with a
+low-recombination/high-LD interval, a 500-line NAM population, a phenotype,
+family-aware GWAS, RNA-seq/eQTL outputs, and genomic-selection results.
 
-```r
-install.packages(c("shiny", "httr2"))
-launch_simitall_agent()
-```
-
-Shiny does not need a GitHub connection. It runs on the user's own R session,
-and defaults to the free local evidence briefing. It can also use an Ollama
-model running on the same computer. Long simulations should later run in a
-separate queued execution service, rather than inside an interactive Shiny
-worker.
-
-The OpenAI backend is optional and paid. Only use it after adding API billing
-and setting `OPENAI_API_KEY` locally. A ChatGPT or Codex subscription/login
-does not provide API usage:
-
-```r
-simitall_ask("Explain LD blocks for GWAS.", provider = "openai")
-```
+When real NAM founder haplotypes and a genetic map are available, replace the
+synthetic panel explicitly. The agent must not call synthetic founders real NAM
+varieties. See the [detailed NAM workflow](docs/TUTORIAL.md#46-nam-and-magic-populations)
+and [validation examples](docs/VALIDATION.md) for output expectations.
 
 ## What it can simulate
 
