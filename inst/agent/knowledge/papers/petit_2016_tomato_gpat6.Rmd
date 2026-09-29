@@ -1,0 +1,40 @@
+---
+id: paper_petit_2016_tomato_gpat6
+document_type: paper_summary
+title: "The Glycerol-3-Phosphate Acyltransferase GPAT6 from Tomato Plays a Central Role in Fruit Cutin Biosynthesis"
+citation_key: Petit2016GPAT6
+authors: "Petit, J., Bres, C., Mauxion, J.-P., et al."
+year: 2016
+journal: "Plant Physiology"
+domains: [plant_genetics, bulk_segregant_analysis, RNAseq, cuticle_biology]
+techniques: [BC1F2, mapping_by_sequencing, pooled_sequencing, RNAseq]
+organisms: [tomato]
+evidence_status: source_reviewed_from_user_pdf
+source_priority: primary_paper
+source_file: user_supplied_local_archive
+last_reviewed: 2026-09-29
+---
+
+# One-Sentence Summary
+
+This tomato study used a BC1F2 population, phenotype-based pools, and
+whole-genome sequencing to map a cutin-deficiency mutation, then used RNA-seq
+to examine pathways affected by the mutation.
+
+# Scope for simitall
+
+Useful as a biological and design example connecting backcross/F2 segregation,
+bulked-segregant mapping, a targeted phenotype, and downstream RNA-seq.
+
+# Agent-Safe Takeaways
+
+- Pool membership must be defined from the phenotype before sequencing and
+  analysis.
+- A mapped locus is distinct from a downstream expression consequence.
+- A synthetic BC1F2 or bulked-segregant workflow should retain pool labels,
+  allele-frequency truth, and phenotype-assignment truth.
+
+# Limitations and Guardrails
+
+This is a tomato-specific functional study. It does not justify transferring
+its gene effects, cuticle parameters, or trait biology to other species.

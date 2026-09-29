@@ -12,9 +12,10 @@ truth sets.
 |---|---|---|
 | `papers/` | One faithful, source-traceable summary per paper | Cite page/section evidence and preserve uncertainty |
 | `techniques/` | Cross-paper method guides | Separate accepted practice, package behavior, and inference |
-| `tools/` | Package and command-line software cards | Pin version where known; link to official documentation |
+| `tools/` | Package/software cards plus tutorial map | Record tutorial/vignette provenance and executable boundary |
 | `species/` | Organism-aware modeling notes | Do not transfer biological defaults across organisms without saying so |
 | `workflows/` | Reproducible recipes using `simitall` | Include inputs, outputs, code, QC, truth benchmarks, and limitations |
+| `validation_contracts/` | Four-part workflow checks | Define simulation truth, required results, figures, and pass criteria |
 | `terminology/` | Definitions and aliases | Prefer unambiguous names and state context-dependent meanings |
 | `evaluations/` | Agent behavior tests | Specify the expected safe, evidence-aware response |
 

@@ -1,0 +1,34 @@
+---
+id: validation_sequencing_assembly
+document_type: validation_contract
+status: active
+domains: [Illumina, PacBio, Nanopore, hybrid_assembly, QUAST]
+related_functions: [sim_illumina_art, sim_pacbio, sim_nanopore, run_unicycler_grid, run_quast_grid, summarize_quast]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Sequencing and Hybrid-Assembly Validation Contract
+
+## Simulation Truth
+
+- Reference genome, requested coverage, read length/insert distribution or long-read
+  error profile, read type, seed, assembler settings, and truth structural variants.
+
+## Required Results
+
+- FASTQ/FASTA read files, read manifest/QC summary, assembly FASTA, assembler logs,
+  QUAST report/summary, and parameter manifest.
+
+## Required Figures
+
+- Read-length and coverage distributions.
+- Assembly contiguity/accuracy trade-off across design settings.
+- QUAST genome fraction, misassembly, and N50 comparison against known reference truth.
+
+## Pass Criteria
+
+- Read files are non-empty and sample identifiers/read pairs are consistent.
+- Observed coverage and length distributions are compared with requested settings.
+- Assembly metrics are taken from parsed QUAST output against the exact simulated or
+  declared reference; N50 alone is never a pass criterion.

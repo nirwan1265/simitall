@@ -71,30 +71,40 @@ Write-Step "Installation profile: $Profile"
 
 $Packages = @(
     "python=3.10", "pip", "r-base>=4.3", "r-remotes", "r-jsonlite",
-    "r-matrix", "r-reticulate"
+    "r-matrix", "r-reticulate", "r-shiny", "r-processx"
 )
-if ($Profile -eq "omics") {
+if ($Profile -in @("omics", "full")) {
     $Packages += @("r-biocmanager", "r-ggplot2", "r-patchwork")
+}
+if ($Profile -eq "population") {
+    # TASSEL is a noarch Java application distributed by Bioconda. GEMMA does
+    # not have a native Windows Bioconda build, so it remains an explicit
+    # external/Docker/WSL choice rather than a failed mandatory install.
+    $Packages += "tassel"
 }
 
 $Environments = & $Conda env list
 if ($Environments -match "(?m)^$([regex]::Escape($EnvName))\s") {
     Write-Step "Updating existing environment $EnvName."
-    & $Conda install -n $EnvName -y --strict-channel-priority -c conda-forge $Packages
+    & $Conda install -n $EnvName -y --strict-channel-priority -c conda-forge -c bioconda $Packages
 } else {
     Write-Step "Creating environment $EnvName."
-    & $Conda create -n $EnvName -y --strict-channel-priority -c conda-forge $Packages
+    & $Conda create -n $EnvName -y --strict-channel-priority -c conda-forge -c bioconda $Packages
 }
 if ($LASTEXITCODE -ne 0) { throw "Conda environment creation failed." }
 
 if ($Profile -eq "population") {
-    Write-Step "Installing SimuPOP and advanced phenotype dependencies."
+    Write-Step "Installing SimuPOP, TASSEL, and advanced phenotype dependencies."
     & $Conda install -n $EnvName -y -c conda-forge simupop
     if ($LASTEXITCODE -ne 0) {
         & $Conda run -n $EnvName python -m pip install simuPOP
     }
     & $Conda run -n $EnvName Rscript -e 'if (!requireNamespace("simplePHENOTYPES", quietly=TRUE)) remotes::install_github("samuelbfernandes/simplePHENOTYPES", dependencies=TRUE, upgrade="never")'
     & $Conda run -n $EnvName Rscript -e 'needed <- c("simstudy", "pedtricks", "rrBLUP", "BGLR", "ranger"); missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly=TRUE)]; if (length(missing)) install.packages(missing, repos="https://cloud.r-project.org")'
+}
+
+if ($Profile -eq "population") {
+    Write-Host "[simitall] GEMMA is not installed on native Windows by this profile. Use WSL2, Docker, or the portable R mixed-model workflow when GEMMA is required." -ForegroundColor Yellow
 }
 
 if ($Profile -eq "omics") {

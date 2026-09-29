@@ -1,0 +1,37 @@
+---
+id: tool_rnaseq_analysis_resources
+document_type: tool_resource
+status: navigation_only
+software: RNAseq_analysis_resources
+related_functions: [simulate_rnaseq_from_gwas, plot_rnaseq_eqtl_results]
+source_priority: user_supplied_review_and_blog
+last_reviewed: 2026-09-29
+---
+
+# RNA-seq Analysis Resources
+
+## Role
+
+The supplied practical review *From bench to bytes: a practical guide to RNA
+sequencing data analysis* provides a decision-oriented overview of common
+RNA-seq processing and analysis stages. The supplied RNA-Seq Blog page is a
+historical tool-navigation resource, not primary methodological evidence.
+
+## simitall Position
+
+Use these resources to help the agent ask which stage a user means: read QC,
+alignment/quantification, count construction, differential expression,
+functional interpretation, or simulation/power analysis. Use official manuals
+and primary method papers for executable defaults and claims.
+
+## Guardrails
+
+- Do not treat a blog tool list as a validated benchmarking result.
+- Preserve raw-read, alignment/quantification, and count-matrix provenance.
+- Match software choice to experimental design, organism/reference quality,
+  read technology, and intended endpoint.
+
+## Tutorial Provenance
+
+Curated from user-supplied `fgene-16-1697922.pdf` and `Review of RNA-Seq Data
+Analysis Tools _ RNA-Seq Blog.html`.

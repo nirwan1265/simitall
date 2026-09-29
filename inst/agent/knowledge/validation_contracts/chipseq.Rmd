@@ -1,0 +1,37 @@
+---
+id: validation_chipseq
+document_type: validation_contract
+status: active
+domains: [ChIPseq, transcription_factor, histone_mark, regulatory_elements, differential_binding]
+related_functions: [simulate_chipseq, plot_chipseq_results]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# ChIP-seq Validation Contract
+
+## Simulation Truth
+
+- Reference/annotation source, target regulatory elements, true peak intervals,
+  binding affinity, fragment/read settings, ChIP versus input assignment,
+  differential-binding effects, background/noise model, and seed.
+
+## Required Results
+
+- True-peak BED/TSV, read manifest/positions or FASTQ, sample metadata,
+  peak-count table, differential-binding truth, QC TSV/JSON, and a parameter manifest.
+
+## Required Figures
+
+- Peak locations over promoters/enhancers or genome track.
+- Peak-centred ChIP versus input enrichment profile.
+- FRiP/library-complexity/QC plots.
+- Differential-binding recovery plot when conditions are simulated.
+
+## Pass Criteria
+
+- Peak intervals are valid, sorted, and inside reference contig bounds.
+- ChIP and input samples, read counts, and condition labels agree with metadata.
+- Programmed target regions have greater simulated enrichment than background;
+  report the selected summary rather than assuming a fixed FRiP cutoff.
+- Differential-binding calls are benchmarked against retained peak truth.

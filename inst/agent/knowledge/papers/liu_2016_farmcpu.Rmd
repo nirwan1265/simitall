@@ -1,0 +1,42 @@
+---
+id: paper_liu_2016_farmcpu
+document_type: paper_summary
+title: "Iterative Usage of Fixed and Random Effect Models for Powerful and Efficient Genome-Wide Association Studies"
+citation_key: Liu2016FarmCPU
+authors: "Liu, X., Huang, M., Fan, B., Buckler, E. S., and Zhang, Z."
+year: 2016
+doi: "10.1371/journal.pgen.1005767"
+journal: "PLoS Genetics"
+domains: [GWAS, FarmCPU, population_structure]
+techniques: [fixed_effect_model, random_effect_model, association_mapping]
+organisms: [general]
+evidence_status: citation_and_user_manual_reviewed
+source_priority: primary_paper
+source_file: user_supplied_FarmCPU_manual
+last_reviewed: 2026-09-29
+---
+
+# One-Sentence Summary
+
+FarmCPU alternates fixed and random effect components for genome-wide
+association analysis and is commonly used as one of several model options in
+plant and other GWAS workflows.
+
+# Scope for simitall
+
+Use as a comparative GWAS analysis method after simulation, with the same
+filters, covariates, samples, and causal-truth benchmark used for the baseline
+mixed-model analysis.
+
+# Agent-Safe Takeaways
+
+- Compare FarmCPU with a prespecified baseline such as MLM rather than choosing
+  a method after viewing significance results.
+- Use simulation truth to compare calibration, recovery, and false positives.
+- Preserve population structure and relatedness handling in every comparison.
+
+# Limitations and Guardrails
+
+A method's performance varies with marker density, LD, sample size, trait
+architecture, and structure. More detected markers are not automatically a
+better or more biologically valid result.

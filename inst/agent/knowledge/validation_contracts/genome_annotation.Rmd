@@ -1,0 +1,35 @@
+---
+id: validation_genome_annotation
+document_type: validation_contract
+status: active
+domains: [genome_simulation, annotation, structural_variation]
+related_functions: [simulate_genome, simulate_annotations]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Genome and Annotation Validation Contract
+
+## Simulation Truth
+
+- Random seed, reference FASTA provenance or synthetic-genome settings.
+- Requested chromosome/contig lengths, GC target, repeat events, SNP/indel/SV
+  events, and feature-placement settings.
+- Coordinate-level truth tables for simulated sequence and annotation events.
+
+## Required Results
+
+- FASTA, GFF3, BED/TSV truth tables, JSON parameter manifest, and sequence/feature summaries.
+
+## Required Figures
+
+- Contig-length and GC-content distribution.
+- Variant or repeat density along each chromosome.
+- Feature-position track or promoter/gene-length distribution.
+
+## Pass Criteria
+
+- FASTA and annotation coordinates are internally valid and within contig bounds.
+- Requested contig count and approximate lengths are present.
+- Feature intervals do not have negative widths or invalid strand labels.
+- Truth-event counts and requested event classes agree with the parameter manifest.

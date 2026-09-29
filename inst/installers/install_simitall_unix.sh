@@ -85,9 +85,24 @@ log "Conda environment: ${ENV_NAME}"
 
 base_packages=(
   "python=3.10" pip "r-base>=4.3" r-remotes r-jsonlite r-matrix
-  r-reticulate
+  r-reticulate r-shiny r-processx
 )
 packages=("${base_packages[@]}")
+association_packages=()
+if [[ "$PROFILE" == "population" || "$PROFILE" == "full" ]]; then
+  # TASSEL is noarch. GEMMA has no native Apple Silicon build in Bioconda, so
+  # leave the portable R baseline available and explain the external fallback.
+  association_packages+=(tassel)
+  case "${OS}-${ARCH}" in
+    Darwin-x86_64|Linux-x86_64|Linux-aarch64)
+      association_packages+=(gemma)
+      ;;
+    Darwin-arm64|Linux-arm64)
+      log "GEMMA is not available from Bioconda for ${OS}-${ARCH}; keeping the R mixed-model baseline. Use Docker, an x86_64 environment, or another compatible external tool if GEMMA is required."
+      ;;
+  esac
+fi
+packages+=("${association_packages[@]}")
 if [[ "$PROFILE" == "omics" || "$PROFILE" == "full" ]]; then
   packages+=(r-biocmanager r-ggplot2 r-patchwork)
 fi
@@ -106,7 +121,7 @@ else
 fi
 
 if [[ "$PROFILE" == "population" || "$PROFILE" == "full" ]]; then
-  log "Installing SimuPOP and advanced phenotype dependencies."
+  log "Installing SimuPOP, association tools, and advanced phenotype dependencies."
   if ! "$CONDA_EXE" install -n "$ENV_NAME" -y -c conda-forge simupop; then
     "$CONDA_EXE" run -n "$ENV_NAME" python -m pip install simuPOP
   fi

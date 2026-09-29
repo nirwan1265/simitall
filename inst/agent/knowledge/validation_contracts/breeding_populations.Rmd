@@ -1,0 +1,48 @@
+---
+id: validation_breeding_populations
+document_type: validation_contract
+status: active
+domains: [breeding, F1, F2, backcross, selfing, RIL, NIL, DH, NAM, MAGIC, inbreeding]
+related_functions: [generate_random_haplotype_panel, simulate_breeding, simupop_api]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Breeding and Mapping-Population Validation Contract
+
+## Simulation Truth
+
+- Founder panel and genome build/provenance, chromosome-specific maps, cross
+  design, parent identities, generations, selection rules, seed, and requested
+  line count.
+- Founder ancestry, parental links, recombination breakpoints, and any imposed
+  distortion, introgression, missingness, or genotype-error truth.
+
+## Required Results
+
+- Offspring FASTA and/or VCF, sample/family metadata, ancestry TSV,
+  breakpoint TSV, realized recombination-map TSV, structural-variant truth when
+  requested, and a parameter manifest.
+
+## Required Figures
+
+- Allele-frequency distribution or trajectory.
+- Founder-contribution/ancestry plot and breakpoint or segment-length plot.
+- Heterozygosity/homozygosity by generation for selfing, RIL, or inbreeding.
+- Donor fraction and target-tract distribution for NIL/backcross designs.
+- LD decay or regional LD heatmap only when enough markers and lines exist.
+
+## Pass Criteria
+
+- All promised truth and genotype files exist; sample count equals the requested
+  retained-line count.
+- Genotypes contain only permitted ploidy-aware allele states and allele
+  frequencies lie in `[0, 1]`.
+- Parent, family, founder, chromosome, and breakpoint labels are non-missing
+  and internally consistent.
+- Repeated selfing/inbreeding should increase mean homozygosity; unselected
+  donor background should decline with additional backcrosses. These are
+  directional programmed checks, not universal biological laws.
+- A designed low-recombination interval should have fewer breakpoints than a
+  comparable high-recombination interval when the simulation map imposes that
+  contrast.

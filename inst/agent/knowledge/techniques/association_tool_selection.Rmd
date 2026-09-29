@@ -1,0 +1,50 @@
+---
+id: technique_association_tool_selection
+document_type: technique
+status: active
+domains: [GWAS, QTL, plants, animals, humans, TASSEL, GEMMA, GAPIT, FarmCPU]
+related_functions: [analyze_gwas, benchmark_gwas, plot_gwas_results]
+source_priority: package_workflows_and_official_tool_docs
+last_reviewed: 2026-09-29
+---
+
+# Association Tool Selection Defaults
+
+## Principle
+
+Choose an association tool from the study design and requested output, not from
+organism name alone. TASSEL and GEMMA are both species-agnostic in principle;
+their common use patterns, supported formats, and model features make them
+better fits for different requests.
+
+## Default Routing
+
+| Situation | Preferred starting path | Why |
+| --- | --- | --- |
+| All-R simulated cohort, any species | `analyze_gwas()` plus `benchmark_gwas()` | Portable baseline with retained synthetic truth. |
+| Plant/crop GWAS, HapMap/GBS/TASSEL output, LD/PCA/kinship workflow | TASSEL | Common crop-genetics ecosystem and plant-oriented data handling. |
+| Plant GWAS explicitly comparing FarmCPU, BLINK, MLM, or GAPIT models | GAPIT/FarmCPU | Model comparison with identical input QC and causal truth. |
+| Animal/human quantitative trait, PLINK/BIMBAM, LMM/mvLMM/BSLMM request | GEMMA | Efficient external mixed-model toolkit with relatedness-aware models. |
+| Large human case-control or biobank-scale study | Ask for sample size, imbalance, ancestry, and compute environment | Do not silently default to GEMMA; tool choice may require other specialized methods. |
+| Admixed/local-ancestry GWAS | RFMix/Tractor/GENESIS boundary plus explicit reference panels | Ordinary GWAS, admixture mapping, and local-ancestry association are distinct analyses. |
+
+## Required Harmonization Before Comparing Tools
+
+- Same sample manifest, genome build, marker coordinates, and allele coding.
+- Same MAF/missingness/variant filters.
+- Same phenotype transform, covariates, PCs, and relatedness treatment where comparable.
+- Same simulated causal truth and recovery window for benchmark metrics.
+
+## Required Outputs and Figures
+
+- Per-tool command/configuration manifest and version.
+- Filtered input summary, association tables, Manhattan and QQ plots.
+- Synthetic-truth precision/recall/power comparison where truth exists.
+- Explicit note when an external tool was planned but not executed locally.
+
+## Guardrails
+
+No species label alone determines the correct GWAS method. A default is a
+starting recommendation to be confirmed with phenotype type, cohort size,
+relatedness, ancestry, marker density, experimental design, and requested
+analysis output.

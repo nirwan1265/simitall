@@ -1,0 +1,54 @@
+---
+id: tool_tassel
+document_type: tool
+status: curated_from_user_tutorial
+software: TASSEL
+related_functions: [analyze_gwas, benchmark_gwas, plot_gwas_results]
+source_priority: user_supplied_manual_and_official_docs
+last_reviewed: 2026-09-29
+---
+
+# TASSEL
+
+## Role
+
+TASSEL (Trait Analysis by aSSociation, Evolution and Linkage) is a widely used
+plant-genetics application and command-line pipeline for genotype/phenotype
+association, linkage disequilibrium, diversity, kinship, PCA, and genomic
+selection. Its modern documentation supports common genotype formats including
+HapMap, VCF, PLINK, FASTA, and HDF5, plus GLM and MLM association workflows.
+
+## simitall Position
+
+TASSEL is the preferred external association-analysis suggestion for plant
+studies when the user requests plant-standard TASSEL output, HapMap/GBS-oriented
+processing, LD/kinship/PCA inspection, or an explicit TASSEL comparison. The
+R-native `analyze_gwas()` path remains the portable default when an all-R
+workflow is requested.
+
+## Inputs
+
+- Genotype data in a supported format and a marker map/reference coordinate system.
+- Trait, covariate, and population/family metadata with exact taxa-name matching.
+- Prespecified filtering, kinship/structure choices, and association model.
+
+## Outputs and Validation
+
+- Filtered genotype/trait inputs, kinship and PCA/structure summaries,
+  association results, Manhattan/QQ plots, and a method manifest.
+- In synthetic data, evaluate TASSEL results with the same causal truth and
+  recovery window used for the R baseline or other methods.
+
+## Guardrails
+
+- TASSEL is common in crop genetics, especially maize, but it is not a
+  scientifically mandatory default for every plant study.
+- Taxa-name mismatches, genotype encoding, missingness, and structure decisions
+  can change results before any association model is fitted.
+- Do not compare methods unless input filtering and covariates are harmonized.
+
+## Tutorial Provenance
+
+Curated from user-supplied `Tassel_User_Guide_3.0.pdf` and the current TASSEL
+user documentation. The supplied guide is TASSEL 3; use current TASSEL 5
+manuals for present-day commands and file support.

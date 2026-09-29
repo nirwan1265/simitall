@@ -1,0 +1,52 @@
+---
+id: tool_gemma
+document_type: tool
+status: official_docs_curated
+software: GEMMA
+related_functions: [analyze_gwas, benchmark_gwas, plot_gwas_results]
+source_priority: official_docs_and_primary_paper
+last_reviewed: 2026-09-29
+---
+
+# GEMMA
+
+## Role
+
+GEMMA is a command-line toolkit for genome-wide efficient mixed-model analysis.
+It provides univariate and multivariate linear mixed models, Bayesian sparse
+linear mixed models, relatedness-aware association testing, variance-component
+estimation, and genotype-by-environment tests.
+
+## simitall Position
+
+GEMMA is the preferred external mixed-model suggestion for moderate-scale animal
+or human quantitative-trait studies when the user requests GEMMA, PLINK/BIMBAM
+inputs, LMM/mvLMM/BSLMM, or a command-line relatedness-aware benchmark. It is
+not automatically the best choice for every animal or human dataset.
+
+## Inputs
+
+- PLINK binary or BIMBAM-style genotype inputs, phenotype, marker annotation,
+  covariates, and a compatible relatedness/kinship matrix.
+- Genome build, phenotype type, sample QC, and structure/relatedness strategy.
+
+## Outputs and Validation
+
+- Kinship matrix, association result files, model diagnostics, and method
+  manifest; SimItAll should add standard plots and synthetic-truth recovery.
+- For simulation, compare p-values and recovered loci against retained causal
+  truth using harmonized QC and covariates across methods.
+
+## Guardrails
+
+- GEMMA is species-agnostic; its suitability depends on study design, sample
+  size, phenotype model, genotype format, and computational constraints.
+- Large human binary-trait studies may need tools designed for severe case-control
+  imbalance or biobank scale; do not claim GEMMA is the universal human default.
+- Preserve covariates, genome build, and relatedness provenance.
+
+## Documentation Provenance
+
+Curated from the official GEMMA manual/repository and Zhou and Stephens (2012).
+The official repository notes that active development moved to PanGEMMA in late
+2024; verify the current executable/version before running an external command.

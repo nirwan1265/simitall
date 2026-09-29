@@ -1,0 +1,38 @@
+---
+id: validation_bulk_rnaseq_eqtl
+document_type: validation_contract
+status: active
+domains: [bulk_RNAseq, differential_expression, eQTL, ASE, batch_effects]
+related_functions: [simulate_rnaseq_from_gwas, benchmark_eqtl, plot_rnaseq_eqtl_results]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Bulk RNA-seq and eQTL Validation Contract
+
+## Simulation Truth
+
+- Donor genotypes, gene/annotation source, baseline expression, cis/trans eQTL
+  effects, condition and genotype-by-condition effects, batch labels, latent
+  factors, allele-specific-expression effects, dispersion/noise settings, and seed.
+
+## Required Results
+
+- Count and expression matrices, gene and sample metadata, condition/batch and
+  latent-factor truth, eQTL/ASE truth TSVs, eQTL results and benchmark TSVs,
+  plus a parameter manifest.
+
+## Required Figures
+
+- Library-size and mean-variance plots.
+- Sample PCA/MDS coloured by condition and batch.
+- Differential-expression volcano plot when DE is run.
+- eQTL signal/recovery plot and allelic-ratio-by-genotype plot when ASE is simulated.
+
+## Pass Criteria
+
+- Counts are non-negative integers and sample/gene identifiers align across files.
+- Conditions, replicates, batches, and donor identifiers match their truth metadata.
+- Dispersion, library size, and zero fraction are reported rather than assumed.
+- eQTL/DE recovery is evaluated against explicit simulated truth; report precision,
+  recall, and FDR/power at a prespecified threshold.

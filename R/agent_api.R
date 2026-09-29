@@ -165,6 +165,7 @@
 
 .simitall_agent_category_priority <- function(category) {
   priorities <- c(
+    validation_contracts = 14,
     workflows = 12,
     techniques = 10,
     species = 8,
@@ -276,7 +277,7 @@ search_simitall_knowledge <- function(query, n_results = 6L, knowledge_dir = NUL
   # Prefer operational package knowledge over background papers when both
   # discuss the same subject. Documents with no query match remain available
   # only as a fallback for very short or unfamiliar questions.
-  operational <- results$category %in% c("workflows", "techniques", "species", "tools") &
+  operational <- results$category %in% c("validation_contracts", "workflows", "techniques", "species", "tools") &
     results$score > 0
   results <- results[order(!operational, -results$score, results$path), , drop = FALSE]
   results <- results[seq_len(min(n_results, nrow(results))), , drop = FALSE]
@@ -546,7 +547,69 @@ simitall_agent_tools <- function() {
   is_biparental <- grepl("biparental|bi[ -]?parental", tolower(question)) &&
     any(c("backcross", "selfing", "cross") %in% terms)
   if (!identical(preflight$status, "ready") ||
-      !preflight$data_source %in% c("synthetic", "provided")) return("")
+      !preflight$data_source %in% c("synthetic", "provided", "package_demo")) return("")
+
+  if (identical(preflight$data_source, "package_demo") && is_human_irf6) {
+    return(paste(
+      "Bundled synthetic human IRF6-region demo:",
+      "This runs a small synthetic VCF and GFF3 bundled with simitall. It does not contain real 1000 Genomes participants, does not estimate clinical risk, and must not be used to claim IRF6 variant causality.",
+      "",
+      "```r",
+      "system2(\"Rscript\", c(",
+      "  \"analysis/paper_fig/fig11_human_irf6_synthetic_liability.R\",",
+      "  \"--data_dir\", \"inst/extdata/human_irf6\",",
+      "  \"--out_dir\", \"results/demo_human_irf6\",",
+      "  \"--seed\", \"81\"",
+      "))",
+      "```",
+      "",
+      "Expected outputs: synthetic marker truth, pedigree-liability tables, metadata JSON, and `figure11_human_irf6_synthetic_liability.png`.",
+      sep = "\n"
+    ))
+  }
+
+  if (identical(preflight$data_source, "package_demo") && is_nam) {
+    return(paste(
+      "Bundled synthetic maize NAM-style demo:",
+      "This uses eight small synthetic chr10 founders and a small synthetic recombination map bundled with simitall. It is a runnable structural demo, not a named maize NAM panel or a publication-scale population.",
+      "",
+      "```r",
+      "library(simitall)",
+      "panel <- system.file(\"extdata\", \"panels\", \"demo_maize_nam_chr10.fa\", package = \"simitall\")",
+      "map_file <- system.file(\"extdata\", \"maps\", \"demo_maize_nam_chr10_map.tsv\", package = \"simitall\")",
+      "stopifnot(nzchar(panel), nzchar(map_file))",
+      "dir.create(\"results/demo_maize_nam\", recursive = TRUE, showWarnings = FALSE)",
+      "prefix <- \"results/demo_maize_nam/nam_demo\"",
+      "simulate_breeding(",
+      "  haplotype_fa = panel, out_prefix = prefix, scheme = \"NAM\",",
+      "  founders = paste0(\"hap\", 1:8, collapse = \",\"), n_offspring = 80,",
+      "  recomb_map_in = map_file, vcf_out = paste0(prefix, \".vcf\"),",
+      "  ancestry_out = paste0(prefix, \".ancestry.tsv\"),",
+      "  breakpoints_out = paste0(prefix, \".breakpoints.tsv\"), seed = 2026",
+      ")",
+      "# Validation figure: final alternate-allele frequency across the toy chr10.",
+      "vcf_lines <- readLines(paste0(prefix, \".vcf\"), warn = FALSE)",
+      "records <- strsplit(vcf_lines[!grepl(\"^#\", vcf_lines)], \"\\t\", fixed = TRUE)",
+      "dosage <- function(gt) sum(as.numeric(strsplit(sub(\":.*$\", \"\", gt), \"[/|]\")[[1L]]))",
+      "frequency <- data.frame(",
+      "  position_bp = as.integer(vapply(records, `[[`, character(1), 2L)),",
+      "  alt_frequency = vapply(records, function(x) mean(vapply(x[10:length(x)], dosage, numeric(1))) / 2, numeric(1))",
+      ")",
+      "write.table(frequency, \"results/demo_maize_nam/nam_demo.allele_frequency.tsv\", sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+      "png(\"results/demo_maize_nam/nam_demo_validation.png\", width = 1500, height = 900, res = 160)",
+      "plot(frequency$position_bp, frequency$alt_frequency, pch = 16, col = \"#156E8A\", ylim = c(0, 1),",
+      "  xlab = \"Position on synthetic chr10 (bp)\", ylab = \"Alternate-allele frequency\",",
+      "  main = \"Bundled NAM-style demo: final allele frequencies\")",
+      "rect(1800, 0, 2600, 1, col = grDevices::adjustcolor(\"#E4A05D\", 0.18), border = NA)",
+      "points(frequency$position_bp, frequency$alt_frequency, pch = 16, col = \"#156E8A\")",
+      "legend(\"topright\", legend = \"Toy low-recombination interval\", fill = grDevices::adjustcolor(\"#E4A05D\", 0.18), bty = \"n\")",
+      "dev.off()",
+      "```",
+      "",
+      "Expected outputs: demo NAM VCF, sample/family metadata, ancestry tracts, breakpoint truth, realized recombination map, allele-frequency TSV, and `nam_demo_validation.png`.",
+      sep = "\n"
+    ))
+  }
 
   if (is_human_irf6 && identical(preflight$data_source, "provided")) {
     script_path <- .simitall_agent_source_file(

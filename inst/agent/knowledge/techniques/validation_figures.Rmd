@@ -40,6 +40,12 @@ The package example `analysis/paper_fig/fig10_biparental_bc2s7_allele_frequency.
 creates the BC2S7 allele-frequency figure and its TSV source table. It is a
 synthetic demonstration, not a result for named maize founders.
 
+When the agent is asked to use the bundled maize NAM demo, its runnable recipe
+also writes `nam_demo_validation.png` and
+`nam_demo.allele_frequency.tsv`. The plot is a compact check that the demo VCF
+was produced and labels its deliberately low-recombination interval. It is a
+toy validation graphic, not a measured LD analysis for maize chromosome 10.
+
 ## GWAS and Trait Figures
 
 | Question | Figure | What it checks | Expected pattern |

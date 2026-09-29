@@ -43,6 +43,21 @@ test_that("figure terminology retrieves validation guidance", {
   expect_true(any(basename(found$path) == "validation_figures.Rmd"))
 })
 
+test_that("validation contracts retrieve the four-part GWAS specification", {
+  found <- search_simitall_knowledge(
+    "GWAS required figure simulation truth results pass criteria",
+    n_results = 3
+  )
+  expect_true(any(basename(found$path) == "phenotypes_gwas.Rmd"))
+  expect_true(any(found$category == "validation_contracts"))
+
+  contract_path <- found$path[basename(found$path) == "phenotypes_gwas.Rmd"][1L]
+  contract <- readLines(contract_path, warn = FALSE)
+  expect_true(all(c(
+    "## Simulation Truth", "## Required Results", "## Required Figures", "## Pass Criteria"
+  ) %in% contract))
+})
+
 test_that("retrieval prioritizes workflow knowledge over repeated paper text", {
   knowledge <- file.path(tempdir(), "simitall-agent-priority")
   dir.create(file.path(knowledge, "workflows"), recursive = TRUE)

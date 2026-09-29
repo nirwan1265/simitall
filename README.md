@@ -31,6 +31,37 @@ chromosome or the user explicitly selects synthetic inputs.
 
 **Start here:** [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Results and validation](docs/VALIDATION.md)
 
+## Install simitall
+
+SimItAll keeps R dependencies, Python modules, and external scientific
+software outside this repository. Select a profile that matches the work you
+need; `full` installs the supported union for the operating system.
+
+```bash
+git clone https://github.com/nirwan1265/simitall.git
+cd simitall
+
+# macOS or Linux
+bash install_simitall_macos.sh population
+
+# Windows PowerShell
+powershell -ExecutionPolicy Bypass -File install_simitall_windows.ps1 -Profile population
+```
+
+| Profile | Includes |
+| --- | --- |
+| `minimal` | R package, free local agent, Shiny interface, and basic simulation dependencies |
+| `population` | SimuPOP, breeding, phenotype simulation, GWAS/genomic-selection R packages, TASSEL, and GEMMA where the platform supports it |
+| `omics` | Bulk RNA-seq, single-cell, ChIP-seq, and supporting R/Bioconductor packages |
+| `sequencing` | ART, PBSIM/PBSIM3, Badread, Unicycler, QUAST, and helper tools |
+| `full` | Every supported profile component for the current operating system |
+
+TASSEL is installed from Bioconda in the `population` profile. GEMMA is added
+on Linux and Intel macOS; native Windows and Apple Silicon users retain the
+portable R mixed-model workflow and receive a clear GEMMA fallback message.
+Use `check_simitall_dependencies("population")` after activation to inspect
+what is available.
+
 ## What simitall can do
 
 | `SIMULATE` | `ANALYZE` | `AGENTIC AI` |

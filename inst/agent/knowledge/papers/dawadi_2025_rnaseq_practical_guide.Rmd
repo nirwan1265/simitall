@@ -1,0 +1,48 @@
+---
+id: paper_dawadi_2025_rnaseq_practical_guide
+document_type: paper_summary
+title: "From bench to bytes: a practical guide to RNA sequencing data analysis"
+citation_key: Dawadi2025RNAseqGuide
+authors: "Dawadi, P., Pokharel, B., Shrestha, A., Niraula, D., Naeem, A., Miura, S., Roy, M., and Nepal, S."
+year: 2025
+doi: "10.3389/fgene.2025.1697922"
+journal: "Frontiers in Genetics"
+domains: [bulk_RNAseq, RNAseq_analysis, differential_expression]
+techniques: [read_QC, alignment, quantification, count_analysis]
+organisms: [general]
+evidence_status: source_reviewed_from_user_pdf
+source_priority: review_paper
+source_file: user_supplied_local_archive
+last_reviewed: 2026-09-29
+---
+
+# Citation
+
+Dawadi et al. (2025). *From bench to bytes: a practical guide to RNA
+sequencing data analysis*. Frontiers in Genetics 16:1697922. DOI:
+10.3389/fgene.2025.1697922.
+
+# One-Sentence Summary
+
+A decision-oriented guide to selecting and interpreting RNA-seq processing and
+statistical-analysis steps, written for researchers moving from experimental
+RNA work into computational analysis.
+
+# Scope for simitall
+
+Use as workflow context for clearly separating read generation, QC,
+alignment/quantification, count matrices, differential expression, and
+biological interpretation. It supports asking users for the missing design and
+provenance information before code is proposed.
+
+# Agent-Safe Takeaways
+
+- RNA-seq workflows require explicit file-format and processing provenance.
+- Tool selection depends on the question, data type, reference quality, and
+  compute constraints; no single default applies to every study.
+- Simulated read truth and simulated count truth should remain distinguishable.
+
+# Limitations and Guardrails
+
+This review is guidance, not a benchmark establishing that one tool is best.
+Use primary method papers and official manuals for package-specific behavior.

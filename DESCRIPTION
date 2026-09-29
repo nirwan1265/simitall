@@ -38,6 +38,7 @@ Suggests:
     httr2,
     ggplot2,
     patchwork,
+    processx,
     ranger,
     rrBLUP,
     roxygen2,

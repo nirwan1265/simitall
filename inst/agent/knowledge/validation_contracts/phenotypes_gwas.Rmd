@@ -1,0 +1,41 @@
+---
+id: validation_phenotypes_gwas
+document_type: validation_contract
+status: active
+domains: [phenotypes, GWAS, QTL, epistasis, heritability, population_structure]
+related_functions: [simulate_gwas_cohort, simulate_phenotypes, analyze_gwas, benchmark_gwas, plot_gwas_results]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Phenotype and GWAS Validation Contract
+
+## Simulation Truth
+
+- Genotype/cohort source, causal loci, additive/dominance/epistatic effects,
+  polygenic and environmental variance, heritability target, population/family
+  covariates, phenotype type, seed, and association-model settings.
+
+## Required Results
+
+- Genotype/VCF, phenotype TSV, causal-effect truth TSV, cohort metadata,
+  association result TSV, kinship/PC covariates when used, benchmark TSV, and
+  analysis parameter manifest.
+
+## Required Figures
+
+- Phenotype distribution, stratified by programmed group/environment when relevant.
+- Manhattan plot with simulated causal loci labelled and QQ plot.
+- Truth-recovery plot or table for precision, recall, F1, power, and false-positive rate.
+- Effect-size distribution for complex trait architectures.
+
+## Pass Criteria
+
+- Sample identifiers match across genotype, phenotype, and covariate files.
+- Phenotype values match the requested type and p-values are finite in `[0, 1]`.
+- Causal truth is retained and every benchmark metric is computed against the
+  declared recovery window.
+- QQ/PC diagnostics must be reported; acceptable calibration is a design
+  decision, not a fixed universal threshold.
+- In synthetic data, recovery should be compared across replicates or stated
+  power targets. A single significant marker is not a sufficient pass criterion.

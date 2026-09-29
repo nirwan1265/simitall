@@ -1,0 +1,40 @@
+---
+id: validation_scrnaseq_celltype_eqtl
+document_type: validation_contract
+status: active
+domains: [single_cell_RNAseq, cell_types, dropout, pseudobulk, celltype_eQTL]
+related_functions: [simulate_scrnaseq_from_gwas, benchmark_celltype_eqtls, plot_scrnaseq_results]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Single-Cell RNA-seq and Cell-Type eQTL Validation Contract
+
+## Simulation Truth
+
+- Donor genotypes, cell-type/state proportions, cell identities, pseudotime,
+  condition and batch labels, donor effects, dropout/library-depth settings,
+  marker genes, cell-type eQTL effects, and seed.
+
+## Required Results
+
+- Sparse count matrix, barcodes, feature table, cell/donor metadata,
+  pseudobulk matrices, marker/eQTL truth, eQTL results/metrics, and an RDS or
+  interoperable matrix representation.
+
+## Required Figures
+
+- UMAP/PCA coloured by cell type, donor, condition, and batch.
+- Library-size and zero-fraction/dropout plots.
+- Marker-expression or cell-type composition plot.
+- Donor-aware pseudobulk heatmap and cell-type eQTL recovery plot.
+
+## Pass Criteria
+
+- Matrix dimensions agree with barcode and feature tables; counts are
+  non-negative integers.
+- Every cell has a valid donor, cell type, and batch/condition label when these
+  were requested.
+- Pseudobulk replicates aggregate biological donors, not cells treated as independent samples.
+- Marker and eQTL recovery are assessed against retained truth by cell type;
+  embedding separation is descriptive, not proof of biological validity.

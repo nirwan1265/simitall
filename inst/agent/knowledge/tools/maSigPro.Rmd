@@ -1,0 +1,53 @@
+---
+id: tool_masigpro
+document_type: tool
+status: curated_from_user_tutorial
+software: maSigPro
+related_functions: [simulate_rnaseq_from_gwas, benchmark_eqtl, plot_rnaseq_eqtl_results]
+source_priority: user_supplied_tutorial_and_bioconductor_docs
+last_reviewed: 2026-09-29
+---
+
+# maSigPro
+
+## Role
+
+maSigPro is an R package for single- and multi-series time-course expression
+analysis. The supplied user guide describes a two-step regression approach:
+fit a global time/group model with false-discovery-rate control, then use
+variable selection to identify group-specific temporal profiles and cluster or
+visualize significant genes.
+
+## simitall Position
+
+Use maSigPro as an optional analysis backend after SimItAll creates a bulk
+RNA-seq count matrix with explicit time, condition, replicate, batch, and
+truth metadata. It complements rather than replaces a general differential
+expression baseline.
+
+## Inputs
+
+- Gene-by-sample count or expression matrix.
+- Sample design table with time, group/condition, and biological replicate.
+- Prespecified time encoding, contrasts, normalization, and FDR threshold.
+
+## Outputs and Validation
+
+- Significant temporal genes, model coefficients, time-profile clusters, and
+  trajectory figures.
+- Benchmark temporal-DE calls against simulated trajectory truth using power,
+  precision, recall, and false-discovery metrics.
+
+## Guardrails
+
+- Time points and biological replicates must not be confused with technical
+  replicates.
+- State whether time is treated as discrete, continuous, or a polynomial/spline
+  regression term.
+- Temporal association in a simulation is not a claim of biological regulation.
+
+## Tutorial Provenance
+
+Curated from user-supplied `maSigPro-tutorial.pdf`. The guide names the core
+workflow functions `make.design.matrix()`, `p.vector()`, `T.fit()`,
+`get.siggenes()`, `see.genes()`, and the `maSigPro()` wrapper.

@@ -17,22 +17,44 @@ data_dir <- get_arg("--data_dir", "data/raw/human_irf6")
 out_dir <- get_arg("--out_dir", "analysis/results/human_irf6_synthetic_liability")
 seed <- as.integer(get_arg("--seed", "81"))
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-vcf <- file.path(data_dir, "irf6_1kgp_grch38_chr1_209M_211M.vcf.gz")
-gff <- file.path(data_dir, "irf6_grch38_chr1_209M_211M.gff3")
-stopifnot(file.exists(vcf), file.exists(gff), nzchar(Sys.which("bcftools")))
+real_vcf <- file.path(data_dir, "irf6_1kgp_grch38_chr1_209M_211M.vcf.gz")
+real_gff <- file.path(data_dir, "irf6_grch38_chr1_209M_211M.gff3")
+demo_dir <- file.path(root, "inst", "extdata", "human_irf6")
+using_demo <- !file.exists(real_vcf)
+vcf <- if (using_demo) file.path(demo_dir, "demo_human_irf6_chr1.vcf.gz") else real_vcf
+gff <- if (using_demo) file.path(demo_dir, "demo_human_irf6_chr1.gff3") else real_gff
+stopifnot(file.exists(vcf), file.exists(gff))
 set.seed(seed)
 
 # Obtain biallelic SNP allele frequencies without reading 3,202 individual
 # genotypes into R. These positions are markers, not asserted disease variants.
-query_file <- tempfile(fileext = ".tsv")
-query_command <- paste(
-  "bcftools query -f",
-  shQuote("%CHROM\\t%POS\\t%ID\\t%REF\\t%ALT\\t%INFO/AF\\n"),
-  shQuote(vcf), ">", shQuote(query_file)
-)
-if (system(query_command) != 0L) stop("bcftools query failed")
-markers <- read.delim(query_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
-names(markers) <- c("chromosome", "position_bp", "id", "ref", "alt", "af")
+if (using_demo) {
+  connection <- gzfile(vcf, open = "rt")
+  on.exit(close(connection), add = TRUE)
+  records <- readLines(connection, warn = FALSE)
+  records <- records[!grepl("^#", records)]
+  fields <- strsplit(records, "\t", fixed = TRUE)
+  markers <- data.frame(
+    chromosome = vapply(fields, `[[`, character(1), 1L),
+    position_bp = as.integer(vapply(fields, `[[`, character(1), 2L)),
+    id = vapply(fields, `[[`, character(1), 3L),
+    ref = vapply(fields, `[[`, character(1), 4L),
+    alt = vapply(fields, `[[`, character(1), 5L),
+    af = as.numeric(sub(".*AF=([0-9.]+).*", "\\1", vapply(fields, `[[`, character(1), 8L))),
+    stringsAsFactors = FALSE
+  )
+} else {
+  if (!nzchar(Sys.which("bcftools"))) stop("bcftools is required for the supplied real VCF")
+  query_file <- tempfile(fileext = ".tsv")
+  query_command <- paste(
+    "bcftools query -f",
+    shQuote("%CHROM\\t%POS\\t%ID\\t%REF\\t%ALT\\t%INFO/AF\\n"),
+    shQuote(vcf), ">", shQuote(query_file)
+  )
+  if (system(query_command) != 0L) stop("bcftools query failed")
+  markers <- read.delim(query_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+  names(markers) <- c("chromosome", "position_bp", "id", "ref", "alt", "af")
+}
 markers$af <- suppressWarnings(as.numeric(markers$af))
 markers <- markers[
   is.finite(markers$af) & markers$af >= 0.10 & markers$af <= 0.40 &
@@ -106,7 +128,8 @@ write.table(summary, file.path(out_dir, "synthetic_pedigree_liability_summary.ts
 
 png(file.path(out_dir, "figure11_human_irf6_synthetic_liability.png"), width = 1800, height = 1300, res = 180)
 par(mfrow = c(2, 2), mar = c(4.5, 4.5, 3.5, 1))
-plot(markers$position_bp, markers$af, pch = 16, col = "#156E8A", ylim = c(0, 0.5), xlab = "Position on chr1 (GRCh38)", ylab = "1000 Genomes alternate-allele frequency", main = "A. Anonymous common markers in the IRF6 region")
+frequency_label <- if (using_demo) "Synthetic demo alternate-allele frequency" else "1000 Genomes alternate-allele frequency"
+plot(markers$position_bp, markers$af, pch = 16, col = "#156E8A", ylim = c(0, 0.5), xlab = "Position on chr1 (GRCh38)", ylab = frequency_label, main = "A. Anonymous common markers in the IRF6 region")
 abline(v = 209785617, col = "#B4422B", lty = 2, lwd = 2)
 text(209785617, 0.48, "IRF6", pos = 4, col = "#B4422B")
 plot(summary$generation + ifelse(summary$group == "first_cousin_descendant", 0.08, -0.08), summary$synthetic_cleft_probability, pch = 16, col = ifelse(summary$group == "random_mating", "#156E8A", "#B4422B"), xaxt = "n", xlab = "Pedigree generation", ylab = "Mean synthetic probability", main = "B. Synthetic liability by pedigree group")
@@ -116,6 +139,6 @@ boxplot(synthetic_cleft_probability ~ group, data = individuals[individuals$gene
 boxplot(marker_homozygosity ~ group, data = individuals[individuals$generation == 3L, ], col = c("#A7D3E0", "#E9B2A8"), ylab = "Fraction homozygous at selected markers", main = "D. Marker homozygosity")
 dev.off()
 
-metadata <- list(seed = seed, reference = "GRCh38 chr1:209,000,000-211,000,000", gene = "IRF6", marker_count = L, pedigree = "random-mating generations 0-3 plus synthetic first-cousin descendants at generation 3", limitation = "Synthetic liability effects are illustrative only; this is not a clinical predictor or a claim that selected markers cause cleft lip.")
+metadata <- list(seed = seed, reference = "GRCh38 chr1:209,000,000-211,000,000", input_type = if (using_demo) "bundled synthetic VCF" else "user-supplied VCF", gene = "IRF6", marker_count = L, pedigree = "random-mating generations 0-3 plus synthetic first-cousin descendants at generation 3", limitation = "Synthetic liability effects are illustrative only; this is not a clinical predictor or a claim that selected markers cause cleft lip.")
 if (requireNamespace("jsonlite", quietly = TRUE)) jsonlite::write_json(metadata, file.path(out_dir, "metadata.json"), pretty = TRUE, auto_unbox = TRUE)
 cat("Completed synthetic IRF6-region pedigree-liability demonstration:\n", normalizePath(out_dir), "\n", sep = "")

@@ -1,0 +1,43 @@
+---
+id: paper_vieth_2017_powsimr
+document_type: paper_summary
+title: "powsimR: Power Analysis for Bulk and Single Cell RNA-seq Experiments"
+citation_key: Vieth2017powsimR
+authors: "Vieth, B., Ziegenhain, C., Parekh, S., Enard, W., and Hellmann, I."
+year: 2017
+doi: "10.1093/bioinformatics/btx435"
+journal: "Bioinformatics"
+domains: [bulk_RNAseq, single_cell_RNAseq, power_analysis, differential_expression]
+techniques: [mean_dispersion_model, dropout_model, DE_power]
+organisms: [general]
+evidence_status: user_vignette_reviewed
+source_priority: primary_paper
+source_file: user_supplied_powsimR_vignette
+last_reviewed: 2026-09-29
+---
+
+# One-Sentence Summary
+
+powsimR models count-distribution characteristics from reference bulk or
+single-cell RNA-seq data, simulates differential-expression designs, and
+reports power and error-rate behavior across sample-size choices.
+
+# Scope for simitall
+
+Use as an optional design sensitivity layer after the simulation architecture
+has declared biological replicates, effect sizes, cell types or conditions, and
+analysis endpoints.
+
+# Agent-Safe Takeaways
+
+- Power is conditional on the fitted or assumed mean-dispersion/dropout model,
+  effect-size distribution, and tested pipeline.
+- Produce power and false-discovery curves across sample-size scenarios instead
+  of one unqualified sample-size recommendation.
+- Keep reference-fitting samples biologically coherent before fitting a count model.
+
+# Limitations and Guardrails
+
+Reference-derived parameters transfer imperfectly across protocols, tissues,
+cell types, and organisms. Clearly label reference-based versus fully synthetic
+power estimates.

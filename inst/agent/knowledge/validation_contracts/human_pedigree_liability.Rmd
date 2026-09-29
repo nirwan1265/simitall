@@ -1,0 +1,37 @@
+---
+id: validation_human_pedigree_liability
+document_type: validation_contract
+status: active
+domains: [human, pedigree, inbreeding, liability, IRF6]
+related_functions: [simulate_breeding, simulate_parental_effects, simupop_api]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Human Pedigree and Synthetic Liability Validation Contract
+
+## Simulation Truth
+
+- Genome build and supplied versus bundled synthetic marker source, pedigree graph,
+  mating scenario, marker-frequency source, liability-effect parameters, threshold,
+  seed, and explicit statement that effects are simulated.
+
+## Required Results
+
+- Marker truth, individual synthetic-liability table, pedigree/group summary,
+  parameter metadata, and a generated validation figure.
+
+## Required Figures
+
+- Regional marker-frequency plot with the named region annotated.
+- Liability/probability distribution by pedigree group and generation.
+- Marker homozygosity or relatedness distribution across programmed scenarios.
+
+## Pass Criteria
+
+- Pedigree identifiers/parents/generations are internally valid and probabilities
+  are finite in `[0, 1]`.
+- Input provenance is labelled as user-supplied or bundled synthetic.
+- Scenario labels and planned groups are retained in output tables.
+- Any directional difference is described as an outcome of programmed synthetic
+  effects, never as clinical risk prediction, variant causality, or evidence about a person or population.

@@ -1,0 +1,52 @@
+---
+id: tool_gapit_farmcpu
+document_type: tool
+status: curated_from_user_tutorial
+software: [GAPIT, FarmCPU]
+related_functions: [analyze_gwas, benchmark_gwas, plot_gwas_results]
+source_priority: user_supplied_manual_and_official_docs
+last_reviewed: 2026-09-29
+---
+
+# GAPIT and FarmCPU
+
+## Role
+
+GAPIT is an R framework for genomic association and prediction. The supplied
+GAPIT Version 3 manual documents model choices including GLM, MLM, CMLM, SUPER,
+MLMM, FarmCPU, BLINK, and genomic-prediction models. The supplied FarmCPU
+manual describes the fixed-and-random-model circulating probability unification
+method and recommends comparing results with other approaches.
+
+## simitall Position
+
+`analyze_gwas()` remains the package's reproducible baseline mixed-model path.
+GAPIT/FarmCPU is an optional comparative analysis backend for an already
+simulated or user-supplied genotype/phenotype cohort. The agent must preserve
+identical filtering, covariates, kinship/PC handling, and causal truth when
+comparing methods.
+
+## Inputs
+
+- Genotype matrix and marker map with matching sample identifiers.
+- Phenotype table and prespecified covariates/PCs.
+- MAF/missingness filters and a declared model list.
+
+## Outputs and Validation
+
+- Per-method association results, parameter manifest, Manhattan/QQ plots, and
+  truth-recovery metrics for synthetic data.
+- Compare calibration, power, precision, recall, and false-positive behavior;
+  do not choose a method solely by the number of significant markers.
+
+## Guardrails
+
+- FarmCPU is not a replacement for controlling experimental confounding.
+- Do not call simulated causal recovery a biological discovery.
+- For real data, report model assumptions, QC, and independent replication.
+
+## Tutorial Provenance
+
+Curated from user-supplied `FarmCPU_help_document.pdf` and
+`gapit_help_document.pdf`; retain the original manuals outside the distributed
+package source and cite the method/version actually used.

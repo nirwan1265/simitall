@@ -1,8 +1,15 @@
+.simitall_gemma_supported_platform <- function() {
+  system <- unname(Sys.info()[["sysname"]])
+  machine <- tolower(unname(Sys.info()[["machine"]]))
+  if (identical(system, "Linux")) return(TRUE)
+  identical(system, "Darwin") && machine %in% c("x86_64", "amd64")
+}
+
 .simitall_dependency_catalog <- function(profile) {
   core <- data.frame(
-    component = c("jsonlite", "Matrix", "reticulate"),
+    component = c("jsonlite", "Matrix", "reticulate", "shiny", "processx"),
     kind = "R package",
-    candidates = c("jsonlite", "Matrix", "reticulate"),
+    candidates = c("jsonlite", "Matrix", "reticulate", "shiny", "processx"),
     required_for = "minimal",
     install_hint = "Installed by the minimal profile",
     stringsAsFactors = FALSE
@@ -10,12 +17,12 @@
   population <- data.frame(
     component = c(
       "simplePHENOTYPES", "simstudy", "pedtricks", "rrBLUP", "BGLR",
-      "ranger", "SimuPOP"
+      "ranger", "SimuPOP", "TASSEL", "GEMMA"
     ),
-    kind = c(rep("R package", 6L), "Python module"),
+    kind = c(rep("R package", 6L), "Python module", rep("command", 2L)),
     candidates = c(
       "simplePHENOTYPES", "simstudy", "pedtricks", "rrBLUP", "BGLR",
-      "ranger", "simuPOP"
+      "ranger", "simuPOP", "run_pipeline.pl|tassel", "gemma"
     ),
     required_for = "population",
     install_hint = c(
@@ -25,10 +32,17 @@
       "install.packages('rrBLUP')",
       "install.packages('BGLR')",
       "install.packages('ranger')",
-      "conda install -c conda-forge simupop"
+      "conda install -c conda-forge simupop",
+      "Installed by the population profile through Bioconda",
+      "Installed by the population profile where the platform provides GEMMA"
     ),
     stringsAsFactors = FALSE
   )
+  # The Bioconda GEMMA package is unavailable for native Windows and Apple
+  # Silicon. Do not mark a platform-impossible external binary as missing.
+  if (!.simitall_gemma_supported_platform()) {
+    population <- population[population$component != "GEMMA", , drop = FALSE]
+  }
   omics <- data.frame(
     component = c(
       "Rsubread", "ChIPsim", "SingleCellExperiment",

@@ -1,0 +1,39 @@
+---
+id: paper_jung_2006_rice_wda1
+document_type: paper_summary
+title: "Wax-deficient anther1 Is Involved in Cuticle and Wax Production in Rice Anther Walls and Is Required for Pollen Development"
+citation_key: Jung2006Wda1
+authors: "Jung, K.-H., Han, M.-J., Lee, D.-Y., et al."
+year: 2006
+journal: "The Plant Cell"
+domains: [rice, cuticle_wax, reproductive_development, functional_genetics]
+techniques: [T_DNA_mutant, expression_analysis, electron_microscopy]
+organisms: [rice]
+evidence_status: source_reviewed_from_user_pdf
+source_priority: primary_paper
+source_file: user_supplied_local_archive
+last_reviewed: 2026-09-29
+---
+
+# One-Sentence Summary
+
+This rice study characterizes a Wda1 insertion mutant with altered wax/cuticle
+production in anther walls and disrupted pollen development.
+
+# Scope for simitall
+
+Use as species-specific biological context for future rice reproductive-trait
+or condition/annotation scenarios, not as a direct quantitative parameter
+source.
+
+# Agent-Safe Takeaways
+
+- A molecular perturbation, cellular phenotype, and reproductive outcome are
+  different layers that need separate simulation truth when modeled.
+- Tissue specificity matters: anther-wall effects should not be generalized to
+  leaf or whole-plant expression without an explicit model.
+
+# Limitations and Guardrails
+
+The evidence concerns a particular rice gene and mutant system. It is not a
+basis for general causal claims or cross-species phenotype prediction.

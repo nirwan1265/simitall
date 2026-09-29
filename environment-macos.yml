@@ -27,6 +27,7 @@ dependencies:
   - samtools
   - seqkit
   - pigz
+  - tassel
   - pip:
       - badread
       - quast

@@ -1,0 +1,42 @@
+---
+id: paper_khan_2026_cuticle_drought_tolerance
+document_type: paper_summary
+title: "From molecules to field: Integrated insights into cuticle-mediated drought tolerance in plants"
+citation_key: Khan2026CuticleDrought
+authors: "Khan, A. A., Iqbal, B., Akbar, R., Du, D., and Wang, Y.-F."
+year: 2026
+doi: "10.1016/j.biotechadv.2026.108877"
+journal: "Biotechnology Advances"
+domains: [plant_cuticle, drought, lipidomics, QTL, multiomics]
+techniques: [GC_FID, GC_MS, QTL_mapping, CRISPR]
+organisms: [plants]
+evidence_status: source_reviewed_from_user_pdf
+source_priority: review_paper
+source_file: user_supplied_local_archive
+last_reviewed: 2026-09-29
+---
+
+# One-Sentence Summary
+
+This review synthesizes plant cuticle and wax biology in drought tolerance,
+linking molecular pathways, regulatory networks, lipidomic measurements, and
+breeding/editing strategies.
+
+# Scope for simitall
+
+Supports future multi-omic plant-stress scenarios where genotype, drought
+condition, cuticle-associated phenotype, RNA-seq, and lipidomics are simulated
+as separate but linked layers.
+
+# Agent-Safe Takeaways
+
+- Drought response is a condition-dependent design factor, not a universal
+  expression setting.
+- Molecular, phenotype, and lipidomic readouts should retain separate truth
+  tables and explicit cross-layer links.
+- QTL or gene references from a review need species- and experiment-specific
+  confirmation before being used as causal defaults.
+
+# Limitations and Guardrails
+
+This is a broad review, not a parameter source for a generic plant simulation.

@@ -1,0 +1,36 @@
+---
+id: validation_genomic_selection
+document_type: validation_contract
+status: active
+domains: [genomic_selection, GBLUP, rrBLUP, BGLR, selection_cycles, diversity]
+related_functions: [fit_genomic_model, run_genomic_selection, plot_genomic_selection_results]
+source_priority: package_truth_and_validation
+last_reviewed: 2026-09-29
+---
+
+# Genomic Selection Validation Contract
+
+## Simulation Truth
+
+- Genotypes/phenotypes, causal architecture, training/test or family split,
+  model settings, selected-parent rule, mating design, number of cycles, seed,
+  and retained true breeding values when simulation provides them.
+
+## Required Results
+
+- Training/test membership, predictions/GEBVs, model metrics, selected-parent
+  table, crosses/offspring metadata, kinship/diversity summary, cycle summary,
+  and parameter manifest.
+
+## Required Figures
+
+- Observed versus predicted phenotype or breeding value on held-out lines.
+- Prediction accuracy/calibration by split or cycle.
+- Genetic gain, selection differential, kinship/inbreeding, and family-representation plots over cycles.
+
+## Pass Criteria
+
+- Training and test labels are disjoint; family-aware splits avoid close-relative leakage when requested.
+- Each cycle has a valid selected-parent set and recorded crossing decisions.
+- Accuracy is reported only on held-out individuals; gain and diversity loss are both reported.
+- Selection success is interpreted as a configured simulation outcome, not evidence that the same scheme improves a real breeding program.

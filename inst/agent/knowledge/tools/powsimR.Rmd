@@ -1,0 +1,49 @@
+---
+id: tool_powsimr
+document_type: tool
+status: curated_from_user_tutorial
+software: powsimR
+related_functions: [simulate_rnaseq_from_gwas, simulate_scrnaseq_from_gwas, benchmark_eqtl, benchmark_celltype_eqtls]
+source_priority: user_supplied_vignette
+last_reviewed: 2026-09-29
+---
+
+# powsimR
+
+## Role
+
+powsimR supports a priori and posterior power analysis for bulk and single-cell
+RNA-seq differential-expression experiments. The supplied vignette describes
+fitting mean-dispersion and, where relevant, dropout relationships from a
+reference count matrix, simulating counts under chosen DE effects/sample sizes,
+and evaluating error rates across analysis choices.
+
+## simitall Position
+
+Use as an optional study-design and power-analysis layer. SimItAll retains its
+own causal expression/eQTL truth and can compare powsimR-style power summaries
+with its standard validation tables.
+
+## Inputs
+
+- A suitable reference count matrix or an explicitly synthetic count model.
+- Sample-size grid, effect-size/DE prevalence assumptions, and analysis methods.
+- For single-cell data: cell type, donor/batch design, and dropout assumptions.
+
+## Outputs and Validation
+
+- Simulated count sets, power/false-discovery summaries, and error-rate plots
+  across sample sizes and effect sizes.
+- Treat estimated reference distributions as dataset-specific, not universal.
+
+## Guardrails
+
+- Fit reference parameters within a biologically coherent group; do not pool
+  incompatible cell types, conditions, or batches merely to increase size.
+- Power conclusions depend on the assumed effect distribution and analysis
+  pipeline and should be shown as sensitivity analyses.
+
+## Tutorial Provenance
+
+Curated from user-supplied `powsimR • powsimR.html`, which cites Vieth et al.
+(2017), *Bioinformatics*, DOI: 10.1093/bioinformatics/btx435.
