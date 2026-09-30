@@ -544,6 +544,10 @@ simitall_agent_tools <- function() {
     any(c("human", "pedigree", "liability", "cleft") %in% terms)
   is_human_inbreeding <- .simitall_agent_species(question) == "human" &&
     grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
+  is_nam_gxe_multiomics <- is_nam && grepl(
+    "drought|irrigated|gxe|genotype.by.environment|rna.?seq|eqtl|gwas|genomic.?selection",
+    tolower(question)
+  )
   is_biparental <- grepl("biparental|bi[ -]?parental", tolower(question)) &&
     any(c("backcross", "selfing", "cross") %in% terms)
   if (!identical(preflight$status, "ready") ||
@@ -590,10 +594,17 @@ simitall_agent_tools <- function() {
       "# Validation figure: final alternate-allele frequency across the toy chr10.",
       "vcf_lines <- readLines(paste0(prefix, \".vcf\"), warn = FALSE)",
       "records <- strsplit(vcf_lines[!grepl(\"^#\", vcf_lines)], \"\\t\", fixed = TRUE)",
-      "dosage <- function(gt) sum(as.numeric(strsplit(sub(\":.*$\", \"\", gt), \"[/|]\")[[1L]]))",
+      "dosage <- function(gt) {",
+      "  alleles <- strsplit(sub(\":.*$\", \"\", gt), \"[/|]\")[[1L]]",
+      "  if (any(alleles == \".\")) return(NA_real_)",
+      "  sum(as.numeric(alleles))",
+      "}",
       "frequency <- data.frame(",
       "  position_bp = as.integer(vapply(records, `[[`, character(1), 2L)),",
-      "  alt_frequency = vapply(records, function(x) mean(vapply(x[10:length(x)], dosage, numeric(1))) / 2, numeric(1))",
+      "  alt_frequency = vapply(records, function(x) {",
+      "    values <- vapply(x[10:length(x)], dosage, numeric(1))",
+      "    mean(values, na.rm = TRUE) / 2",
+      "  }, numeric(1))",
       ")",
       "write.table(frequency, \"results/demo_maize_nam/nam_demo.allele_frequency.tsv\", sep = \"\\t\", row.names = FALSE, quote = FALSE)",
       "png(\"results/demo_maize_nam/nam_demo_validation.png\", width = 1500, height = 900, res = 160)",
@@ -732,6 +743,43 @@ simitall_agent_tools <- function() {
     ))
   }
 
+  if (is_nam_gxe_multiomics) {
+    script_path <- .simitall_agent_source_file(
+      "analysis", "paper_fig", "fig12_maize_nam_chr10_gxe_multiomics.R"
+    )
+    script_body <- if (!is.null(script_path)) {
+      paste(readLines(script_path, warn = FALSE), collapse = "\n")
+    } else {
+      NULL
+    }
+    if (is.null(script_body)) {
+      return("The NAM GxE multi-omics runner is unavailable from this installation. Run the request from a simitall source checkout containing `analysis/paper_fig/fig12_maize_nam_chr10_gxe_multiomics.R`.")
+    }
+    return(paste(
+      "Verified NAM execution recipe: maize GxE and multi-omics workflow:",
+      "The versioned runner simulates one synthetic chr10 NAM population, retains ancestry/breakpoint truth, creates irrigated and drought phenotypes with a focal GxE locus, derives RNA-seq/eQTL truth from the same lines, runs drought GWAS, and performs one GBLUP selection cycle. The bundled panel and focal gene are synthetic unless `--gff3` is supplied.",
+      "",
+      "Run it directly from the repository root:",
+      "",
+      "```r",
+      "system2(\"Rscript\", c(",
+      "  \"analysis/paper_fig/fig12_maize_nam_chr10_gxe_multiomics.R\",",
+      "  \"--out_dir\", \"analysis/results/maize_nam_chr10_gxe_multiomics\",",
+      "  \"--seed\", \"1201\"",
+      "))",
+      "```",
+      "",
+      "Expected figures: GxE phenotype distribution, regional GWAS truth overlay, GWAS Manhattan/QQ diagnostics, RNA-seq PCA, RNA-seq volcano/library-size diagnostics, and genomic-selection differential. Expected tables include breeding truth, trait/QTL truth, GWAS/eQTL results, RNA-seq counts, differential-expression results, and selected-parent/cross tables.",
+      "",
+      "Full versioned R implementation:",
+      "",
+      "```r",
+      script_body,
+      "```",
+      sep = "\n"
+    ))
+  }
+
   if (is_biparental && !is_nam) {
     return(paste(
       "Verified biparental BC2S7 execution recipe:",
@@ -763,11 +811,16 @@ simitall_agent_tools <- function() {
       "vcf_lines <- readLines(paste0(prefix, \".vcf\"))",
       "records <- strsplit(vcf_lines[!grepl(\"^#\", vcf_lines)], \"\\t\", fixed = TRUE)",
       "dosage <- function(gt) {",
-      "  a <- strsplit(sub(\":.*$\", \"\", gt), \"[/|]\")[[1]]; sum(as.numeric(a))",
+      "  a <- strsplit(sub(\":.*$\", \"\", gt), \"[/|]\")[[1L]]",
+      "  if (any(a == \".\")) return(NA_real_)",
+      "  sum(as.numeric(a))",
       "}",
       "freq <- data.frame(",
       "  position_bp = as.integer(vapply(records, `[[`, character(1), 2)),",
-      "  alt_frequency = vapply(records, function(x) mean(vapply(x[10:length(x)], dosage, numeric(1))) / 2, numeric(1))",
+      "  alt_frequency = vapply(records, function(x) {",
+      "    values <- vapply(x[10:length(x)], dosage, numeric(1))",
+      "    mean(values, na.rm = TRUE) / 2",
+      "  }, numeric(1))",
       ")",
       "write.table(freq, paste0(prefix, \".allele_frequencies.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
       "png(\"results/biparental_bc2s7/allele_frequency.png\", width = 1600, height = 1000, res = 180)",

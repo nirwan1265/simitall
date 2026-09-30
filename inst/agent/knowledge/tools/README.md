@@ -40,6 +40,7 @@ for the original manual or paper.
 | Tractor | Local-ancestry-aware association boundary | `Tractor.Rmd` | Official documentation and cited paper | Ancestry-aware GWAS |
 | GENESIS | Relatedness/population-aware association tools | `GENESIS.Rmd` | Official documentation | Ancestry-aware GWAS |
 | GenomeAdmixR | Admixture simulation/visualization support | `GenomeAdmixR.Rmd` | Installed package documentation | Ancestry-aware GWAS |
+| Figure and diagnostic package map | Optional R backends for GWAS, RNA-seq, ChIP-seq, single-cell, breeding, and genomic-selection figures | `figure_visualization_packages.Rmd` | Official package documentation | Result reporting and validation |
 
 ## How the Agent Uses This Map
 

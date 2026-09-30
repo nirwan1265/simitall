@@ -10,7 +10,8 @@ plot_gwas_results(
   fdr_threshold = 0.05,
   width = 13,
   height = 6,
-  dpi = 300
+  dpi = 300,
+  individual_panels_dir = file.path(dirname(out_prefix), "figures")
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ plot_gwas_results(
 \item{width, height}{Figure dimensions in inches.}
 
 \item{dpi}{PNG resolution.}
+
+\item{individual_panels_dir}{Optional directory for standalone Manhattan and
+QQ PNG/PDF panels. Defaults to a \code{figures} folder beside \code{out_prefix}.}
 }
 \value{
 Invisibly returns the combined plot, source data, and output paths.

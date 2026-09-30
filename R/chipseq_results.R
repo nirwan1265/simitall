@@ -31,6 +31,8 @@
 #' @param height Figure height in inches.
 #' @param dpi PNG resolution.
 #' @param seed Seed used for read subsampling.
+#' @param individual_panels_dir Optional directory for standalone PNG/PDF
+#'   panels. Defaults to a `figures` folder beside `out_prefix`.
 #'
 #' @return Invisibly returns the combined figure, panels, source data, and
 #'   output paths.
@@ -51,7 +53,8 @@ plot_chipseq_results <- function(
     width = 15,
     height = 10,
     dpi = 300,
-    seed = 1L) {
+    seed = 1L,
+    individual_panels_dir = file.path(dirname(out_prefix), "figures")) {
   if (!requireNamespace("ggplot2", quietly = TRUE) ||
       !requireNamespace("patchwork", quietly = TRUE)) {
     stop("ggplot2 and patchwork are required for ChIP-seq figures")
@@ -317,6 +320,18 @@ plot_chipseq_results <- function(
   utils::write.table(
     summary, paths$summary, sep = "\t", row.names = FALSE, quote = FALSE
   )
+  individual_panels <- if (is.null(individual_panels_dir)) {
+    NULL
+  } else {
+    export_simitall_plot_panels(
+      list(panels = list(panel_a, panel_b, panel_c, panel_d, panel_e, panel_f)),
+      individual_panels_dir,
+      c("chip_peak_landscape", "chip_peak_profile", "chip_frip",
+        "chip_library_complexity", "chip_peak_signal", "chip_differential_binding"),
+      width = 7, height = 5, dpi = dpi
+    )
+  }
+  paths$individual_panels <- individual_panels
   invisible(list(
     figure = combined,
     panels = list(panel_a, panel_b, panel_c, panel_d, panel_e, panel_f),

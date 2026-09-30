@@ -178,3 +178,75 @@ Or run a focused smoke-test subset:
 ```r
 testthat::test_local(".", filter = "ancestry-smoke|agent-api")
 ```
+
+### Maize NAM chr10 GxE, RNA-seq, GWAS, and genomic selection
+
+![Single-chromosome maize NAM GxE multi-omics benchmark](../analysis/example_figures/figure12_maize_nam_chr10_gxe_multiomics.png)
+
+This integrated demonstration simulates 300 NAM lines from eight bundled
+synthetic `chr10` founder haplotypes. The same lines are evaluated under
+irrigated and drought conditions, with one explicitly programmed focal GxE
+marker and six background trait markers. It retains breeding truth, runs a
+kinship-aware drought GWAS, simulates 12-gene bulk RNA-seq/eQTL truth, and
+selects 12 parents with GBLUP. The four panels show the environment design,
+GWAS truth overlay, expression structure, and selection differential.
+
+```bash
+Rscript analysis/paper_fig/fig12_maize_nam_chr10_gxe_multiomics.R \
+  --out_dir analysis/results/maize_nam_chr10_gxe_multiomics --seed 1201
+```
+
+The fixed run confirms the expected 300 NAM lines, 600 environment-specific
+phenotype records, 12 RNA-seq genes, 12 selected parents, and all required
+truth/result files. Supply `--gff3 /path/to/maize_chr10.gff3` to replace the
+bundled synthetic focal annotation. The bundled default is not a named maize
+gene or biological drought claim.
+
+### Human relatedness and GWAS calibration
+
+![Synthetic human relatedness GWAS-calibration benchmark](../analysis/example_figures/figure13_human_relatedness_gwas_calibration.png)
+
+This benchmark creates 240 synthetic individuals on `chr10`, two synthetic
+ancestry groups, 80 unrelated individuals, 80 sibling-cohort individuals, 80
+autozygous/inbreeding-proxy individuals, and 800 markers. Its phenotype has a
+programmed group-level confounder but **no causal marker**. The unadjusted QQ
+plot has lambda 1.14, whereas PC-plus-family/kinship-proxy adjustment lowers it
+to 1.05 for the fixed seed. That directional reduction is the programmed pass
+criterion.
+
+```bash
+Rscript analysis/paper_fig/fig13_human_relatedness_gwas_calibration.R \
+  --out_dir analysis/results/human_relatedness_gwas_calibration --seed 1301
+```
+
+It is a synthetic calibration demonstration, not a clinical phenotype model,
+human disease inference, or validation of a method on real cohorts.
+
+## Individual Result Figures
+
+All new workflow runners should use a `figures/` folder inside their run
+output directory. SimItAll now provides reusable helpers for individual,
+downloadable panels instead of only one combined report figure:
+
+```r
+fig_dir <- file.path("results", "my_run", "figures")
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+
+# Quantitative phenotype distribution, optionally grouped by environment.
+plot_trait_diagnostics(phenotype, trait = "trait", out_dir = fig_dir)
+
+# Combined GWAS report plus standalone Manhattan and QQ panels.
+g <- plot_gwas_results("results/my_run/gwas.benchmark.tsv",
+                       file.path(fig_dir, "gwas_overview"))
+export_simitall_plot_panels(g, fig_dir, c("gwas_manhattan", "gwas_qq"))
+
+# Standalone bulk RNA-seq library-size, PCA, volcano, and DEG outputs.
+plot_rnaseq_diagnostics("results/my_run/rna.counts.tsv",
+                        "results/my_run/rna.sample_metadata.tsv",
+                        out_dir = fig_dir)
+```
+
+The agent knowledge card
+`inst/agent/knowledge/techniques/result_reporting_and_individual_figures.Rmd`
+defines the expected figure/table sets for GWAS, bulk RNA-seq/eQTL, ChIP-seq,
+single-cell RNA-seq, breeding, and genomic selection.

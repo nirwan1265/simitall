@@ -1,0 +1,40 @@
+---
+title: "Single-Chromosome Maize NAM GxE and Multi-Omics Validation"
+category: validation_contracts
+aliases:
+  - maize NAM drought
+  - genotype by environment
+  - GxE breeding RNA-seq GWAS
+---
+
+# Simulation Truth
+
+- Eight synthetic founder haplotypes, one chromosome (`chr10`), a
+  chromosome-specific recombination map, NAM family labels, ancestry tracts,
+  and breakpoints.
+- A declared focal gene/marker, six additional polygenic markers, irrigated
+  and drought environments, and an explicit focal genotype-by-drought effect.
+- Bulk RNA-seq baseline, batch, condition, cis/trans-eQTL, and GxE truth from
+  the same simulated NAM genotypes.
+
+# Required Results
+
+- VCF, FASTA, family metadata, ancestry, breakpoints, and recombination map.
+- Irrigated/drought phenotype table, QTL truth, drought GWAS and benchmark
+  tables, RNA-seq counts/eQTL truth, selected parents, and crossing plan.
+
+# Required Figures
+
+- Environment-specific phenotype distribution.
+- Drought GWAS with focal and polygenic truth highlighted.
+- RNA-seq PCA colored by condition.
+- Genomic-selection candidate versus selected-parent distributions.
+
+# Pass Criteria
+
+- All core result files and the four-panel figure exist.
+- Number of NAM lines, phenotype rows, and selected parents equal requested
+  values.
+- The focal locus is retained in truth and GWAS input.
+- The demonstration is labeled synthetic unless a user supplies a compatible
+  maize GFF3 and founder panel.

@@ -5,10 +5,13 @@ test_that("dependency profiles contain the expected components", {
   sequencing <- check_simitall_dependencies("sequencing", verbose = FALSE)
   full <- check_simitall_dependencies("full", verbose = FALSE)
 
-  expect_setequal(minimal$component, c("jsonlite", "Matrix", "reticulate"))
+  expect_setequal(
+    minimal$component,
+    c("jsonlite", "Matrix", "reticulate", "shiny", "processx")
+  )
   expect_true(all(c(
     "simplePHENOTYPES", "simstudy", "pedtricks", "rrBLUP", "BGLR",
-    "ranger", "SimuPOP"
+    "ranger", "SimuPOP", "TASSEL"
   ) %in% population$component))
   expect_true(all(c("Rsubread", "ChIPsim", "splatter") %in% omics$component))
   expect_true(all(c("ART", "PBSIM/PBSIM3", "QUAST") %in%

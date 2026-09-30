@@ -12,7 +12,8 @@ plot_rnaseq_eqtl_results(
   fdr_threshold = 0.05,
   width = 15,
   height = 10,
-  dpi = 300
+  dpi = 300,
+  individual_panels_dir = file.path(dirname(out_prefix), "figures")
 )
 }
 \arguments{
@@ -31,6 +32,9 @@ plot_rnaseq_eqtl_results(
 \item{height}{Figure height in inches.}
 
 \item{dpi}{PNG resolution.}
+
+\item{individual_panels_dir}{Optional directory for standalone PNG/PDF
+panels. Defaults to a \code{figures} folder beside \code{out_prefix}.}
 }
 \value{
 Invisibly returns a list containing the combined figure, individual

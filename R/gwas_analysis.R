@@ -361,6 +361,8 @@ benchmark_gwas <- function(
 #' @param fdr_threshold Adjusted-p-value threshold shown as a horizontal line.
 #' @param width,height Figure dimensions in inches.
 #' @param dpi PNG resolution.
+#' @param individual_panels_dir Optional directory for standalone Manhattan and
+#'   QQ PNG/PDF panels. Defaults to a `figures` folder beside `out_prefix`.
 #'
 #' @return Invisibly returns the combined plot, source data, and output paths.
 #' @examples
@@ -377,7 +379,8 @@ plot_gwas_results <- function(
     fdr_threshold = 0.05,
     width = 13,
     height = 6,
-    dpi = 300) {
+    dpi = 300,
+    individual_panels_dir = file.path(dirname(out_prefix), "figures")) {
   .simitall_require_package("ggplot2", "GWAS plotting")
   .simitall_require_package("patchwork", "GWAS plotting")
   results <- .simitall_read_analysis_table(gwas_results, "GWAS result")
@@ -479,11 +482,22 @@ plot_gwas_results <- function(
   utils::write.table(
     results, source_path, sep = "\t", quote = FALSE, row.names = FALSE
   )
+  individual_panels <- if (is.null(individual_panels_dir)) {
+    NULL
+  } else {
+    export_simitall_plot_panels(
+      list(manhattan = manhattan, qq = qq), individual_panels_dir,
+      c("gwas_manhattan", "gwas_qq"), width = 7, height = 5, dpi = dpi
+    )
+  }
   invisible(list(
     plot = combined,
     manhattan = manhattan,
     qq = qq,
     source_data = list(manhattan = results, qq = qq_data),
-    paths = list(pdf = pdf_path, png = png_path, source_data = source_path)
+    paths = list(
+      pdf = pdf_path, png = png_path, source_data = source_path,
+      individual_panels = individual_panels
+    )
   ))
 }

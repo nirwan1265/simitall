@@ -14,7 +14,8 @@ plot_scrnaseq_results(
   width = 15,
   height = 10,
   dpi = 300,
-  seed = 1L
+  seed = 1L,
+  individual_panels_dir = file.path(dirname(out_prefix), "figures")
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ When omitted, the two eQTL panels explain that no benchmark was supplied.}
 \item{dpi}{PNG resolution.}
 
 \item{seed}{Seed used for plot-cell subsampling.}
+
+\item{individual_panels_dir}{Optional directory for standalone PNG/PDF
+panels. Defaults to a \code{figures} folder beside \code{out_prefix}.}
 }
 \value{
 Invisibly returns the combined figure, panel objects, source data,

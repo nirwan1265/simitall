@@ -1,0 +1,136 @@
+---
+id: technique_result_reporting_and_individual_figures
+document_type: technique
+status: active
+domains: [visualization, validation, reporting, reproducibility]
+related_functions: [plot_trait_diagnostics, plot_gwas_results, plot_rnaseq_diagnostics, plot_rnaseq_eqtl_results, plot_chipseq_results, plot_scrnaseq_results, export_simitall_plot_panels]
+source_priority: package_output_contracts
+last_reviewed: 2026-09-30
+---
+
+# Result Reporting and Individual Figures
+
+## Rule
+
+Every runnable SimItAll workflow writes tables to `results/<run>/` and writes
+figures to `results/<run>/figures/`. Never leave figures only in memory or only
+inside a Shiny session. Return the figure paths, their source tables, truth
+files when simulated, and a pass criterion.
+
+Use a combined overview for rapid inspection **and** individual PNG/PDF panels
+for reports, download, and agent review.
+
+## GWAS Output Contract
+
+Required files:
+
+- `phenotype_distribution.png` (or a grouped phenotype figure).
+- `gwas_manhattan.png` and `gwas_qq.png`.
+- GWAS TSV with marker, chromosome, position, p-value, q-value, and model
+  metadata.
+- When truth is simulated: causal truth TSV plus recovery/precision/recall
+  metrics.
+
+```r
+fig_dir <- file.path(out_dir, "figures")
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+plot_trait_diagnostics(phenotype, trait = "trait", group = "environment",
+                       out_dir = fig_dir)
+gwas_figure <- plot_gwas_results("results/gwas.benchmark.tsv",
+                                 file.path(fig_dir, "gwas_overview"))
+export_simitall_plot_panels(gwas_figure, fig_dir,
+                            c("gwas_manhattan", "gwas_qq"))
+```
+
+A Manhattan plot is evidence of association strength, not causality. A QQ plot
+is required to inspect calibration. For structured, related, or admixed cohorts
+report covariates, kinship/model treatment, and sensitivity analyses.
+
+## Bulk RNA-seq Output Contract
+
+Required files:
+
+- `rnaseq_library_size.png`, `rnaseq_pca.png`, and `rnaseq_volcano.png`.
+- `rnaseq_deg.tsv` containing gene ID, log2 fold change, p-value, q-value, and
+  significance label.
+- Counts, sample metadata, and expression matrix.
+- When eQTL simulation/analysis is requested: eQTL truth, association table,
+  recovery metrics, and individual panels exported from the eQTL figure.
+
+```r
+rna_qc <- plot_rnaseq_diagnostics(
+  "results/rna.counts.tsv", "results/rna.sample_metadata.tsv",
+  out_dir = file.path("results", "figures")
+)
+rna_eqtl <- plot_rnaseq_eqtl_results(
+  "results/rna", "results/eqtl", "results/figures/rnaseq_eqtl_overview"
+)
+export_simitall_plot_panels(
+  rna_eqtl, "results/figures",
+  c("rnaseq_library_size", "rnaseq_pca", "eqtl_associations",
+    "eqtl_effect_recovery", "ase_recovery", "eqtl_benchmark")
+)
+```
+
+If no differential-expression results are supplied,
+`plot_rnaseq_diagnostics()` uses a Welch t-test on log2 counts only as a
+transparent synthetic-data screening default. For real data, use a
+pre-specified DESeq2, edgeR, or limma-voom result table and retain its design
+formula, filtering, normalization, and multiple-testing choices.
+
+## ChIP-seq Output Contract
+
+Required files:
+
+- Peak landscape, peak-centered enrichment, FRiP, library-complexity,
+  peak-signal, and differential-binding figures.
+- Peak truth/peak-call BED or TSV, read-position table, library QC, peak counts,
+  and differential-binding truth when simulated.
+
+```r
+chip_figure <- plot_chipseq_results(
+  "results/chipseq/run", "results/chipseq/run/figures/chipseq_overview"
+)
+export_simitall_plot_panels(
+  chip_figure, "results/chipseq/run/figures",
+  c("chip_peak_landscape", "chip_peak_profile", "chip_frip",
+    "chip_library_complexity", "chip_peak_signal", "chip_differential_binding")
+)
+```
+
+## Single-Cell Output Contract
+
+Required files:
+
+- Cell counts per donor, cell-level PCA, marker-expression, pseudobulk PCA,
+  eQTL effect recovery, and donor-level eQTL benchmark figures.
+- Sparse counts, cell metadata, gene metadata, donor/cell-type pseudobulk,
+  eQTL truth/results, and metrics.
+
+```r
+sc_figure <- plot_scrnaseq_results(
+  experiment, "results/scrnaseq/figures/scrnaseq_overview"
+)
+export_simitall_plot_panels(
+  sc_figure, "results/scrnaseq/figures",
+  c("scrnaseq_cells_per_donor", "scrnaseq_cell_pca",
+    "scrnaseq_marker_expression", "scrnaseq_pseudobulk_pca",
+    "scrnaseq_eqtl_effects", "scrnaseq_eqtl_metrics")
+)
+```
+
+## Breeding and Genomic-Selection Output Contract
+
+Required figures depend on the mating design, but should include ancestry or
+founder contribution, breakpoint/segment or heterozygosity QC,
+phenotype-by-environment distribution when applicable, and selected-parent
+GEBV/kinship/diversity diagnostics. Save parent, cross, prediction, kinship,
+and family representation tables next to figures.
+
+## Agent Behavior
+
+When a user asks to run a named analysis, the agent should select figures from
+the relevant contract, create `results/<run>/figures/`, and state which figures
+were generated versus unavailable because a required input or analysis result
+is missing. The agent must not manufacture a volcano plot without gene-level
+statistics, nor a truth-recovery figure without retained truth.

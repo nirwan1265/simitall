@@ -1,0 +1,37 @@
+---
+title: "Maize NAM chr10 GxE, Bulk RNA-seq, GWAS, and Genomic Selection"
+category: workflows
+aliases:
+  - NAM drought GWAS RNA-seq
+  - maize GxE genomic selection
+  - chromosome 10 NAM
+---
+
+# Purpose
+
+Plan or run a single-chromosome NAM benchmark in which the same simulated
+maize lines have breeding ancestry, irrigated/drought phenotypes, expression
+data, eQTL truth, GWAS results, and genomic-selection outputs.
+
+# Inputs
+
+Use `analysis/paper_fig/fig12_maize_nam_chr10_gxe_multiomics.R`. The bundled
+mode needs no external input. For an annotation-anchored run, require an
+aligned founder FASTA, compatible `chr10` recombination map, and a matching
+GFF3. Do not call a local GFF3 a real NAM founder panel by itself.
+
+# Runnable Recipe
+
+```r
+system2("Rscript", c(
+  "analysis/paper_fig/fig12_maize_nam_chr10_gxe_multiomics.R",
+  "--out_dir", "analysis/results/maize_nam_chr10_gxe_multiomics",
+  "--seed", "1201"
+))
+```
+
+# Interpretation Boundary
+
+The bundled focal feature and all QTL/eQTL effects are synthetic. The workflow
+checks that data types remain linked by sample and truth; it does not validate
+drought biology of a named maize line.

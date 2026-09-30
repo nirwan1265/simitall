@@ -1,0 +1,91 @@
+---
+id: tool_figure_visualization_packages
+document_type: tool_collection
+status: active
+software: [ggplot2, qqman, CMplot, DESeq2, edgeR, limma, ChIPseeker, DiffBind, Seurat, scater, rrBLUP, BGLR]
+related_functions: [simitall_figure_tool_catalog, plot_trait_diagnostics, plot_gwas_results, plot_rnaseq_diagnostics, plot_rnaseq_eqtl_results, plot_chipseq_results, plot_scrnaseq_results, export_simitall_plot_panels]
+source_priority: official_package_documentation
+last_reviewed: 2026-09-30
+---
+
+# R Figure and Diagnostic Package Map
+
+## Role
+
+SimItAll writes a portable base figure set with `ggplot2`, but an R package
+exists for many additional diagnostic, locus-level, and interpretation plots.
+Use `simitall_figure_tool_catalog()` to inspect installed availability before
+selecting an optional backend.
+
+These packages are **optional**, not mandatory dependencies of every SimItAll
+run. The agent must select a plot only when its needed input exists. For
+example, ChIPQC requires aligned BAM files; a simulated BED peak list alone
+cannot produce cross-correlation, fragment-length, or blacklist QC.
+
+## GWAS
+
+| Question | Recommended R packages | Inputs required |
+| --- | --- | --- |
+| Standard Manhattan and QQ | `qqman`, `CMplot`, `GWASTools` | Association marker table |
+| Population/QC PCA and kinship | `SNPRelate`, `GENESIS` | Genotypes and sample metadata |
+| Regional association and LD | `locuszoomr`, `LDheatmap` | Lead locus, LD, marker map, annotation |
+| Fine mapping / colocalization | `susieR`, `coloc` | Summary statistics and compatible LD/reference data |
+| ROC/PR/calibration of synthetic truth | `pROC`, `PRROC`, `yardstick` | Causal-truth labels and association scores |
+
+## Bulk RNA-seq and eQTL
+
+| Question | Recommended R packages | Inputs required |
+| --- | --- | --- |
+| Differential expression / MA | `DESeq2`, `edgeR`, `limma` | Raw counts and declared design |
+| PCA / interactive QC | `PCAtools`, `pcaExplorer`, `Glimma` | Normalized counts and sample metadata |
+| Volcano / heatmap | `EnhancedVolcano`, `ComplexHeatmap` | DE results or expression matrix |
+| Enrichment | `clusterProfiler`, `fgsea`, `GSVA` | Identifier mapping and gene list/rank |
+| Modules / trajectories | `WGCNA`, `maSigPro` | Adequately replicated expression/time-course data |
+| Splicing / exon use | `DEXSeq` | Exon-level counts and annotation |
+| eQTL FDR, fine mapping, sharing | `qvalue`, `susieR`, `coloc`, `ComplexUpset` | eQTL summaries; GWAS summaries for colocalization |
+
+## ChIP-seq
+
+| Question | Recommended R packages | Inputs required |
+| --- | --- | --- |
+| BAM-level QC | `ChIPQC` | ChIP and input BAM files, sample sheet |
+| Differential binding | `DiffBind`, `csaw` | Replicates, BAM/peak sets, design |
+| Peak annotation / TSS profile | `ChIPseeker`, `ChIPpeakAnno` | Peak BED and matching GTF/GFF3 |
+| Motifs / signal heatmaps | `motifmatchr`, `universalmotif`, `ComplexHeatmap` | Motif matrices plus sequences/signal matrix |
+
+For bigWig coverage tracks, phantom-peak cross-correlation, IDR, and deep
+heatmaps, R usually orchestrates **external** tools such as deepTools, IDR, or
+phantompeakqualtools. Do not claim these are created from a peak table alone.
+
+## Single-cell
+
+| Question | Recommended R packages | Inputs required |
+| --- | --- | --- |
+| QC, UMAP, markers | `Seurat`, `scater`, `scuttle`, `scran` | Cell-by-gene counts and metadata |
+| Doublets / integration / clustering | `scDblFinder`, `batchelor`, `clustree` | Raw counts, batches, embeddings/clusters |
+| Trajectory | `slingshot`, `tradeSeq` | Reduced dimensions, clusters, pseudotime |
+| Communication/CNV | `CellChat`, `infercnv` | Suitable reference/annotation and expression data |
+
+## Breeding and Genomic Selection
+
+| Question | Recommended R packages | Inputs required |
+| --- | --- | --- |
+| QTL / founder effects | `qtl`, `qtl2` | Cross type, genotypes, marker map, phenotypes |
+| Structure / LD / diversity | `vcfR`, `adegenet`, `pegas`, `hierfstat`, `LDheatmap` | VCF/genotypes, marker map, population labels |
+| GxE, BLUPs, reaction norms | `sommer`, `metan` | Trait, environment, family/pedigree design |
+| Prediction and gain | `rrBLUP`, `BGLR`, `yardstick`, `pROC` | Training genotypes/phenotypes and held-out candidates |
+
+## Cross-Cutting Figures
+
+Use `ComplexUpset` for set overlap, `ComplexHeatmap` for large annotated
+matrices, `circlize` for Circos plots, `ggalluvial` for pedigree/flow diagrams,
+`igraph` + `ggraph` for networks, and `patchwork` for multi-panel layouts.
+
+## SimItAll Rule
+
+1. Always write the base required figures in `results/<run>/figures/`.
+2. Add optional figures only when their inputs are present and their role is
+   stated in the result manifest.
+3. Preserve the package/version, design formula, filters, and input paths.
+4. For simulated data, pair interpretation figures with truth/recovery or a
+   declared QC pass criterion.

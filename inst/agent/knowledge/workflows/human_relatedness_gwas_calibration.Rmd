@@ -1,0 +1,37 @@
+---
+title: "Synthetic Human Relatedness and GWAS Calibration"
+category: workflows
+aliases:
+  - human kinship GWAS calibration
+  - population structure QQ plot
+  - related cohort adjustment
+---
+
+# Purpose
+
+Demonstrate that an ancestry-confounded synthetic null phenotype can inflate
+unadjusted association statistics, then compare it with PC-plus-family/kinship-proxy
+adjustment. The workflow is about calibration, not disease modeling.
+
+# Inputs
+
+The bundled runner generates all markers, family labels, ancestry labels, and
+phenotypes. A user question about real human data requires a genome build,
+cohort manifest, phenotype/covariates, consent-appropriate data access, QC,
+and a validated association method; do not substitute this demo.
+
+# Runnable Recipe
+
+```r
+system2("Rscript", c(
+  "analysis/paper_fig/fig13_human_relatedness_gwas_calibration.R",
+  "--out_dir", "analysis/results/human_relatedness_gwas_calibration",
+  "--seed", "1301"
+))
+```
+
+# Interpretation Boundary
+
+The null phenotype has no causal variants. The pass criterion is lower lambda
+after adjustment in this fixed synthetic setup, not proof that an adjustment
+strategy controls calibration in every human study.

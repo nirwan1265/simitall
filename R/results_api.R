@@ -149,6 +149,8 @@ summarize_rnaseq_results <- function(
 #' @param width Figure width in inches.
 #' @param height Figure height in inches.
 #' @param dpi PNG resolution.
+#' @param individual_panels_dir Optional directory for standalone PNG/PDF
+#'   panels. Defaults to a `figures` folder beside `out_prefix`.
 #'
 #' @return Invisibly returns a list containing the combined figure, individual
 #'   panels, source data, and output paths.
@@ -169,7 +171,8 @@ plot_rnaseq_eqtl_results <- function(
     fdr_threshold = 0.05,
     width = 15,
     height = 10,
-    dpi = 300) {
+    dpi = 300,
+    individual_panels_dir = file.path(dirname(out_prefix), "figures")) {
   if (!requireNamespace("ggplot2", quietly = TRUE) ||
       !requireNamespace("patchwork", quietly = TRUE)) {
     stop(
@@ -541,12 +544,22 @@ plot_rnaseq_eqtl_results <- function(
       row.names = FALSE
     )
   }
+  individual_panels <- if (is.null(individual_panels_dir)) {
+    NULL
+  } else {
+    export_simitall_plot_panels(
+      list(panels = panels), individual_panels_dir,
+      c("rnaseq_library_size", "rnaseq_pca", "eqtl_associations",
+        "eqtl_effect_recovery", "ase_recovery", "eqtl_benchmark"),
+      width = 7, height = 5, dpi = dpi
+    )
+  }
 
   message("RNA-seq/eQTL figure written to: ", output_paths$pdf)
   invisible(list(
     figure = figure,
     panels = panels,
     source_data = source_data,
-    paths = output_paths
+    paths = c(output_paths, list(individual_panels = individual_panels))
   ))
 }

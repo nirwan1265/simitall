@@ -1,0 +1,36 @@
+---
+title: "Human Relatedness and GWAS Calibration Validation"
+category: validation_contracts
+aliases:
+  - human relatedness GWAS
+  - kinship adjustment
+  - population structure calibration
+  - genomic inflation
+---
+
+# Simulation Truth
+
+- Synthetic chr10 marker panel, two synthetic ancestry groups, and known
+  sibling-pair family membership.
+- A null trait with deliberately programmed ancestry-group confounding; no
+  marker is causal.
+- Genotype PCs and a realized genomic relationship matrix.
+
+# Required Results
+
+- Genotype matrix, phenotype/family table, naive and adjusted marker p-values,
+  lambda/frequency metrics, and validation summary.
+
+# Required Figures
+
+- Genotype PCA colored by synthetic ancestry group.
+- Realized genomic relationship matrix.
+- QQ plot for naive association.
+- QQ plot for PC-plus-family/kinship-proxy adjustment.
+
+# Pass Criteria
+
+- The output contains only the declared synthetic null trait.
+- Both p-value scans and the figure exist.
+- For the fixed benchmark seed, adjusted genomic inflation is lower than naive
+  genomic inflation. This checks the programmed calibration mechanism only.
