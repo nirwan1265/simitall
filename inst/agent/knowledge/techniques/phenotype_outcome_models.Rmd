@@ -1,0 +1,74 @@
+---
+id: technique_phenotype_outcome_models
+document_type: technique
+status: active
+domains: [phenotype_simulation, outcome_distribution, GWAS, trait_architecture]
+related_functions: [simulate_phenotypes, simulate_count_trait, simulate_ordinal_trait, analyze_gwas, analyze_binary_gwas]
+source_priority: simitall_output_contracts_and_package_docs
+last_reviewed: 2026-09-30
+---
+
+# Phenotype Outcome Models
+
+## Rule for the Agent
+
+Read the requested **phenotype distribution** before adding downstream steps.
+Do not invent F1, F2, selfing, backcrossing, environments, RNA-seq, or family
+figures unless the question explicitly asks for them. `NAM` identifies a
+mapping-population context; it does not itself request that family labels be
+shown in the final figure.
+
+## Distribution Decision Table
+
+| User wording | Canonical model | Outcome values | Required extra input | Default diagnostic |
+| --- | --- | --- | --- | --- |
+| `normal`, `Gaussian`, `quantitative`, `continuous` | Gaussian residual model | continuous real values | residual variance or heritability | histogram/density, Q-Q plot |
+| `binary`, `case-control`, `presence/absence`, `Bernoulli` | Bernoulli / binomial with one trial | 0 or 1 | prevalence | case/control count bar plot |
+| `binomial` with `trials`, `out of`, or a denominator | Binomial count model | 0 through number of trials | trials per sample | observed versus expected proportion |
+| `Poisson` | Poisson count model | 0, 1, 2, ... | expected count/link | count histogram, mean-variance plot |
+| `negative binomial`, `overdispersed count` | Negative-binomial count model | 0, 1, 2, ... | dispersion plus mean/link | count histogram, mean-variance plot |
+| `ordinal`, `severity class`, `rating` | Threshold / ordered-category model | ordered categories | category probabilities or thresholds | category bar plot |
+| `zero-inflated` | Two-part zero + count model | excess zeros plus counts | zero probability and count distribution | zero-rate and count plots |
+
+## Important Distinction
+
+`Binomial` alone is ambiguous. For one outcome per genotype, SimItAll treats
+it as a binary Bernoulli phenotype (binomial with `n = 1`) unless the question
+mentions trials, proportions, reads, seeds, successes, or a denominator. The
+agent must say that interpretation in the plan.
+
+`Negative binomial` is **not** a binary phenotype. It is a count distribution
+used when counts are more variable than Poisson; bulk RNA-seq counts are a
+common example.
+
+## Analysis Match
+
+- Quantitative/normal trait: `analyze_gwas()`.
+- Binary Bernoulli trait: `analyze_binary_gwas()` for the package's simple
+  logistic baseline; use a validated binary mixed model for real related or
+  unbalanced cohorts.
+- Poisson/negative-binomial/true binomial count trait: retain the count and
+  trials/dispersion in the truth table. A dedicated count-GWAS implementation
+  is not yet a SimItAll wrapper, so the agent must label that analysis boundary
+  instead of silently applying a Gaussian or binary model.
+- Ordinal trait: retain category thresholds/probabilities. An ordinal-GWAS
+  wrapper is not yet implemented.
+
+## Minimal NAM Example
+
+For “simulate GWAS with a binomial phenotype in NAM for 100 genotypes,” the
+minimal interpretation is:
+
+1. Create 100 synthetic NAM lines.
+2. Generate one 0/1 outcome per line with a declared prevalence and causal
+   marker truth.
+3. Run a logistic association scan.
+4. Write a case/control count plot, Manhattan plot, QQ plot, association TSV,
+   causal truth TSV, and recovery metrics.
+
+Do not add F1/F2/F3 panels, RNA-seq, GxE, or genomic selection to this minimal
+request.
+
+## Scope of trait labels
+
+A trait-context adjective (for example, `drought-related`, `disease-related`, or `yield-related`) identifies the phenotype being simulated. It does not by itself request additional environments, GxE, transcriptomics, eQTL mapping, or selection. Those downstream modules must be named explicitly in the question.

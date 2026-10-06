@@ -234,6 +234,184 @@ analyze_gwas <- function(
   ))
 }
 
+#' Run a fixed-effect logistic GWAS for a binary trait
+#'
+#' Test binary case/control, presence/absence, or other Bernoulli phenotypes
+#' marker by marker with logistic regression. Optional categorical covariates
+#' and marker-derived principal components can be included to reduce measured
+#' structure confounding. The function writes the same standard association
+#' columns as [analyze_gwas()], so [plot_gwas_results()] can create Manhattan
+#' and QQ plots from its output.
+#'
+#' This is a transparent fixed-effect baseline, not a replacement for a
+#' scalable binary mixed-model GWAS. For strongly related cohorts, large human
+#' biobanks, severe case-control imbalance, or separation, use an appropriate
+#' externally validated mixed-model method such as SAIGE, GMMAT, or GENESIS and
+#' retain the model specification in the result manifest.
+#'
+#' @param genotype_file VCF, VCF.GZ, or marker-by-sample genotype TSV path.
+#' @param phenotype Data frame or phenotype TSV containing one row per sample.
+#' @param out_prefix Prefix for `.gwas.tsv` and `.gwas_summary.json` outputs.
+#' @param trait Binary phenotype column encoded as `0/1`, `FALSE/TRUE`, or a
+#'   two-level factor/character vector.
+#' @param sample_id Sample-ID column in `phenotype`.
+#' @param fixed_effects Optional phenotype columns included as fixed effects.
+#' @param n_pcs Number of marker-derived principal components to include.
+#' @param min_maf Minimum minor allele frequency for a marker to be tested.
+#' @param fdr_threshold BH-adjusted p-value cutoff used to label discoveries.
+#'
+#' @return Invisibly returns the association results, summary, and output paths.
+#' @examples
+#' \dontrun{
+#' binary_gwas <- analyze_binary_gwas(
+#'   "results/nam.vcf", "results/case_control.tsv", "results/binary_gwas",
+#'   trait = "case", fixed_effects = "family", n_pcs = 2
+#' )
+#' plot_gwas_results(binary_gwas$paths$results, "results/figures/binary_gwas")
+#' }
+#' @export
+analyze_binary_gwas <- function(
+    genotype_file,
+    phenotype,
+    out_prefix,
+    trait = "trait",
+    sample_id = "sample",
+    fixed_effects = NULL,
+    n_pcs = 0L,
+    min_maf = 0.05,
+    fdr_threshold = 0.05) {
+  if (!is.numeric(min_maf) || length(min_maf) != 1L ||
+      !is.finite(min_maf) || min_maf < 0 || min_maf >= 0.5) {
+    stop("min_maf must be one number in [0, 0.5)")
+  }
+  if (!is.numeric(fdr_threshold) || length(fdr_threshold) != 1L ||
+      !is.finite(fdr_threshold) || fdr_threshold <= 0 || fdr_threshold >= 1) {
+    stop("fdr_threshold must be one number between zero and one")
+  }
+  genotype_data <- .simitall_read_genotypes(genotype_file)
+  sample_ids <- colnames(genotype_data$genotype)
+  phenotype <- .simitall_read_analysis_table(phenotype, "Phenotype")
+  required_columns <- unique(c(sample_id, trait, fixed_effects))
+  missing_columns <- setdiff(required_columns, names(phenotype))
+  if (length(missing_columns)) {
+    stop("Phenotype data are missing columns: ", paste(missing_columns, collapse = ", "))
+  }
+  ids <- as.character(phenotype[[sample_id]])
+  if (anyNA(ids) || any(!nzchar(ids)) || anyDuplicated(ids)) {
+    stop("Phenotype sample IDs must be present and unique")
+  }
+  phenotype[[sample_id]] <- ids
+  phenotype <- phenotype[match(sample_ids, ids), , drop = FALSE]
+  phenotype[[sample_id]] <- sample_ids
+  raw_trait <- phenotype[[trait]]
+  if (is.logical(raw_trait)) {
+    outcome <- as.integer(raw_trait)
+  } else if (is.numeric(raw_trait)) {
+    outcome <- as.integer(raw_trait)
+  } else {
+    levels <- unique(stats::na.omit(as.character(raw_trait)))
+    if (length(levels) != 2L) {
+      stop("A non-numeric binary trait must have exactly two observed levels")
+    }
+    outcome <- match(as.character(raw_trait), levels) - 1L
+  }
+  if (any(!is.na(outcome) & !outcome %in% c(0L, 1L))) {
+    stop("Binary trait values must be 0/1, FALSE/TRUE, or exactly two levels")
+  }
+  covariates <- phenotype[, fixed_effects %||% character(), drop = FALSE]
+  observed <- !is.na(outcome)
+  if (ncol(covariates)) {
+    observed <- observed & stats::complete.cases(covariates)
+  }
+  if (sum(observed) < 10L || length(unique(outcome[observed])) != 2L) {
+    stop("Binary GWAS requires at least ten observed samples and both outcome classes")
+  }
+
+  dosage <- genotype_data$genotype[, observed, drop = FALSE]
+  samples <- sample_ids[observed]
+  outcome <- outcome[observed]
+  covariates <- covariates[observed, , drop = FALSE]
+  if (ncol(covariates)) {
+    covariates[] <- lapply(covariates, function(x) {
+      if (is.character(x)) factor(x) else x
+    })
+  }
+  maf <- rowMeans(dosage, na.rm = TRUE) / 2
+  maf <- pmin(maf, 1 - maf)
+  keep <- is.finite(maf) & maf >= min_maf
+  if (!any(keep)) stop("No markers meet min_maf after phenotype alignment")
+
+  n_pcs <- as.integer(n_pcs)
+  pcs <- NULL
+  if (n_pcs > 0L) {
+    centered <- t(dosage[keep, , drop = FALSE])
+    center_values <- colMeans(centered, na.rm = TRUE)
+    centered[!is.finite(centered)] <- center_values[col(centered)[!is.finite(centered)]]
+    pca <- stats::prcomp(centered, center = TRUE, scale. = TRUE)
+    n_pcs <- min(n_pcs, ncol(pca$x))
+    pcs <- as.data.frame(pca$x[, seq_len(n_pcs), drop = FALSE])
+    names(pcs) <- paste0("PC", seq_len(n_pcs))
+  }
+
+  tested <- which(keep)
+  scan <- lapply(tested, function(i) {
+    marker <- dosage[i, ]
+    marker[!is.finite(marker)] <- mean(marker, na.rm = TRUE)
+    if (!is.finite(stats::var(marker)) || stats::var(marker) == 0) {
+      return(c(beta = NA_real_, se = NA_real_, p_value = NA_real_))
+    }
+    frame <- data.frame(outcome = outcome, dosage = marker, covariates,
+                        check.names = FALSE)
+    if (!is.null(pcs)) frame <- cbind(frame, pcs)
+    fit <- suppressWarnings(tryCatch(
+      stats::glm(outcome ~ ., data = frame, family = stats::binomial()),
+      error = function(e) NULL
+    ))
+    if (is.null(fit) || !isTRUE(fit$converged)) {
+      return(c(beta = NA_real_, se = NA_real_, p_value = NA_real_))
+    }
+    coefficients <- summary(fit)$coefficients
+    if (!"dosage" %in% rownames(coefficients)) {
+      return(c(beta = NA_real_, se = NA_real_, p_value = NA_real_))
+    }
+    c(beta = coefficients["dosage", "Estimate"],
+      se = coefficients["dosage", "Std. Error"],
+      p_value = coefficients["dosage", "Pr(>|z|)"])
+  })
+  scan <- as.data.frame(do.call(rbind, scan))
+  variants <- genotype_data$variants[tested, , drop = FALSE]
+  result <- data.frame(
+    marker_id = as.character(variants$id),
+    seqname = as.character(variants$seqname),
+    pos = as.numeric(variants$pos),
+    beta = scan$beta,
+    se = scan$se,
+    odds_ratio = exp(scan$beta),
+    p_value = scan$p_value,
+    q_value = stats::p.adjust(scan$p_value, method = "BH"),
+    maf = maf[tested],
+    samples = length(samples),
+    stringsAsFactors = FALSE
+  )
+  result$significant <- !is.na(result$q_value) & result$q_value <= fdr_threshold
+  result <- result[order(result$p_value, na.last = TRUE), , drop = FALSE]
+  result_path <- paste0(out_prefix, ".gwas.tsv")
+  summary_path <- paste0(out_prefix, ".gwas_summary.json")
+  dir.create(dirname(result_path), recursive = TRUE, showWarnings = FALSE)
+  utils::write.table(result, result_path, sep = "\t", quote = FALSE, row.names = FALSE)
+  summary <- list(
+    backend = "stats::glm(binomial)", trait = trait, samples = length(samples),
+    cases = sum(outcome), controls = sum(outcome == 0L), markers_tested = nrow(result),
+    fixed_effects = fixed_effects %||% character(), principal_components = n_pcs,
+    minimum_maf = min_maf, fdr_threshold = fdr_threshold,
+    discoveries = sum(result$significant, na.rm = TRUE),
+    limitation = "Fixed-effect logistic baseline; no kinship random effect."
+  )
+  .simitall_write_json(summary, summary_path)
+  invisible(list(results = result, summary = summary,
+                 paths = list(results = result_path, summary = summary_path)))
+}
+
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
 #' Benchmark GWAS discoveries against simulated causal variants

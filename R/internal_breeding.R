@@ -661,28 +661,35 @@ main_11_simulate_breeding <- function(args = commandArgs(trailingOnly = TRUE)) {
   current_population <- NULL
 
   if (!is.na(scheme) && scheme == "MAGIC") {
-    parents <- lapply(founder_idx, founder_individual)
-    round <- 1L
-    while (length(parents) > 1L) {
-      next_round <- list()
-      pair_index <- 1L
-      i <- 1L
-      while (i <= length(parents)) {
-        if (i == length(parents)) {
-          next_round[[length(next_round) + 1L]] <- parents[[i]]
-        } else {
-          next_round[[length(next_round) + 1L]] <- make_child(
-            parents[[i]], parents[[i + 1L]], paste0("MAGIC_R", round),
-            "MAGIC", paste0("pair", pair_index)
-          )
-          pair_index <- pair_index + 1L
+    # Each final line comes from its own funnel (independent intercrosses), as
+    # in real MAGIC populations. A single shared funnel would make every line a
+    # selfed descendant of one plant, so founder contributions would not
+    # average 1/n_founders across lines.
+    run_funnel <- function() {
+      parents <- lapply(founder_idx, founder_individual)
+      round <- 1L
+      while (length(parents) > 1L) {
+        next_round <- list()
+        pair_index <- 1L
+        i <- 1L
+        while (i <= length(parents)) {
+          if (i == length(parents)) {
+            next_round[[length(next_round) + 1L]] <- parents[[i]]
+          } else {
+            next_round[[length(next_round) + 1L]] <- make_child(
+              parents[[i]], parents[[i + 1L]], paste0("MAGIC_R", round),
+              "MAGIC", paste0("pair", pair_index)
+            )
+            pair_index <- pair_index + 1L
+          }
+          i <- i + 2L
         }
-        i <- i + 2L
+        parents <- next_round
+        round <- round + 1L
       }
-      parents <- next_round
-      round <- round + 1L
+      parents[[1L]]
     }
-    current_population <- parents
+    current_population <- lapply(seq_len(n_offspring), function(i) run_funnel())
     sequence_tokens <- rep("SELF", self_generations)
   } else if (!is.na(scheme) && scheme == "NAM") {
     common <- founder_individual(founder_idx[1L])

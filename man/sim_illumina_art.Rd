@@ -4,7 +4,15 @@
 \alias{sim_illumina_art}
 \title{Simulate Illumina reads with ART}
 \usage{
-sim_illumina_art(ref_fa, outprefix, cov, readlen = 150, ins = 350, sd = 50)
+sim_illumina_art(
+  ref_fa,
+  outprefix,
+  cov,
+  readlen = NULL,
+  ins = NULL,
+  sd = NULL,
+  platform = "generic_illumina"
+)
 }
 \arguments{
 \item{ref_fa}{Character. Reference FASTA path.}
@@ -13,11 +21,16 @@ sim_illumina_art(ref_fa, outprefix, cov, readlen = 150, ins = 350, sd = 50)
 
 \item{cov}{Numeric. Fold coverage.}
 
-\item{readlen}{Integer. Read length (default 150).}
+\item{readlen}{Optional read length. Defaults depend on \code{platform} and are
+checked against the profile's supported maximum.}
 
-\item{ins}{Integer. Mean insert size (default 350).}
+\item{ins}{Optional mean insert size; defaults depend on \code{platform}.}
 
-\item{sd}{Integer. Insert size standard deviation (default 50).}
+\item{sd}{Optional insert-size standard deviation; defaults depend on
+\code{platform}.}
+
+\item{platform}{Illumina profile: \code{"generic_illumina"}, \code{"MiSeq"},
+\code{"MiSeq i100"}, \code{"NextSeq 1000/2000"}, or \code{"NovaSeq X"}.}
 }
 \value{
 A list with \code{r1} and \code{r2} file paths to gzipped FASTQ files.

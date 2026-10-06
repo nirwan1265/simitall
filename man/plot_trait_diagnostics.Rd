@@ -33,10 +33,11 @@ treatment, family, or population.}
 Invisibly returns the plot and PNG/PDF paths.
 }
 \description{
-Create a standalone phenotype QC figure. With a grouping column, the plot
-shows a violin, boxplot, and individual observations per group; otherwise it
-shows a histogram and density curve. This is suitable for simulated traits
-and real numeric phenotype tables.
+Create a standalone phenotype QC figure. Binary 0/1 traits are displayed as
+case/control counts (or groupwise case fractions), continuous traits use a
+histogram/density plot without groups and a violin/box/jitter plot with
+groups. This is suitable for simulated traits and real numeric phenotype
+tables.
 }
 \examples{
 \dontrun{

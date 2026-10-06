@@ -4,7 +4,7 @@
 \alias{sim_pacbio}
 \title{Simulate PacBio reads with PBSIM/PBSIM3}
 \usage{
-sim_pacbio(ref_fa, outdir, cov, type = "HIFI", seed = 1)
+sim_pacbio(ref_fa, outdir, cov, type = NULL, seed = 1, platform = NULL)
 }
 \arguments{
 \item{ref_fa}{Character. Reference FASTA path.}
@@ -13,9 +13,12 @@ sim_pacbio(ref_fa, outdir, cov, type = "HIFI", seed = 1)
 
 \item{cov}{Numeric. Fold coverage.}
 
-\item{type}{Character. \code{"CLR"} or \code{"HIFI"}.}
+\item{type}{Deprecated compatibility argument: \code{"CLR"} or \code{"HIFI"}.}
 
 \item{seed}{Integer. Random seed (default 1).}
+
+\item{platform}{PacBio profile: \code{"CLR"}, \code{"HiFi"}, \code{"Sequel IIe HiFi"},
+\code{"Revio HiFi"}, or \code{"Vega HiFi"}.}
 }
 \value{
 Character. Output directory path.

@@ -1,0 +1,64 @@
+---
+id: workflow_maize_nam_binary_gwas
+document_type: workflow
+status: active
+species: maize
+domains: [NAM, binary_trait, logistic_GWAS, phenotype_simulation, validation]
+related_functions: [simulate_breeding, analyze_binary_gwas, benchmark_gwas, plot_gwas_results, plot_trait_diagnostics]
+source_priority: simitall_versioned_runner
+last_reviewed: 2026-09-30
+---
+
+# Synthetic NAM Binary-Trait GWAS
+
+## Goal
+
+Create a small synthetic maize NAM population, program a binary case/control
+phenotype from one common causal marker, scan associations with a simple
+logistic model, then evaluate results against causal-marker truth. NAM family
+labels are retained in metadata but not displayed for this simple request.
+
+## Versioned Runner
+
+`analysis/paper_fig/fig14_maize_nam_binary_gwas.R`
+
+```r
+system2("Rscript", c(
+  "analysis/paper_fig/fig14_maize_nam_binary_gwas.R",
+  "--out_dir", "analysis/results/maize_nam_binary_gwas",
+  "--input_mode", "package_demo",
+  "--n_lines", "100", "--prevalence", "0.30", "--seed", "1401"
+))
+```
+
+## Input Sources
+
+The biological workflow is identical for every input source; only founder/map
+provenance changes. Use `--input_mode package_demo` for bundled toy inputs,
+`--input_mode synthetic` to generate toy founders and a map within the run
+folder, or `--input_mode provided` with both `--haplotype_fa` and
+`--recomb_map` for supplied inputs. Every mode writes the same tables and
+figures under the selected `out_dir`.
+
+## Required Outputs
+
+- NAM VCF, family metadata, ancestry, breakpoint, and recombination-map truth.
+- Binary phenotype table with programmed individual probabilities.
+- Causal-marker truth table with log-odds effects.
+- Logistic-GWAS, benchmark, and recovery-metric TSVs.
+- `figures/binary_phenotype_counts.png`.
+- `figures/gwas_manhattan.png` and `figures/gwas_qq.png`.
+
+## Pass Criteria
+
+- Every phenotype is exactly 0 or 1.
+- Both outcome classes are present.
+- The intended number of NAM lines is retained.
+- The association table, causal truth table, and all required figures exist.
+
+## Boundary
+
+`analyze_binary_gwas()` is a fixed-effect logistic baseline. It includes named
+family covariates and marker PCs, but not a kinship random effect. Use a
+validated binary mixed-model association method for a real related cohort,
+unbalanced case/control study, or a publication-level inference.

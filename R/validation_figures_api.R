@@ -80,10 +80,11 @@ export_simitall_plot_panels <- function(
 
 #' Plot a quantitative phenotype distribution
 #'
-#' Create a standalone phenotype QC figure. With a grouping column, the plot
-#' shows a violin, boxplot, and individual observations per group; otherwise it
-#' shows a histogram and density curve. This is suitable for simulated traits
-#' and real numeric phenotype tables.
+#' Create a standalone phenotype QC figure. Binary 0/1 traits are displayed as
+#' case/control counts (or groupwise case fractions), continuous traits use a
+#' histogram/density plot without groups and a violin/box/jitter plot with
+#' groups. This is suitable for simulated traits and real numeric phenotype
+#' tables.
 #'
 #' @param phenotype Data frame or TSV containing the trait.
 #' @param trait Numeric trait column.
@@ -119,10 +120,31 @@ plot_trait_diagnostics <- function(
   data <- data[is.finite(data[[trait]]), , drop = FALSE]
   if (!nrow(data)) stop("trait contains no finite values")
   if (!is.null(group) && !group %in% names(data)) stop("group column not found: ", group)
-  if (is.null(group)) {
+  is_binary <- all(data[[trait]] %in% c(0, 1))
+  if (is_binary && is.null(group)) {
+    counts <- data.frame(
+      outcome = factor(c("Control", "Case"), levels = c("Control", "Case")),
+      count = c(sum(data[[trait]] == 0), sum(data[[trait]] == 1))
+    )
+    plot <- ggplot2::ggplot(counts, ggplot2::aes(x = outcome, y = count, fill = outcome)) +
+      ggplot2::geom_col(show.legend = FALSE, width = 0.65) +
+      ggplot2::geom_text(ggplot2::aes(label = count), vjust = -0.4, size = 4) +
+      ggplot2::scale_fill_manual(values = c("Control" = "#315C6B", "Case" = "#D97706")) +
+      ggplot2::labs(title = "Binary phenotype counts", x = NULL, y = "Samples")
+  } else if (is_binary) {
+    rates <- stats::aggregate(data[[trait]], list(group = data[[group]]), mean)
+    names(rates) <- c("group", "case_fraction")
+    plot <- ggplot2::ggplot(rates, ggplot2::aes(x = group, y = case_fraction, fill = group)) +
+      ggplot2::geom_col(show.legend = FALSE) +
+      ggplot2::geom_hline(yintercept = mean(data[[trait]]), linetype = 2, color = "#B4422B") +
+      ggplot2::coord_cartesian(ylim = c(0, 1)) +
+      ggplot2::labs(title = "Binary phenotype fraction by group", x = group, y = "Case fraction")
+  } else if (is.null(group)) {
     plot <- ggplot2::ggplot(data, ggplot2::aes(x = .data[[trait]])) +
       ggplot2::geom_histogram(bins = 30, fill = "#2E7D6A", color = "white") +
-      ggplot2::geom_density(ggplot2::aes(y = after_stat(count)), color = "#B4422B", linewidth = 0.9) +
+      # `..count..` remains compatible with the older ggplot2 versions
+      # commonly bundled with local R installations.
+      ggplot2::geom_density(ggplot2::aes(y = ..count..), color = "#B4422B", linewidth = 0.9) +
       ggplot2::labs(title = "Phenotype distribution", x = trait, y = "Samples")
   } else {
     plot <- ggplot2::ggplot(data, ggplot2::aes(x = .data[[group]], y = .data[[trait]], fill = .data[[group]])) +

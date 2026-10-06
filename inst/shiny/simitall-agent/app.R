@@ -1,6 +1,8 @@
 library(shiny)
 library(simitall)
 
+if (!exists("%||%", mode = "function")) `%||%` <- function(a, b) if (is.null(a)) b else a
+
 ui <- fluidPage(
   tags$head(
     tags$title("simitall agent"),
@@ -9,8 +11,8 @@ ui <- fluidPage(
       body { background:var(--paper); color:var(--ink); font-family:Avenir Next, Avenir, Helvetica Neue, sans-serif; }
       .container-fluid { max-width:1200px; padding:32px 24px 54px; }
       .agent-header { align-items:flex-start; display:flex; gap:24px; justify-content:space-between; margin:0 auto 28px; max-width:980px; }
-      .agent-mark { color:var(--forest); font-size:12px; font-weight:800; letter-spacing:.16em; margin-bottom:8px; text-transform:uppercase; }
-      h1 { font-family:Iowan Old Style, Palatino, Georgia, serif; font-size:clamp(34px, 5vw, 54px); font-weight:700; letter-spacing:-.04em; line-height:1; margin:0 0 12px; }
+      .agent-brand { min-width:0; }
+      .agent-logo { display:block; height:auto; margin:0 0 12px; max-width:440px; width:min(440px, 100%); }
       .agent-subtitle { color:var(--muted); font-size:17px; line-height:1.5; margin:0; max-width:680px; }
       .privacy-note { background:var(--mint); border-radius:999px; color:var(--forest-dark); font-size:12px; font-weight:700; padding:8px 12px; white-space:nowrap; }
       .chat-shell { margin:0 auto; max-width:980px; }
@@ -31,6 +33,7 @@ ui <- fluidPage(
       .section-code { background:#17231e; border:0; border-radius:0; color:#eef6ef; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px; line-height:1.55; margin:0; max-height:600px; overflow:auto; padding:16px; white-space:pre; }
       .run-button { background:#d97435; border:0; border-radius:12px; font-size:15px; font-weight:850; letter-spacing:.08em; margin:0 0 18px; min-height:52px; width:100%; }
       .run-button:hover, .run-button:focus { background:#b95524; }
+      .run-button:disabled { background:#b9b1a2; cursor:not-allowed; opacity:.75; }
       .run-note { color:var(--muted); font-size:12px; margin:-9px 0 16px; text-align:center; }
       .parameter-inputs { display:grid; gap:10px; grid-template-columns:repeat(3, 1fr); padding:0 16px 16px; }
       .parameter-inputs .form-group { margin:0; }
@@ -73,6 +76,31 @@ ui <- fluidPage(
       .parameter-card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
       .parameter-card strong { color:var(--forest-dark); display:block; font-size:12px; margin-bottom:4px; }
       .parameter-card span { font-size:12px; line-height:1.4; }
+      .spec-badge { background:var(--mint); border:1px solid #b8d5c5; border-radius:999px; color:var(--forest-dark); display:inline-block; font-size:11px; font-weight:800; letter-spacing:.06em; margin:0 0 10px; padding:4px 10px; }
+      .fallback-action { background:#fff7ef; border:1px solid #efc9a3; border-radius:12px; margin:0 0 18px; padding:12px 14px; }
+      .fallback-action p { color:var(--ink); font-size:13px; margin:0 0 10px; }
+      .fallback-action .btn { background:var(--forest); border:0; border-radius:9px; color:#fff; font-weight:700; }
+      .tuning-note { color:var(--muted); font-size:12px; line-height:1.45; padding:0 16px 16px; }
+      .tuning-errors { background:#fdecea; border:1px solid #e6b3ab; border-radius:9px; color:#7a2318; font-size:12px; margin:0 16px 16px; padding:10px 12px; }
+      .metrics-table { border-collapse:collapse; font-size:12px; margin:0 0 14px; width:100%; }
+      .metrics-wrap { overflow-x:auto; }
+      .metrics-table th, .metrics-table td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; white-space:nowrap; }
+      .metrics-table th { color:var(--forest-dark); font-weight:800; }
+      .figure-grid { display:grid; gap:12px; grid-template-columns:repeat(2, 1fr); margin:0 0 14px; }
+      .figure-card { background:#fff; border:1px solid var(--line); border-radius:10px; margin:0; overflow:hidden; }
+      .figure-card img { display:block; height:auto; max-width:100%; width:100%; }
+      .figure-card figcaption { color:var(--muted); font-size:11px; padding:6px 8px; word-break:break-all; }
+      .guided-box { border-top:1px solid var(--line); padding:14px 16px 16px; }
+      .guided-intro { color:var(--muted); font-size:13px; margin:0 0 12px; }
+      .guided-question { background:#fff; border:1px solid var(--line); border-radius:12px; margin:0 0 12px; padding:12px 14px; }
+      .guided-question .control-label { color:var(--ink); font-size:14px; font-weight:800; }
+      .guided-question .radio { display:inline-block; margin:4px 14px 0 0; }
+      .guided-why { color:var(--muted); font-size:12px; line-height:1.45; margin:4px 0 8px; }
+      .guided-evidence { background:var(--mint); border-radius:8px; font-size:12px; line-height:1.45; margin:6px 0 8px; padding:8px 10px; }
+      .guided-evidence.none { background:#f4f4ef; color:var(--muted); }
+      .guided-question .btn { background:#d97435; border:0; border-radius:9px; color:#fff; font-size:12px; font-weight:800; }
+      .output-heading { color:var(--forest-dark); font-size:12px; font-weight:800; letter-spacing:.08em; margin:4px 0 8px; text-transform:uppercase; }
+      @media (max-width:700px) { .figure-grid { grid-template-columns:1fr; } }
       @media (max-width:700px) { .container-fluid { padding:22px 14px 40px; } .agent-header { display:block; } .privacy-note { display:inline-block; margin-top:14px; } .composer-row { align-items:stretch; flex-direction:column; } .send-button { width:100%; } .advanced-grid, .parameter-grid, .section-nav, .parameter-inputs { grid-template-columns:1fr; } }
     ")),
     tags$script(HTML("\
@@ -86,8 +114,11 @@ ui <- fluidPage(
   div(
     class = "agent-header",
     div(
-      div(class = "agent-mark", "Simulation planning assistant"),
-      h1("simitall agent"),
+      class = "agent-brand",
+      tags$img(
+        class = "agent-logo", src = "logo.png",
+        alt = "SimItAll, AI bioinformatics agent"
+      ),
       p(class = "agent-subtitle", "Ask one study-design question. The agent retrieves local project knowledge, identifies required inputs, and returns a reviewable plan with verified R code when available.")
     ),
     div(class = "privacy-note", "Local by default - no API key")
@@ -149,7 +180,7 @@ ui <- fluidPage(
   before <- substr(answer, 1L, start - 1L)
   remainder <- substr(answer, start + nchar(marker), nchar(answer))
   recipe_start <- regexpr(
-    "\n\n(?:Verified |Synthetic human |Input-dependent |Bundled synthetic )", remainder,
+    "\n\n(?:Verified |Synthetic human |Input-dependent |Bundled synthetic |Spec-compiled )", remainder,
     perl = TRUE
   )[1L]
   if (recipe_start < 0L) return(before)
@@ -180,11 +211,16 @@ ui <- fluidPage(
   if (length(fences) < 2L) return("")
   starts <- fences[seq(1L, length(fences) - 1L, by = 2L)]
   ends <- fences[seq(2L, length(fences), by = 2L)]
-  paste(vapply(
+  blocks <- vapply(
     seq_along(starts),
     function(i) paste(lines[(starts[i] + 1L):(ends[i] - 1L)], collapse = "\n"),
     character(1)
-  ), collapse = "\n\n# ---- Next verified recipe block ----\n\n")
+  )
+  # Agent answers often show a short system2() invocation followed by the full
+  # versioned runner. RUN executes the invocation: it preserves the runner's
+  # repository-relative path and prevents the full source from being run a
+  # second time after being copied into the run directory.
+  blocks[[1L]]
 }
 
 .simitall_shiny_parameter_text <- function() {
@@ -210,8 +246,8 @@ ui <- fluidPage(
     if (is.finite(value)) value else fallback
   }
   list(
-    seed = first_number("(?:seed\\s*<-|seed\\s*=)\\s*[0-9]+", 2026),
-    n_lines = first_number("(?:n_lines\\s*<-|n_lines\\s*=|n_offspring\\s*=)\\s*[0-9]+", 500),
+    seed = first_number("(?:seed\\s*<-|seed\\s*=|get_arg\\(\\\"--seed\\\",\\s*\\\")[0-9]+", 2026),
+    n_lines = first_number("(?:n_lines\\s*<-|n_lines\\s*=|n_offspring\\s*=|get_arg\\(\\\"--n_lines\\\",\\s*\\\")[0-9]+", 500),
     n_generations = first_number("(?:n_rounds\\s*<-|n_generations\\s*<-)\\s*[0-9]+", 10),
     n_markers = first_number("(?:n_markers\\s*<-|n_markers\\s*=)\\s*[0-9]+", 500),
     heritability = first_number("heritability\\s*=\\s*[0-9]+(?:\\.[0-9]+)?", 0.6)
@@ -243,6 +279,27 @@ ui <- fluidPage(
   code <- replace_assignment(code, "n_markers", paste0(values$n_markers, "L"))
   code <- replace_argument(code, "n_markers", values$n_markers)
   code <- replace_argument(code, "heritability", values$heritability)
+  # Versioned runners read command-line defaults through get_arg(). Override
+  # those defaults when RUN executes the runner body directly.
+  code <- gsub(
+    '(get_arg\\("--seed",\\s*")[0-9]+("\\))',
+    paste0("\\1", values$seed, "\\2"), code, perl = TRUE
+  )
+  code <- gsub(
+    '(get_arg\\("--n_lines",\\s*")[0-9]+("\\))',
+    paste0("\\1", values$n_lines, "\\2"), code, perl = TRUE
+  )
+  # RUN executes the first code block, which for runner recipes is a
+  # system2() call. Override its CLI arguments too, or the knobs do nothing.
+  replace_cli <- function(text, flag, value) {
+    gsub(
+      paste0('("--', flag, '",\\s*")[0-9.]+(")'),
+      paste0("\\1", value, "\\2"), text, perl = TRUE
+    )
+  }
+  code <- replace_cli(code, "seed", values$seed)
+  code <- replace_cli(code, "n_lines", values$n_lines)
+  code <- replace_cli(code, "heritability", values$heritability)
   code
 }
 
@@ -265,7 +322,75 @@ ui <- fluidPage(
   files[file.info(files)$mtime >= started_at - 2]
 }
 
-.simitall_shiny_sections <- function(answer, question) {
+# Serve run outputs to the browser so figures can be shown inline. Only the
+# results folders are exposed, never the whole project.
+.simitall_shiny_resource_roots <- function(project_dir) {
+  roots <- c(
+    `simitall-results` = file.path(project_dir, "results"),
+    `simitall-analysis-results` = file.path(project_dir, "analysis", "results")
+  )
+  for (prefix in names(roots)) {
+    dir.create(roots[[prefix]], recursive = TRUE, showWarnings = FALSE)
+    shiny::addResourcePath(prefix, normalizePath(roots[[prefix]]))
+  }
+  vapply(roots, normalizePath, character(1))
+}
+
+.simitall_shiny_file_url <- function(path, roots) {
+  path <- normalizePath(path, mustWork = FALSE)
+  for (prefix in names(roots)) {
+    root <- paste0(roots[[prefix]], .Platform$file.sep)
+    if (startsWith(path, root)) {
+      relative <- substring(path, nchar(root) + 1L)
+      encoded <- paste(vapply(strsplit(relative, "/", fixed = TRUE)[[1L]], utils::URLencode,
+                              character(1), reserved = TRUE), collapse = "/")
+      # The mtime query string stops the browser showing a stale figure.
+      return(paste0(prefix, "/", encoded, "?v=", as.integer(file.info(path)$mtime)))
+    }
+  }
+  NULL
+}
+
+.simitall_shiny_figures_ui <- function(files, roots, limit = 12L) {
+  images <- files[grepl("\\.(png|jpe?g|svg)$", files, ignore.case = TRUE)]
+  if (!length(images)) return(NULL)
+  # Newest first; ties (same second) fall back to file name for a stable order.
+  images <- images[order(-as.numeric(file.info(images)$mtime), basename(images))][seq_len(min(limit, length(images)))]
+  cards <- lapply(images, function(path) {
+    url <- .simitall_shiny_file_url(path, roots)
+    if (is.null(url)) return(NULL)
+    tags$figure(class = "figure-card",
+                tags$a(href = url, target = "_blank", tags$img(src = url, alt = basename(path))),
+                tags$figcaption(basename(path)))
+  })
+  tagList(div(class = "output-heading", "Figures"), div(class = "figure-grid", cards))
+}
+
+.simitall_shiny_metrics_ui <- function(files) {
+  tables <- files[grepl("(truth_recovery_metrics|validation_summary|family_risk_summary|eqtl_metrics)\\.tsv$", basename(files))]
+  # An option comparison writes one table per option plus the side-by-side
+  # summary; show only the summary.
+  comparison <- tables[grepl("^option_comparison", basename(tables))]
+  if (length(comparison)) tables <- comparison
+  if (!length(tables)) return(NULL)
+  lapply(tables, function(path) {
+    data <- tryCatch(utils::read.delim(path, check.names = FALSE), error = function(e) NULL)
+    if (is.null(data) || !nrow(data)) return(NULL)
+    cell <- function(x) if (is.numeric(x)) format(signif(x, 4)) else as.character(x)
+    tagList(
+      div(class = "output-heading", sub("\\.tsv$", "", basename(path))),
+      div(class = "metrics-wrap", tags$table(
+        class = "metrics-table",
+        tags$thead(tags$tr(lapply(names(data), tags$th))),
+        tags$tbody(lapply(seq_len(min(nrow(data), 20L)), function(i) {
+          tags$tr(lapply(data[i, , drop = FALSE], function(x) tags$td(cell(x))))
+        }))
+      ))
+    )
+  })
+}
+
+.simitall_shiny_sections <- function(answer, question, plan_source = NULL) {
   answer <- .simitall_shiny_hide_grounding(answer)
   headings <- c(
     "Interpreted design", "Proposed stages", "Required inputs",
@@ -283,10 +408,12 @@ ui <- fluidPage(
   # A verified recipe is deliberately appended after the planning prose. It
   # belongs only in the R Code panel, never inside the Limitations panel.
   limitations <- sub(
-    "(?s)\\n\\n(?:Input-dependent|Verified|Synthetic|Package-verified)[^\\n]*:\\n.*$",
+    "(?s)\\n\\n(?:Input-dependent|Verified|Synthetic|Package-verified|Spec-compiled)[^\\n]*:\\n.*$",
     "", limitations, perl = TRUE
   )
-  plan <- if (nzchar(stages)) {
+  plan <- if (identical(plan_source, "spec") && nzchar(stages)) {
+    paste0("This plan and its R code were compiled from one validated request spec, so they describe the same ", length(grep("^[0-9]+\\.", strsplit(stages, "\n")[[1L]])), "-stage workflow. No language model was called. Open Design to see how your question was parsed, and Parameter Tunings to change the assumptions before RUN.")
+  } else if (nzchar(stages)) {
     paste0("A simulation/analysis plan was generated with ", length(grep("^[0-9]+\\.", strsplit(stages, "\n")[[1L]])), " proposed stage(s). Select Design, Stages, Inputs, Outputs, or R Code for the details.")
   } else {
     "The agent returned a planning response. Select the available sections for details."
@@ -305,17 +432,22 @@ ui <- fluidPage(
 }
 
 server <- function(input, output, session) {
+  project_dir <- .simitall_shiny_project_dir()
+  resource_roots <- .simitall_shiny_resource_roots(project_dir)
   selected_section <- reactiveVal("Plan")
+  # The current answer. A reactiveVal (not eventReactive) so the empty state
+  # renders before the first question and answers can be replaced in place.
+  current_answer <- reactiveVal(NULL)
+  answer_count <- reactiveVal(0L)
   run_state <- reactiveValues(
     log = "No recipe has been run in this session.", files = character(),
     completed = FALSE, running = FALSE, stage = "Ready",
     detail = "No local recipe is running.", process = NULL, started_at = NULL
   )
 
-  response <- eventReactive(input$ask, {
-    question <- trimws(input$question)
+  ask_agent <- function(question, data_source) {
+    question <- trimws(question)
     req(nzchar(question))
-    data_source <- input$data_source
     # In the chat interface, an explicit request to simulate a chromosome is
     # consent to a labelled synthetic chromosome. All other chromosome prompts
     # keep the conservative "ask for data" policy unless the user chooses a
@@ -335,7 +467,7 @@ server <- function(input, output, session) {
     if (is.null(uploaded_paths)) uploaded_paths <- character()
     input_files <- unique(c(input_files, uploaded_paths))
     n_context <- .simitall_shiny_context_count(input$context_level)
-    tryCatch(
+    result <- tryCatch(
       simitall_ask(
         question,
         provider = input$provider,
@@ -346,6 +478,7 @@ server <- function(input, output, session) {
       ),
       error = function(e) structure(
         list(
+          question = question,
           answer = paste("Error:", conditionMessage(e)),
           sources = tryCatch(
             search_simitall_knowledge(question, n_results = n_context),
@@ -355,29 +488,80 @@ server <- function(input, output, session) {
         class = "simitall_agent_answer"
       )
     )
+    answer_count(answer_count() + 1L)
+    result$shiny_id <- answer_count()
+    current_answer(result)
+  }
+
+  observeEvent(input$ask, ask_agent(input$question, input$data_source))
+
+  # One-click recovery when a spec needs a panel simitall does not bundle.
+  observeEvent(input$use_synthetic, {
+    req(current_answer())
+    updateSelectInput(session, "data_source", selected = "synthetic")
+    ask_agent(current_answer()$question, "synthetic")
   })
 
-  observeEvent(response(), {
+  response <- function() current_answer()
+  is_spec_answer <- function(r = response()) {
+    !is.null(r) && identical(r$plan_source, "spec") && !is.null(r$spec)
+  }
+  # Input ids carry the answer number so tuning values from a previous
+  # question can never leak into a new one.
+  tune_id <- function(name) paste0("tune_", name, "_", isolate(response())$shiny_id)
+  tune_value <- function(name) {
+    r <- response()
+    if (is.null(r)) return(NULL)
+    input[[paste0("tune_", name, "_", r$shiny_id)]]
+  }
+
+  # For spec answers, the code that RUN executes is always recompiled from
+  # the spec with the current tuning values, then re-validated.
+  compiled_spec <- reactive({
+    r <- response()
+    if (!is_spec_answer(r)) return(NULL)
+    knobs <- simitall:::.simitall_agent_spec_knobs(r$spec)
+    names <- c(vapply(knobs, `[[`, character(1), "name"),
+               vapply(simitall:::.simitall_agent_spec_questions(r$spec), `[[`, character(1), "id"))
+    simitall:::.simitall_agent_recompile_spec(r$spec, stats::setNames(lapply(names, tune_value), names))
+  })
+
+  observeEvent(current_answer(), {
     selected_section("Plan")
     if (!isTRUE(run_state$running)) {
-      run_state$stage <- "Ready"
-      run_state$detail <- "A new recipe is ready to run locally."
+      preflight <- response()$preflight
+      needs_input <- !is.null(preflight) && !identical(preflight$status, "ready")
+      run_state$stage <- if (needs_input) "Needs input" else "Ready"
+      run_state$detail <- if (needs_input) preflight$action else "A new recipe is ready to run locally."
       run_state$completed <- FALSE
       run_state$files <- character()
       run_state$log <- "No recipe has been run for this answer."
     }
-  }, ignoreInit = TRUE)
+  })
 
   observeEvent(input$answer_section, {
     selected_section(input$answer_section)
   })
 
   sections <- reactive({
-    req(response())
-    .simitall_shiny_sections(
-      response()$answer,
-      trimws(input$question)
-    )
+    r <- response()
+    req(r)
+    answer <- r$answer
+    spec <- compiled_spec()
+    if (!is.null(spec)) {
+      # Rebuild the answer from the tuned spec so Design, Stages, and R Code
+      # always show what RUN will execute.
+      answer <- paste(simitall:::.simitall_agent_spec_plan(spec), spec$recipe, sep = "\n\n")
+    }
+    .simitall_shiny_sections(answer, r$question %||% "", r$plan_source)
+  })
+
+  needs_synthetic_offer <- reactive({
+    r <- response()
+    if (!is_spec_answer(r)) return(FALSE)
+    spec <- r$spec
+    !length(spec$errors) && identical(spec$resolution$status, "needs_input") &&
+      spec$data_source %in% c("auto", "package_demo")
   })
 
   output$question_top <- renderUI({
@@ -385,13 +569,13 @@ server <- function(input, output, session) {
       return(div(
         class = "message assistant-message",
         div(class = "message-label", "simitall"),
-        div(class = "empty-answer", "I am ready when you are. Try: 'Plan a synthetic 500-line maize NAM population for chromosome 10 with a high-LD region, GWAS, RNA-seq, and genomic selection.'")
+        div(class = "empty-answer", "I am ready when you are. Try: 'what is the chance my kids get a disease if I marry my first cousin?', 'run a gwas for flowering time in arabidopsis 1001 with 300 accessions', or 'run a gwas for a phenotype in maize NAM'.")
       ))
     }
     div(
       class = "message question-message",
       div(class = "message-label", "Question"),
-      div(class = "question-text", sections()[["Question"]])
+      div(class = "question-text", response()$question)
     )
   })
 
@@ -415,6 +599,45 @@ server <- function(input, output, session) {
     )
   })
 
+  tuning_panel <- function(content) {
+    r <- response()
+    if (is_spec_answer(r)) {
+      # Each workflow declares its own knobs and starts from the values the
+      # spec runs with, not from regex guesses.
+      is_nam <- identical(r$spec$population$design, "NAM")
+      knobs <- lapply(simitall:::.simitall_agent_spec_knobs(r$spec), function(k) {
+        numericInput(tune_id(k$name), k$label, value = k$value, min = k$min,
+                     max = if (is.na(k$max)) NA else k$max, step = k$step)
+      })
+      return(tagList(
+        div(class = "section-text", "These values feed the request spec. Each change is re-validated and the recipe is recompiled, so the Design, Stages, and R Code panels always show what RUN will execute."),
+        div(class = "parameter-inputs", knobs),
+        uiOutput("tuning_errors"),
+        div(class = "tuning-note", if (is_nam) "The NAM runner fixes the QTL architecture (1 focal + 6 background QTL), so it is not tunable here." else NULL)
+      ))
+    }
+    code <- isolate(sections())[["R Code"]]
+    defaults <- .simitall_shiny_recipe_defaults(code)
+    tagList(
+      div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
+      div(
+        class = "parameter-inputs",
+        numericInput(tune_id("seed"), "Random seed", value = defaults$seed, min = 1, step = 1),
+        numericInput(tune_id("n_lines"), "Lines / offspring", value = defaults$n_lines, min = 2, step = 1),
+        numericInput(tune_id("n_generations"), "Generations / rounds", value = defaults$n_generations, min = 1, step = 1),
+        numericInput(tune_id("n_markers"), "Markers", value = defaults$n_markers, min = 10, step = 10),
+        numericInput(tune_id("heritability"), "Heritability", value = defaults$heritability, min = 0, max = 1, step = 0.05)
+      )
+    )
+  }
+
+  output$tuning_errors <- renderUI({
+    spec <- compiled_spec()
+    if (is.null(spec) || !length(spec$errors)) return(NULL)
+    div(class = "tuning-errors", strong("RUN is disabled until these are fixed:"),
+        tags$ul(lapply(spec$errors, tags$li)))
+  })
+
   output$section_detail <- renderUI({
     if (is.null(response())) {
       return(div(
@@ -424,10 +647,12 @@ server <- function(input, output, session) {
       ))
     }
     choice <- selected_section()
-    content <- sections()[[choice]]
+    # The tuning panel must not re-render while the user types into it.
+    content <- if (identical(choice, "Parameter Tunings")) isolate(sections())[[choice]] else sections()[[choice]]
+    if (is.null(content)) content <- ""
     if (identical(choice, "R Code")) {
       if (!nzchar(content)) {
-        content <- "No verified R code was returned. Enable 'Include verified runnable code', provide any required local inputs, or ask for a synthetic design."
+        content <- "No runnable R code is available. Enable 'Include verified runnable code', provide any required local inputs, fix any parameter errors, or ask for a synthetic design."
       }
       body <- tags$pre(class = "section-code", content)
     } else if (identical(choice, "Inputs")) {
@@ -448,25 +673,20 @@ server <- function(input, output, session) {
         )
       )
     } else if (identical(choice, "Parameter Tunings")) {
-      defaults <- .simitall_shiny_recipe_defaults(sections()[["R Code"]])
-      body <- tagList(
-        div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
-        div(
-          class = "parameter-inputs",
-          numericInput("recipe_seed", "Random seed", value = defaults$seed, min = 1, step = 1),
-          numericInput("recipe_n_lines", "Lines / offspring", value = defaults$n_lines, min = 2, step = 1),
-          numericInput("recipe_n_generations", "Generations / rounds", value = defaults$n_generations, min = 1, step = 1),
-          numericInput("recipe_n_markers", "Markers", value = defaults$n_markers, min = 10, step = 10),
-          numericInput("recipe_heritability", "Heritability", value = defaults$heritability, min = 0, max = 1, step = 0.05)
-        )
-      )
+      body <- tuning_panel(content)
     } else if (identical(choice, "Outputs")) {
       body <- tagList(
         div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
         uiOutput("run_output")
       )
     } else {
-      body <- div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE)))
+      badge <- if (identical(choice, "Plan") && is_spec_answer()) {
+        div(class = "spec-badge", paste0("Compiled from spec - parsed by ", response()$spec$extractor))
+      }
+      body <- tagList(
+        div(class = "section-text", badge, HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
+        if (identical(choice, "Plan")) uiOutput("guided_questions")
+      )
     }
     div(
       class = "section-detail",
@@ -478,40 +698,129 @@ server <- function(input, output, session) {
   output$run_button <- renderUI({
     if (is.null(response())) return(NULL)
     has_code <- nzchar(sections()[["R Code"]])
+    offer <- if (isTRUE(needs_synthetic_offer())) {
+      div(
+        class = "fallback-action",
+        p(response()$spec$resolution$action),
+        actionButton("use_synthetic", "Simulate a synthetic stand-in instead")
+      )
+    }
     tagList(
+      offer,
       actionButton("run_recipe", "RUN", class = "btn-primary run-button",
                    disabled = if (!has_code || isTRUE(run_state$running)) "disabled"),
-      div(class = "run-note", "Runs the displayed R recipe locally with the current parameter values. Outputs remain on this computer.")
+      div(
+        class = "run-note",
+        if (has_code) {
+          "Runs the displayed R recipe locally with the current parameter values. Outputs remain on this computer."
+        } else {
+          "No runnable recipe is available yet. Choose package demo or synthetic input, provide the requested local files, or fix the parameter errors, then press Send."
+        }
+      )
     )
+  })
+
+  # Guided mode: the agent's questions about method choices. Defaults are
+  # pre-selected, so answering is optional (quick mode = change nothing).
+  # Renders from the answer only, so clicking an option never re-renders it.
+  output$guided_questions <- renderUI({
+    r <- response()
+    if (!is_spec_answer(r)) return(NULL)
+    questions <- simitall:::.simitall_agent_spec_questions(r$spec)
+    if (!length(questions)) return(NULL)
+    records <- tryCatch(simitall:::.simitall_paper_records(), error = function(e) data.frame())
+    cards <- lapply(questions, function(question) {
+      evidence <- simitall:::.simitall_agent_question_evidence(question, records)
+      div(
+        class = "guided-question",
+        radioButtons(tune_id(question$id), question$question, inline = TRUE,
+                     choiceNames = question$labels, choiceValues = question$values, selected = question$selected),
+        div(class = "guided-why", question$why),
+        if (length(evidence)) {
+          div(class = "guided-evidence", strong("What papers say (reviewed): "), tags$ul(lapply(evidence, tags$li)))
+        } else {
+          div(class = "guided-evidence none", "No reviewed paper evidence yet for this choice. Review the matching rows in inst/agent/paper_records/method_records.tsv to show it here.")
+        },
+        tags$button(
+          type = "button", class = "btn btn-default",
+          onclick = sprintf("Shiny.setInputValue('compare_question', '%s', {priority: 'event'});", question$id),
+          "Test all options on simulation"
+        )
+      )
+    })
+    div(
+      class = "guided-box",
+      div(class = "section-detail-label", paste0("The agent has ", length(questions), " question", if (length(questions) > 1L) "s", " for you")),
+      p(class = "guided-intro", "Defaults are already chosen, so you can just press RUN. Or pick an option, or let the agent test every option on the same simulated data and show which one recovers the truth best."),
+      cards
+    )
+  })
+
+  observeEvent(input$compare_question, {
+    spec <- compiled_spec()
+    req(spec)
+    if (length(spec$errors)) {
+      run_state$stage <- "Needs fixes"
+      run_state$detail <- "Fix the parameter errors before comparing options."
+      selected_section("Outputs")
+      return(invisible(NULL))
+    }
+    recipe <- tryCatch(simitall:::.simitall_agent_compile_comparison(spec, input$compare_question),
+                       error = function(e) NULL)
+    req(recipe)
+    start_run(.simitall_shiny_code_blocks(recipe), "option comparison")
   })
 
   observeEvent(input$run_recipe, {
     req(response())
-    code <- sections()[["R Code"]]
-    validate(need(nzchar(code), "No runnable R code is available for this answer."))
-    if (grepl("PATH_TO_", code, fixed = TRUE)) {
-      run_state$completed <- FALSE
-      run_state$running <- FALSE
-      run_state$files <- character()
-      run_state$stage <- "Needs updated recipe"
-      run_state$detail <- "Choose a data source, then press Send to regenerate the recipe."
-      run_state$log <- paste(
-        "This recipe still contains PATH_TO_* placeholders, so it was not run.",
-        "Upload or provide the requested real files, or choose 'Use package demo only' under Optional input details and send the question again.",
-        sep = "\n"
+    r <- response()
+    if (is_spec_answer(r)) {
+      spec <- compiled_spec()
+      if (length(spec$errors) || !nzchar(spec$recipe)) {
+        run_state$completed <- FALSE
+        run_state$stage <- "Needs fixes"
+        run_state$detail <- "The tuned request did not validate."
+        run_state$log <- paste(c("Not run. Fix these parameters:", paste0("- ", spec$errors)), collapse = "\n")
+        selected_section("Outputs")
+        return(invisible(NULL))
+      }
+      # Compiled straight from the validated spec; no regex rewriting.
+      code <- .simitall_shiny_code_blocks(spec$recipe)
+    } else {
+      code <- sections()[["R Code"]]
+      validate(need(nzchar(code), "No runnable R code is available for this answer."))
+      if (grepl("PATH_TO_", code, fixed = TRUE)) {
+        run_state$completed <- FALSE
+        run_state$running <- FALSE
+        run_state$files <- character()
+        run_state$stage <- "Needs updated recipe"
+        run_state$detail <- "Choose a data source, then press Send to regenerate the recipe."
+        run_state$log <- paste(
+          "This recipe still contains PATH_TO_* placeholders, so it was not run.",
+          "Upload or provide the requested real files, or choose 'Use package demo only' under Optional input details and send the question again.",
+          sep = "\n"
+        )
+        selected_section("Outputs")
+        return(invisible(NULL))
+      }
+      # Legacy recipes: start from the recipe's own values and rewrite only
+      # the knobs the user actually changed.
+      defaults <- .simitall_shiny_recipe_defaults(code)
+      values <- list(
+        seed = .simitall_shiny_default(tune_value("seed"), defaults$seed),
+        n_lines = .simitall_shiny_default(tune_value("n_lines"), defaults$n_lines),
+        n_generations = .simitall_shiny_default(tune_value("n_generations"), defaults$n_generations),
+        n_markers = .simitall_shiny_default(tune_value("n_markers"), defaults$n_markers),
+        heritability = .simitall_shiny_default(tune_value("heritability"), defaults$heritability)
       )
-      selected_section("Outputs")
-      return(invisible(NULL))
+      if (!identical(values, defaults)) code <- .simitall_shiny_apply_overrides(code, values)
     }
-    values <- list(
-      seed = .simitall_shiny_default(input$recipe_seed, 2026),
-      n_lines = .simitall_shiny_default(input$recipe_n_lines, 500),
-      n_generations = .simitall_shiny_default(input$recipe_n_generations, 10),
-      n_markers = .simitall_shiny_default(input$recipe_n_markers, 500),
-      heritability = .simitall_shiny_default(input$recipe_heritability, 0.6)
-    )
-    code <- .simitall_shiny_apply_overrides(code, values)
-    project_dir <- .simitall_shiny_project_dir()
+    start_run(code, "recipe")
+  })
+
+  # Write a recipe with the project bootstrap and run it in the background.
+  start_run <- function(code, label = "recipe") {
+    if (isTRUE(run_state$running)) return(invisible(NULL))
     run_dir <- file.path(project_dir, "results", "simitall_runs", format(Sys.time(), "%Y%m%d_%H%M%S"))
     dir.create(run_dir, recursive = TRUE, showWarnings = FALSE)
     script <- file.path(run_dir, "recipe.R")
@@ -520,12 +829,14 @@ server <- function(input, output, session) {
     project_literal <- encodeString(project_dir, quote = "\"")
     bootstrap <- c(
       sprintf("setwd(%s)", project_literal),
-      "# RUN starts a fresh R process, so load this development package first.",
-      "if (!requireNamespace('simitall', quietly = TRUE)) {",
-      "  if (!requireNamespace('devtools', quietly = TRUE)) {",
-      "    stop('simitall is not installed and devtools is unavailable to load this project.')",
-      "  }",
+      "# RUN starts a fresh R process. In a source checkout, load this checkout",
+      "# so recipes use the code on disk, not an older installed simitall.",
+      sprintf("if (file.exists(file.path(%s, 'DESCRIPTION')) && requireNamespace('devtools', quietly = TRUE)) {", project_literal),
       sprintf("  devtools::load_all(%s, quiet = TRUE)", project_literal),
+      "} else if (requireNamespace('simitall', quietly = TRUE)) {",
+      "  library(simitall)",
+      "} else {",
+      "  stop('simitall is not installed and devtools is unavailable to load this project.')",
       "}"
     )
     writeLines(c(bootstrap, code), script)
@@ -542,14 +853,15 @@ server <- function(input, output, session) {
     run_state$completed <- FALSE
     run_state$files <- character()
     run_state$stage <- "Running"
-    run_state$detail <- paste("Executing", basename(script))
+    run_state$detail <- paste("Executing", label)
     run_state$log <- paste("Recipe:", script, "\nProcess started in the background.")
     run_state$process <- processx::process$new(
       command = file.path(R.home("bin"), "Rscript"), args = script,
       stdout = "|", stderr = "|", cleanup = FALSE
     )
     selected_section("Outputs")
-  })
+    invisible(NULL)
+  }
 
   observe({
     invalidateLater(600, session)
@@ -564,7 +876,13 @@ server <- function(input, output, session) {
     }
     if (isTRUE(process$is_alive())) return()
     status <- process$get_exit_status()
-    files <- .simitall_shiny_result_files(.simitall_shiny_project_dir(), run_state$started_at)
+    # Drain anything written between the last poll and exit.
+    tail_lines <- c(
+      tryCatch(process$read_all_output_lines(), error = function(e) character()),
+      tryCatch(process$read_all_error_lines(), error = function(e) character())
+    )
+    if (length(tail_lines)) run_state$log <- paste(c(run_state$log, tail_lines), collapse = "\n")
+    files <- .simitall_shiny_result_files(project_dir, run_state$started_at)
     run_state$files <- files
     run_state$running <- FALSE
     run_state$completed <- identical(status, 0L)
@@ -579,13 +897,22 @@ server <- function(input, output, session) {
   })
 
   output$run_output <- renderUI({
-    if (!isTRUE(run_state$completed) && identical(run_state$log, "No recipe has been run in this session.")) {
-      return(div(class = "run-output", div(class = "upload-note", "Run a recipe to see generated figures, files, and the local execution log here.")))
+    no_run_yet <- !isTRUE(run_state$completed) && !isTRUE(run_state$running) &&
+      grepl("^No recipe has been run", run_state$log)
+    if (no_run_yet) {
+      note <- if (identical(run_state$stage, "Needs input")) {
+        paste("No run has started.", run_state$detail)
+      } else {
+        "Run a recipe to see generated figures, metrics, files, and the local execution log here."
+      }
+      return(div(class = "run-output", div(class = "upload-note", note)))
     }
     div(
       class = "run-output",
+      if (run_state$completed) .simitall_shiny_metrics_ui(run_state$files),
+      if (run_state$completed) .simitall_shiny_figures_ui(run_state$files, resource_roots),
       if (length(run_state$files)) downloadButton("download_run", "Download run outputs") else NULL,
-      div(class = "upload-note", if (run_state$running) "Recipe is running in the background; the log updates live." else if (run_state$completed) paste("Run completed. Detected", length(run_state$files), "new or updated output file(s), including any validation figures. Use Download run outputs to retrieve them.") else "Run returned an error. Inspect the local log below."),
+      div(class = "upload-note", if (run_state$running) "Recipe is running in the background; the log updates live." else if (run_state$completed) paste("Run completed. Detected", length(run_state$files), "new or updated output file(s). Figures and metrics are shown above; use Download run outputs for everything.") else "Run returned an error. Inspect the local log below."),
       tags$pre(run_state$log)
     )
   })
@@ -594,7 +921,6 @@ server <- function(input, output, session) {
     filename = function() paste0("simitall_run_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".zip"),
     content = function(file) {
       req(length(run_state$files))
-      project_dir <- .simitall_shiny_project_dir()
       files <- normalizePath(run_state$files, mustWork = TRUE)
       # Zip relative paths so extracting never recreates /Users/... folders.
       relative_files <- substring(files, nchar(project_dir) + 2L)
@@ -605,7 +931,7 @@ server <- function(input, output, session) {
   )
 
   output$run_status <- renderUI({
-    status_class <- if (isTRUE(run_state$running)) "is-running" else if (!isTRUE(run_state$completed) && !identical(run_state$stage, "Ready")) "is-error" else ""
+    status_class <- if (isTRUE(run_state$running)) "is-running" else if (!isTRUE(run_state$completed) && !run_state$stage %in% c("Ready", "Completed")) "is-error" else ""
     div(
       class = paste("run-status", status_class),
       div(class = "run-status-label", "Local runner"),

@@ -4,7 +4,7 @@ document_type: "paper_summary"
 title: "1,135 genomes reveal the global pattern of polymorphism in Arabidopsis thaliana"
 citation_key: "Arabidopsis1001Genomes2016"
 authors: "The 1001 Genomes Consortium"
-year: genomes
+year: 2016
 doi: "10.1016/j.cell.2016.05.063"
 journal: "Cell"
 url: "https://discovery.ucl.ac.uk/id/eprint/1503762/"
@@ -21,7 +21,7 @@ last_reviewed: null
 
 # Citation
 
-The 1001 Genomes Consortium (genomes). *1,135 genomes reveal the global pattern of polymorphism in Arabidopsis thaliana*. Cell. DOI: 10.1016/j.cell.2016.05.063. Source: [https://discovery.ucl.ac.uk/id/eprint/1503762/](https://discovery.ucl.ac.uk/id/eprint/1503762/).
+The 1001 Genomes Consortium (2016). *1,135 genomes reveal the global pattern of polymorphism in Arabidopsis thaliana*. Cell. DOI: 10.1016/j.cell.2016.05.063. Source: [https://discovery.ucl.ac.uk/id/eprint/1503762/](https://discovery.ucl.ac.uk/id/eprint/1503762/).
 
 # One-Sentence Summary
 

@@ -3,7 +3,7 @@ id: technique_gwas
 document_type: technique
 status: starter
 domains: [GWAS, association_mapping, population_structure]
-related_functions: [simulate_gwas_cohort, analyze_gwas, benchmark_gwas, plot_gwas_results]
+related_functions: [simulate_gwas_cohort, analyze_gwas, analyze_binary_gwas, benchmark_gwas, plot_gwas_results]
 source_priority: primary_and_official_docs
 last_reviewed: 2026-09-25
 ---
@@ -31,6 +31,11 @@ controlled biparental population.
   `simitall`, `analyze_gwas()` uses `rrBLUP::GWAS()` with a realized kinship
   matrix, optional fixed effects, and optional marker-derived principal
   components.
+- For a simulated binary phenotype, `analyze_binary_gwas()` supplies a
+  transparent fixed-effect logistic baseline with fixed covariates and marker
+  PCs. It does **not** include a kinship random effect, so use a validated
+  binary mixed-model method for real related cohorts or publication-level
+  inference.
 - Define minor-allele-frequency and missing-data filters before looking at
   associations.
 - Use family-aware or population-aware validation rather than randomly mixing

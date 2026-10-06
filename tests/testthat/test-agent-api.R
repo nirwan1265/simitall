@@ -93,7 +93,8 @@ test_that("agent request previews are local and non-executing", {
   expect_match(preview$instructions, "cannot execute R")
   expect_match(preview$instructions, "Do not write R code", fixed = TRUE)
   expect_match(preview$instructions, "simulate_gwas_cohort", fixed = TRUE)
-  expect_equal(preview$execution, "disabled; planning and question answering only")
+  # simitall_ask() never executes code itself; only the user's RUN does.
+  expect_match(preview$execution, "only when the user presses RUN", fixed = TRUE)
 })
 
 test_that("unsafe local-model output falls back to the evidence briefing", {
@@ -129,31 +130,36 @@ test_that("NAM requests receive a deterministic code recipe only on request", {
     data_source = "synthetic",
     knowledge_dir = knowledge
   )
-  expect_match(answer$answer, "Verified NAM execution recipe", fixed = TRUE)
+  expect_match(answer$answer, "Spec-compiled NAM quantitative-trait GWAS recipe", fixed = TRUE)
+  expect_equal(answer$spec$resolution$mode, "bundled")
   expect_match(answer$answer, "simulate_breeding", fixed = TRUE)
-  expect_match(answer$answer, "simulate_rnaseq_from_gwas", fixed = TRUE)
+  expect_match(answer$answer, "fig15_maize_nam_quantitative_gwas.R", fixed = TRUE)
+  expect_false(grepl("simulate_rnaseq_from_gwas", answer$answer, fixed = TRUE))
 })
 
-test_that("synthetic biparental BC2S7 requests receive a figure recipe", {
+test_that("synthetic biparental BC2S7 requests compile to the breeding workflow", {
   answer <- simitall_ask(
     "Simulate a synthetic biparental cross with 2 backcrosses and 7 selfing generations, then show allele frequencies.",
     provider = "local",
     include_code = TRUE,
     data_source = "synthetic"
   )
-  expect_match(answer$answer, "Verified biparental BC2S7 execution recipe", fixed = TRUE)
-  expect_match(answer$answer, "allele_frequency.png", fixed = TRUE)
-  expect_match(answer$answer, "F1,BC:P1:2,SELF:7", fixed = TRUE)
+  expect_equal(answer$plan_source, "spec")
+  expect_match(answer$answer, "Spec-compiled breeding-population recipe", fixed = TRUE)
+  expect_match(answer$answer, "BC2S7", fixed = TRUE)
+  expect_match(answer$answer, "backcrosses = 2L", fixed = TRUE)
+  expect_match(answer$answer, "self_generations = 7L", fixed = TRUE)
 })
 
-test_that("provided IRF6 requests include the versioned implementation", {
+test_that("provided IRF6 requests compile against the supplied VCF", {
+  vcf <- system.file("extdata", "human_irf6", "demo_human_irf6_chr1.vcf.gz", package = "simitall")
   recipe <- simitall:::.simitall_agent_code_recipe(
     "Plan a human IRF6 pedigree liability simulation",
-    list(status = "ready", data_source = "provided")
+    list(status = "ready", data_source = "provided", input_files = vcf)
   )
-  expect_match(recipe, "Full versioned R implementation", fixed = TRUE)
-  expect_match(recipe, "make_unrelated <- function", fixed = TRUE)
-  expect_match(recipe, "synthetic_cleft_probability", fixed = TRUE)
+  expect_match(recipe, "simulate_human_pedigree_groups", fixed = TRUE)
+  expect_match(recipe, normalizePath(vcf), fixed = TRUE)
+  expect_false(grepl("fig11_human_irf6_synthetic_liability.R", recipe, fixed = TRUE))
 })
 
 test_that("Arabidopsis 1001 requests require a real panel instead of a toy substitute", {
@@ -223,4 +229,16 @@ test_that("E. coli GWAS requests use the bacterial analysis boundary", {
   )
   expect_match(answer$answer, "bacterial-GWAS", fixed = TRUE)
   expect_false(grepl("simulate_gwas_cohort()", answer$answer, fixed = TRUE))
+})
+
+test_that("human IRF6 pedigree prompts compile reusable modules instead of a figure script", {
+  question <- paste(
+    "Simulate a synthetic human family study around the IRF6 region.",
+    "Compare unrelated people, distantly related people, and first-cousin descendants.",
+    "Create an illustrative inherited-trait probability and show marker homozygosity."
+  )
+  answer <- simitall_ask(question, provider = "local", include_code = TRUE, data_source = "package_demo")
+  expect_match(answer$answer, "simulate_human_pedigree_groups", fixed = TRUE)
+  expect_match(answer$answer, "plot_human_pedigree_diagnostics", fixed = TRUE)
+  expect_false(grepl("fig11_human_irf6_synthetic_liability.R", answer$answer, fixed = TRUE))
 })

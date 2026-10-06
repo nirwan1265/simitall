@@ -34,3 +34,23 @@ counts and depth instead of assuming requested fold coverage is exact.
 ## Citation
 
 Huang W et al. (2012), *ART: a next-generation sequencing read simulator*.
+
+## SimItAll Platform Profiles
+
+Use `simitall_sequencing_profiles()` to inspect supported profiles. The
+Illumina choices are `MiSeq`, `MiSeq i100`, `NextSeq 1000/2000`, and `NovaSeq
+X`.
+
+ART includes historical machine error models, not chemistry models for every
+current instrument. SimItAll therefore records a transparent proxy: MiSeq and
+MiSeq i100 use `MSv3`; NextSeq 1000/2000 uses `NS50`; NovaSeq X uses `HS25`.
+These are suitable starting points for teaching simulations and method
+benchmarks, but empirical error profiles should be supplied for
+instrument-specific validation.
+
+```r
+sim_illumina_art(
+  ref_fa = "reference.fa", outprefix = "results/miseq/run_",
+  cov = 100, platform = "MiSeq", readlen = 250
+)
+```

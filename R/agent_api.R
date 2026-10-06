@@ -328,7 +328,7 @@ simitall_agent_tools <- function() {
     function_name = c(
       "simulate_genome", "simulate_annotations", "simulate_breeding",
       "generate_random_haplotype_panel", "simupop_api", "simulate_gwas_cohort",
-      "analyze_gwas", "benchmark_gwas", "plot_gwas_results", "fit_genomic_model",
+      "analyze_gwas", "analyze_binary_gwas", "benchmark_gwas", "plot_gwas_results", "fit_genomic_model",
       "run_genomic_selection", "simulate_rnaseq_from_gwas",
       "simulate_rnaseq_experiment", "simulate_rnaseq_reads", "benchmark_eqtl",
       "plot_rnaseq_eqtl_results", "simulate_scrnaseq_from_gwas",
@@ -339,7 +339,7 @@ simitall_agent_tools <- function() {
     ),
     domain = c(
       "genome", "annotation", "population", "population", "population",
-      "GWAS", "GWAS", "GWAS", "GWAS", "genomic selection",
+      "GWAS", "GWAS", "GWAS", "GWAS", "GWAS", "genomic selection",
       "genomic selection", "bulk RNA-seq", "bulk RNA-seq", "bulk RNA-seq",
       "bulk RNA-seq", "bulk RNA-seq", "single-cell RNA-seq",
       "single-cell RNA-seq", "single-cell RNA-seq", "single-cell RNA-seq",
@@ -353,6 +353,7 @@ simitall_agent_tools <- function() {
       "Create a synthetic founder FASTA haplotype panel.",
       "Bridge to selected advanced SimuPOP population operations.",
       "Generate a genotype, phenotype, and truth-set GWAS cohort.",
+      "Run a fixed-effect logistic GWAS for a binary phenotype.",
       "Run a mixed-model genome-wide association scan.",
       "Compare GWAS results with known causal-variant truth.",
       "Create GWAS result figures.",
@@ -491,37 +492,67 @@ simitall_agent_tools <- function() {
   )
 }
 
+# Split a model answer into code (fenced blocks and inline `spans`) and prose.
+# Safety checks on function calls only make sense inside code: in prose,
+# "population (NAM)" is a word followed by a parenthesis, not a call.
+.simitall_agent_split_code <- function(answer) {
+  fence <- "(?s)```.*?```"
+  blocks <- regmatches(answer, gregexpr(fence, answer, perl = TRUE))[[1L]]
+  prose <- gsub(fence, " ", answer, perl = TRUE)
+  inline_pattern <- "`[^`\n]+`"
+  inline <- regmatches(prose, gregexpr(inline_pattern, prose, perl = TRUE))[[1L]]
+  prose <- gsub(inline_pattern, " ", prose, perl = TRUE)
+  list(code = paste(c(blocks, inline), collapse = "\n"), prose = prose)
+}
+
+# Functions the agent may name: the curated tool list plus every simitall
+# export, so the allowlist cannot drift from NAMESPACE.
+.simitall_agent_allowed_functions <- function() {
+  exports <- tryCatch(getNamespaceExports("simitall"), error = function(e) character())
+  unique(c(simitall_agent_tools()$function_name, exports))
+}
+
+.simitall_agent_is_base_function <- function(name) {
+  envs <- c("base", "stats", "utils", "graphics", "grDevices", "methods")
+  any(vapply(envs, function(pkg) {
+    exists(name, envir = asNamespace(pkg), mode = "function", inherits = FALSE)
+  }, logical(1)))
+}
+
+.simitall_agent_unsupported_calls <- function(code, prose) {
+  call_pattern <- "(?<![A-Za-z0-9_.$@])[A-Za-z.][A-Za-z0-9._]*(?=\\()"
+  code_calls <- regmatches(code, gregexpr(call_pattern, code, perl = TRUE))[[1L]]
+  # Names defined inside the code block (helper <- function) are local.
+  local <- regmatches(code, gregexpr("[A-Za-z.][A-Za-z0-9._]*(?=\\s*(?:<-|=)\\s*function)", code, perl = TRUE))[[1L]]
+  code_calls <- setdiff(unique(code_calls), c(local, "function", "if", "for", "while", "return"))
+  code_calls <- code_calls[!vapply(code_calls, .simitall_agent_is_base_function, logical(1))]
+  # In prose only snake_case names glued to "(" look like function claims,
+  # e.g. "benchmark_eqtls()". Plain words before a parenthesis are ignored.
+  prose_calls <- regmatches(prose, gregexpr("\\b[a-z][a-z0-9]*_[a-z0-9_]+(?=\\()", prose, perl = TRUE))[[1L]]
+  setdiff(unique(c(code_calls, prose_calls)), .simitall_agent_allowed_functions())
+}
+
 .simitall_agent_validate_answer <- function(answer, question, retrieval, allow_code) {
-  prohibited <- c(
-    "```" = "code block",
-    "install\\.packages\\s*\\(" = "package installation",
-    "(?:library|require)\\s*\\(" = "package loading",
-    "\\b(?:gapit|tassel|maize_gwas_data)\\b" = "unsupported external tool or data object"
+  parts <- .simitall_agent_split_code(answer)
+  has_code_block <- grepl("```", answer, fixed = TRUE)
+  violations <- c(
+    if (!isTRUE(allow_code) && has_code_block) "code block",
+    if (grepl("install\\.packages\\s*\\(", parts$code, perl = TRUE)) "package installation",
+    if (grepl("\\b(?:library|require)\\s*\\((?!\\s*['\"]?simitall)", parts$code, perl = TRUE)) "package loading",
+    # External tools are allowed in prose (the knowledge base has tool cards)
+    # but must not appear as code the user would run.
+    if (grepl("\\b(?:gapit|tassel|maize_gwas_data)\\b", parts$code, ignore.case = TRUE, perl = TRUE)) "unsupported external tool or data object"
   )
-  if (isTRUE(allow_code)) prohibited <- prohibited[names(prohibited) != "```"]
-  hits <- names(prohibited)[vapply(
-    names(prohibited),
-    function(pattern) grepl(pattern, answer, ignore.case = TRUE, perl = TRUE),
-    logical(1)
-  )]
-  # Function-like text is only safe when it names an allowlisted high-level
-  # simitall operation. This catches convincing-but-nonexistent suggestions
-  # such as benchmark_eqtl() before they reach a user.
-  calls <- regmatches(
-    answer,
-    gregexpr("\\b[A-Za-z][A-Za-z0-9_]*\\s*\\(", answer, perl = TRUE)
-  )[[1L]]
-  calls <- sub("\\s*\\($", "", calls)
-  calls <- unique(calls[nzchar(calls)])
-  allowed <- simitall_agent_tools()$function_name
-  unsupported_calls <- setdiff(calls, allowed)
-  if (length(unsupported_calls)) {
-    hits <- c(hits, paste0("unsupported function: ", unsupported_calls))
+  unsupported <- .simitall_agent_unsupported_calls(parts$code, parts$prose)
+  if (length(unsupported)) violations <- c(violations, paste0("unsupported function: ", unsupported))
+
+  if (!length(violations)) {
+    attr(answer, "simitall_validation") <- list(fallback = FALSE, violations = character())
+    return(answer)
   }
-  if (!length(hits)) return(answer)
-  labels <- unname(prohibited[intersect(hits, names(prohibited))])
-  labels <- c(labels, setdiff(hits, names(prohibited)))
-  .simitall_agent_safe_fallback(question, retrieval, labels)
+  fallback <- .simitall_agent_safe_fallback(question, retrieval, violations)
+  attr(fallback, "simitall_validation") <- list(fallback = TRUE, violations = violations)
+  fallback
 }
 
 .simitall_agent_source_file <- function(...) {
@@ -537,21 +568,132 @@ simitall_agent_tools <- function() {
   NULL
 }
 
+# Compose a runnable human-pedigree recipe from parsed intent. Unlike the
+# versioned figure scripts, this is assembled from reusable package functions
+# and can vary relationship templates, sample size, and marker source.
+.simitall_agent_human_pedigree_recipe <- function(question, preflight) {
+  text <- tolower(question)
+  groups <- character()
+  if (grepl("unrelated|random mating", text)) groups <- c(groups, "unrelated")
+  if (grepl("distantly[ -]?related|distant relation|second[ -]?cousin", text)) {
+    groups <- c(groups, "distantly_related")
+  }
+  if (grepl("first[ -]?cousin", text)) groups <- c(groups, "first_cousin_descendant")
+  if (!length(groups)) groups <- c("unrelated", "distantly_related", "first_cousin_descendant")
+  groups <- unique(groups)
+  size_match <- regexec("([0-9]+)\\s*(?:families|people|individuals|descendants|samples)", text, perl = TRUE)
+  size_value <- regmatches(text, size_match)[[1L]]
+  n_per_group <- if (length(size_value) > 1L) size_value[2L] else "200"
+  vcf_recipe <- switch(
+    preflight$data_source,
+    package_demo = paste0(
+      "vcf <- system.file(\"extdata\", \"human_irf6\", \"demo_human_irf6_chr1.vcf.gz\", package = \"simitall\")",
+      "\nstopifnot(nzchar(vcf), file.exists(vcf))"
+    ),
+    provided = {
+      vcf <- preflight$input_files[grepl("\\.(vcf|bcf)(\\.gz)?$", preflight$input_files, ignore.case = TRUE)][1L]
+      paste0("vcf <- ", encodeString(normalizePath(path.expand(vcf)), quote = "\""), "\nstopifnot(file.exists(vcf))")
+    },
+    synthetic = paste(
+      "# The bundled VCF supplies anonymous toy IRF6-region marker frequencies.",
+      "# Choose package-demo or provide a VCF when region-specific frequencies matter.",
+      "vcf <- system.file(\"extdata\", \"human_irf6\", \"demo_human_irf6_chr1.vcf.gz\", package = \"simitall\")",
+      "stopifnot(nzchar(vcf), file.exists(vcf))",
+      sep = "\n"
+    )
+  )
+  group_code <- paste(sprintf("\"%s\"", groups), collapse = ", ")
+  paste(
+    "Generated human-pedigree recipe:",
+    "This recipe is composed from reusable marker-frequency, pedigree-template, synthetic-liability, and plotting functions. It is not a Figure 11 wrapper. The marker input supplies anonymous common-marker frequencies only; the trait probability is illustrative and is not a clinical prediction or a causal claim about IRF6.",
+    "",
+    "```r",
+    "library(simitall)",
+    "",
+    "out_dir <- \"results/human_irf6_pedigree\"",
+    "seed <- 81L",
+    paste0("n_per_group <- ", n_per_group, "L"),
+    "groups <- c(", group_code, ")",
+    "dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)",
+    "",
+    vcf_recipe,
+    "markers <- read_human_marker_frequencies(vcf, maf_min = 0.10, maf_max = 0.40)",
+    "pedigree_run <- simulate_human_pedigree_groups(",
+    "  markers = markers, groups = groups, n_per_group = n_per_group, seed = seed,",
+    "  baseline_probability = 0.05",
+    ")",
+    "",
+    "write.table(pedigree_run$marker_truth, file.path(out_dir, \"marker_truth.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+    "write.table(pedigree_run$pedigree, file.path(out_dir, \"pedigree_truth.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+    "write.table(pedigree_run$individuals, file.path(out_dir, \"synthetic_trait_probability.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+    "write.table(pedigree_run$genotypes, file.path(out_dir, \"simulated_marker_genotypes.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+    "figures <- plot_human_pedigree_diagnostics(pedigree_run$individuals, file.path(out_dir, \"figures\"))",
+    "",
+    "# Pass criteria for this synthetic demonstration.",
+    "stopifnot(",
+    "  nrow(pedigree_run$individuals) == length(groups) * n_per_group,",
+    "  all(is.finite(pedigree_run$individuals$synthetic_trait_probability)),",
+    "  all(pedigree_run$individuals$synthetic_trait_probability > 0 & pedigree_run$individuals$synthetic_trait_probability < 1),",
+    "  all(file.exists(figures))",
+    ")",
+    "",
+    "aggregate(cbind(synthetic_trait_probability, marker_homozygosity) ~ group, pedigree_run$individuals, mean)",
+    "```",
+    "",
+    "Expected outputs: marker-frequency truth, sex-aware pedigree truth, simulated genotype and probability tables, plus separate probability-comparison, trait-distribution, and homozygosity figures in `results/human_irf6_pedigree/figures/`.",
+    sep = "\n"
+  )
+}
+
 .simitall_agent_code_recipe <- function(question, preflight) {
   terms <- .simitall_agent_terms(question)
   is_nam <- "nam" %in% terms
+  is_maize <- .simitall_agent_species(question) == "maize"
+  is_maize_breeding_gwas <- is_maize && grepl(
+    "breeding|population|cross|selfing|gwas|association|qtl", tolower(question)
+  ) && grepl("gwas|association|qtl", tolower(question))
+  # The only bundled maize population is NAM-style. When a user explicitly
+  # selects the package demo for a generic maize breeding GWAS, use that
+  # runnable demo rather than returning an empty code panel.
+  is_package_demo_maize_gwas <- identical(preflight$data_source, "package_demo") &&
+    is_maize_breeding_gwas
+  line_match <- regexec("([0-9]+)\\s*(?:lines?|offspring|individuals)", tolower(question), perl = TRUE)
+  line_value <- regmatches(tolower(question), line_match)[[1L]]
+  requested_n_lines <- if (length(line_value) > 1L) line_value[2L] else "300"
   is_human_irf6 <- "irf6" %in% terms &&
     any(c("human", "pedigree", "liability", "cleft") %in% terms)
   is_human_inbreeding <- .simitall_agent_species(question) == "human" &&
     grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
-  is_nam_gxe_multiomics <- is_nam && grepl(
-    "drought|irrigated|gxe|genotype.by.environment|rna.?seq|eqtl|gwas|genomic.?selection",
+  is_binary_trait <- grepl(
+    "binary|binomial|bernoulli|case[ -]?control|case/control|presence[ -]?absence",
     tolower(question)
   )
+  is_nam_binary_gwas <- is_nam && is_binary_trait &&
+    grepl("gwas|association|qtl", tolower(question))
+  # Input provenance must not choose the analysis. A NAM request with a
+  # downstream endpoint always uses its endpoint-specific workflow.
+  is_nam_downstream <- is_nam && grepl(
+    "gwas|association|qtl|phenotype|rna.?seq|eqtl|genomic.?selection",
+    tolower(question)
+  )
+  # A trait label such as "drought-related" does not imply an environment
+  # contrast, transcriptomics, or selection. Those modules require an
+  # explicit request so a simple NAM trait + GWAS remains simple.
+  is_multiomics_request <- grepl(
+    "irrigated|gxe|genotype.by.environment|rna.?seq|eqtl|genomic.?selection|multi.?omics",
+    tolower(question)
+  )
+  is_nam_gxe_multiomics <- is_nam && is_multiomics_request
+  is_nam_quantitative_gwas <- (is_nam || is_package_demo_maize_gwas) &&
+    grepl("gwas|association|qtl", tolower(question)) &&
+    !is_binary_trait && !is_multiomics_request
   is_biparental <- grepl("biparental|bi[ -]?parental", tolower(question)) &&
     any(c("backcross", "selfing", "cross") %in% terms)
   if (!identical(preflight$status, "ready") ||
       !preflight$data_source %in% c("synthetic", "provided", "package_demo")) return("")
+
+  compiled_workflow <- .simitall_agent_compile_workflow(question, preflight)
+  if (nzchar(compiled_workflow)) return(compiled_workflow)
 
   if (identical(preflight$data_source, "package_demo") && is_human_irf6) {
     return(paste(
@@ -572,7 +714,7 @@ simitall_agent_tools <- function() {
     ))
   }
 
-  if (identical(preflight$data_source, "package_demo") && is_nam) {
+  if (identical(preflight$data_source, "package_demo") && is_nam && !is_nam_downstream) {
     return(paste(
       "Bundled synthetic maize NAM-style demo:",
       "This uses eight small synthetic chr10 founders and a small synthetic recombination map bundled with simitall. It is a runnable structural demo, not a named maize NAM panel or a publication-scale population.",
@@ -662,7 +804,14 @@ simitall_agent_tools <- function() {
     return("The IRF6 runner is unavailable from this installation. Run this request from a simitall source checkout containing `analysis/paper_fig/fig11_human_irf6_synthetic_liability.R` to retrieve the full verified implementation.")
   }
 
-  if (!identical(preflight$data_source, "synthetic")) return("")
+  # Bundled NAM workflows must stay runnable when the user explicitly chooses
+  # package_demo. Input provenance selects the bundled data, not a placeholder
+  # template. Other generic recipes remain synthetic-only until they gain an
+  # equivalent input adapter.
+  package_demo_gxe <- identical(preflight$data_source, "package_demo") &&
+    is_nam_gxe_multiomics
+  if (!identical(preflight$data_source, "synthetic") &&
+      !is_nam_binary_gwas && !is_nam_quantitative_gwas && !package_demo_gxe) return("")
 
   if (is_human_inbreeding) {
     return(paste(
@@ -743,6 +892,116 @@ simitall_agent_tools <- function() {
     ))
   }
 
+  if (is_nam_binary_gwas) {
+    script_path <- .simitall_agent_source_file(
+      "analysis", "paper_fig", "fig14_maize_nam_binary_gwas.R"
+    )
+    script_body <- if (!is.null(script_path)) {
+      paste(readLines(script_path, warn = FALSE), collapse = "\n")
+    } else {
+      NULL
+    }
+    if (is.null(script_body)) {
+      return("The NAM binary-GWAS runner is unavailable from this installation. Run this request from a simitall source checkout containing `analysis/paper_fig/fig14_maize_nam_binary_gwas.R`.")
+    }
+    binary_input_recipe <- switch(
+      preflight$data_source,
+      package_demo = "  \"--input_mode\", \"package_demo\",",
+      synthetic = "  \"--input_mode\", \"synthetic\",",
+      provided = {
+        panel <- preflight$input_files[grepl("\\.(fa|fasta|fna)(\\.gz)?$", preflight$input_files, ignore.case = TRUE)][1L]
+        map <- preflight$input_files[grepl("(recomb|genetic|map).*(\\.tsv|\\.csv|\\.txt)$", basename(preflight$input_files), ignore.case = TRUE)][1L]
+        c(
+          "  \"--input_mode\", \"provided\",",
+          paste0("  \"--haplotype_fa\", ", encodeString(normalizePath(path.expand(panel)), quote = "\""), ","),
+          paste0("  \"--recomb_map\", ", encodeString(normalizePath(path.expand(map)), quote = "\"") , ",")
+        )
+      }
+    )
+    binary_input_recipe <- paste(binary_input_recipe, collapse = "\n")
+    return(paste(
+      "Verified NAM binary-GWAS execution recipe:",
+      "The versioned runner uses the selected founder/map source, creates a 100-line NAM population, programs a binary case/control phenotype from one common causal marker, fits a simple logistic scan, and writes a case/control count plot, Manhattan plot, QQ plot, and truth-recovery outputs. NAM-family labels remain in metadata but are not displayed for this simple request. This is a synthetic mechanism check, not a disease model or a binary mixed-model GWAS.",
+      "",
+      "Run it directly from the repository root:",
+      "",
+      "```r",
+      "system2(\"Rscript\", c(",
+      "  \"analysis/paper_fig/fig14_maize_nam_binary_gwas.R\",",
+      "  \"--out_dir\", \"analysis/results/maize_nam_binary_gwas\",",
+      "  \"--n_lines\", \"100\",",
+      "  \"--prevalence\", \"0.30\",",
+      binary_input_recipe,
+      "  \"--seed\", \"1401\"",
+      "))",
+      "```",
+      "",
+      "Expected figures in `analysis/results/maize_nam_binary_gwas/figures/`: case/control count plot, Manhattan plot, QQ plot, and a combined overview. Expected tables: phenotype, causal-marker truth, association results, recovery metrics, and validation summary.",
+      "",
+      "Full versioned R implementation:",
+      "",
+      "```r",
+      script_body,
+      "```",
+      sep = "\n"
+    ))
+  }
+
+  if (is_nam_quantitative_gwas) {
+    script_path <- .simitall_agent_source_file(
+      "analysis", "paper_fig", "fig15_maize_nam_quantitative_gwas.R"
+    )
+    script_body <- if (!is.null(script_path)) {
+      paste(readLines(script_path, warn = FALSE), collapse = "\n")
+    } else {
+      NULL
+    }
+    if (is.null(script_body)) {
+      return("The NAM quantitative-GWAS runner is unavailable from this installation. Run the request from a simitall source checkout containing `analysis/paper_fig/fig15_maize_nam_quantitative_gwas.R`.")
+    }
+    quantitative_input_recipe <- switch(
+      preflight$data_source,
+      package_demo = "  \"--input_mode\", \"package_demo\",",
+      synthetic = "  \"--input_mode\", \"synthetic\",",
+      provided = {
+        panel <- preflight$input_files[grepl("\\.(fa|fasta|fna)(\\.gz)?$", preflight$input_files, ignore.case = TRUE)][1L]
+        map <- preflight$input_files[grepl("(recomb|genetic|map).*(\\.tsv|\\.csv|\\.txt)$", basename(preflight$input_files), ignore.case = TRUE)][1L]
+        c(
+          "  \"--input_mode\", \"provided\",",
+          paste0("  \"--haplotype_fa\", ", encodeString(normalizePath(path.expand(panel)), quote = "\""), ","),
+          paste0("  \"--recomb_map\", ", encodeString(normalizePath(path.expand(map)), quote = "\""), ",")
+        )
+      }
+    )
+    quantitative_input_recipe <- paste(quantitative_input_recipe, collapse = "\n")
+    return(paste(
+      "Verified NAM quantitative-trait GWAS execution recipe:",
+      "The versioned runner performs only the requested steps: NAM population simulation, one synthetic quantitative drought-response trait, family-aware GWAS, causal-truth recovery, and phenotype/GWAS figures. It does not generate RNA-seq, eQTL, genotype-by-environment, or genomic-selection outputs unless those are explicitly requested.",
+      "",
+      "Run it directly from the repository root:",
+      "",
+      "```r",
+      "system2(\"Rscript\", c(",
+      "  \"analysis/paper_fig/fig15_maize_nam_quantitative_gwas.R\",",
+      "  \"--out_dir\", \"analysis/results/maize_nam_quantitative_gwas\",",
+      paste0("  \"--n_lines\", \"", requested_n_lines, "\","),
+      "  \"--heritability\", \"0.60\",",
+      quantitative_input_recipe,
+      "  \"--seed\", \"1501\"",
+      "))",
+      "```",
+      "",
+      "Expected figures in `analysis/results/maize_nam_quantitative_gwas/figures/`: phenotype distribution, Manhattan plot, QQ plot, and a combined GWAS overview. Expected tables: population truth, quantitative phenotype, QTL truth, association results, recovery metrics, and validation summary.",
+      "",
+      "Full versioned R implementation:",
+      "",
+      "```r",
+      script_body,
+      "```",
+      sep = "\n"
+    ))
+  }
+
   if (is_nam_gxe_multiomics) {
     script_path <- .simitall_agent_source_file(
       "analysis", "paper_fig", "fig12_maize_nam_chr10_gxe_multiomics.R"
@@ -765,6 +1024,7 @@ simitall_agent_tools <- function() {
       "system2(\"Rscript\", c(",
       "  \"analysis/paper_fig/fig12_maize_nam_chr10_gxe_multiomics.R\",",
       "  \"--out_dir\", \"analysis/results/maize_nam_chr10_gxe_multiomics\",",
+      paste0("  \"--n_lines\", \"", requested_n_lines, "\","),
       "  \"--seed\", \"1201\"",
       "))",
       "```",
@@ -1073,6 +1333,8 @@ simitall_agent_tools <- function() {
 .simitall_agent_preflight <- function(question, input_files, data_source) {
   terms <- .simitall_agent_terms(question)
   species <- .simitall_agent_species(question)
+  needs_human_marker_vcf <- identical(species, "human") &&
+    grepl("irf6|pedigree|cousin|consanguin|related", tolower(question))
   needs_panel <- any(c("breeding", "nam", "magic", "ril", "nil", "f1", "f2", "backcross", "selfing", "cross") %in% terms) ||
     grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
   input_files <- input_files %||% character()
@@ -1086,9 +1348,25 @@ simitall_agent_tools <- function() {
   if (length(missing_files)) {
     status <- "blocked"
     action <- paste0("These declared input files do not exist: ", paste(missing_files, collapse = ", "), ".")
-  } else if (needs_panel && identical(data_source, "provided") && !length(supplied)) {
+  } else if (needs_human_marker_vcf && identical(data_source, "provided") && !length(supplied)) {
+    status <- "needs_input"
+    action <- "Provide a local VCF or VCF.GZ containing the requested human region. A phased VCF is required for future haplotype/recombination-aware inheritance; the current frequency-based human pedigree module uses INFO/AF only."
+  } else if (needs_human_marker_vcf && identical(data_source, "provided")) {
+    has_vcf <- any(grepl("\\.(vcf|bcf)(\\.gz)?$", supplied, ignore.case = TRUE))
+    if (!has_vcf) {
+      status <- "needs_input"
+      action <- "Provide a VCF, VCF.GZ, or BCF for the requested human region."
+    }
+  } else if (needs_panel && !needs_human_marker_vcf && identical(data_source, "provided") && !length(supplied)) {
     status <- "needs_input"
     action <- "Provide a founder haplotype FASTA panel and a chromosome-specific recombination map."
+  } else if (needs_panel && !needs_human_marker_vcf && identical(data_source, "provided")) {
+    has_panel <- any(grepl("\\.(fa|fasta|fna)(\\.gz)?$", supplied, ignore.case = TRUE))
+    has_map <- any(grepl("(recomb|genetic|map).*(\\.tsv|\\.csv|\\.txt)$", basename(supplied), ignore.case = TRUE))
+    if (!has_panel || !has_map) {
+      status <- "needs_input"
+      action <- "Provide both an aligned founder haplotype FASTA panel (`.fa`, `.fasta`, or `.fna`) and a chromosome-specific recombination-map table whose filename includes `map`, `recomb`, or `genetic`."
+    }
   } else if (needs_panel && identical(species, "arabidopsis") && grepl("1001", tolower(question)) && !length(supplied)) {
     status <- "needs_input"
     action <- paste(
@@ -1116,6 +1394,23 @@ simitall_agent_tools <- function() {
 .simitall_local_answer <- function(question, retrieval) {
   terms <- .simitall_agent_terms(question)
   has_any <- function(words) any(words %in% terms)
+  question_lower <- tolower(question)
+  phenotype_model <- if (grepl("negative[ -]?binomial|overdispersed[ -]?count", question_lower)) {
+    "negative_binomial"
+  } else if (grepl("poisson", question_lower)) {
+    "poisson"
+  } else if (grepl("ordinal|severity|rating", question_lower)) {
+    "ordinal"
+  } else if (grepl("binary|bernoulli|case[ -]?control|case/control|presence[ -]?absence", question_lower) ||
+             (grepl("binomial", question_lower) && !grepl("trials?|denominator|out of|proportion", question_lower))) {
+    "binary"
+  } else if (grepl("binomial", question_lower)) {
+    "binomial_count"
+  } else if (grepl("normal|gaussian|quantitative|continuous", question_lower)) {
+    "quantitative"
+  } else {
+    "unspecified"
+  }
   is_human_inbreeding <- .simitall_agent_species(question) == "human" &&
     grepl("inbreed|inbred|consanguin|first[ -]?cousin|related[ -]?mating", tolower(question))
   is_pedigree <- has_any(c("pedigree", "parentage", "maternal", "paternal")) || is_human_inbreeding
@@ -1256,12 +1551,28 @@ simitall_agent_tools <- function() {
       required <- c(required, "Bacterial isolate panel, lineage/phylogeny or kinship representation, accessory-genome/variant encoding, phenotype, and recombination assumptions.")
       truth <- c(truth, "Lineage-aware calibration summaries, causal truth where simulated, and variant-representation provenance.")
     } else if (is_breeding) {
-      stages <- c(stages, paste0(
-        length(stages) + 1L, ". Simulate a phenotype from the breeding VCF with `simulate_phenotypes()`, then run `analyze_gwas()` on that same VCF with family-aware covariates.",
-        source("Genome-Wide Association|Simulate and Run a GWAS")
-      ))
-      required <- c(required, "Trait architecture, phenotype design, and family covariates carried forward from the breeding metadata.")
-      truth <- c(truth, "Breeding VCF, phenotype table, family metadata, and GWAS results. A standardized GWAS causal-truth benchmark is not yet emitted by this breeding-first route.")
+      if (identical(phenotype_model, "binary")) {
+        stages <- c(stages, paste0(
+          length(stages) + 1L, ". Interpret the requested binomial phenotype as one binary Bernoulli outcome per line (binomial n = 1). Simulate a declared case prevalence and causal-marker truth, then run `analyze_binary_gwas()` on the NAM VCF.",
+          source("Phenotype Outcome|Genome-Wide Association")
+        ))
+        required <- c(required, "Binary-trait prevalence and a causal effect scale. If the intended outcome is a binomial count rather than 0/1, specify the number of trials per line.")
+        truth <- c(truth, "Binary phenotype table, case/control counts, causal-marker truth, logistic-GWAS results, Manhattan/QQ plots, and truth-recovery metrics.")
+      } else if (phenotype_model %in% c("poisson", "negative_binomial", "binomial_count", "ordinal")) {
+        stages <- c(stages, paste0(
+          length(stages) + 1L, ". Retain the requested ", gsub("_", " ", phenotype_model), " outcome and its distribution parameters in the truth table. A dedicated count/ordinal GWAS wrapper is not yet implemented, so do not silently substitute a Gaussian or binary association model.",
+          source("Phenotype Outcome")
+        ))
+        required <- c(required, "Distribution-specific parameters: trials for binomial counts, dispersion for negative-binomial counts, or category thresholds for ordinal traits.")
+        truth <- c(truth, "Outcome distribution parameters, count/category phenotype table, and the corresponding QC figure.")
+      } else {
+        stages <- c(stages, paste0(
+          length(stages) + 1L, ". Simulate a phenotype from the breeding VCF with `simulate_phenotypes()`, then run `analyze_gwas()` on that same VCF with family-aware covariates.",
+          source("Genome-Wide Association|Simulate and Run a GWAS")
+        ))
+        required <- c(required, "Trait architecture, phenotype design, and family covariates carried forward from the breeding metadata.")
+        truth <- c(truth, "Breeding VCF, phenotype table, family metadata, and GWAS results. A standardized GWAS causal-truth benchmark is not yet emitted by this breeding-first route.")
+      }
     } else {
       stages <- c(stages, paste0(
         length(stages) + 1L, ". Simulate the genotype/phenotype cohort with `simulate_gwas_cohort()`, then use `analyze_gwas()` and `benchmark_gwas()` against causal truth.",
@@ -1399,6 +1710,20 @@ simitall_ask <- function(
   }
   retrieval <- search_simitall_knowledge(question, n_context, knowledge_dir)
   preflight <- .simitall_agent_preflight(question, input_files, data_source)
+  spec <- .simitall_agent_spec_pipeline(question, input_files %||% character(), data_source)
+  if (isTRUE(spec$supported)) {
+    # The spec owns input resolution for the workflows it supports.
+    if (length(spec$errors)) {
+      preflight$status <- "invalid_spec"
+      preflight$action <- paste0("Fix these request parameters: ", paste(spec$errors, collapse = "; "), ".")
+    } else if (identical(spec$resolution$status, "ready")) {
+      preflight$status <- "ready"
+      preflight$action <- ""
+    } else {
+      preflight$status <- "needs_input"
+      preflight$action <- spec$resolution$action
+    }
+  }
   context <- .simitall_agent_context(
     retrieval,
     max_chars = if (identical(provider, "ollama")) 8000L else 18000L
@@ -1453,10 +1778,19 @@ simitall_ask <- function(
     instructions = instructions,
     context = context,
     preflight = preflight,
-    execution = "disabled; planning and question answering only"
+    spec = spec,
+    validation = NULL,
+    execution = "code is shown for review; it runs only when the user presses RUN"
   )
   if (!isTRUE(dry_run)) {
-    if (!identical(preflight$status, "ready")) {
+    # When the spec layer handles a request, its plan is authoritative: the
+    # prose and the code are generated from the same validated spec, so they
+    # cannot describe different methods. No model call is needed.
+    spec_handled <- isTRUE(spec$supported)
+    result$plan_source <- if (spec_handled) "spec" else provider
+    if (spec_handled) {
+      result$answer <- .simitall_agent_spec_plan(spec)
+    } else if (!identical(preflight$status, "ready")) {
       result$answer <- paste(
         .simitall_local_answer(question, retrieval),
         "Data-source resolution required:",
@@ -1478,20 +1812,22 @@ simitall_ask <- function(
       }
       result$answer <- .simitall_openai_request(question, instructions, model, api_key)
     }
-    if (!identical(provider, "local")) {
+    if (!spec_handled && !identical(provider, "local")) {
       result$answer <- .simitall_agent_validate_answer(
         result$answer, question, retrieval, allow_code
       )
+      result$validation <- attr(result$answer, "simitall_validation")
+      attr(result$answer, "simitall_validation") <- NULL
     }
     if (isTRUE(include_code)) {
-      recipe <- .simitall_agent_code_recipe(question, preflight)
+      recipe <- if (isTRUE(spec$supported)) spec$recipe else .simitall_agent_code_recipe(question, preflight)
       if (nzchar(recipe)) {
         result$answer <- paste(result$answer, recipe, sep = "\n\n")
-      } else {
+      } else if (!spec_handled) {
         skeleton <- .simitall_agent_code_skeleton(question, preflight)
         if (nzchar(skeleton)) result$answer <- paste(result$answer, skeleton, sep = "\n\n")
       }
-      if (!identical(preflight$status, "ready")) {
+      if (!spec_handled && !identical(preflight$status, "ready")) {
         result$answer <- paste(
           result$answer,
           "The code skeleton is not runnable until the required input has been resolved.",

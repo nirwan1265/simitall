@@ -1,3 +1,80 @@
+#' List validated sequencing-platform profiles
+#'
+#' The profiles connect plain-language platform names to simulator settings.
+#' ART does not provide current error models for every current Illumina system,
+#' so its system profile is an explicitly labelled compatible proxy rather than
+#' a claim that it reproduces an instrument's current chemistry.
+#'
+#' @return A data frame describing supported Illumina and PacBio profiles.
+#' @export
+simitall_sequencing_profiles <- function() {
+  data.frame(
+    platform = c(
+      "MiSeq", "MiSeq i100", "NextSeq 1000/2000", "NovaSeq X",
+      "Sequel IIe HiFi", "Revio HiFi", "Vega HiFi"
+    ),
+    technology = c(rep("Illumina short read", 4L), rep("PacBio HiFi", 3L)),
+    simulator = c(rep("ART", 4L), rep("PBSIM/PBSIM3", 3L)),
+    simulator_profile = c("MSv3", "MSv3", "NS50", "HS25", rep("HIFI", 3L)),
+    default_read_length_bp = c(250L, 150L, 150L, 150L, NA_integer_, NA_integer_, NA_integer_),
+    maximum_read_length_bp = c(300L, 300L, 300L, 150L, NA_integer_, NA_integer_, NA_integer_),
+    simulation_note = c(
+      "ART MiSeq v3 error-profile proxy.",
+      "ART has no MiSeq i100 model; uses the MiSeq v3 proxy.",
+      "ART NextSeq 500 profile proxy for NextSeq 1000/2000.",
+      "ART has no NovaSeq X model; uses the HiSeq 2500 proxy.",
+      "HiFi read type; supply an empirical PBSIM model when instrument-specific errors matter.",
+      "HiFi read type; supply an empirical PBSIM model when instrument-specific errors matter.",
+      "HiFi read type; supply an empirical PBSIM model when instrument-specific errors matter."
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+.simitall_normalize_sequencing_platform <- function(platform) {
+  key <- gsub("[^a-z0-9]+", "", tolower(platform))
+  aliases <- c(
+    generic = "generic_illumina", genericillumina = "generic_illumina", illumina = "generic_illumina",
+    miseq = "miseq", miseqv3 = "miseq",
+    miseqi100 = "miseq_i100", i100 = "miseq_i100", i100plus = "miseq_i100",
+    nextseq = "nextseq_1000_2000", nextseq1000 = "nextseq_1000_2000", nextseq2000 = "nextseq_1000_2000", nextseq10002000 = "nextseq_1000_2000",
+    novaseq = "novaseq_x", novaseqx = "novaseq_x", novaseqxplus = "novaseq_x",
+    sequeliie = "sequel_iie_hifi", sequeliiehifi = "sequel_iie_hifi", revio = "revio_hifi", reviohifi = "revio_hifi", vega = "vega_hifi", vegahifi = "vega_hifi",
+    hifi = "generic_hifi", generichifi = "generic_hifi", clr = "clr"
+  )
+  if (!key %in% names(aliases)) {
+    stop("Unsupported sequencing platform: ", platform,
+         ". Use simitall_sequencing_profiles() to view supported profiles.")
+  }
+  unname(aliases[[key]])
+}
+
+.simitall_illumina_profile <- function(platform) {
+  platform <- .simitall_normalize_sequencing_platform(platform)
+  profiles <- list(
+    generic_illumina = list(art_system = "HS25", readlen = 150L, max_readlen = 150L, insert = 350L, insert_sd = 50L),
+    miseq = list(art_system = "MSv3", readlen = 250L, max_readlen = 300L, insert = 550L, insert_sd = 60L),
+    miseq_i100 = list(art_system = "MSv3", readlen = 150L, max_readlen = 300L, insert = 350L, insert_sd = 50L),
+    nextseq_1000_2000 = list(art_system = "NS50", readlen = 150L, max_readlen = 300L, insert = 350L, insert_sd = 50L),
+    novaseq_x = list(art_system = "HS25", readlen = 150L, max_readlen = 150L, insert = 350L, insert_sd = 50L)
+  )
+  if (!platform %in% names(profiles)) stop("platform is not an Illumina profile")
+  c(list(key = platform), profiles[[platform]])
+}
+
+.simitall_pacbio_profile <- function(platform) {
+  platform <- .simitall_normalize_sequencing_platform(platform)
+  profiles <- list(
+    clr = list(type = "CLR", label = "CLR"),
+    generic_hifi = list(type = "HIFI", label = "HiFi"),
+    sequel_iie_hifi = list(type = "HIFI", label = "Sequel_IIe_HiFi"),
+    revio_hifi = list(type = "HIFI", label = "Revio_HiFi"),
+    vega_hifi = list(type = "HIFI", label = "Vega_HiFi")
+  )
+  if (!platform %in% names(profiles)) stop("platform is not a PacBio profile")
+  c(list(key = platform), profiles[[platform]])
+}
+
 #' Simulate Illumina reads with ART
 #'
 #' Wrapper around the `art_illumina` command for paired-end read simulation.
@@ -6,9 +83,13 @@
 #' @param ref_fa Character. Reference FASTA path.
 #' @param outprefix Character. Output prefix (ART will write `<outprefix>1.fq` and `<outprefix>2.fq`).
 #' @param cov Numeric. Fold coverage.
-#' @param readlen Integer. Read length (default 150).
-#' @param ins Integer. Mean insert size (default 350).
-#' @param sd Integer. Insert size standard deviation (default 50).
+#' @param platform Illumina profile: `"generic_illumina"`, `"MiSeq"`,
+#'   `"MiSeq i100"`, `"NextSeq 1000/2000"`, or `"NovaSeq X"`.
+#' @param readlen Optional read length. Defaults depend on `platform` and are
+#'   checked against the profile's supported maximum.
+#' @param ins Optional mean insert size; defaults depend on `platform`.
+#' @param sd Optional insert-size standard deviation; defaults depend on
+#'   `platform`.
 #'
 #' @return A list with `r1` and `r2` file paths to gzipped FASTQ files.
 #' @examples
@@ -16,15 +97,33 @@
 #' sim_illumina_art("01_simref/ecoli_repMed.fa", "02_reads/ecoli/illumina/ecoli.ill_cov30_", 30)
 #' }
 #' @export
-sim_illumina_art <- function(ref_fa, outprefix, cov, readlen = 150, ins = 350, sd = 50) {
+sim_illumina_art <- function(
+    ref_fa,
+    outprefix,
+    cov,
+    readlen = NULL,
+    ins = NULL,
+    sd = NULL,
+    platform = "generic_illumina") {
   if (!file.exists(ref_fa)) stop("Reference FASTA not found: ", ref_fa)
+  profile <- .simitall_illumina_profile(platform)
+  readlen <- if (is.null(readlen)) profile$readlen else as.integer(readlen)
+  ins <- if (is.null(ins)) profile$insert else as.integer(ins)
+  sd <- if (is.null(sd)) profile$insert_sd else as.integer(sd)
+  if (!is.finite(readlen) || readlen < 1L || readlen > profile$max_readlen) {
+    stop("readlen must be between 1 and ", profile$max_readlen,
+         " bp for platform ", platform)
+  }
+  if (!is.finite(ins) || !is.finite(sd) || ins < 1L || sd < 0L) {
+    stop("ins must be positive and sd must be non-negative")
+  }
   if (!nzchar(Sys.which("art_illumina"))) {
     stop("ART was not found in PATH. Install the Bioconda package 'art'.")
   }
   dir.create(dirname(outprefix), showWarnings = FALSE, recursive = TRUE)
   cmd <- sprintf(
-    "art_illumina -ss HS25 -i %s -p -l %s -f %s -m %s -s %s -o %s",
-    shQuote(ref_fa), readlen, cov, ins, sd, shQuote(outprefix)
+    "art_illumina -ss %s -i %s -p -l %s -f %s -m %s -s %s -o %s",
+    profile$art_system, shQuote(ref_fa), readlen, cov, ins, sd, shQuote(outprefix)
   )
   status <- system(cmd, ignore.stdout = FALSE, ignore.stderr = FALSE)
   if (status != 0) stop("ART simulation failed")
@@ -43,7 +142,9 @@ sim_illumina_art <- function(ref_fa, outprefix, cov, readlen = 150, ins = 350, s
 #' @param ref_fa Character. Reference FASTA path.
 #' @param outdir Character. Output directory.
 #' @param cov Numeric. Fold coverage.
-#' @param type Character. `"CLR"` or `"HIFI"`.
+#' @param type Deprecated compatibility argument: `"CLR"` or `"HIFI"`.
+#' @param platform PacBio profile: `"CLR"`, `"HiFi"`, `"Sequel IIe HiFi"`,
+#'   `"Revio HiFi"`, or `"Vega HiFi"`.
 #' @param seed Integer. Random seed (default 1).
 #'
 #' @return Character. Output directory path.
@@ -52,25 +153,27 @@ sim_illumina_art <- function(ref_fa, outprefix, cov, readlen = 150, ins = 350, s
 #' sim_pacbio("01_simref/ecoli_repMed.fa", "02_reads/ecoli/pacbio_HIFI/cov20", 20, type = "HIFI")
 #' }
 #' @export
-sim_pacbio <- function(ref_fa, outdir, cov, type = "HIFI", seed = 1) {
+sim_pacbio <- function(ref_fa, outdir, cov, type = NULL, seed = 1, platform = NULL) {
   if (!file.exists(ref_fa)) stop("Reference FASTA not found: ", ref_fa)
   ref_fa <- normalizePath(ref_fa, mustWork = TRUE)
   outdir <- normalizePath(
     outdir,
     mustWork = FALSE
   )
-  type <- match.arg(toupper(type), c("CLR", "HIFI"))
+  if (is.null(platform)) platform <- if (is.null(type)) "HiFi" else type
+  profile <- .simitall_pacbio_profile(platform)
+  type <- profile$type
   dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
   has_pbsim3 <- nzchar(Sys.which("pbsim3"))
   has_pbsim <- nzchar(Sys.which("pbsim"))
 
   if (has_pbsim3) {
-    prefix <- ifelse(type == "HIFI", "pbHIFI", "pbCLR")
+    prefix <- paste0("pb", profile$label)
     cmd <- sprintf("pbsim3 --depth %s --seed %s --prefix %s_cov%s %s", cov, seed, prefix, cov, shQuote(ref_fa))
   } else if (has_pbsim) {
     dtype <- ifelse(type == "HIFI", "CCS", "CLR")
-    prefix <- ifelse(type == "HIFI", "pbHIFI", "pbCLR")
+    prefix <- paste0("pb", profile$label)
     cmd <- sprintf("pbsim --depth %s --seed %s --data-type %s --prefix %s_cov%s %s", cov, seed, dtype, prefix, cov, shQuote(ref_fa))
   } else {
     stop("pbsim3 or pbsim not found in PATH")

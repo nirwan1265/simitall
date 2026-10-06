@@ -1,0 +1,32 @@
+---
+title: "NAM Quantitative Trait GWAS"
+workflow: maize_nam_quantitative_gwas
+species: maize
+keywords: [NAM, maize, drought trait, quantitative phenotype, GWAS, QTL, association]
+---
+
+# NAM Quantitative Trait GWAS
+
+Use this workflow when the request asks for a NAM maize population, one quantitative trait, and GWAS. A descriptor such as "drought-related" names the simulated trait context; it does not by itself request drought versus irrigated environments, genotype-by-environment effects, RNA-seq, eQTL analysis, or genomic selection.
+
+## Required result
+
+Simulate a NAM-style population, emit a quantitative phenotype with programmed focal and background QTL truth, run family-aware GWAS, and benchmark recovered associations against the programmed truth.
+
+## Required figures
+
+- Quantitative phenotype distribution.
+- Manhattan plot.
+- QQ plot.
+- Combined GWAS overview.
+
+## Pass criteria
+
+- Requested line count is retained in the phenotype table.
+- Phenotype values are finite and numeric.
+- GWAS results, QTL truth, validation summary, and all required figures exist.
+- The programmed focal QTL is represented in the truth table.
+
+## Boundaries
+
+Request `irrigated and drought`, `GxE`, `RNA-seq`, `eQTL`, or `genomic selection` explicitly to use the expanded multi-omics workflow. Do not add those analyses solely because a phenotype is called drought-related.

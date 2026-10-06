@@ -104,3 +104,85 @@ validation	figure validation	visualization	package validation-figure guidance	hi
 benchmark	figure validation	visualization	package validation-figure guidance	high
 benchmarking	figure validation	visualization	package validation-figure guidance	high
 qc	figure validation	visualization	package validation-figure guidance	high
+corn	maize	species	plain-language synonyms for spec extraction	high
+zea mays	maize	species	plain-language synonyms for spec extraction	high
+field corn	maize	species	plain-language synonyms for spec extraction	high
+thale cress	arabidopsis	species	plain-language synonyms for spec extraction	high
+arabidopsis thaliana	arabidopsis	species	plain-language synonyms for spec extraction	high
+mouse ear cress	arabidopsis	species	plain-language synonyms for spec extraction	high
+oryza sativa	rice	species	plain-language synonyms for spec extraction	high
+paddy rice	rice	species	plain-language synonyms for spec extraction	high
+homo sapiens	human	species	plain-language synonyms for spec extraction	high
+humans	human	species	plain-language synonyms for spec extraction	high
+grain yield	yield	trait	plain-language synonyms for spec extraction	high
+crop yield	yield	trait	plain-language synonyms for spec extraction	high
+kernel yield	yield	trait	plain-language synonyms for spec extraction	high
+higher yielding	yield	trait	plain-language synonyms for spec extraction	high
+high yielding	yield	trait	plain-language synonyms for spec extraction	high
+productivity	yield	trait	plain-language synonyms for spec extraction	high
+flowering	flowering time	trait	plain-language synonyms for spec extraction	high
+days to flowering	flowering time	trait	plain-language synonyms for spec extraction	high
+days to anthesis	flowering time	trait	plain-language synonyms for spec extraction	high
+anthesis	flowering time	trait	plain-language synonyms for spec extraction	high
+heading date	flowering time	trait	plain-language synonyms for spec extraction	high
+bolting time	flowering time	trait	plain-language synonyms for spec extraction	high
+plant stature	plant height	trait	plain-language synonyms for spec extraction	high
+stature	plant height	trait	plain-language synonyms for spec extraction	high
+tall plants	plant height	trait	plain-language synonyms for spec extraction	high
+water deficit	drought	stress	plain-language synonyms for spec extraction	high
+water stress	drought	stress	plain-language synonyms for spec extraction	high
+drought stress	drought	stress	plain-language synonyms for spec extraction	high
+water limited	drought	stress	plain-language synonyms for spec extraction	high
+limited water	drought	stress	plain-language synonyms for spec extraction	high
+low water	drought	stress	plain-language synonyms for spec extraction	high
+dry conditions	drought	stress	plain-language synonyms for spec extraction	high
+heat stress	heat	stress	plain-language synonyms for spec extraction	high
+high temperature	heat	stress	plain-language synonyms for spec extraction	high
+thermal stress	heat	stress	plain-language synonyms for spec extraction	high
+cold stress	cold	stress	plain-language synonyms for spec extraction	high
+chilling	cold	stress	plain-language synonyms for spec extraction	high
+low temperature	cold	stress	plain-language synonyms for spec extraction	high
+frost	cold	stress	plain-language synonyms for spec extraction	high
+salt stress	salt	stress	plain-language synonyms for spec extraction	high
+salinity	salt	stress	plain-language synonyms for spec extraction	high
+saline	salt	stress	plain-language synonyms for spec extraction	high
+rna sequencing	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+mrna seq	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+mrna sequencing	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+transcriptome	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+transcriptomic	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+transcriptomics	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+gene expression profiling	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+expression profiling	rnaseq	RNA-seq	plain-language synonyms for spec extraction	high
+expression qtl	eqtl	RNA-seq	plain-language synonyms for spec extraction	high
+expression quantitative trait locus	eqtl	RNA-seq	plain-language synonyms for spec extraction	high
+expression quantitative trait loci	eqtl	RNA-seq	plain-language synonyms for spec extraction	high
+cis eqtl	eqtl	RNA-seq	plain-language synonyms for spec extraction	high
+genome wide association	gwas	association mapping	plain-language synonyms for spec extraction	high
+association analysis	gwas	association mapping	plain-language synonyms for spec extraction	high
+association scan	gwas	association mapping	plain-language synonyms for spec extraction	high
+gwa study	gwas	association mapping	plain-language synonyms for spec extraction	high
+breeding value prediction	genomic selection	genomic selection	plain-language synonyms for spec extraction	high
+predict breeding values	genomic selection	genomic selection	plain-language synonyms for spec extraction	high
+genome enabled prediction	genomic selection	genomic selection	plain-language synonyms for spec extraction	high
+parent selection	genomic selection	genomic selection	plain-language synonyms for spec extraction	high
+germplasm panel	diversity panel	population	plain-language synonyms for spec extraction	high
+germplasm collection	diversity panel	population	plain-language synonyms for spec extraction	high
+landraces	diversity panel	population	plain-language synonyms for spec extraction	high
+natural accessions	diversity panel	population	plain-language synonyms for spec extraction	high
+ecotypes	diversity panel	population	plain-language synonyms for spec extraction	high
+consanguineous	consanguinity	pedigree	plain-language synonyms for spec extraction	high
+consanguinity	consanguinity	pedigree	plain-language synonyms for spec extraction	high
+cousin marriage	consanguinity	pedigree	plain-language synonyms for spec extraction	high
+related couple	consanguinity	pedigree	plain-language synonyms for spec extraction	high
+miseq	illumina miseq	sequencing platform	curated sequencing-platform vocabulary	high
+miseq i100	illumina miseq i100	sequencing platform	curated sequencing-platform vocabulary	high
+i100	illumina miseq i100	sequencing platform	curated sequencing-platform vocabulary	high
+nextseq	nextseq 1000/2000	sequencing platform	curated sequencing-platform vocabulary	high
+nextseq 1000	nextseq 1000/2000	sequencing platform	curated sequencing-platform vocabulary	high
+nextseq 2000	nextseq 1000/2000	sequencing platform	curated sequencing-platform vocabulary	high
+novaseq	novaseq x	sequencing platform	curated sequencing-platform vocabulary	high
+novaseq x	novaseq x	sequencing platform	curated sequencing-platform vocabulary	high
+sequel iie	sequel iie hifi	sequencing platform	curated sequencing-platform vocabulary	high
+revio	revio hifi	sequencing platform	curated sequencing-platform vocabulary	high
+vega	vega hifi	sequencing platform	curated sequencing-platform vocabulary	high

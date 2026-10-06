@@ -33,3 +33,19 @@ subsequent PacBio CCS step. The agent must say this explicitly.
 
 The executable may be named `pbsim` even when PBSIM3 is installed. Detect the
 installed binary and its help text before constructing a command.
+
+## SimItAll PacBio Profiles
+
+`simitall_sequencing_profiles()` exposes `Sequel IIe HiFi`, `Revio HiFi`, and
+`Vega HiFi` labels. Each selects HiFi read type and records the requested
+platform in the command/output naming. PBSIM/PBSIM3 does not itself guarantee
+an instrument-specific error distribution from that label alone; use an
+empirical PBSIM quality/error model when that distinction is scientifically
+important.
+
+```r
+sim_pacbio(
+  ref_fa = "reference.fa", outdir = "results/revio_hifi",
+  cov = 30, platform = "Revio HiFi", seed = 42
+)
+```
