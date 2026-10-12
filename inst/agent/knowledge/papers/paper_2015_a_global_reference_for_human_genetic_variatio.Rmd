@@ -11,11 +11,11 @@ url: "https://doi.org/10.1038/nature15393"
 domains: ["haplotype_panels"]
 techniques: ["reference_panel", "human_genomics", "population_structure"]
 organisms: ["human"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
 crossref_checked_at: "2026-09-25"
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -26,17 +26,17 @@ Auton, Adam; Abecasis, Goncalo R.; Altshuler, David M.; Durbin, Richard M.; Abec
 
 # One-Sentence Summary
 
-Primary methodological record for large-scale human reference-panel and population-variation analysis.
+Catalog summary for *A global reference for human genetic variation*: relevant to haplotype-panel use, reference-panel provenance, and empirical variation-aware simulation. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-This primary-method record grounds agent guidance about large-scale human reference-panel and population-variation analysis. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+Use this catalog summary to route questions about founder or reference-panel selection. Require panel version, coordinate build, chromosome/region, sample filtering, and consent or access constraints. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Use this source when a request involves haplotype panels and reference panel, human genomics.
-- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
-- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+- Prefer real, documented panels when empirical LD and allele frequencies matter.
+- Record all panel filtering and coordinate transformations.
+- Do not imply that a cited public panel ships with the package.
 
 # Inputs to Specify
 
@@ -52,7 +52,7 @@ This primary-method record grounds agent guidance about large-scale human refere
 
 # Limitations and Guardrails
 
-- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- This metadata-curated record is not a page-by-page or full-text evidence extraction.
 - The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
 
 # Questions This Record Can Ground
@@ -62,4 +62,4 @@ This primary-method record grounds agent guidance about large-scale human refere
 
 # Curation Note
 
-This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

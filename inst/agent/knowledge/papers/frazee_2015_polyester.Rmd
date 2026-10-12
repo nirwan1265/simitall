@@ -11,10 +11,10 @@ url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4635655/"
 domains: ["rnaseq", "simulation"]
 techniques: ["bulk_rnaseq", "read_simulation", "differential_expression", "isoforms"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Frazee, A. C., et al. (2015). *Polyester: simulating RNA-seq datasets with diffe
 
 # One-Sentence Summary
 
-Introduces Polyester for simulation of RNA-seq reads with transcript-level differential expression and replicate-aware count generation.
+Catalog summary for *Polyester: simulating RNA-seq datasets with differential transcript expression*: relevant to bulk RNA-seq experimental design, expression quantification, and differential-expression analysis. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as a sequencing-read layer after simitall generates sample-level expression truth. Keep biological expression effects and technical FASTQ simulation as separate, traceable stages.
+Use this catalog summary to route questions about bulk RNA-seq simulation or analysis. Require a count matrix or read-generation plan, biological replicate structure, condition labels, gene annotation, and an FDR rule. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Read simulation should start from a declared transcriptome and expression design.
-- Replicates, condition effects, and transcript-level effects should be saved as truth metadata.
-- Count-level and FASTQ-level simulations answer different benchmarking questions.
+- Keep biological replicates, technical effects, and condition truth separately recorded.
+- Use count-aware differential-expression models and report effect sizes alongside adjusted P values.
+- Pair DEG tables with QC, PCA/sample-distance, and volcano or MA figures.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as a sequencing-read layer after simitall generates sample-level expression 
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

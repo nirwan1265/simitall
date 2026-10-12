@@ -7,3 +7,6 @@
 ^install_simitall_linux\.sh$
 ^install_simitall_macos\.sh$
 ^install_simitall_windows\.ps1$
+
+# Source-controlled external GO downloads; do not ship in the R package
+^resources$

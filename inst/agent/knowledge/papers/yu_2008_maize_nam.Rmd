@@ -11,10 +11,10 @@ url: "https://www.ars.usda.gov/ARSUserFiles/60701500/Publications/Holland/Hollan
 domains: ["maize", "breeding", "qtl_mapping", "gwas"]
 techniques: ["nested_association_mapping", "multiparent_population", "linkage_mapping"]
 organisms: ["maize"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Yu, J., et al. (2008). *The nested association mapping population: a powerful re
 
 # One-Sentence Summary
 
-Presents the maize nested association mapping design, which combines multiple biparental families sharing a common parent to obtain both structured linkage information and broader founder diversity.
+Catalog summary for *The nested association mapping population: a powerful resource for the dissection of complex traits in maize*: relevant to maize genomic resources and maize-specific simulation or analysis context. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as the primary conceptual reference for simitall NAM workflows. A simulated NAM population should preserve family labels, shared-parent design, chromosome-specific recombination, and founder ancestry truth.
+Use this catalog summary to route questions about maize-specific studies. Require genome build, germplasm/population definition, chromosome/interval, trait context, and available genotype or annotation inputs. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- NAM is not an unstructured diversity panel: family membership is central to analysis and validation.
-- A common parent crossed to diverse founders creates multiple related recombinant families.
-- Association or QTL workflows must account for both family structure and marker effects.
+- Preserve the difference between NAM, diversity, biparental, and breeding populations.
+- Use maize coordinate/build and founder provenance consistently across inputs.
+- Treat published biological results as context, not as simulated truth.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as the primary conceptual reference for simitall NAM workflows. A simulated 
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

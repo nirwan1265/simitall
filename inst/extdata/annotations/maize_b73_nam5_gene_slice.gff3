@@ -1,0 +1,29 @@
+##gff-version 3
+##simitall-subset true
+##simitall-note Zea mays B73 NAM-5.0, Ensembl Plants release 62 local source
+##simitall-note Gene-feature-only excerpt; use the full source annotation for transcript/exon/CDS analysis.
+1	ensembl	gene	34617	40204	.	+	.	ID=gene:Zm00001eb000010;biotype=protein_coding;description=Zm00001e000001;gene_id=Zm00001eb000010;logic_name=cshl_gene
+1	ensembl	gene	41214	46762	.	-	.	ID=gene:Zm00001eb000020;biotype=protein_coding;description=Zm00001e000002;gene_id=Zm00001eb000020;logic_name=cshl_gene
+1	ensembl	gene	106148	106620	.	-	.	ID=gene:Zm00001eb000030;biotype=misc_non_coding;description=Zm00001e000003;gene_id=Zm00001eb000030;logic_name=cshl_noncoding_gene
+1	ensembl	gene	107080	108196	.	-	.	ID=gene:Zm00001eb000040;biotype=misc_non_coding;description=Zm00001e000004;gene_id=Zm00001eb000040;logic_name=cshl_noncoding_gene
+1	ensembl	gene	108554	114382	.	-	.	ID=gene:Zm00001eb000050;biotype=protein_coding;description=Zm00001e100003;gene_id=Zm00001eb000050;logic_name=cshl_gene
+1	ensembl	gene	188559	189581	.	-	.	ID=gene:Zm00001eb000060;biotype=protein_coding;description=Zm00001e000006;gene_id=Zm00001eb000060;logic_name=cshl_gene
+1	ensembl	gene	190192	198832	.	-	.	ID=gene:Zm00001eb000070;biotype=protein_coding;description=Zm00001e100010;gene_id=Zm00001eb000070;logic_name=cshl_gene
+1	ensembl	gene	200262	203393	.	-	.	ID=gene:Zm00001eb000080;biotype=protein_coding;description=Zm00001e000007;gene_id=Zm00001eb000080;logic_name=cshl_gene
+1	ensembl	gene	205120	205505	.	+	.	ID=gene:Zm00001eb000090;biotype=misc_non_coding;description=Zm00001e000008;gene_id=Zm00001eb000090;logic_name=cshl_noncoding_gene
+1	ensembl	gene	206619	209723	.	-	.	ID=gene:Zm00001eb000100;biotype=protein_coding;description=Zm00001e000009;gene_id=Zm00001eb000100;logic_name=cshl_gene
+1	ensembl	gene	246422	247242	.	-	.	ID=gene:Zm00001eb000110;biotype=protein_coding;description=Zm00001e000010;gene_id=Zm00001eb000110;logic_name=cshl_gene
+1	ensembl	gene	315219	315846	.	+	.	ID=gene:Zm00001eb000120;biotype=protein_coding;description=Zm00001e000012;gene_id=Zm00001eb000120;logic_name=cshl_gene
+1	ensembl	gene	318880	320662	.	-	.	ID=gene:Zm00001eb000130;biotype=misc_non_coding;description=Zm00001e000013;gene_id=Zm00001eb000130;logic_name=cshl_noncoding_gene
+1	ensembl	gene	325307	326897	.	-	.	ID=gene:Zm00001eb000140;biotype=protein_coding;description=Zm00001e100023;gene_id=Zm00001eb000140;logic_name=cshl_gene
+1	ensembl	gene	328087	328525	.	+	.	ID=gene:Zm00001eb000150;biotype=protein_coding;description=Zm00001e000014;gene_id=Zm00001eb000150;logic_name=cshl_gene
+1	ensembl	gene	459859	461337	.	+	.	ID=gene:Zm00001eb000160;biotype=misc_non_coding;description=Zm00001e000016;gene_id=Zm00001eb000160;logic_name=cshl_noncoding_gene
+1	ensembl	gene	550834	564766	.	-	.	ID=gene:Zm00001eb000170;biotype=protein_coding;description=Zm00001e000017;gene_id=Zm00001eb000170;logic_name=cshl_gene
+1	ensembl	gene	551078	552061	.	+	.	ID=gene:Zm00001eb000180;biotype=protein_coding;description=Zm00001e000018;gene_id=Zm00001eb000180;logic_name=cshl_gene
+1	ensembl	gene	679957	680801	.	+	.	ID=gene:Zm00001eb000200;biotype=protein_coding;description=Zm00001e100035;gene_id=Zm00001eb000200;logic_name=cshl_gene
+1	ensembl	gene	679957	708016	.	-	.	ID=gene:Zm00001eb000190;biotype=protein_coding;description=Zm00001e000019;gene_id=Zm00001eb000190;logic_name=cshl_gene
+1	ensembl	gene	1003108	1014318	.	+	.	ID=gene:Zm00001eb000210;biotype=protein_coding;description=Zm00001e000020;gene_id=Zm00001eb000210;logic_name=cshl_gene
+1	ensembl	gene	1018151	1020839	.	+	.	ID=gene:Zm00001eb000220;biotype=protein_coding;description=Zm00001e000022;gene_id=Zm00001eb000220;logic_name=cshl_gene
+1	ensembl	gene	1022421	1026593	.	+	.	ID=gene:Zm00001eb000230;biotype=protein_coding;description=Zm00001e000023;gene_id=Zm00001eb000230;logic_name=cshl_gene
+1	ensembl	gene	1025166	1028066	.	-	.	ID=gene:Zm00001eb000240;Name=HEX6_3;biotype=protein_coding;gene_id=Zm00001eb000240;logic_name=cshl_gene
+1	ensembl	gene	1035114	1035395	.	+	.	ID=gene:Zm00001eb000250;biotype=protein_coding;description=Zm00001e100044;gene_id=Zm00001eb000250;logic_name=cshl_gene

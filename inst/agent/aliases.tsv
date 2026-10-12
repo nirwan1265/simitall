@@ -186,3 +186,8 @@ novaseq x	novaseq x	sequencing platform	curated sequencing-platform vocabulary	h
 sequel iie	sequel iie hifi	sequencing platform	curated sequencing-platform vocabulary	high
 revio	revio hifi	sequencing platform	curated sequencing-platform vocabulary	high
 vega	vega hifi	sequencing platform	curated sequencing-platform vocabulary	high
+go term	gene ontology	functional annotation	curated functional-annotation vocabulary	high
+go terms	gene ontology	functional annotation	curated functional-annotation vocabulary	high
+gene ontology	gene ontology	functional annotation	curated functional-annotation vocabulary	high
+gaf	gene ontology annotation file	functional annotation	curated functional-annotation vocabulary	high
+gene annotation	genome annotation	functional annotation	curated functional-annotation vocabulary	high

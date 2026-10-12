@@ -11,11 +11,11 @@ url: "https://doi.org/10.1038/nmeth.4401"
 domains: ["epigenomics"]
 techniques: ["chromvar", "single_cell_atac", "motifs"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
 crossref_checked_at: "2026-09-25"
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -26,17 +26,17 @@ Alicia N Schep; Beijing Wu; Jason D Buenrostro; William J Greenleaf (2017). *chr
 
 # One-Sentence Summary
 
-Primary methodological record for motif accessibility analysis for sparse single-cell epigenomic data.
+Catalog summary for *chromVAR: inferring transcription-factor-associated accessibility from single-cell epigenomic data*: relevant to chromatin or methylation profiling, peak-level inference, and regulatory-genomics quality control. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use this record to ground recommendations about motif accessibility analysis for sparse single-cell epigenomic data. Preserve tool version, inputs, parameter settings, and a validation design in all generated workflow recipes.
+Use this catalog summary to route questions about ATAC-seq, ChIP-seq, or methylation workflows. Require assay type, control/input design, replicates, genome build, and peak or site-level significance criteria. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- The method belongs in a workflow only after the biological question and input data are resolved.
-- Keep analysis or simulation parameters separate from biological truth so each can be audited.
-- Use appropriate quality control and benchmark outputs rather than relying on a single headline metric.
+- Model biological replicates and controls explicitly.
+- Report read/fragment QC and enrichment metrics before differential peak calls.
+- Validate peak truth or known regions separately from global signal summaries.
 
 # Inputs to Specify
 
@@ -52,9 +52,9 @@ Use this record to ground recommendations about motif accessibility analysis for
 
 # Limitations and Guardrails
 
-- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- This metadata-curated record is not a page-by-page or full-text evidence extraction.
 - The agent must not infer that the tool or resource is installed, bundled, or appropriate for every organism.
 
 # Curation Note
 
-This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. Replace or extend it with source-faithful, page-specific notes after reviewing the full text.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

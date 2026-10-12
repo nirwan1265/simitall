@@ -1,0 +1,54 @@
+---
+id: tool_gene_ontology
+document_type: tool
+status: active
+software: Gene Ontology annotations
+related_functions: [read_gene_coordinates, read_go_gaf, join_gene_go, summarize_go_terms]
+---
+
+# Gene Ontology Annotations
+
+## Role
+
+Gene Ontology (GO) annotations connect gene products to controlled biological
+process, molecular function, and cellular component terms. A GO Annotation
+File (GAF) is not a genome annotation: GFF3/GTF records coordinates, while a
+GAF records gene-product-to-term associations, evidence codes, and references.
+
+## SimItAll Inputs
+
+- A coordinate table or compatible GFF3/GTF for the requested assembly.
+- A dated, organism-specific `.gaf` or `.gaf.gz` file.
+- A reviewed identifier mapping when GFF3 gene IDs and GAF IDs differ.
+- The question to ask of the terms: interval annotation, gene-list summary, or
+  formal enrichment analysis.
+
+## Core Functions
+
+```r
+coordinates <- read_gene_coordinates("Arabidopsis_thaliana")
+annotations <- read_go_gaf("/path/to/ARATH-mod.gaf.gz")
+gene_go <- join_gene_go(coordinates, annotations)
+term_summary <- summarize_go_terms(gene_go, by = "go_id_aspect")
+```
+
+`join_gene_go()` uses stable IDs first and then an exact symbol only when no
+stable-ID annotation is available. Synonym matching requires an explicit
+reviewed mapping because symbols are not reliably unique across resources.
+
+## Bundled Demonstration Data
+
+The package includes compact coordinate catalogues for Arabidopsis, barley,
+rice, wheat, maize, and fly. It also includes a small Arabidopsis GAF subset
+only for a runnable parsing/join demonstration. Full GAF files remain local,
+dated study inputs rather than package data.
+
+## Guardrails
+
+- Record the GAF header date, GO ontology release, assembly, and ID mapping.
+- Do not label a gene as experimentally validated merely because an annotation
+  exists; retain the GAF evidence code and reference.
+- Do not run over-representation or enrichment tests without a stated gene
+  universe and multiple-testing policy.
+- For maize and wheat in the supplied catalogues, a separate Ensembl-to-UniProt
+  or species-specific ID mapping is required before GO joins.

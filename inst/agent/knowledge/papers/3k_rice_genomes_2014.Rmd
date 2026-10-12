@@ -11,10 +11,10 @@ url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4035669/"
 domains: ["rice", "haplotype_panels", "population_genetics"]
 techniques: ["reference_panels", "genome_diversity", "population_structure"]
 organisms: ["Oryza_sativa"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ The 3,000 Rice Genomes Project (rice). *The 3,000 rice genomes project*. GigaSci
 
 # One-Sentence Summary
 
-Describes the 3,000 Rice Genomes Project, a broad rice diversity resource for genomic analyses.
+Catalog summary for *The 3,000 rice genomes project*: relevant to rice genomic resources and rice-focused population or trait studies. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as the data-source reference for rice panel workflows. A simitall recipe should require a locally downloaded, documented subset rather than assume remote access or distribute the full project data.
+Use this catalog summary to route questions about rice-specific studies. Require genome build, population/resource choice, chromosome/region, trait endpoint, and source-data provenance. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Diversity panels enable realistic founder differences and population structure.
-- Subset choices can strongly change allele spectra and LD.
-- Sample origin and subgroup labels are scientifically relevant metadata.
+- Keep diversity panels, breeding lines, and biparental populations distinct.
+- Record genome build and population filtering.
+- Treat resource citations as context, not bundled data.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as the data-source reference for rice panel workflows. A simitall recipe sho
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

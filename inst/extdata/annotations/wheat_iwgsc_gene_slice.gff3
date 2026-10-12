@@ -1,0 +1,29 @@
+##gff-version 3
+##simitall-subset true
+##simitall-note Triticum aestivum IWGSC, Ensembl Plants release 62 local source
+##simitall-note Gene-feature-only excerpt; use the full source annotation for transcript/exon/CDS analysis.
+1A	IWGSC	gene	40098	70338	.	-	.	ID=gene:TraesCS1A02G000100;biotype=protein_coding;gene_id=TraesCS1A02G000100;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	70239	89245	.	+	.	ID=gene:TraesCS1A02G000200;biotype=protein_coding;gene_id=TraesCS1A02G000200;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	95906	104903	.	+	.	ID=gene:TraesCS1A02G000300;biotype=protein_coding;gene_id=TraesCS1A02G000300;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	102794	122504	.	+	.	ID=gene:TraesCS1A02G000400;biotype=protein_coding;gene_id=TraesCS1A02G000400;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	149490	154559	.	-	.	ID=gene:TraesCS1A02G000500;biotype=protein_coding;gene_id=TraesCS1A02G000500;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	162313	162609	.	+	.	ID=gene:TraesCS1A02G000600;biotype=protein_coding;gene_id=TraesCS1A02G000600;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	169592	169969	.	-	.	ID=gene:TraesCS1A02G000700;biotype=protein_coding;gene_id=TraesCS1A02G000700;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	180175	180552	.	-	.	ID=gene:TraesCS1A02G000800;biotype=protein_coding;gene_id=TraesCS1A02G000800;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	233818	245051	.	+	.	ID=gene:TraesCS1A02G000900;biotype=protein_coding;gene_id=TraesCS1A02G000900;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	269472	289602	.	-	.	ID=gene:TraesCS1A02G001100;biotype=protein_coding;gene_id=TraesCS1A02G001100;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	270605	272936	.	-	.	ID=gene:TraesCS1A02G001000;biotype=protein_coding;gene_id=TraesCS1A02G001000;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	287697	287957	.	+	.	ID=gene:TraesCS1A02G001200;biotype=protein_coding;gene_id=TraesCS1A02G001200;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	294611	305428	.	-	.	ID=gene:TraesCS1A02G001400;biotype=protein_coding;gene_id=TraesCS1A02G001400;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	297266	297652	.	+	.	ID=gene:TraesCS1A02G001300;biotype=protein_coding;gene_id=TraesCS1A02G001300;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	326099	326518	.	+	.	ID=gene:TraesCS1A02G001500;biotype=protein_coding;gene_id=TraesCS1A02G001500;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	337960	338256	.	+	.	ID=gene:TraesCS1A02G001600;biotype=protein_coding;gene_id=TraesCS1A02G001600;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	403455	403751	.	+	.	ID=gene:TraesCS1A02G001700;biotype=protein_coding;gene_id=TraesCS1A02G001700;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1144333	1145934	.	+	.	ID=gene:TraesCS1A02G001800;biotype=protein_coding;gene_id=TraesCS1A02G001800;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1159194	1162830	.	-	.	ID=gene:TraesCS1A02G001900;biotype=protein_coding;gene_id=TraesCS1A02G001900;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1163485	1167878	.	-	.	ID=gene:TraesCS1A02G002000;biotype=protein_coding;description=E3 ubiquitin-protein ligase SIS3 [Source:Projected from Arabidopsis thaliana (AT3G47990) UniProtKB/Swiss-Prot%3BAcc:Q8GYT9];gene_id=TraesCS1A02G002000;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1170356	1177383	.	+	.	ID=gene:TraesCS1A02G002100;biotype=protein_coding;gene_id=TraesCS1A02G002100;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1188844	1190864	.	+	.	ID=gene:TraesCS1A02G002200;biotype=protein_coding;gene_id=TraesCS1A02G002200;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1209721	1212812	.	-	.	ID=gene:TraesCS1A02G002300;biotype=protein_coding;gene_id=TraesCS1A02G002300;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1228914	1229339	.	-	.	ID=gene:TraesCS1A02G002400;biotype=protein_coding;gene_id=TraesCS1A02G002400;logic_name=iwgsc_high_conf
+1A	IWGSC	gene	1232354	1238469	.	-	.	ID=gene:TraesCS1A02G002500;biotype=protein_coding;description=Phospholipid-transporting ATPase [Source:UniProtKB/TrEMBL%3BAcc:A0A1D5S510];gene_id=TraesCS1A02G002500;logic_name=iwgsc_high_conf

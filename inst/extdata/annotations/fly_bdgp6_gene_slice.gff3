@@ -1,0 +1,29 @@
+##gff-version 3
+##simitall-subset true
+##simitall-note Drosophila melanogaster BDGP6, Ensembl Metazoa release 115 local source
+##simitall-note Gene-feature-only excerpt; use the full source annotation for transcript/exon/CDS analysis.
+211000022278760	FlyBase	gene	562	879	.	-	.	ID=gene:FBgn0085506;Name=CG40635;biotype=protein_coding;gene_id=FBgn0085506;logic_name=flybase
+211000022279188	FlyBase	gene	1449	2180	.	+	.	ID=gene:FBgn0259817;Name=SteXh:CG42398;biotype=protein_coding;description=SteXh:CG42398;gene_id=FBgn0259817;logic_name=flybase
+211000022280328	FlyBase	gene	7386	9527	.	-	.	ID=gene:FBgn0085692;Name=CG41561;biotype=protein_coding;gene_id=FBgn0085692;logic_name=flybase
+2L	FlyBase	gene	9839	21376	.	-	.	ID=gene:FBgn0002121;Name=l(2)gl;biotype=protein_coding;description=lethal (2) giant larvae;gene_id=FBgn0002121;logic_name=flybase
+2L	FlyBase	gene	21823	25155	.	-	.	ID=gene:FBgn0031209;Name=Ir21a;biotype=protein_coding;description=Ionotropic receptor 21a;gene_id=FBgn0031209;logic_name=flybase
+2L	FlyBase	gene	25402	65404	.	-	.	ID=gene:FBgn0051973;Name=Cda5;biotype=protein_coding;description=Chitin deacetylase-like 5;gene_id=FBgn0051973;logic_name=flybase
+2L	FlyBase	gene	66482	71390	.	+	.	ID=gene:FBgn0067779;Name=dbr;biotype=protein_coding;description=debra;gene_id=FBgn0067779;logic_name=flybase
+2L	FlyBase	gene	71757	76211	.	+	.	ID=gene:FBgn0031213;Name=galectin;biotype=protein_coding;description=galectin;gene_id=FBgn0031213;logic_name=flybase
+2L	FlyBase	gene	76348	77783	.	+	.	ID=gene:FBgn0031214;Name=CG11374;biotype=protein_coding;gene_id=FBgn0031214;logic_name=flybase
+2L	FlyBase	gene	82421	87387	.	-	.	ID=gene:FBgn0002931;Name=net;biotype=protein_coding;description=net;gene_id=FBgn0002931;logic_name=flybase
+2L	FlyBase	gene	94739	102086	.	+	.	ID=gene:FBgn0031216;Name=Zir;biotype=protein_coding;description=Zizimin-related;gene_id=FBgn0031216;logic_name=flybase
+2L	FlyBase	gene	102380	104142	.	+	.	ID=gene:FBgn0031217;Name=Creld;biotype=protein_coding;description=Cysteine rich with EGF like domains;gene_id=FBgn0031217;logic_name=flybase
+2L	FlyBase	gene	103962	106732	.	-	.	ID=gene:FBgn0026787;Name=Nhe1;biotype=protein_coding;description=Na[+]/H[+] hydrogen exchanger 1;gene_id=FBgn0026787;logic_name=flybase
+2L	FlyBase	gene	106903	114432	.	+	.	ID=gene:FBgn0005278;Name=Sam-S;biotype=protein_coding;description=S-adenosylmethionine Synthetase;gene_id=FBgn0005278;logic_name=flybase
+2L	FlyBase	gene	114726	156030	.	+	.	ID=gene:FBgn0031228;Name=ND-15;biotype=protein_coding;description=NADH dehydrogenase (ubiquinone) 15 kDa subunit;gene_id=FBgn0031228;logic_name=flybase
+2L	FlyBase	gene	115365	116488	.	-	.	ID=gene:FBgn0031219;Name=CG13694;biotype=protein_coding;gene_id=FBgn0031219;logic_name=flybase
+2L	FlyBase	gene	116970	121754	.	-	.	ID=gene:FBgn0031220;Name=CG4822;biotype=protein_coding;gene_id=FBgn0031220;logic_name=flybase
+2L	FlyBase	gene	122624	130791	.	-	.	ID=gene:FBgn0288229;Name=CG3164;biotype=protein_coding;gene_id=FBgn0288229;logic_name=flybase
+2L	FlyBase	gene	132077	134472	.	+	.	ID=gene:FBgn0001142;Name=Gs1;biotype=protein_coding;description=Glutamine synthetase 1;gene_id=FBgn0001142;logic_name=flybase
+2L	FlyBase	gene	138384	140992	.	-	.	ID=gene:FBgn0051975;Name=CG31975;biotype=protein_coding;gene_id=FBgn0051975;logic_name=flybase
+2L	FlyBase	gene	138384	140992	.	-	.	ID=gene:FBgn0051976;Name=ovm;biotype=protein_coding;description=oven mitt;gene_id=FBgn0051976;logic_name=flybase
+2L	FlyBase	gene	141077	143091	.	-	.	ID=gene:FBgn0051974;Name=CG31974;biotype=protein_coding;gene_id=FBgn0051974;logic_name=flybase
+2L	FlyBase	gene	143323	144227	.	+	.	ID=gene:FBgn0031224;Name=CG11454;biotype=protein_coding;gene_id=FBgn0031224;logic_name=flybase
+2L	FlyBase	gene	144231	153300	.	-	.	ID=gene:FBgn0259818;Name=CG42399;biotype=protein_coding;gene_id=FBgn0259818;logic_name=flybase
+2L	FlyBase	gene	153539	155305	.	-	.	ID=gene:FBgn0031227;Name=Pus10;biotype=protein_coding;description=Pseudouridine synthase 10;gene_id=FBgn0031227;logic_name=flybase

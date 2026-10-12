@@ -11,11 +11,11 @@ url: "https://doi.org/10.1093/bioinformatics/btt656"
 domains: ["rnaseq"]
 techniques: ["featurecounts", "read_counting", "annotation"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
 crossref_checked_at: "2026-09-25"
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -26,17 +26,17 @@ Liao, Yang; Smyth, Gordon K.; Shi, Wei (2014). *featureCounts: an efficient gene
 
 # One-Sentence Summary
 
-Primary methodological record for featureCounts read assignment to genomic features.
+Catalog summary for *featureCounts: an efficient general purpose program for assigning sequence reads to genomic features*: relevant to bulk RNA-seq experimental design, expression quantification, and differential-expression analysis. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-This primary-method record grounds agent guidance about featureCounts read assignment to genomic features. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+Use this catalog summary to route questions about bulk RNA-seq simulation or analysis. Require a count matrix or read-generation plan, biological replicate structure, condition labels, gene annotation, and an FDR rule. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Use this source when a request involves rnaseq and featurecounts, read counting.
-- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
-- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+- Keep biological replicates, technical effects, and condition truth separately recorded.
+- Use count-aware differential-expression models and report effect sizes alongside adjusted P values.
+- Pair DEG tables with QC, PCA/sample-distance, and volcano or MA figures.
 
 # Inputs to Specify
 
@@ -52,7 +52,7 @@ This primary-method record grounds agent guidance about featureCounts read assig
 
 # Limitations and Guardrails
 
-- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- This metadata-curated record is not a page-by-page or full-text evidence extraction.
 - The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
 
 # Questions This Record Can Ground
@@ -62,4 +62,4 @@ This primary-method record grounds agent guidance about featureCounts read assig
 
 # Curation Note
 
-This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

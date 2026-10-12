@@ -11,10 +11,10 @@ url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8022926/"
 domains: ["plant_breeding", "genomic_selection", "simulation"]
 techniques: ["breeding_program_simulation", "crossing", "selection", "quantitative_genetics"]
 organisms: ["plants", "animals", "general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Gaynor, R. C., et al. (2021). *AlphaSimR: an R package for breeding program simu
 
 # One-Sentence Summary
 
-Describes AlphaSimR, an R framework for stochastic breeding-program simulation that models genomes, crosses, traits, selection, and breeding operations.
+Catalog summary for *AlphaSimR: an R package for breeding program simulations*: relevant to plant-breeding design, trait improvement, and simulation-aware decision support. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as a complementary breeding-engine option, especially for multi-cycle selection experiments. simitall should expose a stable higher-level workflow rather than duplicate every engine feature.
+Use this catalog summary to route questions about plant-breeding workflows. Require crop/population, crossing and selection scheme, target trait, environment design, and generation horizon. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Breeding simulation separates founder generation, meiosis, crossing, phenotyping, selection, and advancement.
-- Quantitative traits can include multiple genetic-effect classes and environmental variation.
-- Simulation is most useful when output QC is compared with intended breeding-population properties.
+- Track gain, diversity, relatedness, and family representation together.
+- Make genotype-by-environment assumptions explicit.
+- Use simulated results as design exploration rather than cultivar recommendations.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as a complementary breeding-engine option, especially for multi-cycle select
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

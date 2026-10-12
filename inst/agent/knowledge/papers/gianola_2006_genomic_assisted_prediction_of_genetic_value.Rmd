@@ -11,11 +11,11 @@ url: "https://doi.org/10.1534/genetics.105.049510"
 domains: ["genomic_selection"]
 techniques: ["bayesian_regression", "marker_effects", "genomic_prediction"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
 crossref_checked_at: "2026-09-25"
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -26,17 +26,17 @@ Gianola, Daniel; Fernando, Rohan L; Stella, Alessandra (2006). *Genomic-Assisted
 
 # One-Sentence Summary
 
-Primary methodological record for Bayesian whole-genome regression for complex traits.
+Catalog summary for *Genomic-Assisted Prediction of Genetic Value With Semiparametric Procedures*: relevant to genomic prediction, breeding-value estimation, and selection-response evaluation. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-This primary-method record grounds agent guidance about Bayesian whole-genome regression for complex traits. It should be used to identify appropriate inputs, outputs, QC, and assumptions; it does not by itself validate a biological scenario.
+Use this catalog summary to route questions about genomic-selection workflows. Require training/validation split or cycle design, phenotype definition, genomic relationship/model choice, and selection intensity. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Use this source when a request involves genomic selection and bayesian regression, marker effects.
-- Keep the exact software version, parameterization, input coordinate system, and random seed in workflow provenance where applicable.
-- Prefer benchmark designs with explicit truth or held-out validation rather than relying on a single summary metric.
+- Keep training, validation, and selected-parent samples disjoint where prediction is being evaluated.
+- Report prediction accuracy, calibration, genetic gain, relatedness, and diversity together.
+- Do not interpret simulated gain as evidence for a real breeding program without empirical inputs.
 
 # Inputs to Specify
 
@@ -52,7 +52,7 @@ This primary-method record grounds agent guidance about Bayesian whole-genome re
 
 # Limitations and Guardrails
 
-- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- This metadata-curated record is not a page-by-page or full-text evidence extraction.
 - The agent must not infer that a tool or data resource is installed, bundled, or suitable for every organism.
 
 # Questions This Record Can Ground
@@ -62,4 +62,4 @@ This primary-method record grounds agent guidance about Bayesian whole-genome re
 
 # Curation Note
 
-This is a curated starter record with bibliographic metadata verified against Crossref on 2026-09-25. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful summary, including page-specific evidence, after reviewing the paper or its official documentation.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

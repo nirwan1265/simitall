@@ -1,0 +1,8 @@
+organism	taxon_id	preferred_annotation_source	source_url	id_namespace_requirement	package_policy
+Homo_sapiens	9606	Gene_Ontology_Consortium_HUMAN_uniprot_GAF	https://current.geneontology.org/annotations/HUMAN-uniprot.gaf.gz	Map input gene IDs to UniProt or use a compatible GPI mapping	Download a dated file for each analysis; do not treat it as bundled package data.
+Arabidopsis_thaliana	3702	Gene_Ontology_Consortium_TAIR_GAF	https://current.geneontology.org/annotations/tair.gaf.gz	Use TAIR gene identifiers	Download a dated file for each analysis; do not treat it as bundled package data.
+Drosophila_melanogaster	7227	Gene_Ontology_Consortium_FlyBase_GAF	https://current.geneontology.org/annotations/fb.gaf.gz	Use FlyBase gene product identifiers	Download a dated file for each analysis; do not treat it as bundled package data.
+Zea_mays	4577	Gene_Ontology_Consortium_or_Gramene	https://geneontology.org/docs/download-go-annotations/downloads/	Verify mapping between NAM-5.0/Ensembl IDs and the chosen annotation namespace	Require explicit user-provided dated GAF and ID map.
+Triticum_aestivum	4565	Gene_Ontology_Consortium_or_Ensembl_Plants	https://geneontology.org/docs/download-go-annotations/downloads/	Verify IWGSC/Ensembl gene-ID mapping	Require explicit user-provided dated GAF and ID map.
+Oryza_sativa	4530	Gene_Ontology_Consortium_or_Gramene	https://geneontology.org/docs/download-go-annotations/downloads/	Verify IRGSP/Ensembl gene-ID mapping	Require explicit user-provided dated GAF and ID map.
+Sorghum_bicolor	4558	Gene_Ontology_Consortium_or_Gramene	https://geneontology.org/docs/download-go-annotations/downloads/	Verify NCBIv3/Ensembl gene-ID mapping	Require explicit user-provided dated GAF and ID map.

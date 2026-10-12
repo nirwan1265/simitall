@@ -11,11 +11,11 @@ url: "https://doi.org/10.1111/j.1365-313X.2005.02591.x"
 domains: ["maize"]
 techniques: ["association_panel", "population_structure", "gwas"]
 organisms: ["maize"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
 crossref_checked_at: "2026-09-26"
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -26,19 +26,17 @@ Sherry A. FlintGarcia; AnneCeline Thuillet; Jianming Yu; Gael Pressoir; Susan M.
 
 # One-Sentence Summary
 
-Primary record for the Goodman or Flint-Garcia maize association population.
+Catalog summary for *Maize association population: a highresolution platform for quantitative trait locus dissection*: relevant to maize genomic resources and maize-specific simulation or analysis context. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use this record to guide source selection, input requirements, and limitations
-for the Goodman or Flint-Garcia maize association population. It must not be used to imply that the associated panel, raw data,
-or external analysis software is packaged with simitall.
+Use this catalog summary to route questions about maize-specific studies. Require genome build, germplasm/population definition, chromosome/interval, trait context, and available genotype or annotation inputs. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Treat panel membership, reference build, sample manifests, and genotype filtering as required provenance.
-- Use the resource-specific relationship structure and LD only when a matching local panel is supplied.
-- Retain family, ancestry, or subpopulation labels separately from marker genotypes for quality control and validation.
+- Preserve the difference between NAM, diversity, biparental, and breeding populations.
+- Use maize coordinate/build and founder provenance consistently across inputs.
+- Treat published biological results as context, not as simulated truth.
 
 # Inputs to Specify
 
@@ -48,12 +46,10 @@ or external analysis software is packaged with simitall.
 
 # Limitations and Guardrails
 
-- This starter record is bibliographically verified but is not a page-by-page full-text extraction.
+- This metadata-curated record is not a page-by-page or full-text evidence extraction.
 - Panel properties are not transferable across different subsets, populations, species, or reference builds.
 - In human ancestry applications, do not convert genetic ancestry estimates into medical, social, or identity claims.
 
 # Curation Note
 
-This is a curated starter record with bibliographic metadata verified against
-Crossref on 2026-09-26. Replace or extend it with source-faithful,
-page-specific notes after reviewing the full text.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

@@ -1,0 +1,29 @@
+##gff-version 3
+##simitall-subset true
+##simitall-note Oryza sativa IRGSP-1.0, Ensembl Plants release 62 local source
+##simitall-note Gene-feature-only excerpt; use the full source annotation for transcript/exon/CDS analysis.
+1	RAP2022-09-01	gene	2983	10815	.	+	.	ID=gene:Os01g0100100;biotype=protein_coding;gene_id=Os01g0100100;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	11218	12435	.	+	.	ID=gene:Os01g0100200;biotype=protein_coding;gene_id=Os01g0100200;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	11372	12284	.	-	.	ID=gene:Os01g0100300;biotype=protein_coding;gene_id=Os01g0100300;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	12721	15685	.	+	.	ID=gene:Os01g0100400;biotype=protein_coding;gene_id=Os01g0100400;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	12808	13978	.	-	.	ID=gene:Os01g0100466;biotype=protein_coding;gene_id=Os01g0100466;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	16399	20144	.	+	.	ID=gene:Os01g0100500;Name=P0402A09.1;biotype=protein_coding;gene_id=Os01g0100500;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	22841	26892	.	+	.	ID=gene:Os01g0100600;biotype=protein_coding;gene_id=Os01g0100600;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	25861	26424	.	-	.	ID=gene:Os01g0100650;biotype=protein_coding;gene_id=Os01g0100650;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	27143	28644	.	+	.	ID=gene:Os01g0100700;Name=RPS5;biotype=protein_coding;gene_id=Os01g0100700;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	29818	34453	.	+	.	ID=gene:Os01g0100800;biotype=protein_coding;gene_id=Os01g0100800;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	35623	41136	.	+	.	ID=gene:Os01g0100900;Name=SPL;biotype=protein_coding;gene_id=Os01g0100900;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	58658	61090	.	+	.	ID=gene:Os01g0101150;Name=P0672D08.16;biotype=protein_coding;gene_id=Os01g0101150;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	62060	65537	.	+	.	ID=gene:Os01g0101200;biotype=protein_coding;gene_id=Os01g0101200;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	63350	66302	.	-	.	ID=gene:Os01g0101300;biotype=protein_coding;gene_id=Os01g0101300;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	72816	78349	.	+	.	ID=gene:Os01g0101600;biotype=protein_coding;gene_id=Os01g0101600;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	82426	84095	.	+	.	ID=gene:Os01g0101700;Name=OsDjC1;biotype=protein_coding;gene_id=Os01g0101700;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	85337	88844	.	+	.	ID=gene:Os01g0101800;biotype=protein_coding;gene_id=Os01g0101800;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	86211	88583	.	-	.	ID=gene:Os01g0101850;biotype=protein_coding;gene_id=Os01g0101850;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	88883	89228	.	-	.	ID=gene:Os01g0101900;biotype=protein_coding;gene_id=Os01g0101900;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	89763	91521	.	-	.	ID=gene:Os01g0102000;Name=OsNPC6;biotype=protein_coding;gene_id=Os01g0102000;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	134300	135439	.	+	.	ID=gene:Os01g0102300;Name=OsTLP27;biotype=protein_coding;gene_id=Os01g0102300;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	139826	141555	.	+	.	ID=gene:Os01g0102400;Name=OsHAP5H;biotype=protein_coding;gene_id=Os01g0102400;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	141959	144554	.	+	.	ID=gene:Os01g0102500;Name=P0402A09.23;biotype=protein_coding;gene_id=Os01g0102500;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	145603	147847	.	+	.	ID=gene:Os01g0102600;Name=OsSK4;biotype=protein_coding;gene_id=Os01g0102600;logic_name=rapdb_genes
+1	RAP2022-09-01	gene	148085	150568	.	+	.	ID=gene:Os01g0102700;biotype=protein_coding;gene_id=Os01g0102700;logic_name=rapdb_genes

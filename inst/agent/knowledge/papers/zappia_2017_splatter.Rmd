@@ -11,10 +11,10 @@ url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5596896/"
 domains: ["single_cell_rnaseq", "simulation"]
 techniques: ["scrnaseq", "dropout", "batch_effects", "cell_types"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Zappia, L., Phipson, B., and Oshlack, A. (2017). *Splatter: simulation of single
 
 # One-Sentence Summary
 
-Introduces Splatter, a framework for simulating single-cell RNA-seq count data with biological and technical variability.
+Catalog summary for *Splatter: simulation of single-cell RNA sequencing data*: relevant to single-cell RNA-seq simulation, quality control, cell-state inference, and population-aware analysis. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as a reference and possible backend for generic single-cell count simulations. simitall should add genotype, family, condition, and eQTL truth before handing off to a technical simulator.
+Use this catalog summary to route questions about single-cell workflows. Require donor structure, cell types or states, batch/condition labels, sequencing-depth assumptions, and a cell-level or pseudobulk analysis target. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Single-cell simulation should expose library size, dispersion, dropout, and group effects.
-- A count matrix needs cell-level metadata and known cell-type labels for evaluation.
-- Generic scRNA-seq variation is not the same as genotype-linked variation.
+- Preserve donor identity when inference is about biological replicates rather than individual cells.
+- Report cell and gene QC before clustering, annotation, or differential testing.
+- Use truth-aware benchmarks for simulated cell types, perturbations, and eQTL effects.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as a reference and possible backend for generic single-cell count simulation
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

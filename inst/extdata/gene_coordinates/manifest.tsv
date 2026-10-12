@@ -1,0 +1,7 @@
+organism	taxon_id	assembly	annotation_release	coordinate_file	gene_records	source_annotation_file	source_kind	notes
+Arabidopsis_thaliana	3702	TAIR10	Ensembl_Plants_62	arabidopsis_tair10_ensembl62_genes.tsv.gz	27655	Arabidopsis_thaliana.TAIR10.62.gff3	local_source_annotation	Gene-only coordinate catalogue.
+Hordeum_vulgare	4513	MorexV3	Ensembl_Plants_62	barley_morexv3_ensembl62_genes.tsv.gz	35826	Hordeum_vulgare.MorexV3_pseudomolecules_assembly.62.gff3	local_source_annotation	Gene-only coordinate catalogue.
+Oryza_sativa	4530	IRGSP-1.0	Ensembl_Plants_62	rice_irgsp10_ensembl62_genes.tsv.gz	35806	Oryza_sativa.IRGSP-1.0.62.chr.gff3	local_source_annotation	Gene-only coordinate catalogue.
+Triticum_aestivum	4565	IWGSC	Ensembl_Plants_62	wheat_iwgsc_ensembl62_genes.tsv.gz	107891	Triticum_aestivum.IWGSC.62.gff3	local_source_annotation	Gene-only coordinate catalogue.
+Zea_mays	4577	Zm-B73-REFERENCE-NAM-5.0	Ensembl_Plants_62	maize_b73_nam5_ensembl62_genes.tsv.gz	43459	Zea_mays.Zm-B73-REFERENCE-NAM-5.0.62.chr.gff3	local_source_annotation	Gene-only coordinate catalogue.
+Drosophila_melanogaster	7227	BDGP6	r6.66	fly_bdgp6_r6_66_genes.tsv.gz	17872	dmel-all-r6.66.gff.gz	local_source_annotation	Gene-only coordinate catalogue.

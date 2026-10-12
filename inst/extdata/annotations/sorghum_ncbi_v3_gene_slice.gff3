@@ -1,0 +1,29 @@
+##gff-version 3
+##simitall-subset true
+##simitall-note Sorghum bicolor NCBIv3, Ensembl Plants release 54 local source
+##simitall-note Gene-feature-only excerpt; use the full source annotation for transcript/exon/CDS analysis.
+1	ena	gene	1951	2616	.	+	.	ID=gene:SORBI_3001G000100;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000100;logic_name=ena
+1	ena	gene	11180	14899	.	-	.	ID=gene:SORBI_3001G000200;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000200;logic_name=ena
+1	ena	gene	22391	42443	.	-	.	ID=gene:SORBI_3001G000400;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000400;logic_name=ena
+1	ena	gene	23399	24152	.	-	.	ID=gene:SORBI_3001G000300;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000300;logic_name=ena
+1	ena	gene	52891	53594	.	+	.	ID=gene:SORBI_3001G000501;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000501;logic_name=ena
+1	ena	gene	53781	63305	.	+	.	ID=gene:SORBI_3001G000700;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000700;logic_name=ena
+1	ena	gene	62892	69306	.	-	.	ID=gene:SORBI_3001G000800;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000800;logic_name=ena
+1	ena	gene	79159	81636	.	+	.	ID=gene:SORBI_3001G000900;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G000900;logic_name=ena
+1	ena	gene	81932	83350	.	+	.	ID=gene:SORBI_3001G001000;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001000;logic_name=ena
+1	ena	gene	103029	104803	.	-	.	ID=gene:SORBI_3001G001066;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001066;logic_name=ena
+1	ena	gene	106847	107376	.	+	.	ID=gene:SORBI_3001G001132;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001132;logic_name=ena
+1	ena	gene	109968	112306	.	-	.	ID=gene:SORBI_3001G001200;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001200;logic_name=ena
+1	ena	gene	112766	116048	.	+	.	ID=gene:SORBI_3001G001300;biotype=protein_coding;description=Rhodanese-like domain-containing protein 8%2C chloroplastic [Source:Projected from Arabidopsis thaliana (AT1G17850) UniProtKB/Swiss-Prot%3BAcc:F4I933];gene_id=SORBI_3001G001300;logic_name=ena
+1	ena	gene	116116	136690	.	-	.	ID=gene:SORBI_3001G001400;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001400;logic_name=ena
+1	ena	gene	152558	154625	.	+	.	ID=gene:SORBI_3001G001700;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001700;logic_name=ena
+1	ena	gene	154632	157785	.	+	.	ID=gene:SORBI_3001G001800;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001800;logic_name=ena
+1	ena	gene	155315	162004	.	-	.	ID=gene:SORBI_3001G001900;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G001900;logic_name=ena
+1	ena	gene	162161	167916	.	-	.	ID=gene:SORBI_3001G002000;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002000;logic_name=ena
+1	ena	gene	170558	174521	.	-	.	ID=gene:SORBI_3001G002050;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002050;logic_name=ena
+1	ena	gene	173605	175832	.	-	.	ID=gene:SORBI_3001G002100;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002100;logic_name=ena
+1	ena	gene	185033	204958	.	+	.	ID=gene:SORBI_3001G002200;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002200;logic_name=ena
+1	ena	gene	211481	213424	.	+	.	ID=gene:SORBI_3001G002300;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002300;logic_name=ena
+1	ena	gene	216906	219523	.	+	.	ID=gene:SORBI_3001G002400;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002400;logic_name=ena
+1	ena	gene	245300	247573	.	+	.	ID=gene:SORBI_3001G002500;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002500;logic_name=ena
+1	ena	gene	250934	254491	.	-	.	ID=gene:SORBI_3001G002600;biotype=protein_coding;description=hypothetical protein;gene_id=SORBI_3001G002600;logic_name=ena

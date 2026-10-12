@@ -14,6 +14,25 @@ analysis role. A paper can appear in more than one area. The map is for
 navigation and retrieval; use the individual `.Rmd` summary and original source
 for methods, numbers, and claims.
 
+## Summary Levels
+
+Each paper record is deliberately tagged with an evidence level so that retrieval
+does not turn a citation into an unsupported claim.
+
+- `metadata_curated_summary`: a title-and-bibliographic-metadata summary written
+  for routing a question to the right workflow, inputs, figures, and validation
+  contract. It is not a full-text extraction and must not supply paper-specific
+  numeric recommendations.
+- `source_reviewed_from_user_pdf` or `citation_and_user_manual_reviewed`: notes
+  were created from a supplied document or manual and can be used for the
+  explicitly recorded details.
+- `user_vignette_reviewed`: notes are grounded in a reviewed tutorial or vignette.
+
+Every paper record still links to its source. Upgrade a metadata-curated entry
+when the corresponding PDF or full text is available locally; retain the
+source-specific pages, figures, parameter values, and limitations in the
+upgraded note.
+
 ## GWAS, QTL, Population Structure, and Ancestry
 
 - **GWAS/QTL in plants and maize:** `altaf_2024_qtl_gwas_plant_improvement.Rmd`,

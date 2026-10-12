@@ -111,7 +111,32 @@ remain the user's scientific responsibility.
 | **Traits and association** | Quantitative, binary, count, ordinal, family-effect, and GxE traits with causal truth | GWAS, QTL/causal-truth recovery, calibration, kinship/PC adjustment, and genomic prediction/selection |
 | **Bulk and single-cell transcriptomics** | Bulk RNA-seq, eQTLs, ASE, batches, cell types, pseudotime, dropout, ambient RNA, doublets, and cell-type eQTLs | Differential expression, donor-aware pseudobulk, eQTL benchmarking, clustering, PCA, volcano, and QC figures |
 | **Chromatin** | ChIP-seq and ATAC-seq reads, peaks, matched controls, conditions, and differential-accessibility truth | Peak calling, differential peaks, enrichment/QC, and precision/recall/F1 against retained truth |
+| **Gene and functional annotation** | Compact assembly-aware gene-coordinate catalogues and annotation-compatible synthetic features | Interval-to-gene overlap, local GFF3/GTF parsing, Gene Ontology GAF import, evidence-preserving gene-to-GO joins, and GO-term summaries |
 | **Sequencing and assembly** | Illumina short reads, PacBio HiFi/CLR reads, Nanopore reads, hybrid read sets, coverage grids, and synthetic references | Assembly with Unicycler, QUAST comparison, coverage/read-length QC, and truth-aware assembly metrics |
+
+### Gene Coordinates and GO Annotations
+
+SimItAll includes compact genome-wide, gene-only coordinate catalogues for
+Arabidopsis, barley, rice, wheat, maize, and fly. They retain chromosome,
+start/end, strand, stable gene ID, source ID, gene name, and biotype while
+avoiding the size of full GFF3/GTF files. Small GFF3 and Arabidopsis GO examples
+ship with the package for reproducible demonstrations.
+
+For functional annotation, load a dated local Gene Ontology Annotation File
+(GAF) with `read_go_gaf()`, join it to coordinates with `join_gene_go()`, and
+retain GAF evidence codes in the result. The repository includes the supplied
+full GAF downloads under `resources/go_annotations/`, but they are deliberately
+not installed with the R package.
+
+For an organism not represented in the repository, download its current
+organism-specific GAF and matching ontology from the
+[Gene Ontology annotation downloads](https://geneontology.org/docs/download-go-annotations/downloads/), then supply a reviewed gene-ID mapping when its GFF3/GTF identifiers differ from the GAF identifiers. SimItAll does not infer GO assignments or silently guess identifier conversions.
+
+```r
+genes <- read_gene_coordinates("Arabidopsis_thaliana")
+go <- read_go_gaf("resources/go_annotations/ARATH-mod.gaf.gz")
+gene_go <- join_gene_go(genes, go)
+```
 
 ### Sequencing Platforms
 

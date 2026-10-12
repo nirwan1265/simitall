@@ -11,10 +11,10 @@ url: "https://acsess.onlinelibrary.wiley.com/doi/full/10.3835/plantgenome2011.08
 domains: ["genomic_selection", "statistics", "r_package"]
 techniques: ["rrblup", "gblup", "kinship", "genomic_prediction"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Endelman, J. B. (2011). *Ridge regression and other kernels for genomic selectio
 
 # One-Sentence Summary
 
-Describes rrBLUP methods and an R implementation for ridge-regression and kernel-based genomic prediction.
+Catalog summary for *Ridge regression and other kernels for genomic selection with R package rrBLUP*: relevant to genomic prediction, breeding-value estimation, and selection-response evaluation. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as the reference and optional backend for simitall genomic-prediction workflows when an R-native ridge-regression or GBLUP-style model is requested.
+Use this catalog summary to route questions about genomic-selection workflows. Require training/validation split or cycle design, phenotype definition, genomic relationship/model choice, and selection intensity. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Marker-effect and relationship-matrix formulations are closely related genomic-prediction approaches.
-- Prediction requires aligned genotype and phenotype samples with transparent missing-data handling.
-- Cross-validation must respect intended deployment, especially relatedness and family structure.
+- Keep training, validation, and selected-parent samples disjoint where prediction is being evaluated.
+- Report prediction accuracy, calibration, genetic gain, relatedness, and diversity together.
+- Do not interpret simulated gain as evidence for a real breeding program without empirical inputs.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as the reference and optional backend for simitall genomic-prediction workfl
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

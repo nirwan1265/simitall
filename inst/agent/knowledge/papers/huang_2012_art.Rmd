@@ -11,10 +11,10 @@ url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3278762/"
 domains: ["sequencing", "simulation", "illumina"]
 techniques: ["short_read_simulation", "illumina_reads", "error_profiles"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Huang, W., et al. (2012). *ART: a next-generation sequencing read simulator*. Bi
 
 # One-Sentence Summary
 
-Introduces ART, a simulator for next-generation sequencing reads with technology-specific empirical error profiles.
+Catalog summary for *ART: a next-generation sequencing read simulator*: relevant to sequencing-read generation, technology choice, and sequencing-quality evaluation. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as the short-read backend in simitall hybrid-assembly workflows. Record the ART profile, read length, insert distribution, coverage, and random seed as required provenance.
+Use this catalog summary to route questions about sequencing simulation or preprocessing. Require platform/profile, read length or long-read distribution, coverage, error model, reference, and intended downstream task. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Illumina simulation requires a platform profile, paired-end configuration, read length, insert distribution, and coverage.
-- Read-level errors affect assembly and variant-calling benchmarks.
-- Simulation parameters must be reported to make an assembly benchmark reproducible.
+- Keep technology-specific error and length assumptions explicit.
+- Evaluate both raw-read realism and downstream recovery for the target task.
+- Do not claim a profile represents a current instrument without verified vendor documentation.
 
 # Inputs to Specify
 
@@ -60,4 +60,4 @@ Use as the short-read backend in simitall hybrid-assembly workflows. Record the 
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

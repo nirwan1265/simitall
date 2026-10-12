@@ -11,10 +11,10 @@ url: "https://joss.theoj.org/papers/10.21105/joss.01316.pdf"
 domains: ["sequencing", "simulation", "long_reads"]
 techniques: ["long_read_simulation", "error_models", "assembly_benchmarking"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Wick, R. R. (2019). *Badread: simulation of error-prone long reads*. Journal of 
 
 # One-Sentence Summary
 
-Describes Badread, a configurable simulator for error-prone long sequencing reads.
+Catalog summary for *Badread: simulation of error-prone long reads*: relevant to sequencing-read generation, technology choice, and sequencing-quality evaluation. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Document as an alternative long-read simulator when users need configurable read length, identity, chimeras, or adapter artifacts beyond a PBSIM workflow.
+Use this catalog summary to route questions about sequencing simulation or preprocessing. Require platform/profile, read length or long-read distribution, coverage, error model, reference, and intended downstream task. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Long-read benchmarks are sensitive to read-length and error distributions.
-- Chimeras and artifact settings can create more challenging assembly conditions.
-- A simulation scenario should state whether it aims for idealized or stress-test data.
+- Keep technology-specific error and length assumptions explicit.
+- Evaluate both raw-read realism and downstream recovery for the target task.
+- Do not claim a profile represents a current instrument without verified vendor documentation.
 
 # Inputs to Specify
 
@@ -60,4 +60,4 @@ Document as an alternative long-read simulator when users need configurable read
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

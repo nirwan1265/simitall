@@ -11,10 +11,10 @@ url: "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.100
 domains: ["genome_assembly", "hybrid_assembly", "bacteria"]
 techniques: ["unicycler", "short_long_read_assembly", "assembly_graphs"]
 organisms: ["bacteria"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Wick, R. R., et al. (2017). *Unicycler: resolving bacterial genome assemblies fr
 
 # One-Sentence Summary
 
-Presents Unicycler, a bacterial hybrid assembler that integrates short-read assembly graphs with long reads to improve contiguity and resolve repeats.
+Catalog summary for *Unicycler: resolving bacterial genome assemblies from short and long sequencing reads*: relevant to genome assembly, assembly validation, and reference-quality assessment. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Use as the intended hybrid-assembly backend in the bacterial benchmark pipeline. Keep raw read generation, assembly execution, and reference-based evaluation as separate recorded stages.
+Use this catalog summary to route questions about assembly benchmarking. Require read technology/profile, coverage assumptions, assembler settings, reference or expected genome size, and evaluation criteria. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Short reads provide base accuracy while long reads help resolve graph ambiguity and repeats.
-- Hybrid assembly performance depends on both read sets, not only long-read depth.
-- Assembly results should be compared with a known truth reference using transparent QC metrics.
+- Separate read simulation truth from assembler output and downstream polishing.
+- Report contiguity with correctness and completeness; no single assembly metric is sufficient.
+- Preserve tool versions and command parameters because assembly outcomes are configuration-sensitive.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Use as the intended hybrid-assembly backend in the bacterial benchmark pipeline.
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.

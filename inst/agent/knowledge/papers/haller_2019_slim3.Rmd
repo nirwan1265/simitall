@@ -11,10 +11,10 @@ url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6389312/"
 domains: ["population_genetics", "simulation"]
 techniques: ["forward_simulation", "non_wright_fisher", "demography", "selection"]
 organisms: ["general"]
-evidence_status: "starter_summary"
-source_priority: "primary_paper"
+evidence_status: "metadata_curated_summary"
+source_priority: "primary_paper_metadata"
 source_file: null
-summarized_by: "simitall curated starter record"
+summarized_by: "simitall title-and-metadata curation"
 reviewed_by: null
 last_reviewed: null
 ---
@@ -25,17 +25,17 @@ Haller, B. C., and Messer, P. W. (2019). *SLiM 3: Forward genetic simulations be
 
 # One-Sentence Summary
 
-Describes SLiM 3, a flexible forward genetic simulator that supports models beyond standard Wright-Fisher assumptions.
+Catalog summary for *SLiM 3: Forward genetic simulations beyond the Wright-Fisher model*: relevant to population-genetic variation, demography, ancestry, and diversity-aware study design. This entry is based on bibliographic metadata and its stated scope; it is not a full-text evidence extraction.
 
 # Scope for simitall
 
-Document as an advanced external engine for users who require detailed demography, selection, spatial processes, or custom life histories beyond the first simitall breeding presets.
+Use this catalog summary to route questions about population-genetic simulation or analysis. Require sample provenance, population labels, coordinate build, filtering choices, and the relevant demographic or ancestry assumptions. Consult the cited source before making paper-specific claims, parameter recommendations, or comparisons.
 
 # Agent-Safe Takeaways
 
-- Forward simulation can represent selection and demography in detail but needs careful parameterization.
-- Non-Wright-Fisher life cycles allow more realistic individual-based models.
-- Complex models benefit from independently checked summaries of diversity, LD, and demography.
+- Do not equate synthetic structure with observed demographic history.
+- Track allele frequencies, heterozygosity, ancestry, and relatedness as separate quantities.
+- Use population labels and provenance when choosing association adjustments or reference panels.
 
 # Inputs to Specify
 
@@ -61,4 +61,4 @@ Document as an advanced external engine for users who require detailed demograph
 
 # Curation Note
 
-This is a curated starter record built from the paper citation and authoritative source metadata. It is **not** a page-by-page extraction of a locally archived full text. Replace or extend it with a source-faithful paper summary, including page-specific evidence, after the PDF or full text has been reviewed.
+This is a title-and-bibliographic-metadata catalog summary created for retrieval and routing. It is not a page-by-page or source-faithful full-text extraction; upgrade this record after reviewing the original paper or supplied document.
