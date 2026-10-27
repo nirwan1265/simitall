@@ -199,7 +199,7 @@ test_that("agent context accepts multi-term retrieval metadata", {
     provider = "local",
     knowledge_dir = knowledge
   )
-  expect_match(answer$answer, "Offline simitall plan", fixed = TRUE)
+  expect_match(answer$answer, "Proposed stages", fixed = TRUE)
 })
 
 test_that("local ancestry questions do not fall back to ordinary GWAS claims", {

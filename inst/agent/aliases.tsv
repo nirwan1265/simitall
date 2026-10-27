@@ -191,3 +191,35 @@ go terms	gene ontology	functional annotation	curated functional-annotation vocab
 gene ontology	gene ontology	functional annotation	curated functional-annotation vocabulary	high
 gaf	gene ontology annotation file	functional annotation	curated functional-annotation vocabulary	high
 gene annotation	genome annotation	functional annotation	curated functional-annotation vocabulary	high
+cousin mating	first cousin mating	pedigree	curated terminology	high
+first cousin	first cousin mating	pedigree	curated terminology	high
+first cousins	first cousin mating	pedigree	curated terminology	high
+second cousin	second cousin mating	pedigree	curated terminology	high
+sibling mating	sib mating	pedigree	curated terminology	high
+runs of homozygosity	roh	population genetics	curated abbreviation	high
+run of homozygosity	roh	population genetics	curated abbreviation	high
+roh	roh	population genetics	standard abbreviation	high
+inbreeding coefficient	pedigree inbreeding coefficient	pedigree	curated terminology	high
+bulk rna	bulk rnaseq	RNA-seq	curated terminology	high
+bulk rna seq	bulk rnaseq	RNA-seq	curated terminology	high
+time course rna seq	time series rnaseq	RNA-seq	maSigPro documentation	high
+time series rna seq	time series rnaseq	RNA-seq	maSigPro documentation	high
+longitudinal rna seq	time series rnaseq	RNA-seq	curated terminology	high
+alternative splicing	alternative splicing	RNA-seq	DEXSeq/LeafCutter documentation	high
+differential splicing	alternative splicing	RNA-seq	DEXSeq/LeafCutter documentation	high
+differential exon usage	alternative splicing	RNA-seq	DEXSeq documentation	high
+exon usage	alternative splicing	RNA-seq	DEXSeq documentation	medium
+isoform switching	alternative splicing	RNA-seq	curated terminology	high
+eqtl	eqtl	molecular QTL	standard abbreviation	high
+trans eqtl	trans eqtl	molecular QTL	QTLtools documentation	high
+sqtl	splicing qtl	molecular QTL	curated abbreviation	high
+splicing qtl	splicing qtl	molecular QTL	LeafCutter documentation	high
+allelic imbalance	ase	RNA-seq	curated terminology	high
+case control	binary gwas	association mapping	curated terminology	high
+logistic gwas	binary gwas	association mapping	curated terminology	high
+mixed model gwas	linear mixed model gwas	association mapping	curated terminology	high
+gene based test	gene based association	association mapping	curated terminology	high
+burden test	gene based association	association mapping	curated terminology	high
+skat	gene based association	association mapping	standard abbreviation	high
+differential accessibility	differential peaks	chromatin	curated terminology	high
+differential binding	differential peaks	chromatin	curated terminology	high

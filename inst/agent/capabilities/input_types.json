@@ -1,0 +1,247 @@
+{
+  "catalog_version": "1.0.0",
+  "purpose": "Typed input contracts used by a future StudySpec validator; not yet wired to Shiny.",
+  "types": [
+    {
+      "id": "reference_fasta",
+      "extensions": [
+        ".fa",
+        ".fasta",
+        ".fna",
+        ".fa.gz",
+        ".fasta.gz"
+      ],
+      "requires": [
+        "assembly identifier",
+        "sequence names"
+      ],
+      "validation": [
+        "file exists",
+        "sequence names nonempty",
+        "assembly declared when real"
+      ]
+    },
+    {
+      "id": "vcf_bcf",
+      "extensions": [
+        ".vcf",
+        ".vcf.gz",
+        ".bcf"
+      ],
+      "requires": [
+        "sample IDs",
+        "variant coordinates",
+        "reference build for real data"
+      ],
+      "validation": [
+        "header present",
+        "samples unique",
+        "contigs compatible with assembly",
+        "genotype and phenotype IDs overlap when combined"
+      ]
+    },
+    {
+      "id": "recombination_map",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".txt"
+      ],
+      "requires": [
+        "chromosome",
+        "position",
+        "genetic position or recombination rate"
+      ],
+      "validation": [
+        "positions ordered within chromosome",
+        "units declared",
+        "contigs compatible with genotype/reference"
+      ]
+    },
+    {
+      "id": "gene_annotation",
+      "extensions": [
+        ".gff3",
+        ".gff",
+        ".gtf",
+        ".gff3.gz",
+        ".gtf.gz"
+      ],
+      "requires": [
+        "feature coordinates",
+        "feature identifiers"
+      ],
+      "validation": [
+        "feature coordinates valid",
+        "assembly compatible",
+        "identifier namespace declared"
+      ]
+    },
+    {
+      "id": "pedigree",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".fam",
+        ".ped"
+      ],
+      "requires": [
+        "individual ID",
+        "sire/parent 1",
+        "dam/parent 2"
+      ],
+      "validation": [
+        "IDs unique",
+        "parents precede descendants or can be topologically ordered",
+        "no cycles",
+        "sex/parent conventions declared"
+      ]
+    },
+    {
+      "id": "genotype_matrix",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".rds",
+        ".h5ad"
+      ],
+      "requires": [
+        "variant IDs/coordinates",
+        "sample IDs",
+        "genotype encoding"
+      ],
+      "validation": [
+        "encoding declared",
+        "samples unique",
+        "no unintended duplicate samples"
+      ]
+    },
+    {
+      "id": "count_matrix",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".mtx",
+        ".h5",
+        ".h5ad",
+        ".rds"
+      ],
+      "requires": [
+        "feature IDs",
+        "sample/cell IDs",
+        "nonnegative counts"
+      ],
+      "validation": [
+        "integer counts for NB models",
+        "dimensions match metadata",
+        "feature namespace declared"
+      ]
+    },
+    {
+      "id": "sample_metadata",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".xlsx"
+      ],
+      "requires": [
+        "sample_id",
+        "biological_replicate",
+        "treatment/time/batch/subject fields when used by the design"
+      ],
+      "validation": [
+        "IDs unique at analysis unit",
+        "design variables complete",
+        "no perfect confounding for requested contrast",
+        "sample_id matches count-matrix column names or alignment sample names",
+        "technical replicates are explicitly labelled and not counted as independent biological replicates"
+      ]
+    },
+    {
+      "id": "fastq",
+      "extensions": [
+        ".fastq",
+        ".fq",
+        ".fastq.gz",
+        ".fq.gz"
+      ],
+      "requires": [
+        "read records"
+      ],
+      "validation": [
+        "read structure/pairedness declared",
+        "quality encoding readable",
+        "sample sheet supplied"
+      ]
+    },
+    {
+      "id": "alignment",
+      "extensions": [
+        ".bam",
+        ".cram",
+        ".sam"
+      ],
+      "requires": [
+        "aligned reads",
+        "reference/build"
+      ],
+      "validation": [
+        "index available where needed",
+        "contigs compatible with reference",
+        "library assay and strandedness declared"
+      ]
+    },
+    {
+      "id": "peak_set",
+      "extensions": [
+        ".bed",
+        ".narrowPeak",
+        ".broadPeak",
+        ".bed.gz"
+      ],
+      "requires": [
+        "coordinates"
+      ],
+      "validation": [
+        "coordinates nonnegative",
+        "assembly/build declared",
+        "peak caller and parameters recorded"
+      ]
+    },
+    {
+      "id": "junction_counts",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".bed",
+        ".gz"
+      ],
+      "requires": [
+        "junction identifiers",
+        "sample IDs",
+        "counts"
+      ],
+      "validation": [
+        "junction build/strand convention declared",
+        "metadata IDs match"
+      ]
+    },
+    {
+      "id": "phenotype_table",
+      "extensions": [
+        ".tsv",
+        ".csv",
+        ".xlsx"
+      ],
+      "requires": [
+        "sample ID",
+        "trait"
+      ],
+      "validation": [
+        "trait family declared",
+        "valid values for outcome type",
+        "sample IDs match genotype when joint analysis"
+      ]
+    }
+  ]
+}

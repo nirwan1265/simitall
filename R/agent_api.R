@@ -1711,6 +1711,20 @@ simitall_ask <- function(
   retrieval <- search_simitall_knowledge(question, n_context, knowledge_dir)
   preflight <- .simitall_agent_preflight(question, input_files, data_source)
   spec <- .simitall_agent_spec_pipeline(question, input_files %||% character(), data_source)
+  # The capability catalog is a generic planning route for analyses that the
+  # older structured compiler cannot yet execute. It may scope one requested
+  # analysis, but never invents a downstream workflow or a code recipe.
+  catalog_resolution <- if (!isTRUE(spec$supported)) {
+    .simitall_agent_catalog_resolve(question, data_source, input_files %||% character())
+  } else {
+    NULL
+  }
+  catalog_study_spec <- if (!is.null(catalog_resolution) &&
+    catalog_resolution$status %in% c("recognized", "needs_goal")) {
+    .simitall_agent_catalog_study_spec(catalog_resolution)
+  } else {
+    NULL
+  }
   if (isTRUE(spec$supported)) {
     # The spec owns input resolution for the workflows it supports.
     if (length(spec$errors)) {
@@ -1779,6 +1793,8 @@ simitall_ask <- function(
     context = context,
     preflight = preflight,
     spec = spec,
+    catalog_resolution = catalog_resolution,
+    catalog_study_spec = catalog_study_spec,
     validation = NULL,
     execution = "code is shown for review; it runs only when the user presses RUN"
   )
@@ -1787,9 +1803,20 @@ simitall_ask <- function(
     # prose and the code are generated from the same validated spec, so they
     # cannot describe different methods. No model call is needed.
     spec_handled <- isTRUE(spec$supported)
-    result$plan_source <- if (spec_handled) "spec" else provider
+    # Only an unambiguous direct subanalysis match is allowed to replace the
+    # legacy planner today. Broad family cues and multi-family questions stay
+    # with the established planner until the final StudySpec resolver can
+    # represent all requested analyses safely.
+    catalog_handled <- !is.null(catalog_resolution) &&
+      ((identical(catalog_resolution$status, "recognized") &&
+          length(catalog_resolution$recognized_family_ids) == 1L) ||
+        (identical(catalog_resolution$status, "needs_goal") &&
+          identical(catalog_resolution$family$clarification_mode, "ask_goal")))
+    result$plan_source <- if (spec_handled) "spec" else if (catalog_handled) "catalog" else provider
     if (spec_handled) {
       result$answer <- .simitall_agent_spec_plan(spec)
+    } else if (catalog_handled) {
+      result$answer <- .simitall_agent_catalog_plan(catalog_resolution, preflight)
     } else if (!identical(preflight$status, "ready")) {
       result$answer <- paste(
         .simitall_local_answer(question, retrieval),
@@ -1812,7 +1839,7 @@ simitall_ask <- function(
       }
       result$answer <- .simitall_openai_request(question, instructions, model, api_key)
     }
-    if (!spec_handled && !identical(provider, "local")) {
+    if (!spec_handled && !catalog_handled && !identical(provider, "local")) {
       result$answer <- .simitall_agent_validate_answer(
         result$answer, question, retrieval, allow_code
       )
@@ -1820,14 +1847,14 @@ simitall_ask <- function(
       attr(result$answer, "simitall_validation") <- NULL
     }
     if (isTRUE(include_code)) {
-      recipe <- if (isTRUE(spec$supported)) spec$recipe else .simitall_agent_code_recipe(question, preflight)
+      recipe <- if (isTRUE(spec$supported)) spec$recipe else if (catalog_handled) "" else .simitall_agent_code_recipe(question, preflight)
       if (nzchar(recipe)) {
         result$answer <- paste(result$answer, recipe, sep = "\n\n")
-      } else if (!spec_handled) {
+      } else if (!spec_handled && !catalog_handled) {
         skeleton <- .simitall_agent_code_skeleton(question, preflight)
         if (nzchar(skeleton)) result$answer <- paste(result$answer, skeleton, sep = "\n\n")
       }
-      if (!spec_handled && !identical(preflight$status, "ready")) {
+      if (!spec_handled && !catalog_handled && !identical(preflight$status, "ready")) {
         result$answer <- paste(
           result$answer,
           "The code skeleton is not runnable until the required input has been resolved.",

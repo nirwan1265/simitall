@@ -1,0 +1,2920 @@
+{
+  "catalog_version": "1.0.0",
+  "purpose": "Planning ontology for general prompt interpretation. It is not an executable router or a guarantee that any named tool is installed.",
+  "execution_policy": "A resolver must select only modules explicitly marked implemented after validating inputs and compatibility. Knowledge-only and planned entries can explain, request inputs, or identify a gap but must not emit runnable code.",
+  "families": [
+    {
+      "id": "pedigree_and_inbreeding",
+      "label": "Pedigree, relatedness, and inbreeding",
+      "aliases": [
+        "inbred",
+        "inbreeding",
+        "consanguinity",
+        "cousin mating",
+        "selfed",
+        "selfing",
+        "close relative mating"
+      ],
+      "subanalyses": [
+        {
+          "id": "pedigree_inbreeding",
+          "label": "Pedigree and genomic inbreeding",
+          "aliases": [
+            "pedigree F",
+            "inbreeding coefficient",
+            "homozygosity",
+            "ROH",
+            "runs of homozygosity"
+          ],
+          "goals": [
+            "simulate_pedigree",
+            "estimate_relatedness",
+            "compare_mating_schemes"
+          ],
+          "candidate_models": [
+            "pedigree relationship coefficient",
+            "marker-based F",
+            "ROH-based F"
+          ],
+          "required_inputs": [
+            "organism",
+            "data_source",
+            "mating_scheme_or_pedigree",
+            "population_size",
+            "generations_or_cycles"
+          ],
+          "optional_inputs": [
+            "phased_vcf",
+            "recombination_map",
+            "reference_fasta",
+            "gene_annotation",
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "parameters": [
+            {
+              "id": "mating_scheme",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Biological mating mechanism.",
+              "allowed_values": [
+                "selfing",
+                "sib_mating",
+                "first_cousin",
+                "second_cousin",
+                "backcross",
+                "custom_pedigree",
+                "bottleneck"
+              ]
+            },
+            {
+              "id": "time_unit",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Do not equate cycles with biological generations.",
+              "allowed_values": [
+                "biological_generation",
+                "pedigree_cycle"
+              ]
+            },
+            {
+              "id": "population_size",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Individuals retained per generation or cycle.",
+              "bounds": {
+                "minimum": 2
+              }
+            },
+            {
+              "id": "generations",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Number of specified time units.",
+              "bounds": {
+                "minimum": 1
+              }
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "validated pedigree",
+            "pedigree F",
+            "genomic F",
+            "heterozygosity",
+            "ROH segments when phased markers and a definition are supplied"
+          ],
+          "recommended_figures": [
+            "pedigree diagram",
+            "F by generation",
+            "heterozygosity by generation",
+            "ROH landscape"
+          ],
+          "qc_and_guardrails": [
+            "Do not substitute selfing for cousin mating.",
+            "Do not conflate pedigree F, marker homozygosity, and ROH-based F.",
+            "Synthetic output is not clinical prediction."
+          ],
+          "tool_candidates": [
+            "simitall pedigree primitives",
+            "SimuPOP (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/pedigree_breeding.Rmd",
+            "validation_contracts/human_pedigree_liability.Rmd",
+            "papers/peng_2005_simupop.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "population_relatedness_gwas_calibration",
+          "label": "Relatedness-aware association calibration",
+          "aliases": [
+            "kinship GWAS",
+            "relatedness GWAS",
+            "inbred GWAS calibration"
+          ],
+          "goals": [
+            "simulate_or_analyze_calibration"
+          ],
+          "candidate_models": [
+            "linear mixed model",
+            "PC adjustment",
+            "kinship adjustment"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "phenotype",
+            "sample identifiers"
+          ],
+          "optional_inputs": [
+            "kinship matrix",
+            "PCs",
+            "causal truth"
+          ],
+          "parameters": [
+            {
+              "id": "adjustment",
+              "type": "set",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Association adjustments to compare.",
+              "allowed_values": [
+                "none",
+                "PCs",
+                "kinship",
+                "PCs_plus_kinship"
+              ]
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "association results",
+            "calibration metrics",
+            "truth recovery when synthetic"
+          ],
+          "recommended_figures": [
+            "QQ plot",
+            "Manhattan plot",
+            "inflation/calibration comparison"
+          ],
+          "qc_and_guardrails": [
+            "Do not claim calibration without null or synthetic truth."
+          ],
+          "tool_candidates": [
+            "GEMMA",
+            "GAPIT",
+            "GENESIS"
+          ],
+          "knowledge_sources": [
+            "workflows/human_relatedness_gwas_calibration.Rmd",
+            "validation_contracts/human_relatedness_gwas_calibration.Rmd"
+          ],
+          "execution_status": "knowledge_catalog_only"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/relationship_trees.Rmd",
+        "terminology/panels_ancestry_pedigrees.Rmd"
+      ]
+    },
+    {
+      "id": "breeding_and_cross_design",
+      "label": "Breeding populations and crosses",
+      "aliases": [
+        "cross",
+        "crossing",
+        "backcross",
+        "NAM",
+        "MAGIC",
+        "RIL",
+        "recurrent parent",
+        "introgression"
+      ],
+      "subanalyses": [
+        {
+          "id": "cross_design",
+          "label": "Population construction",
+          "aliases": [
+            "biparental",
+            "F1",
+            "F2",
+            "RIL",
+            "NAM",
+            "MAGIC",
+            "backcross",
+            "introgression"
+          ],
+          "goals": [
+            "simulate_crosses",
+            "design_population"
+          ],
+          "candidate_models": [
+            "Mendelian segregation with recombination",
+            "pedigree-based gene drop"
+          ],
+          "required_inputs": [
+            "organism",
+            "founder haplotypes or synthetic design",
+            "crossing scheme",
+            "population size"
+          ],
+          "optional_inputs": [
+            "recombination map",
+            "selection objective",
+            "seed"
+          ],
+          "parameters": [
+            {
+              "id": "scheme",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Cross design.",
+              "allowed_values": [
+                "biparental",
+                "F1",
+                "F2",
+                "RIL",
+                "NAM",
+                "MAGIC",
+                "backcross",
+                "introgression"
+              ]
+            },
+            {
+              "id": "founder_count",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Number of parents.",
+              "bounds": {
+                "minimum": 2
+              }
+            },
+            {
+              "id": "selfing_generations",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Required for RIL-like schemes.",
+              "bounds": {
+                "minimum": 0
+              }
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "genotypes",
+            "pedigree",
+            "ancestry",
+            "breakpoints",
+            "founder contributions"
+          ],
+          "recommended_figures": [
+            "cross diagram",
+            "ancestry proportions",
+            "breakpoints or recombination distribution"
+          ],
+          "qc_and_guardrails": [
+            "Check scheme is biologically feasible for organism.",
+            "Use a compatible genetic map for map-aware recombination."
+          ],
+          "tool_candidates": [
+            "simulate_breeding"
+          ],
+          "knowledge_sources": [
+            "techniques/breeding_populations.Rmd",
+            "validation_contracts/breeding_populations.Rmd",
+            "workflows/biparental_bc2s7_allele_frequency.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "terminology/panels_ancestry_pedigrees.Rmd"
+      ]
+    },
+    {
+      "id": "phenotype_simulation",
+      "label": "Phenotype and trait simulation",
+      "aliases": [
+        "phenotype",
+        "trait",
+        "quantitative trait",
+        "binary trait",
+        "count trait",
+        "survival trait"
+      ],
+      "subanalyses": [
+        {
+          "id": "phenotype_outcome_model",
+          "label": "Trait generation",
+          "aliases": [
+            "normal phenotype",
+            "binomial phenotype",
+            "negative binomial phenotype",
+            "liability trait",
+            "time-to-event"
+          ],
+          "goals": [
+            "simulate_phenotype",
+            "select_outcome_distribution"
+          ],
+          "candidate_models": [
+            "Gaussian",
+            "Bernoulli",
+            "binomial",
+            "negative_binomial",
+            "ordinal_threshold",
+            "liability_threshold",
+            "Cox_survival"
+          ],
+          "required_inputs": [
+            "genotype or covariate design",
+            "outcome type",
+            "sample identifiers"
+          ],
+          "optional_inputs": [
+            "heritability",
+            "QTL effects",
+            "environment",
+            "batch",
+            "GxE"
+          ],
+          "parameters": [
+            {
+              "id": "outcome_family",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Outcome distribution must follow the requested phenotype.",
+              "allowed_values": [
+                "gaussian",
+                "bernoulli",
+                "binomial",
+                "negative_binomial",
+                "ordinal",
+                "liability",
+                "survival"
+              ]
+            },
+            {
+              "id": "heritability",
+              "type": "number",
+              "required": false,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Proportion of variance assigned to additive genetic effects.",
+              "bounds": {
+                "exclusive_minimum": 0,
+                "exclusive_maximum": 1
+              }
+            },
+            {
+              "id": "replicates_or_trials",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "required_for_binomial",
+              "description": "Required for binomial counts; omit for Bernoulli binary trait.",
+              "bounds": {
+                "minimum": 1
+              }
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "phenotype table",
+            "causal truth when simulated",
+            "model parameters"
+          ],
+          "recommended_figures": [
+            "phenotype distribution",
+            "genetic value versus phenotype",
+            "case fraction when binary"
+          ],
+          "qc_and_guardrails": [
+            "Do not turn \u201cbinomial\u201d into binary unless trials equal one.",
+            "Check values are valid for selected outcome family."
+          ],
+          "tool_candidates": [
+            "simulate_phenotypes",
+            "SimplePHENOTYPES (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/phenotype_outcome_models.Rmd",
+            "validation_contracts/phenotypes_gwas.Rmd",
+            "papers/fernandes_2020_simplephenotypes.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/phenotype_outcome_models.Rmd"
+      ]
+    },
+    {
+      "id": "gwas",
+      "label": "Genome-wide association studies",
+      "aliases": [
+        "GWAS",
+        "association mapping",
+        "genome-wide association",
+        "marker trait association"
+      ],
+      "subanalyses": [
+        {
+          "id": "quantitative_gwas",
+          "label": "Quantitative-trait GWAS",
+          "aliases": [
+            "continuous GWAS",
+            "linear GWAS",
+            "mixed model GWAS"
+          ],
+          "goals": [
+            "simulate_gwas",
+            "run_association",
+            "benchmark_truth_recovery"
+          ],
+          "candidate_models": [
+            "linear regression",
+            "linear mixed model",
+            "multi-locus model",
+            "Bayesian variable selection"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "continuous phenotype",
+            "matched sample identifiers"
+          ],
+          "optional_inputs": [
+            "covariates",
+            "PCs",
+            "kinship",
+            "marker annotation",
+            "causal truth"
+          ],
+          "parameters": [
+            {
+              "id": "association_model",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Association model.",
+              "allowed_values": [
+                "linear",
+                "linear_mixed_model",
+                "FarmCPU",
+                "MLM",
+                "Bayesian"
+              ]
+            },
+            {
+              "id": "structure_adjustment",
+              "type": "set",
+              "required": false,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Confounding adjustment.",
+              "allowed_values": [
+                "none",
+                "PCs",
+                "kinship",
+                "PCs_plus_kinship"
+              ]
+            },
+            {
+              "id": "multiple_testing",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Significance control.",
+              "allowed_values": [
+                "Bonferroni",
+                "FDR",
+                "permutation"
+              ]
+            },
+            {
+              "id": "trait_type",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "must_match_user_request",
+              "description": "Quantitative route only.",
+              "allowed_values": [
+                "continuous"
+              ]
+            }
+          ],
+          "expected_outputs": [
+            "effect estimates",
+            "standard errors",
+            "p-values",
+            "association summary",
+            "truth benchmark when synthetic"
+          ],
+          "recommended_figures": [
+            "Manhattan",
+            "QQ",
+            "phenotype distribution",
+            "effect versus MAF"
+          ],
+          "qc_and_guardrails": [
+            "Alleles, genomic build, phenotype and covariate IDs must align.",
+            "Report failed fits and avoid interpreting association as causation."
+          ],
+          "tool_candidates": [
+            "analyze_gwas",
+            "GAPIT",
+            "FarmCPU",
+            "GEMMA",
+            "TASSEL"
+          ],
+          "knowledge_sources": [
+            "techniques/gwas.Rmd",
+            "techniques/association_tool_selection.Rmd",
+            "validation_contracts/phenotypes_gwas.Rmd",
+            "papers/liu_2016_farmcpu.Rmd",
+            "papers/yu_2006_a_unified_mixed_model_method_for_association.Rmd"
+          ],
+          "execution_status": "partial"
+        },
+        {
+          "id": "binary_gwas",
+          "label": "Binary and case-control GWAS",
+          "aliases": [
+            "case control GWAS",
+            "binary GWAS",
+            "logistic GWAS"
+          ],
+          "goals": [
+            "run_association"
+          ],
+          "candidate_models": [
+            "logistic regression",
+            "logistic mixed model",
+            "Firth logistic regression"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "binary phenotype",
+            "matched sample identifiers"
+          ],
+          "optional_inputs": [
+            "covariates",
+            "PCs",
+            "kinship",
+            "case-control ascertainment"
+          ],
+          "parameters": [
+            {
+              "id": "association_model",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Binary outcome association model.",
+              "allowed_values": [
+                "logistic",
+                "logistic_mixed_model",
+                "Firth_logistic"
+              ]
+            },
+            {
+              "id": "case_definition",
+              "type": "string",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Definition of 0/1 phenotype."
+            }
+          ],
+          "expected_outputs": [
+            "odds ratios",
+            "confidence intervals",
+            "p-values"
+          ],
+          "recommended_figures": [
+            "Manhattan",
+            "QQ",
+            "case-control balance"
+          ],
+          "qc_and_guardrails": [
+            "Do not use quantitative linear GWAS for a binary phenotype.",
+            "Detect separation and report it."
+          ],
+          "tool_candidates": [
+            "analyze_binary_gwas",
+            "GEMMA (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "validation_contracts/phenotypes_gwas.Rmd"
+          ],
+          "execution_status": "partial"
+        },
+        {
+          "id": "multitrait_longitudinal_gwas",
+          "label": "Multitrait, GxE, and longitudinal GWAS",
+          "aliases": [
+            "multi-trait GWAS",
+            "GxE GWAS",
+            "longitudinal GWAS",
+            "repeated measures GWAS"
+          ],
+          "goals": [
+            "run_association"
+          ],
+          "candidate_models": [
+            "multivariate linear mixed model",
+            "mixed model with genotype-by-environment interaction",
+            "functional/trajectory model"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "phenotype with trait/time/environment",
+            "sample identifiers"
+          ],
+          "optional_inputs": [
+            "kinship",
+            "PCs",
+            "repeated-measure subject IDs"
+          ],
+          "parameters": [
+            {
+              "id": "design_type",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "multitrait",
+                "GxE",
+                "longitudinal"
+              ]
+            },
+            {
+              "id": "random_effects",
+              "type": "set",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Required grouping terms for repeated observations."
+            }
+          ],
+          "expected_outputs": [
+            "trait- or interaction-specific associations"
+          ],
+          "recommended_figures": [
+            "per-trait Manhattan",
+            "interaction effect plot",
+            "trajectory by genotype"
+          ],
+          "qc_and_guardrails": [
+            "Define independent units; repeated measurements are not independent rows."
+          ],
+          "tool_candidates": [
+            "GEMMA (knowledge_only)",
+            "GCTA (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/gwas.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "rare_variant_and_gene_based_gwas",
+          "label": "Rare-variant and gene-based association",
+          "aliases": [
+            "burden test",
+            "SKAT",
+            "gene-based GWAS"
+          ],
+          "goals": [
+            "run_gene_based_association"
+          ],
+          "candidate_models": [
+            "burden",
+            "SKAT",
+            "SKAT-O"
+          ],
+          "required_inputs": [
+            "sequenced genotypes",
+            "binary or quantitative phenotype",
+            "gene annotation"
+          ],
+          "optional_inputs": [
+            "functional variant annotation",
+            "population covariates"
+          ],
+          "parameters": [
+            {
+              "id": "variant_set_definition",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "gene",
+                "pathway",
+                "sliding_window"
+              ]
+            },
+            {
+              "id": "MAF_threshold",
+              "type": "number",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "bounds": {
+                "exclusive_minimum": 0,
+                "maximum": 0.05
+              }
+            }
+          ],
+          "expected_outputs": [
+            "gene-level association summary"
+          ],
+          "recommended_figures": [
+            "QQ",
+            "gene-level Manhattan",
+            "burden distribution"
+          ],
+          "qc_and_guardrails": [
+            "Variant functional filters must be declared."
+          ],
+          "tool_candidates": [
+            "SKAT (knowledge_only)",
+            "SAIGE-GENE (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/gwas.Rmd"
+          ],
+          "execution_status": "planned"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/gwas.Rmd",
+        "techniques/association_tool_selection.Rmd"
+      ]
+    },
+    {
+      "id": "linkage_qtl_mapping",
+      "label": "Linkage and QTL mapping",
+      "aliases": [
+        "QTL",
+        "QTL mapping",
+        "linkage mapping",
+        "interval mapping"
+      ],
+      "subanalyses": [
+        {
+          "id": "linkage_qtl",
+          "label": "Linkage QTL mapping",
+          "aliases": [
+            "interval mapping",
+            "composite interval mapping",
+            "multiple QTL mapping"
+          ],
+          "goals": [
+            "map_QTL"
+          ],
+          "candidate_models": [
+            "single-QTL scan",
+            "composite interval mapping",
+            "multiple-QTL model",
+            "mixed-effect QTL"
+          ],
+          "required_inputs": [
+            "segregating population genotypes",
+            "trait phenotype",
+            "genetic map"
+          ],
+          "optional_inputs": [
+            "covariates",
+            "permutations",
+            "environment"
+          ],
+          "parameters": [
+            {
+              "id": "mapping_method",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "single_qtl",
+                "interval_mapping",
+                "composite_interval_mapping",
+                "multiple_qtl",
+                "mixed_effect_qtl"
+              ]
+            },
+            {
+              "id": "permutations",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Empirical threshold iterations.",
+              "bounds": {
+                "minimum": 0
+              }
+            }
+          ],
+          "expected_outputs": [
+            "LOD profile",
+            "QTL intervals",
+            "effect estimates"
+          ],
+          "recommended_figures": [
+            "LOD scan",
+            "QTL genotype-phenotype plot",
+            "permutation threshold"
+          ],
+          "qc_and_guardrails": [
+            "Do not replace QTL mapping with GWAS.",
+            "Genetic map and marker order must be consistent."
+          ],
+          "tool_candidates": [
+            "R/qtl (knowledge_only)",
+            "qtl2 (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "papers/altaf_2024_qtl_gwas_plant_improvement.Rmd"
+          ],
+          "execution_status": "planned"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/gwas.Rmd"
+      ]
+    },
+    {
+      "id": "bulk_rnaseq",
+      "label": "Bulk RNA-seq",
+      "clarification_mode": "ask_goal",
+      "aliases": [
+        "RNA-seq",
+        "bulk RNA",
+        "transcript abundance",
+        "DEG",
+        "differential expression"
+      ],
+      "subanalyses": [
+        {
+          "id": "bulk_counts_simulation",
+          "label": "Bulk count simulation",
+          "aliases": [
+            "simulate RNA-seq counts",
+            "negative binomial RNA-seq"
+          ],
+          "goals": [
+            "simulate_counts",
+            "simulate_experiment"
+          ],
+          "candidate_models": [
+            "negative_binomial",
+            "zero_inflated_negative_binomial",
+            "log_normal_latent_expression"
+          ],
+          "required_inputs": [
+            "experimental design",
+            "genes or gene annotation",
+            "samples and biological replicates"
+          ],
+          "optional_inputs": [
+            "batch",
+            "library-size distribution",
+            "condition effects",
+            "GxE"
+          ],
+          "parameters": [
+            {
+              "id": "count_model",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "negative_binomial",
+                "zero_inflated_negative_binomial"
+              ]
+            },
+            {
+              "id": "replicates",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Independent biological replicates per condition.",
+              "bounds": {
+                "minimum": 2
+              }
+            },
+            {
+              "id": "design_formula",
+              "type": "formula",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Fixed effects and interactions to simulate."
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "count matrix",
+            "sample metadata",
+            "gene metadata",
+            "simulation truth"
+          ],
+          "recommended_figures": [
+            "library size distribution",
+            "mean-variance relationship",
+            "PCA",
+            "sample correlation"
+          ],
+          "qc_and_guardrails": [
+            "Do not require FASTA for count-only simulation.",
+            "Technical replicates do not replace biological replicates."
+          ],
+          "tool_candidates": [
+            "simulate_rnaseq_experiment",
+            "Polyester (knowledge_only)",
+            "powsimR"
+          ],
+          "knowledge_sources": [
+            "techniques/bulk_rnaseq_eqtl.Rmd",
+            "validation_contracts/bulk_rnaseq_eqtl.Rmd",
+            "papers/frazee_2015_polyester.Rmd",
+            "papers/vieth_2017_powsimr.Rmd"
+          ],
+          "execution_status": "partial"
+        },
+        {
+          "id": "differential_expression",
+          "label": "Bulk differential expression",
+          "aliases": [
+            "DEG",
+            "DE analysis",
+            "condition comparison"
+          ],
+          "goals": [
+            "run_differential_expression"
+          ],
+          "candidate_models": [
+            "negative_binomial GLM",
+            "voom linear model",
+            "quasi-likelihood NB GLM"
+          ],
+          "required_inputs": [
+            "integer count matrix",
+            "sample metadata",
+            "design formula",
+            "contrast"
+          ],
+          "optional_inputs": [
+            "gene annotation",
+            "batch covariate",
+            "paired subject identifier"
+          ],
+          "parameters": [
+            {
+              "id": "method",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "DESeq2",
+                "edgeR",
+                "limma_voom"
+              ]
+            },
+            {
+              "id": "design_formula",
+              "type": "formula",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Must include condition and known confounders."
+            },
+            {
+              "id": "contrast",
+              "type": "string",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Specific comparison to test."
+            },
+            {
+              "id": "FDR",
+              "type": "number",
+              "required": false,
+              "missing_value_policy": "disclosed_default",
+              "description": "",
+              "bounds": {
+                "exclusive_minimum": 0,
+                "maximum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "normalized counts",
+            "DE table",
+            "DEG list"
+          ],
+          "recommended_figures": [
+            "PCA",
+            "sample distance",
+            "MA",
+            "volcano",
+            "dispersion or mean-variance"
+          ],
+          "qc_and_guardrails": [
+            "Raw counts, not TPM/FPKM, are required for standard NB DE models.",
+            "Avoid a design where batch is perfectly confounded with condition."
+          ],
+          "tool_candidates": [
+            "DESeq2 (knowledge_only)",
+            "edgeR (knowledge_only)",
+            "limma (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "tools/rnaseq_analysis_resources.Rmd",
+            "papers/love_2014_moderated_estimation_of_fold_change_and_dispe.Rmd",
+            "papers/robinson_2010_tt_edger_tt_a_bioconductor_package_for_differ.Rmd",
+            "papers/law_2014_voom_precision_weights_unlock_linear_model_an.Rmd"
+          ],
+          "execution_status": "knowledge_catalog_only"
+        },
+        {
+          "id": "time_series_rnaseq",
+          "label": "Time-course and longitudinal RNA-seq",
+          "aliases": [
+            "time series RNA-seq",
+            "time course RNA-seq",
+            "longitudinal RNA-seq",
+            "trajectory expression"
+          ],
+          "goals": [
+            "simulate_time_course",
+            "test_time_or_group_interaction"
+          ],
+          "candidate_models": [
+            "maSigPro regression",
+            "spline regression",
+            "NB GLM with time interaction",
+            "mixed model"
+          ],
+          "required_inputs": [
+            "count matrix or time-course simulation design",
+            "time variable",
+            "biological replicates",
+            "condition or group"
+          ],
+          "optional_inputs": [
+            "subject IDs",
+            "batch",
+            "continuous covariates"
+          ],
+          "parameters": [
+            {
+              "id": "time_representation",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "categorical",
+                "continuous",
+                "spline"
+              ]
+            },
+            {
+              "id": "design_formula",
+              "type": "formula",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Must encode time and condition/time interaction when requested."
+            },
+            {
+              "id": "repeated_subject",
+              "type": "boolean",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Whether the same individuals appear at multiple times."
+            }
+          ],
+          "expected_outputs": [
+            "trajectory coefficients",
+            "time/interaction test results",
+            "clustered temporal profiles"
+          ],
+          "recommended_figures": [
+            "time-course PCA",
+            "expression trajectories",
+            "cluster heatmap",
+            "time-by-condition interaction plot"
+          ],
+          "qc_and_guardrails": [
+            "Require actual time values and replicate structure.",
+            "Repeated samples require a subject-aware model."
+          ],
+          "tool_candidates": [
+            "maSigPro (knowledge_only)",
+            "DESeq2 (knowledge_only)",
+            "edgeR (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "tools/maSigPro.Rmd",
+            "papers/trapnell_2013_differential_analysis_of_gene_regulation_at_t.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "alternative_splicing",
+          "label": "Isoform and splicing analysis",
+          "aliases": [
+            "alternative splicing",
+            "differential splicing",
+            "exon usage",
+            "isoform switching",
+            "junction usage"
+          ],
+          "goals": [
+            "quantify_splicing",
+            "test_differential_splicing"
+          ],
+          "candidate_models": [
+            "exon-usage NB GLM",
+            "junction usage Dirichlet-multinomial",
+            "transcript-level differential usage"
+          ],
+          "required_inputs": [
+            "aligned reads or junction counts",
+            "GTF/GFF3 annotation for annotation-based approaches",
+            "sample metadata",
+            "design and contrast"
+          ],
+          "optional_inputs": [
+            "transcript quantification",
+            "gene annotation",
+            "batch"
+          ],
+          "parameters": [
+            {
+              "id": "splicing_event",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "differential_exon_usage",
+                "differential_junction_usage",
+                "differential_transcript_usage",
+                "isoform_switching"
+              ]
+            },
+            {
+              "id": "method",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "DEXSeq",
+                "LeafCutter",
+                "DRIMSeq",
+                "IsoformSwitchAnalyzeR"
+              ]
+            },
+            {
+              "id": "design_formula",
+              "type": "formula",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": ""
+            }
+          ],
+          "expected_outputs": [
+            "event or exon statistics",
+            "gene-level summaries",
+            "annotated events"
+          ],
+          "recommended_figures": [
+            "sashimi or junction plot",
+            "exon usage plot",
+            "splicing volcano/MA",
+            "isoform switch plot"
+          ],
+          "qc_and_guardrails": [
+            "Differential exon usage is not ordinary gene-level DE.",
+            "Confirm strandness, annotation build, and junction-count provenance."
+          ],
+          "tool_candidates": [
+            "DEXSeq (knowledge_only)",
+            "LeafCutter (knowledge_only)",
+            "DRIMSeq (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "tools/rnaseq_analysis_resources.Rmd"
+          ],
+          "execution_status": "knowledge_catalog_only"
+        },
+        {
+          "id": "allele_specific_expression",
+          "label": "Allele-specific expression",
+          "aliases": [
+            "ASE",
+            "allele specific expression",
+            "allelic imbalance"
+          ],
+          "goals": [
+            "quantify_ASE"
+          ],
+          "candidate_models": [
+            "beta-binomial",
+            "binomial with overdispersion"
+          ],
+          "required_inputs": [
+            "RNA-seq alignments",
+            "phased genotypes",
+            "heterozygous sites",
+            "sample identifiers"
+          ],
+          "optional_inputs": [
+            "mapping-bias correction",
+            "reference FASTA"
+          ],
+          "parameters": [
+            {
+              "id": "allele_count_model",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "beta_binomial",
+                "binomial"
+              ]
+            },
+            {
+              "id": "minimum_coverage",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "allelic counts",
+            "imbalance tests"
+          ],
+          "recommended_figures": [
+            "allelic ratio distribution",
+            "per-gene allelic imbalance"
+          ],
+          "qc_and_guardrails": [
+            "Require heterozygous, phased sites and mapping-bias handling."
+          ],
+          "tool_candidates": [
+            "QTLtools ASE (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "papers/patro_2017_salmon_provides_fast_and_bias_aware_quantific.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "rnaseq_power",
+          "label": "RNA-seq power and sample size",
+          "aliases": [
+            "RNA-seq power",
+            "RNA-seq sample size",
+            "powsimR"
+          ],
+          "goals": [
+            "simulate_power",
+            "evaluate_DE_power"
+          ],
+          "candidate_models": [
+            "negative_binomial power simulation"
+          ],
+          "required_inputs": [
+            "pilot count data or explicit mean-dispersion assumptions",
+            "design"
+          ],
+          "optional_inputs": [
+            "effect size",
+            "FDR",
+            "library size"
+          ],
+          "parameters": [
+            {
+              "id": "target_power",
+              "type": "number",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "bounds": {
+                "exclusive_minimum": 0,
+                "maximum": 1
+              }
+            },
+            {
+              "id": "sample_size_grid",
+              "type": "array",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": ""
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "power curves",
+            "false-discovery estimates",
+            "recommended sample size under stated assumptions"
+          ],
+          "recommended_figures": [
+            "power versus sample size",
+            "TPR/FDR tradeoff"
+          ],
+          "qc_and_guardrails": [
+            "A power calculation inherits its mean/dispersion assumptions."
+          ],
+          "tool_candidates": [
+            "powsimR"
+          ],
+          "knowledge_sources": [
+            "tools/powsimR.Rmd",
+            "papers/vieth_2017_powsimr.Rmd"
+          ],
+          "execution_status": "knowledge_catalog_only"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/bulk_rnaseq_eqtl.Rmd",
+        "tools/maSigPro.Rmd",
+        "tools/powsimR.Rmd"
+      ]
+    },
+    {
+      "id": "eqtl",
+      "label": "Expression and molecular QTLs",
+      "aliases": [
+        "eQTL",
+        "expression QTL",
+        "cis-eQTL",
+        "trans-eQTL",
+        "sQTL",
+        "splicing QTL"
+      ],
+      "subanalyses": [
+        {
+          "id": "bulk_eqtl",
+          "label": "Bulk cis/trans eQTL",
+          "aliases": [
+            "cis eQTL",
+            "trans eQTL",
+            "molecular QTL"
+          ],
+          "goals": [
+            "map_molecular_qtl",
+            "conditional_mapping"
+          ],
+          "candidate_models": [
+            "linear regression with covariates",
+            "linear mixed model",
+            "permutation-calibrated cis mapping"
+          ],
+          "required_inputs": [
+            "matched genotype data",
+            "expression phenotype matrix",
+            "sample metadata",
+            "genome build"
+          ],
+          "optional_inputs": [
+            "covariates",
+            "PEER factors",
+            "kinship",
+            "gene coordinates"
+          ],
+          "parameters": [
+            {
+              "id": "scope",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "cis",
+                "trans",
+                "cis_and_trans"
+              ]
+            },
+            {
+              "id": "cis_window_bp",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 0
+              }
+            },
+            {
+              "id": "multiple_testing",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "permutation",
+                "FDR",
+                "Bonferroni"
+              ]
+            },
+            {
+              "id": "conditional_mapping",
+              "type": "boolean",
+              "required": false,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "Search for independent cis signals."
+            }
+          ],
+          "expected_outputs": [
+            "variant-gene associations",
+            "lead variants",
+            "effect sizes",
+            "permutation or adjusted p-values"
+          ],
+          "recommended_figures": [
+            "cis distance plot",
+            "QQ",
+            "effect-size distribution",
+            "lead-QTL locus plot"
+          ],
+          "qc_and_guardrails": [
+            "Genotype, expression and covariate sample IDs must match.",
+            "State cis window and genotype/reference build."
+          ],
+          "tool_candidates": [
+            "QTLtools (knowledge_only)",
+            "TensorQTL (knowledge_only)",
+            "FastQTL (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/bulk_rnaseq_eqtl.Rmd",
+            "workflows/gwas_linked_rnaseq.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "splicing_qtl",
+          "label": "Splicing QTL mapping",
+          "aliases": [
+            "sQTL",
+            "splice QTL",
+            "junction QTL"
+          ],
+          "goals": [
+            "map_molecular_qtl"
+          ],
+          "candidate_models": [
+            "linear regression on splicing phenotypes",
+            "Dirichlet-multinomial-derived phenotypes"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "junction or exon-usage phenotypes",
+            "sample metadata",
+            "genome build"
+          ],
+          "optional_inputs": [
+            "covariates",
+            "splicing clusters",
+            "cis window"
+          ],
+          "parameters": [
+            {
+              "id": "phenotype_type",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "junction_ratio",
+                "exon_usage",
+                "isoform_usage"
+              ]
+            },
+            {
+              "id": "scope",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "cis",
+                "trans"
+              ]
+            }
+          ],
+          "expected_outputs": [
+            "variant-splicing associations"
+          ],
+          "recommended_figures": [
+            "lead-QTL locus plot",
+            "splicing phenotype by genotype"
+          ],
+          "qc_and_guardrails": [
+            "Splicing phenotype construction must be documented before mapping."
+          ],
+          "tool_candidates": [
+            "LeafCutter (knowledge_only)",
+            "QTLtools (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "tools/rnaseq_analysis_resources.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "single_cell_eqtl",
+          "label": "Single-cell and cell-type eQTL",
+          "aliases": [
+            "single-cell eQTL",
+            "cell type eQTL",
+            "pseudobulk eQTL"
+          ],
+          "goals": [
+            "simulate_celltype_eqtl",
+            "map_celltype_qtl"
+          ],
+          "candidate_models": [
+            "pseudobulk linear model",
+            "mixed model",
+            "cell-level model with donor effects"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "cell metadata with donor and cell type",
+            "expression or pseudobulk matrix"
+          ],
+          "optional_inputs": [
+            "covariates",
+            "cell-state scores",
+            "kinship"
+          ],
+          "parameters": [
+            {
+              "id": "unit_of_analysis",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "pseudobulk",
+                "cell_level"
+              ]
+            },
+            {
+              "id": "cell_type_strategy",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "separate_models",
+                "interaction_model"
+              ]
+            },
+            {
+              "id": "minimum_donors_per_cell_type",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "bounds": {
+                "minimum": 2
+              }
+            }
+          ],
+          "expected_outputs": [
+            "cell-type QTL statistics",
+            "donor-cell-type sample counts"
+          ],
+          "recommended_figures": [
+            "donors per cell type",
+            "cell-type QTL comparison",
+            "lead locus plot"
+          ],
+          "qc_and_guardrails": [
+            "Cells are not independent genetic replicates; donor structure is required."
+          ],
+          "tool_candidates": [
+            "simulate_celltype_eqtls",
+            "TensorQTL (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "validation_contracts/scrnaseq_celltype_eqtl.Rmd",
+            "workflows/single_cell_eqtl.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/bulk_rnaseq_eqtl.Rmd",
+        "techniques/scrnaseq.Rmd"
+      ]
+    },
+    {
+      "id": "single_cell_rnaseq",
+      "label": "Single-cell RNA-seq",
+      "aliases": [
+        "scRNA-seq",
+        "single-cell RNA-seq",
+        "single cell transcriptomics",
+        "pseudobulk"
+      ],
+      "subanalyses": [
+        {
+          "id": "scrnaseq_simulation",
+          "label": "Single-cell simulation",
+          "aliases": [
+            "simulate scRNA-seq",
+            "dropout simulation"
+          ],
+          "goals": [
+            "simulate_cells",
+            "benchmark_cell_types"
+          ],
+          "candidate_models": [
+            "negative_binomial",
+            "zero_inflated_negative_binomial",
+            "gamma_poisson",
+            "copula"
+          ],
+          "required_inputs": [
+            "cell and donor design",
+            "cell type composition",
+            "gene set or gene count"
+          ],
+          "optional_inputs": [
+            "batch",
+            "condition",
+            "donor effects",
+            "trajectory"
+          ],
+          "parameters": [
+            {
+              "id": "count_model",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "negative_binomial",
+                "zero_inflated_negative_binomial",
+                "gamma_poisson",
+                "copula"
+              ]
+            },
+            {
+              "id": "cells_per_donor",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 1
+              }
+            },
+            {
+              "id": "donors",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 2
+              }
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "cell-by-gene counts",
+            "cell metadata",
+            "donor metadata",
+            "truth"
+          ],
+          "recommended_figures": [
+            "UMAP/PCA",
+            "marker heatmap",
+            "library-size distribution",
+            "cell-type composition"
+          ],
+          "qc_and_guardrails": [
+            "Keep donor and cell-level replication distinct."
+          ],
+          "tool_candidates": [
+            "simulate_scrnaseq_experiment",
+            "Splatter (knowledge_only)",
+            "scDesign3 (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/scrnaseq.Rmd",
+            "papers/zappia_2017_splatter.Rmd",
+            "papers/song_2023_scdesign3.Rmd"
+          ],
+          "execution_status": "partial"
+        },
+        {
+          "id": "scrnaseq_analysis",
+          "label": "Single-cell processing and DE",
+          "aliases": [
+            "cluster cells",
+            "cell annotation",
+            "single-cell DE",
+            "pseudobulk DE"
+          ],
+          "goals": [
+            "QC",
+            "normalization",
+            "dimension_reduction",
+            "clustering",
+            "annotation",
+            "DE"
+          ],
+          "candidate_models": [
+            "pseudobulk NB GLM",
+            "mixed model",
+            "hurdle model"
+          ],
+          "required_inputs": [
+            "count matrix",
+            "cell metadata",
+            "donor/sample IDs"
+          ],
+          "optional_inputs": [
+            "reference labels",
+            "batch",
+            "gene annotation"
+          ],
+          "parameters": [
+            {
+              "id": "analysis_unit",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "cell",
+                "pseudobulk"
+              ]
+            },
+            {
+              "id": "batch_strategy",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "covariate",
+                "integration",
+                "none"
+              ]
+            },
+            {
+              "id": "DE_design",
+              "type": "formula",
+              "required": true,
+              "missing_value_policy": "required_for_DE",
+              "description": ""
+            }
+          ],
+          "expected_outputs": [
+            "QC metrics",
+            "clusters",
+            "cell labels",
+            "DE results"
+          ],
+          "recommended_figures": [
+            "QC violin plots",
+            "embedding",
+            "marker heatmap",
+            "composition plot",
+            "pseudobulk PCA"
+          ],
+          "qc_and_guardrails": [
+            "Avoid treating cells from one donor as independent biological replicates."
+          ],
+          "tool_candidates": [
+            "cluster_scrnaseq",
+            "aggregate_scrnaseq_pseudobulk",
+            "Seurat (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "techniques/scrnaseq.Rmd",
+            "papers/stuart_2019_comprehensive_integration_of_single_cell_data.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/scrnaseq.Rmd"
+      ]
+    },
+    {
+      "id": "chromatin_epigenomics",
+      "label": "ChIP-seq, ATAC-seq, and chromatin assays",
+      "aliases": [
+        "ChIP-seq",
+        "ATAC-seq",
+        "chromatin accessibility",
+        "peak calling",
+        "differential peaks"
+      ],
+      "subanalyses": [
+        {
+          "id": "chipseq_atacseq",
+          "label": "Peak analysis",
+          "aliases": [
+            "peak calling",
+            "differential accessibility",
+            "differential binding"
+          ],
+          "goals": [
+            "simulate_reads",
+            "call_peaks",
+            "test_differential_peaks"
+          ],
+          "candidate_models": [
+            "window/enrichment model",
+            "count-based differential peak model"
+          ],
+          "required_inputs": [
+            "FASTQ/BAM/CRAM or simulated reads",
+            "reference FASTA",
+            "sample metadata"
+          ],
+          "optional_inputs": [
+            "control/input library",
+            "blacklist",
+            "GTF annotation"
+          ],
+          "parameters": [
+            {
+              "id": "assay",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "chipseq",
+                "atacseq"
+              ]
+            },
+            {
+              "id": "comparison",
+              "type": "string",
+              "required": true,
+              "missing_value_policy": "required_for_differential",
+              "description": ""
+            },
+            {
+              "id": "replicates",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 2
+              }
+            }
+          ],
+          "expected_outputs": [
+            "peak set",
+            "differential peak table",
+            "coverage matrix"
+          ],
+          "recommended_figures": [
+            "fragment-size/QC",
+            "coverage tracks",
+            "peak heatmap",
+            "MA/volcano",
+            "TSS enrichment for ATAC"
+          ],
+          "qc_and_guardrails": [
+            "ChIP-seq needs target/antibody and appropriate control design.",
+            "ATAC and ChIP are not interchangeable assays."
+          ],
+          "tool_candidates": [
+            "simulate_chipseq",
+            "simulate_atacseq",
+            "MACS (knowledge_only)",
+            "ChIPsim"
+          ],
+          "knowledge_sources": [
+            "techniques/chipseq.Rmd",
+            "validation_contracts/chipseq.Rmd",
+            "papers/zhang_2008_model_based_analysis_of_chip_seq_macs.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/chipseq.Rmd"
+      ]
+    },
+    {
+      "id": "genomic_selection",
+      "label": "Genomic prediction and selection",
+      "aliases": [
+        "genomic selection",
+        "genomic prediction",
+        "GBLUP",
+        "GEBV",
+        "select parents"
+      ],
+      "subanalyses": [
+        {
+          "id": "genomic_prediction",
+          "label": "Genomic prediction",
+          "aliases": [
+            "GBLUP",
+            "rrBLUP",
+            "Bayes B",
+            "cross validation"
+          ],
+          "goals": [
+            "fit_prediction",
+            "evaluate_prediction",
+            "select_parents"
+          ],
+          "candidate_models": [
+            "GBLUP",
+            "ridge regression BLUP",
+            "Bayesian regression"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "training phenotypes",
+            "candidate genotypes"
+          ],
+          "optional_inputs": [
+            "kinship",
+            "environment",
+            "pedigree",
+            "cross constraints"
+          ],
+          "parameters": [
+            {
+              "id": "model",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "GBLUP",
+                "rrBLUP",
+                "BayesB"
+              ]
+            },
+            {
+              "id": "validation_design",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "random_kfold",
+                "forward_generation",
+                "family_held_out",
+                "environment_held_out"
+              ]
+            },
+            {
+              "id": "selection_intensity",
+              "type": "number",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "exclusive_minimum": 0,
+                "maximum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "GEBV predictions",
+            "accuracy metrics",
+            "selected parents",
+            "expected gain"
+          ],
+          "recommended_figures": [
+            "observed-versus-predicted",
+            "accuracy by fold",
+            "selection differential",
+            "genetic gain by cycle"
+          ],
+          "qc_and_guardrails": [
+            "Prevent training/test leakage across families and generations."
+          ],
+          "tool_candidates": [
+            "fit_genomic_model",
+            "run_genomic_selection",
+            "rrBLUP",
+            "BGLR"
+          ],
+          "knowledge_sources": [
+            "techniques/genomic_selection.Rmd",
+            "validation_contracts/genomic_selection.Rmd",
+            "papers/vanraden_2008_efficient_methods_to_compute_genomic_predicti.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/genomic_selection.Rmd"
+      ]
+    },
+    {
+      "id": "population_genetics",
+      "label": "Population genetics and ancestry",
+      "aliases": [
+        "admixture",
+        "population structure",
+        "LD",
+        "selection scan",
+        "ancestry",
+        "FST"
+      ],
+      "subanalyses": [
+        {
+          "id": "population_structure",
+          "label": "Structure, ancestry, and diversity",
+          "aliases": [
+            "PCA genetics",
+            "admixture",
+            "FST",
+            "relatedness",
+            "kinship"
+          ],
+          "goals": [
+            "summarize_population",
+            "infer_ancestry"
+          ],
+          "candidate_models": [
+            "PCA",
+            "model-based ancestry",
+            "kinship estimation",
+            "FST"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "sample metadata"
+          ],
+          "optional_inputs": [
+            "reference populations",
+            "geographic metadata"
+          ],
+          "parameters": [
+            {
+              "id": "analysis",
+              "type": "set",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "PCA",
+                "admixture",
+                "FST",
+                "kinship",
+                "IBD"
+              ]
+            },
+            {
+              "id": "ancestry_reference",
+              "type": "boolean",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": ""
+            }
+          ],
+          "expected_outputs": [
+            "PCs",
+            "ancestry proportions",
+            "FST",
+            "kinship/IBD"
+          ],
+          "recommended_figures": [
+            "PCA",
+            "admixture bar plot",
+            "kinship heatmap",
+            "FST distribution"
+          ],
+          "qc_and_guardrails": [
+            "Population labels and genotyping batches can confound ancestry inference."
+          ],
+          "tool_candidates": [
+            "PLINK (knowledge_only)",
+            "ADMIXTURE (knowledge_only)",
+            "RFMix"
+          ],
+          "knowledge_sources": [
+            "techniques/ancestry_aware_gwas.Rmd",
+            "papers/alexander_2009_fast_model_based_estimation_of_ancestry_in_un.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "linkage_disequilibrium",
+          "label": "LD analysis",
+          "aliases": [
+            "LD",
+            "LD decay",
+            "haplotype blocks"
+          ],
+          "goals": [
+            "estimate_LD"
+          ],
+          "candidate_models": [
+            "r2",
+            "Dprime",
+            "haplotype-block definition"
+          ],
+          "required_inputs": [
+            "genotypes with genomic positions"
+          ],
+          "optional_inputs": [
+            "genetic map",
+            "population labels"
+          ],
+          "parameters": [
+            {
+              "id": "LD_metric",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "allowed_values": [
+                "r2",
+                "Dprime"
+              ]
+            },
+            {
+              "id": "distance_window",
+              "type": "integer",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "pairwise LD",
+            "LD decay summary",
+            "haplotype blocks when requested"
+          ],
+          "recommended_figures": [
+            "LD decay curve",
+            "LD heatmap"
+          ],
+          "qc_and_guardrails": [
+            "LD is population, marker-density, and sample-size dependent."
+          ],
+          "tool_candidates": [
+            "PLINK (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "terminology/panels_ancestry_pedigrees.Rmd"
+          ],
+          "execution_status": "planned"
+        },
+        {
+          "id": "selection_scan",
+          "label": "Selection and differentiation scans",
+          "aliases": [
+            "selection scan",
+            "selective sweep",
+            "iHS",
+            "XP-EHH",
+            "PBS"
+          ],
+          "goals": [
+            "scan_selection"
+          ],
+          "candidate_models": [
+            "FST",
+            "iHS",
+            "XP-EHH",
+            "PBS",
+            "site-frequency-spectrum"
+          ],
+          "required_inputs": [
+            "genotypes",
+            "coordinates",
+            "population labels"
+          ],
+          "optional_inputs": [
+            "ancestral alleles",
+            "recombination map",
+            "outgroup"
+          ],
+          "parameters": [
+            {
+              "id": "statistic",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "FST",
+                "iHS",
+                "XP_EHH",
+                "PBS",
+                "SFS"
+              ]
+            },
+            {
+              "id": "populations",
+              "type": "array",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": ""
+            }
+          ],
+          "expected_outputs": [
+            "genome-wide selection statistic",
+            "outlier regions"
+          ],
+          "recommended_figures": [
+            "genome scan",
+            "regional haplotype plot",
+            "allele-frequency comparison"
+          ],
+          "qc_and_guardrails": [
+            "Selection scans need an explicit demographic null or cautious interpretation."
+          ],
+          "tool_candidates": [
+            "selscan (knowledge_only)",
+            "vcftools (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "papers/kelleher_2019_inferring_whole_genome_histories_in_large_pop.Rmd"
+          ],
+          "execution_status": "planned"
+        }
+      ],
+      "knowledge_sources": [
+        "techniques/ancestry_aware_gwas.Rmd"
+      ]
+    },
+    {
+      "id": "sequencing_and_assembly",
+      "label": "Sequencing simulation, assembly, and variant calling",
+      "aliases": [
+        "Illumina",
+        "MiSeq",
+        "NextSeq",
+        "NovaSeq",
+        "PacBio",
+        "HiFi",
+        "Revio",
+        "Nanopore",
+        "assembly",
+        "variant calling"
+      ],
+      "subanalyses": [
+        {
+          "id": "read_simulation",
+          "label": "Sequencing read simulation",
+          "aliases": [
+            "simulate Illumina reads",
+            "simulate HiFi reads",
+            "simulate Nanopore reads"
+          ],
+          "goals": [
+            "simulate_reads"
+          ],
+          "candidate_models": [
+            "platform error-profile simulation"
+          ],
+          "required_inputs": [
+            "reference sequence",
+            "platform profile",
+            "coverage/read count"
+          ],
+          "optional_inputs": [
+            "insert size",
+            "read length",
+            "seed"
+          ],
+          "parameters": [
+            {
+              "id": "platform",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "MiSeq",
+                "MiSeq_i100",
+                "NextSeq_1000_2000",
+                "NovaSeq_X",
+                "Sequel_IIe_HiFi",
+                "Revio_HiFi",
+                "Vega_HiFi",
+                "Nanopore"
+              ]
+            },
+            {
+              "id": "coverage",
+              "type": "number",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "exclusive_minimum": 0
+              }
+            },
+            {
+              "id": "read_length",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": "",
+              "bounds": {
+                "minimum": 1
+              }
+            },
+            {
+              "id": "seed",
+              "type": "integer",
+              "required": false,
+              "missing_value_policy": "automatic",
+              "description": "Recorded random seed for a synthetic or resampling workflow.",
+              "bounds": {
+                "minimum": 1
+              }
+            }
+          ],
+          "expected_outputs": [
+            "FASTQ reads",
+            "simulation metadata"
+          ],
+          "recommended_figures": [
+            "read-length distribution",
+            "quality/error profile",
+            "coverage distribution"
+          ],
+          "qc_and_guardrails": [
+            "Use a platform-compatible profile and disclose synthetic assumptions."
+          ],
+          "tool_candidates": [
+            "sim_illumina_art",
+            "sim_pacbio",
+            "sim_nanopore",
+            "ART",
+            "PBSIM3",
+            "Badread"
+          ],
+          "knowledge_sources": [
+            "validation_contracts/sequencing_assembly.Rmd",
+            "papers/huang_2012_art.Rmd"
+          ],
+          "execution_status": "partial"
+        },
+        {
+          "id": "genome_assembly",
+          "label": "Assembly and assembly QC",
+          "aliases": [
+            "de novo assembly",
+            "hybrid assembly",
+            "assembly QC"
+          ],
+          "goals": [
+            "assemble",
+            "evaluate_assembly"
+          ],
+          "candidate_models": [
+            "short-read assembly",
+            "long-read assembly",
+            "hybrid assembly"
+          ],
+          "required_inputs": [
+            "reads or assembled contigs"
+          ],
+          "optional_inputs": [
+            "reference genome for reference-based QC",
+            "estimated genome size"
+          ],
+          "parameters": [
+            {
+              "id": "assembly_strategy",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "short_read",
+                "long_read",
+                "hybrid"
+              ]
+            },
+            {
+              "id": "QC_reference_available",
+              "type": "boolean",
+              "required": true,
+              "missing_value_policy": "ask_or_disclose_default",
+              "description": ""
+            }
+          ],
+          "expected_outputs": [
+            "assemblies",
+            "contiguity metrics",
+            "misassembly/QC report"
+          ],
+          "recommended_figures": [
+            "assembly graph",
+            "N50/contiguity comparison",
+            "BUSCO/QUAST metrics"
+          ],
+          "qc_and_guardrails": [
+            "N50 alone is not assembly correctness.",
+            "Reference-based and reference-free QC answer different questions."
+          ],
+          "tool_candidates": [
+            "Unicycler",
+            "QUAST",
+            "Canu (knowledge_only)",
+            "Flye (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "workflows/hybrid_assembly_benchmark.Rmd",
+            "papers/gurevich_2013_quast_quality_assessment_tool_for_genome_asse.Rmd"
+          ],
+          "execution_status": "partial"
+        },
+        {
+          "id": "variant_calling",
+          "label": "Variant calling and filtering",
+          "aliases": [
+            "SNP calling",
+            "indel calling",
+            "structural variant calling"
+          ],
+          "goals": [
+            "align",
+            "call_variants",
+            "filter_variants"
+          ],
+          "candidate_models": [
+            "small-variant caller",
+            "SV caller",
+            "joint genotyping"
+          ],
+          "required_inputs": [
+            "FASTQ or aligned BAM/CRAM",
+            "reference FASTA"
+          ],
+          "optional_inputs": [
+            "known sites",
+            "pedigree",
+            "sample metadata"
+          ],
+          "parameters": [
+            {
+              "id": "variant_class",
+              "type": "set",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "SNP",
+                "indel",
+                "SV",
+                "CNV"
+              ]
+            },
+            {
+              "id": "calling_design",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "single_sample",
+                "cohort",
+                "trio",
+                "tumor_normal"
+              ]
+            }
+          ],
+          "expected_outputs": [
+            "VCF/BCF",
+            "quality metrics",
+            "filter report"
+          ],
+          "recommended_figures": [
+            "depth/quality distributions",
+            "Ti/Tv",
+            "allele balance",
+            "SV length spectrum"
+          ],
+          "qc_and_guardrails": [
+            "Reference build, ploidy, and joint-calling cohort must be explicit."
+          ],
+          "tool_candidates": [
+            "bcftools (knowledge_only)",
+            "GATK (knowledge_only)",
+            "Sniffles (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "papers/danecek_2021_twelve_years_of_samtools_and_bcftools.Rmd",
+            "papers/mckenna_2010_the_genome_analysis_toolkit_a_mapreduce_frame.Rmd"
+          ],
+          "execution_status": "planned"
+        }
+      ],
+      "knowledge_sources": [
+        "validation_contracts/sequencing_assembly.Rmd"
+      ]
+    },
+    {
+      "id": "annotation_and_function",
+      "label": "Genome annotation, gene function, and ontology",
+      "aliases": [
+        "GFF3",
+        "GTF",
+        "gene annotation",
+        "GO terms",
+        "gene ontology",
+        "functional annotation"
+      ],
+      "subanalyses": [
+        {
+          "id": "gene_coordinate_annotation",
+          "label": "Coordinate and functional annotation",
+          "aliases": [
+            "annotate variants",
+            "gene coordinates",
+            "GO mapping"
+          ],
+          "goals": [
+            "read_annotation",
+            "join_gene_GO",
+            "summarize_terms"
+          ],
+          "candidate_models": [
+            "coordinate overlap",
+            "identifier mapping",
+            "GO term summary"
+          ],
+          "required_inputs": [
+            "GFF3/GTF or gene-coordinate table",
+            "stable identifiers"
+          ],
+          "optional_inputs": [
+            "GO GAF",
+            "variant positions",
+            "orthology mapping"
+          ],
+          "parameters": [
+            {
+              "id": "identifier_namespace",
+              "type": "string",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "Stable ID namespace and assembly."
+            },
+            {
+              "id": "annotation_scope",
+              "type": "set",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "coordinates",
+                "GO_mapping",
+                "variant_effect",
+                "enrichment"
+              ]
+            }
+          ],
+          "expected_outputs": [
+            "gene coordinate table",
+            "GO mapping",
+            "annotation summary"
+          ],
+          "recommended_figures": [
+            "feature-type counts",
+            "GO category summary",
+            "coordinate overlap plot"
+          ],
+          "qc_and_guardrails": [
+            "Assembly and identifier namespace must match; symbol joins are not safe by default.",
+            "GO mapping is not GO enrichment."
+          ],
+          "tool_candidates": [
+            "read_gene_coordinates",
+            "read_go_gaf",
+            "join_gene_go",
+            "SnpEff (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "validation_contracts/genome_annotation.Rmd",
+            "tools/Gene_Ontology.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "validation_contracts/genome_annotation.Rmd"
+      ]
+    },
+    {
+      "id": "multiomics_integration",
+      "label": "Multi-omics and GxE integration",
+      "aliases": [
+        "multiomics",
+        "multi-omics",
+        "GxE",
+        "genotype by environment",
+        "integrated analysis"
+      ],
+      "subanalyses": [
+        {
+          "id": "gxe_multiomics",
+          "label": "GxE and linked multi-omics",
+          "aliases": [
+            "drought GxE",
+            "RNA-seq plus GWAS",
+            "multi-omics"
+          ],
+          "goals": [
+            "simulate_or_integrate_multiomics"
+          ],
+          "candidate_models": [
+            "interaction model",
+            "mediation model",
+            "multiview factor model"
+          ],
+          "required_inputs": [
+            "matched sample IDs across at least two modalities",
+            "experimental design"
+          ],
+          "optional_inputs": [
+            "genotypes",
+            "environment",
+            "batch",
+            "gene annotation"
+          ],
+          "parameters": [
+            {
+              "id": "modalities",
+              "type": "array",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "genotypes",
+                "phenotypes",
+                "bulk_rnaseq",
+                "scrnaseq",
+                "ATACseq",
+                "ChIPseq"
+              ]
+            },
+            {
+              "id": "integration_goal",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "joint_simulation",
+                "association",
+                "prediction",
+                "mediation"
+              ]
+            },
+            {
+              "id": "design_formula",
+              "type": "formula",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": ""
+            }
+          ],
+          "expected_outputs": [
+            "cross-modal feature tables",
+            "integration results",
+            "truth when simulated"
+          ],
+          "recommended_figures": [
+            "GxE interaction plot",
+            "cross-modal correlation",
+            "multiomics factor plot"
+          ],
+          "qc_and_guardrails": [
+            "Modalities must be matched at the declared unit: sample, donor, line, or cell.",
+            "Association across modalities is not mediation or causality."
+          ],
+          "tool_candidates": [
+            "simitall linked workflows",
+            "MOFA (knowledge_only)"
+          ],
+          "knowledge_sources": [
+            "workflows/maize_nam_chr10_gxe_multiomics.Rmd",
+            "validation_contracts/maize_nam_gxe_multiomics.Rmd"
+          ],
+          "execution_status": "partial"
+        }
+      ],
+      "knowledge_sources": [
+        "workflows/maize_nam_chr10_gxe_multiomics.Rmd"
+      ]
+    },
+    {
+      "id": "metagenomics",
+      "label": "Microbiome and metagenomics",
+      "aliases": [
+        "16S",
+        "amplicon sequencing",
+        "metagenomics",
+        "microbiome"
+      ],
+      "subanalyses": [
+        {
+          "id": "microbiome_analysis",
+          "label": "16S and shotgun metagenomics",
+          "aliases": [
+            "16S analysis",
+            "microbiome differential abundance",
+            "metagenome assembly"
+          ],
+          "goals": [
+            "profile_taxa",
+            "test_differential_abundance",
+            "assemble_metagenome"
+          ],
+          "candidate_models": [
+            "compositional model",
+            "count model",
+            "community diversity model"
+          ],
+          "required_inputs": [
+            "FASTQ or feature table",
+            "sample metadata"
+          ],
+          "optional_inputs": [
+            "reference database",
+            "negative controls",
+            "batch"
+          ],
+          "parameters": [
+            {
+              "id": "assay",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "16S_amplicon",
+                "shotgun_metagenomics"
+              ]
+            },
+            {
+              "id": "analysis_goal",
+              "type": "enum",
+              "required": true,
+              "missing_value_policy": "ask",
+              "description": "",
+              "allowed_values": [
+                "taxonomy",
+                "diversity",
+                "differential_abundance",
+                "functional_profile",
+                "assembly"
+              ]
+            }
+          ],
+          "expected_outputs": [
+            "feature/taxon table",
+            "diversity metrics",
+            "differential abundance results"
+          ],
+          "recommended_figures": [
+            "rarefaction/read depth",
+            "alpha/beta diversity",
+            "ordination",
+            "taxonomic composition"
+          ],
+          "qc_and_guardrails": [
+            "This package has no implemented metagenomics route yet.",
+            "Compositional data require method-specific interpretation."
+          ],
+          "tool_candidates": [
+            "QIIME2 (knowledge_only)",
+            "MetaPhlAn (knowledge_only)"
+          ],
+          "knowledge_sources": [],
+          "execution_status": "planned"
+        }
+      ],
+      "knowledge_sources": []
+    }
+  ]
+}

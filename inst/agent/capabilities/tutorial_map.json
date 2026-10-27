@@ -1,0 +1,79 @@
+{
+  "catalog_version": "1.0.0",
+  "purpose": "Maps canonical analysis concepts to local tutorials, workflow examples, validation contracts, tool cards, and paper summaries for retrieval. It is evidence metadata, not executable routing.",
+  "topics": [
+    {
+      "concept": "pedigree_inbreeding",
+      "tutorials": ["techniques/pedigree_breeding.Rmd", "techniques/relationship_trees.Rmd"],
+      "validation_contracts": ["validation_contracts/human_pedigree_liability.Rmd", "validation_contracts/human_relatedness_gwas_calibration.Rmd"],
+      "papers": ["papers/peng_2005_simupop.Rmd", "papers/manichaikul_2010_robust_relationship_inference_in_genome_wide.Rmd"]
+    },
+    {
+      "concept": "gwas",
+      "tutorials": ["techniques/gwas.Rmd", "techniques/association_tool_selection.Rmd", "techniques/ancestry_aware_gwas.Rmd"],
+      "workflows": ["workflows/simulate_and_run_gwas.Rmd", "workflows/maize_nam_binary_gwas.Rmd", "workflows/human_relatedness_gwas_calibration.Rmd"],
+      "validation_contracts": ["validation_contracts/phenotypes_gwas.Rmd"],
+      "tools": ["tools/GAPIT_FarmCPU.Rmd", "tools/GEMMA.Rmd", "tools/TASSEL.Rmd"],
+      "papers": ["papers/liu_2016_farmcpu.Rmd", "papers/yu_2006_a_unified_mixed_model_method_for_association.Rmd", "papers/price_2006_principal_components_analysis_corrects_for_st.Rmd"]
+    },
+    {
+      "concept": "bulk_rnaseq",
+      "tutorials": ["techniques/bulk_rnaseq_eqtl.Rmd"],
+      "validation_contracts": ["validation_contracts/bulk_rnaseq_eqtl.Rmd"],
+      "tools": ["tools/rnaseq_analysis_resources.Rmd", "tools/maSigPro.Rmd", "tools/powsimR.Rmd"],
+      "papers": ["papers/conesa_2016_a_survey_of_best_practices_for_rna_seq_data_a.Rmd", "papers/love_2014_moderated_estimation_of_fold_change_and_dispe.Rmd", "papers/robinson_2010_tt_edger_tt_a_bioconductor_package_for_differ.Rmd", "papers/law_2014_voom_precision_weights_unlock_linear_model_an.Rmd", "papers/vieth_2017_powsimr.Rmd"]
+    },
+    {
+      "concept": "time_series_rnaseq",
+      "tutorials": ["tools/maSigPro.Rmd", "techniques/bulk_rnaseq_eqtl.Rmd"],
+      "papers": ["papers/trapnell_2013_differential_analysis_of_gene_regulation_at_t.Rmd"]
+    },
+    {
+      "concept": "alternative_splicing",
+      "tutorials": ["tools/rnaseq_analysis_resources.Rmd"],
+      "external_resources": ["external_sources.json#masigpro", "external_sources.json#dexseq", "external_sources.json#leafcutter"]
+    },
+    {
+      "concept": "eqtl",
+      "tutorials": ["techniques/bulk_rnaseq_eqtl.Rmd", "techniques/scrnaseq.Rmd"],
+      "workflows": ["workflows/gwas_linked_rnaseq.Rmd", "workflows/single_cell_eqtl.Rmd"],
+      "validation_contracts": ["validation_contracts/bulk_rnaseq_eqtl.Rmd", "validation_contracts/scrnaseq_celltype_eqtl.Rmd"],
+      "external_resources": ["external_sources.json#qtltools"]
+    },
+    {
+      "concept": "scrnaseq",
+      "tutorials": ["techniques/scrnaseq.Rmd"],
+      "validation_contracts": ["validation_contracts/scrnaseq_celltype_eqtl.Rmd"],
+      "tools": ["tools/Seurat_Splatter.Rmd"],
+      "papers": ["papers/zappia_2017_splatter.Rmd", "papers/song_2023_scdesign3.Rmd", "papers/stuart_2019_comprehensive_integration_of_single_cell_data.Rmd"]
+    },
+    {
+      "concept": "chipseq_atacseq",
+      "tutorials": ["techniques/chipseq.Rmd"],
+      "validation_contracts": ["validation_contracts/chipseq.Rmd"],
+      "tools": ["tools/ChIPsim.Rmd"],
+      "papers": ["papers/zhang_2008_model_based_analysis_of_chip_seq_macs.Rmd", "papers/buenrostro_2013_transposition_of_native_chromatin_for_fast_an.Rmd"]
+    },
+    {
+      "concept": "genomic_selection",
+      "tutorials": ["techniques/genomic_selection.Rmd"],
+      "workflows": ["workflows/genomic_selection_cycle.Rmd"],
+      "validation_contracts": ["validation_contracts/genomic_selection.Rmd"],
+      "tools": ["tools/rrBLUP.Rmd", "tools/BGLR.Rmd"],
+      "papers": ["papers/vanraden_2008_efficient_methods_to_compute_genomic_predicti.Rmd", "papers/meuwissen_2001_genomic_selection.Rmd"]
+    },
+    {
+      "concept": "sequencing_assembly",
+      "validation_contracts": ["validation_contracts/sequencing_assembly.Rmd"],
+      "workflows": ["workflows/hybrid_assembly_benchmark.Rmd"],
+      "tools": ["tools/ART.Rmd", "tools/PBSIM3.Rmd", "tools/Badread.Rmd", "tools/Unicycler.Rmd", "tools/QUAST.Rmd"],
+      "papers": ["papers/huang_2012_art.Rmd", "papers/gurevich_2013_quast_quality_assessment_tool_for_genome_asse.Rmd", "papers/wick_2017_unicycler.Rmd"]
+    },
+    {
+      "concept": "annotation_and_GO",
+      "validation_contracts": ["validation_contracts/genome_annotation.Rmd"],
+      "tools": ["tools/Gene_Ontology.Rmd"],
+      "papers": ["papers/cingolani_2012_a_program_for_annotating_and_predicting_the_e.Rmd"]
+    }
+  ]
+}

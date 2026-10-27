@@ -1,0 +1,49 @@
+{
+  "catalog_version": "1.0.0",
+  "automatic_defaults": [
+    {
+      "parameter": "seed",
+      "value": 2026,
+      "record_in": "assumptions"
+    },
+    {
+      "parameter": "output_directory",
+      "value": "results/<study_id>",
+      "record_in": "recipe_metadata"
+    },
+    {
+      "parameter": "figure_directory",
+      "value": "results/<study_id>/figures",
+      "record_in": "recipe_metadata"
+    },
+    {
+      "parameter": "FDR",
+      "value": 0.05,
+      "record_in": "assumptions",
+      "only_when": "an FDR threshold is appropriate and user did not specify one"
+    }
+  ],
+  "must_ask_or_require": [
+    "organism when organism-specific resource is used",
+    "genome assembly for real coordinate-based data",
+    "data source: provided, synthetic, or package demo",
+    "primary analysis and requested goal",
+    "mating scheme for inbreeding",
+    "biological generations versus pedigree cycles",
+    "population/sample size when it determines design",
+    "phenotype distribution/model",
+    "RNA-seq design formula and contrast",
+    "time values for time-course analysis",
+    "splicing phenotype definition",
+    "eQTL cis/trans scope and window",
+    "genomic build compatibility across inputs"
+  ],
+  "never_infer": [
+    "real data from a synthetic request",
+    "clinical risk from a genetic simulation",
+    "a mating scheme from the word inbreeding",
+    "binary phenotype from binomial wording",
+    "gene-level differential expression from a splicing request",
+    "causal effect from GWAS/eQTL association"
+  ]
+}

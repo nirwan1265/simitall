@@ -1,0 +1,1027 @@
+{
+  "registry_version": "1.0.0",
+  "description": "Audited capability inventory and planning groundwork, not an executable workflow router.",
+  "planner_integration": "not_connected",
+  "default_policy": [
+    "Never infer a real population or biological model from a synthetic demo.",
+    "Ask for missing biological choices that change the scientific question.",
+    "Only use documented implementation defaults and disclose them."
+  ],
+  "input_modes": {
+    "provided": "Use supplied inputs; never replace them with synthetic data silently.",
+    "synthetic": "Synthetic data only when requested or explicitly selected.",
+    "package_demo": "Use bundled demonstration data only and disclose scope.",
+    "ask": "Ask for inputs or scientifically consequential missing choices."
+  },
+  "status_definitions": {
+    "partial": "Some named package functions exist; end-to-end support depends on the request and is not guaranteed.",
+    "planned": "No end-to-end implementation is asserted."
+  },
+  "workflows": [
+    {
+      "id": "genome_simulation",
+      "family": "genome",
+      "action": "simulate",
+      "aliases": [
+        "synthetic genome",
+        "simulated chromosome"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_genome"
+      ],
+      "required_inputs": [
+        "genome design or input reference",
+        "output location"
+      ],
+      "optional_inputs": [
+        "seed",
+        "chromosome sizes",
+        "variation parameters"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "sequence",
+        "variant truth"
+      ],
+      "recommended_figures": [
+        "variant distribution"
+      ],
+      "recommended_checks": [
+        "sequence lengths and coordinates valid"
+      ],
+      "guardrails": [
+        "Synthetic sequences must be labelled; reference sequence alone is not a population haplotype panel."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/genome_annotation.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "genome_annotation",
+      "family": "genome",
+      "action": "simulate",
+      "aliases": [
+        "gene annotation simulation",
+        "synthetic annotation"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_annotations"
+      ],
+      "required_inputs": [
+        "input FASTA",
+        "annotation design",
+        "output location"
+      ],
+      "optional_inputs": [
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "synthetic annotation"
+      ],
+      "recommended_figures": [
+        "gene distribution"
+      ],
+      "recommended_checks": [
+        "features within sequence bounds"
+      ],
+      "guardrails": [],
+      "knowledge_sources": [
+        "validation_contracts/genome_annotation.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "breeding_population",
+      "family": "population",
+      "action": "simulate",
+      "aliases": [
+        "breeding",
+        "crossbreeding",
+        "cross",
+        "NAM",
+        "biparental",
+        "backcross",
+        "selfing"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_breeding"
+      ],
+      "required_inputs": [
+        "founder haplotypes or explicitly requested synthetic founder design",
+        "breeding scheme",
+        "offspring count"
+      ],
+      "optional_inputs": [
+        "recombination map",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "offspring genotypes",
+        "ancestry",
+        "breakpoints"
+      ],
+      "recommended_figures": [
+        "ancestry",
+        "allele frequency"
+      ],
+      "recommended_checks": [
+        "sample counts and genotype validity"
+      ],
+      "guardrails": [
+        "NAM, biparental, selfing and backcrossing are distinct schemes, not interchangeable synonyms.",
+        "Do not assume selfing is biologically appropriate for humans."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/breeding_populations.Rmd"
+      ],
+      "paper_sources": [
+        "papers/peng_2005_simupop.Rmd"
+      ]
+    },
+    {
+      "id": "human_pedigree_illustrative",
+      "family": "pedigree",
+      "action": "simulate",
+      "aliases": [
+        "human pedigree",
+        "first cousin descendants",
+        "distantly related",
+        "unrelated"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_human_pedigree_groups",
+        "summarize_family_risk"
+      ],
+      "required_inputs": [
+        "marker frequencies",
+        "relationship groups",
+        "group sizes",
+        "illustrative risk model"
+      ],
+      "optional_inputs": [
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "marker homozygosity",
+        "illustrative probabilities"
+      ],
+      "recommended_figures": [
+        "homozygosity by group",
+        "probability by group"
+      ],
+      "recommended_checks": [
+        "probabilities in [0,1]",
+        "group sizes correct"
+      ],
+      "guardrails": [
+        "Illustrative probabilities are not clinical risk estimates.",
+        "Relationship groups are not interchangeable with selfing or generic F1 crosses."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/human_pedigree_liability.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "pedigree_inbreeding",
+      "family": "pedigree",
+      "action": "simulate_and_analyze",
+      "aliases": [
+        "inbreeding",
+        "inbred",
+        "consanguinity",
+        "first cousin mating",
+        "selfing",
+        "sib mating",
+        "pedigree inbreeding coefficient"
+      ],
+      "implementation_status": "planned",
+      "planner_status": "not_connected",
+      "package_functions": [],
+      "parameters": {
+        "organism": {
+          "type": "identifier",
+          "required": true,
+          "default_policy": "must_match_user_request"
+        },
+        "assembly": {
+          "type": "identifier",
+          "required_when": "real genomic inputs or genome coordinates are requested",
+          "default_policy": "ask"
+        },
+        "region": {
+          "type": "genomic_region",
+          "required_when": "region-specific output is requested",
+          "default_policy": "ask"
+        },
+        "mating_scheme": {
+          "type": "enum",
+          "allowed": [
+            "selfing",
+            "sib_mating",
+            "first_cousin",
+            "second_cousin",
+            "custom_pedigree"
+          ],
+          "required": true,
+          "default_policy": "ask"
+        },
+        "generations": {
+          "type": "integer",
+          "minimum": 1,
+          "required": true,
+          "default_policy": "ask"
+        },
+        "population_size": {
+          "type": "integer",
+          "minimum": 2,
+          "required": true,
+          "default_policy": "ask"
+        },
+        "marker_count": {
+          "type": "integer",
+          "minimum": 20,
+          "required_when": "synthetic markers are used",
+          "default_policy": "disclosed_default"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 1,
+          "required": false,
+          "default_policy": "automatic"
+        }
+      },
+      "required_inputs": [
+        "organism",
+        "data source",
+        "mating scheme or custom pedigree",
+        "number of generations",
+        "population size"
+      ],
+      "optional_inputs": [
+        "phased founder genotypes",
+        "recombination map",
+        "reference assembly",
+        "seed"
+      ],
+      "clarification_questions": [
+        "Which inbreeding mechanism is intended: selfing, sibling mating, cousin mating, or a custom pedigree?",
+        "Does \u201cgeneration\u201d mean a biological generation or a repeated mating cycle?",
+        "How many individuals or families should be simulated per generation?"
+      ],
+      "recommended_results": [
+        "pedigree table",
+        "pedigree-based inbreeding coefficient by generation",
+        "marker homozygosity by generation",
+        "marker-based inbreeding estimate"
+      ],
+      "recommended_figures": [
+        "pedigree diagram",
+        "inbreeding coefficient by generation",
+        "marker homozygosity by generation"
+      ],
+      "recommended_checks": [
+        "pedigree has no cycles or unknown parent identifiers",
+        "F values are finite and non-negative",
+        "declared mating scheme matches generated pedigree"
+      ],
+      "guardrails": [
+        "Inbreeding is a concept, not one mating scheme; do not map it automatically to selfing or first-cousin mating.",
+        "Do not conflate pedigree F, marker homozygosity, and ROH-based measures.",
+        "A generic synthetic model must not be labelled as real human chromosome data or clinical risk."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/human_pedigree_liability.Rmd"
+      ],
+      "paper_sources": [
+        "papers/peng_2005_simupop.Rmd"
+      ]
+    },
+    {
+      "id": "human_multigeneration_roh_gene_ranking",
+      "family": "pedigree",
+      "action": "simulate_and_analyze",
+      "aliases": [
+        "human inbreeding",
+        "first cousin mating",
+        "runs of homozygosity",
+        "ROH",
+        "gene homozygosity ranking"
+      ],
+      "implementation_status": "planned",
+      "package_functions": [],
+      "required_inputs": [
+        "phased founder VCF or BCF",
+        "compatible recombination map",
+        "compatible gene annotation",
+        "pedigree or mating design",
+        "generations",
+        "gene ranking definition"
+      ],
+      "optional_inputs": [
+        "reference FASTA",
+        "control population",
+        "seed"
+      ],
+      "clarification_questions": [
+        "What mating relationship is repeated each generation?",
+        "How should affected genes be ranked?"
+      ],
+      "recommended_results": [
+        "pedigree",
+        "ROH calls",
+        "gene-level scores"
+      ],
+      "recommended_figures": [
+        "homozygosity by generation",
+        "ROH landscape",
+        "gene ranking"
+      ],
+      "recommended_checks": [
+        "assembly and sample compatibility",
+        "explicit score and denominator"
+      ],
+      "guardrails": [
+        "Not implemented as an end-to-end registry route.",
+        "Gene homozygosity or ROH overlap does not establish functional impact or clinical risk."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/human_pedigree_liability.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "phenotype_simulation",
+      "family": "phenotype",
+      "action": "simulate",
+      "aliases": [
+        "phenotype simulation",
+        "trait simulation",
+        "continuous trait",
+        "binary trait"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_phenotypes"
+      ],
+      "required_inputs": [
+        "genotype data",
+        "trait model"
+      ],
+      "optional_inputs": [
+        "seed",
+        "effect sizes",
+        "heritability"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "phenotypes",
+        "trait truth"
+      ],
+      "recommended_figures": [
+        "phenotype distribution"
+      ],
+      "recommended_checks": [
+        "sample identifiers agree",
+        "distribution matches requested model"
+      ],
+      "guardrails": [
+        "Binary, binomial counts, negative-binomial counts and normal traits are distinct. Do not silently substitute one for another."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/phenotypes_gwas.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "quantitative_gwas",
+      "family": "gwas",
+      "action": "analyze",
+      "aliases": [
+        "GWAS",
+        "genome wide association",
+        "association mapping"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "analyze_gwas",
+        "benchmark_gwas"
+      ],
+      "required_inputs": [
+        "genotypes",
+        "continuous phenotype and sample IDs"
+      ],
+      "optional_inputs": [
+        "covariates",
+        "causal truth",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "association results",
+        "truth benchmark when truth supplied"
+      ],
+      "recommended_figures": [
+        "Manhattan",
+        "QQ",
+        "phenotype distribution"
+      ],
+      "recommended_checks": [
+        "p-values valid",
+        "sample IDs aligned"
+      ],
+      "guardrails": [
+        "A paper about FarmCPU does not establish that FarmCPU is installed or selected.",
+        "Do not promise causal recovery or significance in every replicate."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/phenotypes_gwas.Rmd"
+      ],
+      "paper_sources": [
+        "papers/liu_2016_farmcpu.Rmd"
+      ]
+    },
+    {
+      "id": "binary_gwas",
+      "family": "gwas",
+      "action": "analyze",
+      "aliases": [
+        "binary GWAS",
+        "case control GWAS",
+        "bernoulli phenotype"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "analyze_binary_gwas"
+      ],
+      "required_inputs": [
+        "genotypes",
+        "binary phenotype and sample IDs"
+      ],
+      "optional_inputs": [
+        "covariates",
+        "causal truth"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "association results"
+      ],
+      "recommended_figures": [
+        "Manhattan",
+        "QQ",
+        "case control counts"
+      ],
+      "recommended_checks": [
+        "p-values valid",
+        "report model failures or separation"
+      ],
+      "guardrails": [
+        "A binomial count with multiple trials is not automatically a binary trait."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/phenotypes_gwas.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "qtl_mapping",
+      "family": "qtl",
+      "action": "analyze",
+      "aliases": [
+        "QTL mapping",
+        "linkage mapping"
+      ],
+      "implementation_status": "planned",
+      "package_functions": [],
+      "required_inputs": [
+        "segregating population genotypes",
+        "phenotypes",
+        "linkage map",
+        "mapping model"
+      ],
+      "optional_inputs": [
+        "covariates",
+        "simulation truth"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "QTL scan"
+      ],
+      "recommended_figures": [
+        "LOD profile"
+      ],
+      "recommended_checks": [
+        "map and phenotype IDs align"
+      ],
+      "guardrails": [
+        "Do not silently replace linkage QTL mapping with GWAS."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/phenotypes_gwas.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "bulk_rnaseq_counts",
+      "family": "bulk_rnaseq",
+      "action": "simulate",
+      "aliases": [
+        "bulk RNA-seq",
+        "RNA-seq count simulation",
+        "gene expression simulation"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_rnaseq_experiment"
+      ],
+      "required_inputs": [
+        "experimental design or explicit simulation defaults",
+        "gene count or compatible annotation"
+      ],
+      "optional_inputs": [
+        "seed",
+        "dispersion",
+        "condition effects"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "count matrix",
+        "sample metadata",
+        "simulation truth"
+      ],
+      "recommended_figures": [
+        "sample PCA",
+        "count distribution"
+      ],
+      "recommended_checks": [
+        "nonnegative counts",
+        "sample IDs align"
+      ],
+      "guardrails": [
+        "Count simulation does not inherently require a genome FASTA.",
+        "Only run differential expression if requested and supported."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/bulk_rnaseq_eqtl.Rmd"
+      ],
+      "paper_sources": [
+        "papers/conesa_2016_a_survey_of_best_practices_for_rna_seq_data_a.Rmd",
+        "papers/love_2014_moderated_estimation_of_fold_change_and_dispe.Rmd"
+      ]
+    },
+    {
+      "id": "rnaseq_read_simulation",
+      "family": "bulk_rnaseq",
+      "action": "simulate",
+      "aliases": [
+        "RNA-seq reads",
+        "transcriptome reads"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_rnaseq_reads"
+      ],
+      "required_inputs": [
+        "transcript sequences",
+        "expression or read generation design"
+      ],
+      "optional_inputs": [
+        "transcript-to-gene map",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "simulated reads"
+      ],
+      "recommended_figures": [
+        "read quality"
+      ],
+      "recommended_checks": [
+        "input sequences match chosen reference"
+      ],
+      "guardrails": [],
+      "knowledge_sources": [
+        "validation_contracts/bulk_rnaseq_eqtl.Rmd"
+      ],
+      "paper_sources": [
+        "papers/conesa_2016_a_survey_of_best_practices_for_rna_seq_data_a.Rmd"
+      ]
+    },
+    {
+      "id": "bulk_differential_expression",
+      "family": "bulk_rnaseq",
+      "action": "analyze",
+      "aliases": [
+        "differential expression",
+        "DEG",
+        "DE analysis"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "summarize_rnaseq_results"
+      ],
+      "required_inputs": [
+        "count matrix",
+        "sample metadata",
+        "comparison design"
+      ],
+      "optional_inputs": [
+        "gene annotation"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "differential-expression results when an appropriate analysis backend is available"
+      ],
+      "recommended_figures": [
+        "volcano",
+        "PCA"
+      ],
+      "recommended_checks": [
+        "sample IDs align",
+        "replicates support requested design"
+      ],
+      "guardrails": [
+        "A paper or summarization function does not itself provide a differential-expression fitting backend."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/bulk_rnaseq_eqtl.Rmd"
+      ],
+      "paper_sources": [
+        "papers/love_2014_moderated_estimation_of_fold_change_and_dispe.Rmd",
+        "papers/conesa_2016_a_survey_of_best_practices_for_rna_seq_data_a.Rmd"
+      ]
+    },
+    {
+      "id": "single_cell_rnaseq",
+      "family": "single_cell",
+      "action": "simulate_and_analyze",
+      "aliases": [
+        "scRNA-seq",
+        "single-cell RNA-seq",
+        "single cell transcriptomics"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_scrnaseq_experiment",
+        "cluster_scrnaseq",
+        "aggregate_scrnaseq_pseudobulk",
+        "test_scrnaseq_conditions"
+      ],
+      "required_inputs": [
+        "cell and sample design",
+        "simulation parameters or input counts"
+      ],
+      "optional_inputs": [
+        "cell type labels",
+        "replicate metadata",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "counts",
+        "cell metadata",
+        "truth when simulated"
+      ],
+      "recommended_figures": [
+        "cell embedding",
+        "cell type composition"
+      ],
+      "recommended_checks": [
+        "sample IDs and count dimensions match"
+      ],
+      "guardrails": [
+        "Pseudobulk inference requires independent biological replicates, not just many cells."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/scrnaseq_celltype_eqtl.Rmd"
+      ],
+      "paper_sources": [
+        "papers/song_2023_scdesign3.Rmd",
+        "papers/zappia_2017_splatter.Rmd"
+      ]
+    },
+    {
+      "id": "eqtl",
+      "family": "eqtl",
+      "action": "simulate_and_analyze",
+      "aliases": [
+        "eQTL",
+        "expression QTL",
+        "cell type eQTL"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_rnaseq_from_gwas",
+        "simulate_scrnaseq_from_gwas",
+        "simulate_celltype_eqtls",
+        "benchmark_celltype_eqtls"
+      ],
+      "required_inputs": [
+        "matched genotypes and expression design or simulated expression truth"
+      ],
+      "optional_inputs": [
+        "cell types",
+        "covariates",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "expression and eQTL truth",
+        "benchmark when supported"
+      ],
+      "recommended_figures": [
+        "eQTL association",
+        "truth recovery"
+      ],
+      "recommended_checks": [
+        "sample identifiers aligned"
+      ],
+      "guardrails": [
+        "Generating eQTL truth is not the same as fitting an eQTL association model."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/bulk_rnaseq_eqtl.Rmd",
+        "validation_contracts/scrnaseq_celltype_eqtl.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "chipseq",
+      "family": "chromatin",
+      "action": "simulate_and_analyze",
+      "aliases": [
+        "ChIP-seq",
+        "ChIP sequencing",
+        "chromatin immunoprecipitation"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_chipseq",
+        "call_peaks_windowed",
+        "test_differential_peaks",
+        "score_peak_calls"
+      ],
+      "required_inputs": [
+        "reference sequences or explicit synthetic genome",
+        "assay and read design"
+      ],
+      "optional_inputs": [
+        "control reads",
+        "replicates",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "reads",
+        "peak truth",
+        "peak calls when requested"
+      ],
+      "recommended_figures": [
+        "peak recovery",
+        "coverage"
+      ],
+      "recommended_checks": [
+        "coordinates valid",
+        "compare to truth when available"
+      ],
+      "guardrails": [
+        "A MACS paper is knowledge, not proof that MACS is installed or invoked."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/chipseq.Rmd"
+      ],
+      "paper_sources": [
+        "papers/zhang_2008_model_based_analysis_of_chip_seq_macs.Rmd"
+      ]
+    },
+    {
+      "id": "atacseq",
+      "family": "chromatin",
+      "action": "simulate_and_analyze",
+      "aliases": [
+        "ATAC-seq",
+        "chromatin accessibility"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "simulate_atacseq",
+        "call_peaks_windowed",
+        "test_differential_peaks"
+      ],
+      "required_inputs": [
+        "reference sequences or explicit synthetic genome",
+        "assay design"
+      ],
+      "optional_inputs": [
+        "replicates",
+        "seed"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "reads",
+        "accessible-region truth",
+        "peak calls when requested"
+      ],
+      "recommended_figures": [
+        "accessibility",
+        "peak recovery"
+      ],
+      "recommended_checks": [
+        "coordinates valid"
+      ],
+      "guardrails": [
+        "ATAC-seq and ChIP-seq are distinct assays."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/chipseq.Rmd"
+      ],
+      "paper_sources": []
+    },
+    {
+      "id": "genomic_selection",
+      "family": "selection",
+      "action": "analyze",
+      "aliases": [
+        "genomic selection",
+        "GBLUP",
+        "genomic prediction",
+        "select parents"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "fit_genomic_model",
+        "run_genomic_selection",
+        "select_parents"
+      ],
+      "required_inputs": [
+        "genotypes",
+        "training phenotypes",
+        "selection objective"
+      ],
+      "optional_inputs": [
+        "cross-validation design",
+        "candidate set"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "predictions",
+        "selected parents when requested"
+      ],
+      "recommended_figures": [
+        "prediction performance",
+        "selection distribution"
+      ],
+      "recommended_checks": [
+        "sample IDs align",
+        "avoid train-test leakage"
+      ],
+      "guardrails": [
+        "Predicted gain is not guaranteed realized gain."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/genomic_selection.Rmd"
+      ],
+      "paper_sources": [
+        "papers/vanraden_2008_efficient_methods_to_compute_genomic_predicti.Rmd"
+      ]
+    },
+    {
+      "id": "sequencing_reads",
+      "family": "sequencing",
+      "action": "simulate",
+      "aliases": [
+        "Illumina",
+        "PacBio",
+        "Nanopore",
+        "read simulation"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "sim_illumina_art",
+        "sim_pacbio",
+        "sim_nanopore"
+      ],
+      "required_inputs": [
+        "reference sequence",
+        "platform and read design"
+      ],
+      "optional_inputs": [
+        "coverage",
+        "seed",
+        "error profile"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "simulated sequencing reads"
+      ],
+      "recommended_figures": [
+        "read length and quality"
+      ],
+      "recommended_checks": [
+        "reads match selected platform assumptions"
+      ],
+      "guardrails": [
+        "External simulators and platform profiles have separate installation and availability requirements."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/sequencing_assembly.Rmd"
+      ],
+      "paper_sources": [
+        "papers/huang_2012_art.Rmd"
+      ]
+    },
+    {
+      "id": "assembly_qc",
+      "family": "assembly",
+      "action": "analyze",
+      "aliases": [
+        "genome assembly",
+        "hybrid assembly",
+        "QUAST"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "run_unicycler_grid",
+        "run_quast_grid",
+        "summarize_quast"
+      ],
+      "required_inputs": [
+        "appropriate input reads or assemblies"
+      ],
+      "optional_inputs": [
+        "reference genome"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "assembly or QC metrics"
+      ],
+      "recommended_figures": [
+        "assembly metrics"
+      ],
+      "recommended_checks": [
+        "verify external tools and input compatibility"
+      ],
+      "guardrails": [
+        "Assembly and QC tools are optional external dependencies."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/sequencing_assembly.Rmd"
+      ],
+      "paper_sources": [
+        "papers/gurevich_2013_quast_quality_assessment_tool_for_genome_asse.Rmd"
+      ]
+    },
+    {
+      "id": "gene_go_annotation",
+      "family": "annotation",
+      "action": "analyze",
+      "aliases": [
+        "gene annotation",
+        "GO terms",
+        "gene ontology"
+      ],
+      "implementation_status": "partial",
+      "package_functions": [
+        "read_gene_coordinates",
+        "read_go_gaf",
+        "join_gene_go",
+        "summarize_go_terms"
+      ],
+      "required_inputs": [
+        "gene identifiers or genomic coordinates",
+        "compatible annotation or GO association file"
+      ],
+      "optional_inputs": [
+        "organism",
+        "assembly",
+        "gene identifier mapping"
+      ],
+      "clarification_questions": [],
+      "recommended_results": [
+        "gene coordinates or GO annotations"
+      ],
+      "recommended_figures": [
+        "GO term summaries"
+      ],
+      "recommended_checks": [
+        "assembly and identifier compatibility"
+      ],
+      "guardrails": [
+        "Bundled coordinate and GO resources are limited; mismatched identifiers require a reviewed mapping.",
+        "GO annotation counts are not automatically enrichment results."
+      ],
+      "knowledge_sources": [
+        "validation_contracts/genome_annotation.Rmd"
+      ],
+      "paper_sources": []
+    }
+  ]
+}

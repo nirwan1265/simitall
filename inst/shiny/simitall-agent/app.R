@@ -413,6 +413,8 @@ ui <- fluidPage(
   )
   plan <- if (identical(plan_source, "spec") && nzchar(stages)) {
     paste0("This plan and its R code were compiled from one validated request spec, so they describe the same ", length(grep("^[0-9]+\\.", strsplit(stages, "\n")[[1L]])), "-stage workflow. No language model was called. Open Design to see how your question was parsed, and Parameter Tunings to change the assumptions before RUN.")
+  } else if (identical(plan_source, "catalog")) {
+    "The agent created a partial StudySpec: a structured record of the requested analysis, inputs, parameters, figures, QC, and unanswered choices. It will ask for a missing goal before it considers any recipe, and it will not add unrequested analyses."
   } else if (nzchar(stages)) {
     paste0("A simulation/analysis plan was generated with ", length(grep("^[0-9]+\\.", strsplit(stages, "\n")[[1L]])), " proposed stage(s). Select Design, Stages, Inputs, Outputs, or R Code for the details.")
   } else {
@@ -506,6 +508,14 @@ server <- function(input, output, session) {
   is_spec_answer <- function(r = response()) {
     !is.null(r) && identical(r$plan_source, "spec") && !is.null(r$spec)
   }
+  is_catalog_clarification <- function(r = response()) {
+    !is.null(r) && identical(r$plan_source, "catalog") &&
+      !is.null(r$catalog_resolution) &&
+      identical(r$catalog_resolution$status, "needs_goal")
+  }
+  catalog_goal_id <- function(r = response()) {
+    paste0("catalog_goal_", r$shiny_id)
+  }
   # Input ids carry the answer number so tuning values from a previous
   # question can never leak into a new one.
   tune_id <- function(name) paste0("tune_", name, "_", isolate(response())$shiny_id)
@@ -541,6 +551,18 @@ server <- function(input, output, session) {
 
   observeEvent(input$answer_section, {
     selected_section(input$answer_section)
+  })
+
+  observeEvent(input$continue_catalog_goal, {
+    r <- response()
+    req(is_catalog_clarification(r))
+    selected <- input[[catalog_goal_id(r)]]
+    family <- r$catalog_resolution$family
+    choice <- Filter(function(x) identical(x$id, selected), family$subanalyses)
+    req(length(choice) == 1L)
+    question <- paste(r$question, "Requested goal:", choice[[1L]]$label)
+    updateTextInput(session, "question", value = question)
+    ask_agent(question, input$data_source)
   })
 
   sections <- reactive({
@@ -669,6 +691,11 @@ server <- function(input, output, session) {
           class = "upload-area",
           fileInput("uploaded_files", "Upload local input files", multiple = TRUE,
                     accept = c(".fa", ".fasta", ".fna", ".vcf", ".vcf.gz", ".bcf", ".tsv", ".csv", ".gff", ".gff3", ".gtf", ".bed", ".map")),
+          div(
+            class = "upload-note",
+            strong("Recommended sample naming: "),
+            simitall:::.simitall_agent_sample_naming_text()
+          ),
           upload_summary
         )
       )
@@ -685,7 +712,8 @@ server <- function(input, output, session) {
       }
       body <- tagList(
         div(class = "section-text", badge, HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
-        if (identical(choice, "Plan")) uiOutput("guided_questions")
+        if (identical(choice, "Plan")) uiOutput("guided_questions"),
+        if (identical(choice, "Plan")) uiOutput("catalog_clarification")
       )
     }
     div(
@@ -753,6 +781,29 @@ server <- function(input, output, session) {
       div(class = "section-detail-label", paste0("The agent has ", length(questions), " question", if (length(questions) > 1L) "s", " for you")),
       p(class = "guided-intro", "Defaults are already chosen, so you can just press RUN. Or pick an option, or let the agent test every option on the same simulated data and show which one recovers the truth best."),
       cards
+    )
+  })
+
+  output$catalog_clarification <- renderUI({
+    r <- response()
+    if (!is_catalog_clarification(r)) return(NULL)
+    family <- r$catalog_resolution$family
+    choices <- family$subanalyses
+    div(
+      class = "guided-box",
+      div(class = "section-detail-label", "One choice before planning"),
+      p(class = "guided-intro", "RNA-seq can mean several different studies. Choose the goal you want; the agent will then build a focused partial StudySpec without adding downstream analyses."),
+      div(
+        class = "guided-question",
+        radioButtons(
+          catalog_goal_id(r),
+          paste0("What should the ", family$label, " study do?"),
+          choiceNames = vapply(choices, `[[`, character(1), "label"),
+          choiceValues = vapply(choices, `[[`, character(1), "id"),
+          selected = choices[[1L]]$id
+        ),
+        actionButton("continue_catalog_goal", "Continue planning")
+      )
     )
   })
 
