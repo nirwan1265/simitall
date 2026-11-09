@@ -49,17 +49,27 @@ split without more invented values, ship the tiny model:
 rm -rf inst/models/simitall-tagger && cp -r training/models/simitall-tagger-tiny inst/models/simitall-tagger
 ```
 
-## Results so far (tiny model, 30k template sentences, 4 epochs on 2 CPUs, no paraphrases)
+## Results
+
+Shipped model: `inst/models/simitall-tagger` (tiny BERT, 19 MB; 60k template
+sentences + 13.5k Ollama llama3.1 paraphrases, 86% of paraphrases kept;
+6 epochs on a MacBook CPU in 32 min). The Mac GPU (MPS) crashed with an
+NSException, so use `DEVICE=cpu` on a Mac.
 
 | | lexicon | lexicon + model |
 |---|---|---|
-| reading recall, all 229 / test 152 | 78.7 / 79.6 | 84.0 / 83.9 |
-| primary analysis | 75.0 / 77.1 | 81.2 / 81.4 |
+| reading recall, all 229 / test 152 | 79.3 / 80.4 | 83.8 / 84.4 |
+| primary analysis | 75.0 / 77.1 | 82.2 / 82.1 |
 | goal and data source | 80.0 / 80.5 | 81.4 / 81.5 |
-| invented values (examples) | 1 / 1 | 2 / 2 |
-| improved / made worse (all) | | 34 / 0 |
+| secondary analyses exact | 83.0 / 81.6 | 83.4 / 82.2 |
+| invented values (examples) | 1 / 1 | 1 / 1 |
+| improved / made worse | | 32 / 0 (test: 18 / 0) |
 
-Caveat: the merge guards were adjusted after reading failures on all 229 examples
+Paraphrases barely changed these numbers versus a template-only model (dev
+accuracy on synthetic text is already 99.9%); the remaining misses are mostly
+answer-key conventions and numbers whose meaning the examples define
+differently. Fresh prompts written by someone else are the honest next test.
+
+Caveat: merge guards were adjusted after reading failures on all 229 examples
 (test split included), and the same author wrote the examples, lexicon and
-generator, so these are optimistic. The honest check is new prompts written by
-someone else after the model is frozen.
+generator, so these numbers are optimistic.

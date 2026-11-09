@@ -17,11 +17,19 @@
 )
 
 # Run the Python model on one prompt (needs torch + transformers in `python`).
-.simitall_model_predict <- function(text, model_dir = Sys.getenv("SIMITALL_PROMPT_MODEL"),
+.simitall_model_dir <- function() {
+  d <- Sys.getenv("SIMITALL_PROMPT_MODEL")
+  if (nzchar(d)) return(d)
+  d <- system.file("models", "simitall-tagger", package = "simitall")
+  if (!nzchar(d)) d <- file.path("inst", "models", "simitall-tagger")
+  d
+}
+
+.simitall_model_predict <- function(text, model_dir = .simitall_model_dir(),
                                     python = Sys.getenv("SIMITALL_PYTHON", "python3")) {
   script <- system.file("python", "prompt_model.py", package = "simitall")
   if (!nzchar(script)) script <- file.path("inst", "python", "prompt_model.py")
-  if (!nzchar(model_dir) || !dir.exists(model_dir)) return(NULL)
+  if (!nzchar(model_dir) || !file.exists(file.path(model_dir, "tagger.pt"))) return(NULL)
   out <- tryCatch(suppressWarnings(system2(python, c(shQuote(script), "--model", shQuote(model_dir), "--text", shQuote(text)),
                                            stdout = TRUE, stderr = FALSE)), error = function(e) character())
   if (!length(out)) return(NULL)
@@ -50,7 +58,14 @@
   txt <- vapply(sp, function(s) as.character(s[[2]]), "")
   pos <- vapply(sp, function(s) as.integer(s[[3]]), 1L)
   blocked <- isTRUE(view$do_not_run) || identical(view$execution_status, "unsupported")
-  if (blocked) return(view)   # the lexicon decided to stop; the model adds nothing
+  if (blocked) return(view)
+  toks <- tolower(unlist(regmatches(text, gregexpr("\\d+(?:[.,]\\d+)*|[A-Za-z]+(?:[-'/][A-Za-z0-9]+)*|[^\\sA-Za-z\\d]",
+                                                   text, perl = TRUE))))
+  before <- function(i, k = 3) toks[seq(max(1, pos[i] + 1 - k), pos[i])]
+  after <- function(i, k = 3) {
+    n <- length(strsplit(txt[i], " ", fixed = TRUE)[[1]])
+    toks[seq(pos[i] + n + 1, min(length(toks), pos[i] + n + k))]
+  }   # the lexicon decided to stop; the model adds nothing
   numbers_ok <- !any(grepl("numbers changed", unlist(view$flags)))
 
   # sentence-level fallbacks
@@ -65,6 +80,10 @@
   # roles: inputs / exclusions leave; the PRIMARY-tagged analysis moves first
   if (!blocked && length(analyses)) {
     for (i in which(tag %in% c("INPUT", "NEG"))) {
+      # an input must be marked as one in the text ("my GWAS hits", "these eQTL results")
+      if (tag[i] == "INPUT" && pos[i] < length(toks) &&
+          !any(after(i) %in% c("hits", "results", "genes", "peaks", "output", "list", "signals", "loci", "sumstats")) &&
+          !any(before(i) %in% c("my", "our", "these", "existing", "previous", "published"))) next
       a <- .simitall_model_span_analysis(txt[i], view$goal)
       if (!is.na(a) && a %in% analyses && length(analyses) > 1) analyses <- setdiff(analyses, a)
     }
@@ -77,7 +96,9 @@
                          "chipseq_atacseq", "time_series_rnaseq", "gxe_multiomics")
     special_gwas <- analyses[1] %in% c("binary_gwas", "multitrait_longitudinal_gwas", "rare_variant_and_gene_based_gwas",
                                        "population_relatedness_gwas_calibration")
-    if (length(pa) == 1 && pa %in% analyses && !keep_first && !(special_gwas && pa == "quantitative_gwas")) {
+    # "X, then Y": the text already gives the order, which the lexicon keeps
+    sequenced <- grepl("\\bthen\\b|\\bafterwards\\b|\\bfollowed by\\b|\\bafter that\\b", tolower(text))
+    if (length(pa) == 1 && pa %in% analyses && !keep_first && !sequenced && !(special_gwas && pa == "quantitative_gwas")) {
       analyses <- c(pa, setdiff(analyses, pa))
     }
   }
@@ -96,13 +117,15 @@
   for (t in if (numbers_ok) intersect(names(.simitall_model_fields), unique(tag)) else character()) {
     if (t == "GENS" && !grepl("\\bgen", tolower(text))) next   # "10 rounds" is not 10 generations
     idx <- which(tag == t)
+    # numbers glued to a chromosome name ("chr10", "chromosome 10") are not counts
+    idx <- idx[!vapply(idx, function(i) pos[i] >= 1 && toks[pos[i]] %in% c("chr", "chromosome", "chrom"), logical(1))]
+    if (!length(idx)) next
     vals <- lapply(txt[idx], .simitall_model_number)
     ok <- !vapply(vals, is.null, logical(1))
     if (!any(ok)) next
     idx <- idx[ok]; vals <- unlist(vals[ok])
     value <- vals[1]
     if (t %in% c("DONORS", "POP") && length(vals) > 1) {
-      toks <- tolower(unlist(regmatches(text, gregexpr("\\d+(?:[.,]\\d+)*|[A-Za-z]+(?:[-'/][A-Za-z0-9]+)*|[^\\sA-Za-z\\d]", text, perl = TRUE))))
       between <- toks[seq(pos[idx[1]] + 2, max(pos[idx[2]], pos[idx[1]] + 2))]
       if (any(between %in% c("and", "+", "plus")) && pos[idx[2]] - pos[idx[1]] <= 6) value <- sum(vals[1:2])
     }
@@ -121,6 +144,22 @@
   if (is.null(view$organism) && any(tag == "ORG")) {
     o <- .simitall_detect_organism(txt[tag == "ORG"][1])$organism
     if (!is.na(o)) view$organism <- o
+  }
+  view
+}
+
+# Read a request into a StudySpec-shaped view: lexicon tables first, then the
+# trained model (inst/models/simitall-tagger) when Python with torch is
+# available. Falls back to the lexicon alone, silently, when it is not.
+.simitall_read_prompt <- function(question, use_model = TRUE) {
+  view <- .simitall_lexicon_read_prompt(question)
+  view$reader <- "lexicon"
+  if (isTRUE(use_model)) {
+    pred <- .simitall_model_predict(question)
+    if (!is.null(pred)) {
+      view <- .simitall_model_merge(view, pred, question)
+      view$reader <- "lexicon+model"
+    }
   }
   view
 }

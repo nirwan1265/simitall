@@ -24,3 +24,25 @@ test_that("model merge only fills gaps, keeps guards, and never adds numbers to 
   v4 <- .simitall_model_merge(.simitall_lexicon_read_prompt(s), list(spans = list(list("PRIMARY", "GWAS", 9L))), s)
   expect_equal(v4$primary_analysis, "pedigree_inbreeding")  # the simulation step stays first
 })
+
+test_that("model merge ignores chromosome numbers, unmarked inputs and keeps 'X, then Y' order", {
+  q <- "Simulate a synthetic human chr10 pedigree with first-cousin marriages for 10 generations and compute pedigree F."
+  pred <- list(spans = list(list("ORG", "human", 3L), list("POP", "10", 5L), list("GENS", "10", 12L)))
+  v <- .simitall_model_merge(.simitall_lexicon_read_prompt(q), pred, q)
+  expect_null(v$parameters$population_size)
+
+  g <- "GWAS on my Arabidopsis VCF for flowering time, then annotate significant SNPs with nearby genes and GO terms."
+  pred <- list(spans = list(list("INPUT", "GWAS", 0L), list("ORG", "Arabidopsis", 3L), list("PRIMARY", "GO terms", 19L)))
+  v <- .simitall_model_merge(.simitall_lexicon_read_prompt(g), pred, g)
+  expect_equal(v$primary_analysis, "quantitative_gwas")
+  expect_true("gene_coordinate_annotation" %in% v$secondary_analyses)
+})
+
+test_that("the reader falls back to the lexicon without a model", {
+  old <- Sys.getenv("SIMITALL_PROMPT_MODEL")
+  Sys.setenv(SIMITALL_PROMPT_MODEL = tempfile())
+  on.exit(Sys.setenv(SIMITALL_PROMPT_MODEL = old), add = TRUE)
+  v <- .simitall_read_prompt("Simulate 200 RILs from two founders.")
+  expect_equal(v$reader, "lexicon")
+  expect_equal(v$primary_analysis, "cross_design")
+})

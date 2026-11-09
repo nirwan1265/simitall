@@ -6,6 +6,8 @@ min_donors	\bat least (\d+) donors\b	parameters.minimum_donors_per_cell_type	sin
 donors	(?<!at least )\b(\d+)\s+(?:[a-z]+\s+)?donors\b	design.donors	*	int
 cases	\b(\d+)\s+cases\b	design.cases	*	int
 controls	\b(\d+)\s+controls\b	design.controls	*	int
+pop_sum	\b(\d+)\s+[a-z-]+\s+(?:and|\+|plus)\s+(\d+)\s+[a-z-]+\s+(?:people|patients|donors|individuals|animals|mice|rats|plants|samples|lines|fish|dogs|cows|birds)\b	parameters.population_size	pedigree_inbreeding	sum	"6 healthy and 6 sick people" -> 12
+pop_sum	\b(\d+)\s+[a-z-]+\s+(?:and|\+|plus)\s+(\d+)\s+[a-z-]+\s+(?:people|patients|donors|individuals|animals|mice|rats|plants|samples|lines|fish|dogs|cows|birds)\b	design.population_size	*	sum	
 population_per_gen	\b(\d+)\s+(?:[a-z]+\s+)?(?:fish|birds?|animals|plants|individuals|ears)?\s*(?:/\s*gen|per gen(?:eration)?|each gen(?:eration)?)\b	parameters.population_size	pedigree_inbreeding	int
 population_of	\bpopulation (?:size )?of (\d+)\b	parameters.population_size	pedigree_inbreeding	int
 population_of	\bpopulation (?:size )?of (\d+)\b	design.population_size	*	int

@@ -20,7 +20,7 @@ the scripts in `data-raw/lexicon/`.
 | `techniques.tsv` | 69 | assays, sequencing platforms and analyses -> catalog analysis (`routes_to`), candidate analyses when the technique alone is ambiguous (bulk RNA-seq, scRNA-seq, WGS), parameter set (e.g. `assay=atacseq`, `platform=NovaSeq_X`), support (catalog status or `not_supported`), ontology IDs |
 | `technique_aliases.tsv` | 767 | alias -> technique; source (ontology ID, SRA vocabulary, analysis catalog, curated), strength, case sensitivity |
 | `settings.tsv` | 367 | alias -> analysis, field, value; 91 rows are the catalog's own enum values, the rest curated synonyms; every value validated against the catalog |
-| `quantities.tsv` | 66 | regex (one capture) -> field, analyses it applies to, transform (int, num, frac, bp, range, count, chr); number words and thousands separators normalised first |
+| `quantities.tsv` | 68 | regex (one capture) -> field, analyses it applies to, transform (int, num, frac, bp, range, count, chr); number words and thousands separators normalised first |
 | `intent.tsv` | 42 | regex cue -> signal (simulate, benchmark, analyze, plan, provided, demo, only, negation, real_data, clinical, correction) |
 | `intent_routes.tsv` | 9 | ambiguous assay + goal -> analysis (simulate scRNA-seq -> `scrnaseq_simulation`) |
 

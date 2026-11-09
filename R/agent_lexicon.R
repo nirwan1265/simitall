@@ -255,6 +255,7 @@
       frac = { v <- as.numeric(sub("\\s*%", "", first)); if (grepl("%", first) || v > 1) v / 100 else v },
       bp = as.numeric(caps[1]) * c(bp = 1, kb = 1e3, mb = 1e6, gb = 1e9)[[caps[2]]],
       range = seq(as.integer(caps[1]), as.integer(caps[2])),
+      sum = sum(as.integer(caps[nzchar(caps)])),
       count = length(regmatches(caps[1], gregexpr("\\d+", caps[1]))[[1]]),
       chr = paste0("chr", toupper(caps[1])),
       const = { v <- sub("^const:", "", r$transform); if (v %in% c("true", "false")) v == "true" else v },
@@ -373,6 +374,12 @@
     } else if (is.null(v[[parts[1]]][[parts[2]]])) {
       v[[parts[1]]][[parts[2]]] <- vals[[f]]
     }
+  }
+  # in donor-based analyses, counted people/samples are donors
+  donor_based <- c("scrnaseq_simulation", "scrnaseq_analysis", "single_cell_eqtl", "bulk_eqtl", "splicing_qtl")
+  if (!is.na(primary) && primary %in% donor_based && !is.null(v$design$population_size) && is.null(v$design$donors)) {
+    v$design$donors <- v$design$population_size
+    v$design$population_size <- NULL
   }
   if (identical(primary, "quantitative_gwas") && .simitall_lexicon_quant_trait_cue(text)) v$parameters$trait_type <- "continuous"
 
