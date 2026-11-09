@@ -76,6 +76,14 @@ plot_chipseq_results <- function(
   differential <- read_table(
     ".differential_binding_truth.tsv", "Differential-binding truth"
   )
+  # Native simulation tables retain condition and read_position; BED-like
+  # exports retain start/end instead. Accept either form so the lightweight
+  # agent recipe can produce complete QC figures without duplicating reads.
+  if (!all(c("start", "end") %in% names(reads)) &&
+      "read_position" %in% names(reads)) {
+    reads$start <- pmax(0L, as.integer(reads$read_position) - 1L)
+    reads$end <- reads$start + 1L
+  }
   if (!all(c("start", "end", "seqname", "library_id", "assay") %in%
            names(reads))) {
     stop("Read-position table does not have the expected BED-like columns")

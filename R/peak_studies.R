@@ -7,11 +7,14 @@
 # peak simulations can target regulatory features without external data.
 .simitall_simulate_peak_genome <- function(
     out_fa, out_gff3, n_chromosomes = 2L, chromosome_length = 200000L,
-    n_genes = 120L, seed = 1L) {
+    n_genes = 120L, seed = 1L, chromosome_names = NULL) {
   stopifnot(n_chromosomes >= 1, chromosome_length >= 20000, n_genes >= 4)
   set.seed(seed)
   dir.create(dirname(out_fa), recursive = TRUE, showWarnings = FALSE)
-  chroms <- paste0("chr", seq_len(n_chromosomes))
+  chroms <- if (is.null(chromosome_names)) paste0("chr", seq_len(n_chromosomes)) else chromosome_names
+  if (length(chroms) != n_chromosomes || any(!nzchar(chroms)) || anyDuplicated(chroms)) {
+    stop("chromosome_names must contain one unique non-empty name per chromosome")
+  }
   fasta <- unlist(lapply(chroms, function(chr) {
     bases <- sample(c("A", "C", "G", "T"), chromosome_length, TRUE, prob = c(0.3, 0.2, 0.2, 0.3))
     c(paste0(">", chr), vapply(split(bases, ceiling(seq_along(bases) / 80)), paste, character(1), collapse = ""))

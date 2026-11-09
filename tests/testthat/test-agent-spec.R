@@ -271,14 +271,25 @@ test_that("RNA-seq-only gene hunts run RNA-seq and not GWAS", {
   expect_true(spec$supported)
   expect_equal(spec$analyses, "rnaseq")
   expect_equal(spec$n_individuals, 300)
-  expect_equal(spec$rnaseq$conditions, c("irrigated", "drought"))
+  expect_equal(spec$rnaseq$conditions, c("control", "drought"))
   expect_match(spec$recipe, "simulate_rnaseq_from_gwas", fixed = TRUE)
-  expect_match(spec$recipe, "benchmark_eqtl", fixed = TRUE)
+  expect_false(spec$rnaseq$include_eqtl)
+  expect_false(grepl("benchmark_eqtl", spec$recipe, fixed = TRUE))
   expect_false(grepl("analyze_gwas", spec$recipe, fixed = TRUE))
   expect_false(grepl("run_genomic_selection", spec$recipe, fixed = TRUE))
   plan <- .simitall_agent_spec_plan(spec)
   expect_match(plan, "Not requested, so not run: GWAS, genomic selection", fixed = TRUE)
   expect_match(plan, "It does not show which gene causes the trait", fixed = TRUE)
+})
+
+test_that("eQTL mapping is added only when the prompt explicitly requests it", {
+  spec <- .simitall_agent_spec_pipeline(
+    "RNA-seq and cis eQTL mapping for drought in maize NAM, 100 lines",
+    data_source = "synthetic"
+  )
+  expect_true(spec$rnaseq$include_eqtl)
+  expect_match(spec$recipe, "benchmark_eqtl", fixed = TRUE)
+  expect_match(.simitall_agent_spec_plan(spec), "eQTL", fixed = TRUE)
 })
 
 test_that("named analyses compose in order", {
@@ -327,7 +338,7 @@ test_that("a compiled RNA-seq study runs end to end and scores its truth", {
   de <- read.delim(file.path(out, "rnaseq_de_truth_recovery_metrics.tsv"))
   expect_equal(de$genes_tested, 30L)
   expect_gt(de$true_genes, 0L)
-  expect_true(file.exists(file.path(out, "eqtl.eqtl_metrics.tsv")))
+  expect_false(file.exists(file.path(out, "eqtl.eqtl_metrics.tsv")))
   expect_true(file.exists(file.path(out, "figures", "rnaseq_volcano.png")))
 })
 
@@ -368,7 +379,7 @@ test_that("plain-language synonyms are normalised and shown in the plan", {
 
   water <- .simitall_agent_spec_pipeline("maize NAM: transcriptome profiling under water deficit", data_source = "synthetic")
   expect_equal(water$analyses, "rnaseq")
-  expect_equal(water$rnaseq$conditions, c("irrigated", "drought"))
+  expect_equal(water$rnaseq$conditions, c("control", "drought"))
 })
 
 test_that("family-risk specs keep the original question after normalisation", {
@@ -468,6 +479,63 @@ test_that("ChIP and ATAC prompts become peak-study specs", {
   expect_match(mark$recipe, "window = 1000L", fixed = TRUE)
 })
 
+test_that("complex ChIP prompts retain the requested population, chromosome, contrast, and figures", {
+  chip <- .simitall_agent_spec_pipeline(
+    paste(
+      "chip seq maize NAM lines chr 5 under cold and heat condition for any",
+      "2 random parents that have been inbred for 10 generation"
+    ),
+    data_source = "synthetic"
+  )
+  expect_equal(chip$task, "peak_study")
+  expect_equal(chip$organism, "maize")
+  expect_equal(chip$chromosome, "chr5")
+  expect_equal(chip$conditions, c("cold", "heat"))
+  expect_equal(chip$population$design, "NAM")
+  expect_equal(chip$population$n_parents, 2L)
+  expect_equal(chip$population$selfing_generations, 10L)
+  expect_match(chip$recipe, "self_generations = params$selfing_generations", fixed = TRUE)
+  expect_match(chip$recipe, "selected_parent_lines.tsv", fixed = TRUE)
+  expect_match(chip$recipe, "inbreeding_validation.tsv", fixed = TRUE)
+  expect_match(chip$recipe, "inbreeding_trajectory.png", fixed = TRUE)
+  expect_match(chip$recipe, "plot_chipseq_results", fixed = TRUE)
+  knobs <- vapply(.simitall_agent_spec_knobs(chip), `[[`, "", "name")
+  expect_true(all(c("chromosome_number", "n_parent_lines", "selfing_generations") %in% knobs))
+  plan <- .simitall_agent_spec_plan(chip)
+  expect_match(plan, "cold vs heat", fixed = TRUE)
+  expect_match(plan, "6 ChIP-seq validation figures", fixed = TRUE)
+  expect_match(plan, "final F10 labels", fixed = TRUE)
+})
+
+test_that("peak-study extraction accepts aliases and reordered design wording", {
+  prompts <- c(
+    paste(
+      "Run transcription-factor ChIP sequencing in corn on chromosome five.",
+      "Pick a pair of NAM-derived parental lines following ten cycles of",
+      "selfing and compare chilling to high heat."
+    ),
+    paste(
+      "Use ChIPseq on maize chr5: select two random inbred NAM lines after",
+      "selfing for ten generations; contrast heat versus cold."
+    ),
+    paste(
+      "Make a ChIP experiment with 2 chosen parental lines from nested",
+      "association mapping, 10 generations of selfing, on chromosome 5,",
+      "under cold and heat."
+    )
+  )
+  for (prompt in prompts) {
+    spec <- .simitall_agent_spec_pipeline(prompt, data_source = "synthetic")
+    expect_equal(spec$task, "peak_study")
+    expect_equal(spec$organism, "maize")
+    expect_equal(spec$chromosome, "chr5")
+    expect_equal(spec$population$design, "NAM")
+    expect_equal(spec$population$n_parents, 2L)
+    expect_equal(spec$population$selfing_generations, 10L)
+    expect_setequal(spec$conditions, c("cold", "heat"))
+  }
+})
+
 test_that("unsupported peak requests fail loudly or go to the legacy router", {
   bad <- .simitall_agent_spec_pipeline("ChIP-seq for H3K9me2")
   expect_true(any(grepl("H3K9me2' is not simulated", bad$errors, fixed = TRUE)))
@@ -517,11 +585,17 @@ test_that("single-cell prompts become single-cell specs with tissue-aware cell t
 
 test_that("single-cell questions and knobs recompile the recipe", {
   leaf <- .simitall_agent_spec_pipeline("single-cell RNA-seq of maize leaves under drought")
+  knobs <- .simitall_agent_spec_knobs(leaf)
+  profile <- Filter(function(k) identical(k$name, "cell_type_profile"), knobs)[[1L]]
+  expect_identical(profile$type, "select")
+  expect_true("root" %in% unname(profile$choices))
   expect_equal(vapply(.simitall_agent_spec_questions(leaf), `[[`, "", "id"), c("hvg_fraction", "sc_de_method"))
-  tuned <- .simitall_agent_recompile_spec(leaf, list(sc_de_method = "cell_wilcoxon", hvg_fraction = "0.5", n_donors = 10))
+  tuned <- .simitall_agent_recompile_spec(leaf, list(sc_de_method = "cell_wilcoxon", hvg_fraction = "0.5", n_donors = 10, cell_type_profile = "root"))
   expect_match(tuned$recipe, "method = \"cell_wilcoxon\"", fixed = TRUE)
   expect_match(tuned$recipe, "n_hvg = round(0.5 * params$n_genes)", fixed = TRUE)
   expect_match(tuned$recipe, "n_donors = 10L", fixed = TRUE)
+  expect_match(tuned$recipe, "epidermis = 0.3, cortex = 0.3", fixed = TRUE)
+  expect_match(.simitall_agent_spec_plan(tuned), "root tissue", fixed = TRUE)
   expect_match(.simitall_agent_spec_plan(tuned), "inflated false positives", fixed = TRUE)
   expect_true(any(grepl("^n_donors", .simitall_agent_recompile_spec(leaf, list(n_donors = 2))$errors)))
 })

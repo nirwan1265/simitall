@@ -14,9 +14,11 @@ Adding a JSON entry never enables code execution.
 | `input_types.json` | VCF/BCF, FASTA, GTF/GFF3, maps, count matrices, metadata, alignments, pedigree, and other input contracts. |
 | `defaults.json` | Transparent defaults, questions that must be asked, and assumptions that must never be inferred. |
 | `sample_naming.json` | Reversible naming for new sample IDs and the authoritative metadata-column contract for count, alignment, and phenotype data. |
+| `phenotype_modules.json` | Composable phenotype choices: outcome distribution, genetic architecture, observation design, compatible downstream analyses, figures, QC, and honest implementation status. |
 | `study_spec.schema.json` | JSON Schema for a partial/final prompt-derived StudySpec. |
 | `tutorial_map.json` | Retrieval map from canonical concepts to local tutorials, validation contracts, tools, workflows, and paper summaries. |
 | `external_sources.json` | Method documentation consulted where a concept was not adequately represented locally. It never declares a tool installed. |
+| `real_data_catalog.json` | Public real-data import examples with source accessions, expected local assets, companion annotation requirements, provenance rules, and safe import/QC checks. It never bundles data or enables a route by itself. |
 | `workflows.json` | Existing inventory of package-level routes and their current support status. |
 
 The internal `.simitall_agent_analysis_catalog()`,

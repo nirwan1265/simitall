@@ -14,6 +14,7 @@
     conditions,
     batch_levels,
     design = NULL) {
+  design_extra <- NULL
   if (!is.null(design)) {
     design <- .simitall_read_table_or_data(design, "Experiment design")
     if (!"sample" %in% names(design)) {
@@ -38,6 +39,11 @@
     } else {
       rep(NA_character_, nrow(design))
     }
+    extra_names <- setdiff(
+      names(design),
+      c("sample", "condition", "biological_replicates", "technical_replicates", "batch")
+    )
+    if (length(extra_names)) design_extra <- design[c("sample", extra_names)]
     replicate_mode <- "custom"
   } else {
     if (!length(sample_names) || anyNA(sample_names) ||
@@ -102,6 +108,12 @@
     }
   }
   metadata <- do.call(rbind, rows)
+  if (!is.null(design_extra)) {
+    design_index <- match(metadata$sample, design_extra$sample)
+    for (column in setdiff(names(design_extra), "sample")) {
+      metadata[[column]] <- design_extra[[column]][design_index]
+    }
+  }
   if (anyNA(metadata$batch)) {
     for (condition in unique(metadata$condition)) {
       index <- which(metadata$condition == condition & is.na(metadata$batch))
@@ -205,4 +217,3 @@
   }
   invisible(values)
 }
-

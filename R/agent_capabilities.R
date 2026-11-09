@@ -25,6 +25,93 @@
   jsonlite::fromJSON(.simitall_agent_capability_path("defaults.json"), simplifyVector = FALSE)
 }
 
+#' Load the composable phenotype-model registry
+#'
+#' The registry is deliberately separate from the broad analysis catalog: a
+#' phenotype request has three independent axes (outcome, genetic architecture,
+#' and observation design). Keeping them separate prevents a request for a
+#' count trait, for example, from silently receiving a Gaussian GWAS route.
+#'
+#' @keywords internal
+.simitall_agent_phenotype_module_registry <- function() {
+  jsonlite::fromJSON(
+    .simitall_agent_capability_path("phenotype_modules.json"),
+    simplifyVector = FALSE
+  )
+}
+
+.simitall_agent_phenotype_match <- function(text, entries) {
+  text <- .simitall_agent_catalog_normalise(text)
+  scores <- vapply(entries, function(entry) {
+    # A canonical model name wins over a generic contextual alias. For example,
+    # in "survival trait with repeated measures", survival is the outcome and
+    # repeated measures is the observation design, not a longitudinal outcome.
+    id <- gsub("_", " ", entry$id, fixed = TRUE)
+    id_bonus <- if (.simitall_agent_catalog_phrase_match(text, id)) 10L else 0L
+    id_bonus + .simitall_agent_catalog_score(text, c(entry$label, entry$aliases))
+  }, integer(1))
+  if (!length(scores) || max(scores) == 0L) return(NULL)
+  entries[[which.max(scores)]]
+}
+
+#' Resolve independent phenotype-simulation choices from a question
+#'
+#' This is a planning primitive only. It reports which combinations are
+#' validated, partial, or planned; recipe compilation must still require a
+#' validated compatible combination.
+#'
+#' @keywords internal
+.simitall_agent_resolve_phenotype_modules <- function(question) {
+  registry <- .simitall_agent_phenotype_module_registry()
+  outcome <- .simitall_agent_phenotype_match(question, registry$outcome_models)
+  architecture <- .simitall_agent_phenotype_match(question, registry$genetic_architectures)
+  design <- .simitall_agent_phenotype_match(question, registry$observation_designs)
+
+  if (is.null(outcome)) {
+    outcome <- Filter(function(entry) identical(entry$id, "gaussian"), registry$outcome_models)[[1L]]
+    outcome_source <- "default_for_unspecified_trait"
+  } else {
+    outcome_source <- "explicit"
+  }
+  if (is.null(architecture)) {
+    architecture <- Filter(function(entry) identical(entry$id, "additive_sparse_qtl"), registry$genetic_architectures)[[1L]]
+    architecture_source <- "default_for_unspecified_architecture"
+  } else {
+    architecture_source <- "explicit"
+  }
+  if (is.null(design)) {
+    design <- Filter(function(entry) identical(entry$id, "independent_individuals"), registry$observation_designs)[[1L]]
+    design_source <- "default_for_unspecified_design"
+  } else {
+    design_source <- "explicit"
+  }
+
+  compatible <- identical(architecture$compatible_outcomes[[1L]], "all") ||
+    outcome$id %in% architecture$compatible_outcomes
+  compatible <- compatible && (identical(design$compatible_outcomes[[1L]], "all") ||
+    outcome$id %in% design$compatible_outcomes)
+  statuses <- c(outcome$implementation$status, architecture$implementation_status, design$implementation_status)
+  execution_status <- if (!compatible) {
+    "incompatible"
+  } else if (all(statuses == "validated")) {
+    "validated"
+  } else if (any(statuses == "planned")) {
+    "planned"
+  } else {
+    "partial"
+  }
+  list(
+    outcome_model = outcome,
+    outcome_source = outcome_source,
+    genetic_architecture = architecture,
+    architecture_source = architecture_source,
+    observation_design = design,
+    design_source = design_source,
+    compatible = compatible,
+    execution_status = execution_status
+  )
+}
+
 .simitall_agent_sample_naming_contract <- function() {
   jsonlite::fromJSON(.simitall_agent_capability_path("sample_naming.json"), simplifyVector = FALSE)
 }
@@ -97,6 +184,11 @@
   if (!identical(resolution$status, "recognized")) return(NULL)
 
   primary <- resolution$primary$subanalysis
+  phenotype_modules <- if (identical(resolution$primary$family$id, "phenotype_simulation")) {
+    .simitall_agent_resolve_phenotype_modules(resolution$question)
+  } else {
+    NULL
+  }
   parameter_values <- stats::setNames(
     lapply(resolution$parameters, `[[`, "value"),
     vapply(resolution$parameters, `[[`, character(1), "id")
@@ -132,6 +224,16 @@
     ),
     design = list(),
     parameters = parameter_values,
+    phenotype_modules = if (is.null(phenotype_modules)) NULL else list(
+      outcome_model = phenotype_modules$outcome_model$id,
+      outcome_source = phenotype_modules$outcome_source,
+      genetic_architecture = phenotype_modules$genetic_architecture$id,
+      architecture_source = phenotype_modules$architecture_source,
+      observation_design = phenotype_modules$observation_design$id,
+      design_source = phenotype_modules$design_source,
+      compatible = phenotype_modules$compatible,
+      execution_status = phenotype_modules$execution_status
+    ),
     outputs = primary$expected_outputs,
     figures = primary$recommended_figures,
     truth = if (any(grepl("simulation truth", primary$expected_outputs, fixed = TRUE))) "simulation truth" else character(),
@@ -192,6 +294,9 @@
 .simitall_agent_catalog_parameter_value <- function(text, parameter) {
   allowed <- parameter$allowed_values
   if (!is.null(allowed) && length(allowed)) {
+    # Prefer the most specific value: "negative binomial" must win over the
+    # shorter embedded phrase "binomial".
+    allowed <- allowed[order(nchar(gsub("_", " ", allowed, fixed = TRUE)), decreasing = TRUE)]
     hits <- vapply(allowed, function(value) {
       .simitall_agent_catalog_phrase_match(text, gsub("_", " ", value, fixed = TRUE))
     }, logical(1))
@@ -312,6 +417,11 @@
 
   primary <- resolution$primary$subanalysis
   secondary <- resolution$secondary
+  phenotype_modules <- if (identical(resolution$primary$family$id, "phenotype_simulation")) {
+    .simitall_agent_resolve_phenotype_modules(resolution$question)
+  } else {
+    NULL
+  }
   declared <- unlist(lapply(resolution$parameters, function(parameter) {
     if (is.null(parameter$value)) return(character())
     paste0("- ", parameter$id, ": ", parameter$value)
@@ -335,6 +445,13 @@
   input_note <- if (!is.null(preflight) && !identical(preflight$status, "ready")) {
     paste0("\nInput status: ", preflight$action)
   } else ""
+  phenotype_text <- if (is.null(phenotype_modules)) character() else paste0(
+    "Phenotype composition:\n",
+    "- Outcome: ", phenotype_modules$outcome_model$label, " (", phenotype_modules$outcome_source, ").\n",
+    "- Genetic architecture: ", phenotype_modules$genetic_architecture$id, " (", phenotype_modules$architecture_source, ").\n",
+    "- Observation design: ", phenotype_modules$observation_design$id, " (", phenotype_modules$design_source, ").\n",
+    "- Composition status: `", phenotype_modules$execution_status, "`."
+  )
   paste(
     "simitall catalog-based planning result (not runnable yet).",
     paste0("Question: ", resolution$question),
@@ -346,6 +463,7 @@
     ),
     paste0("Required inputs:\n", paste(c(required, optional), collapse = "\n"), input_note),
     paste0("Required choices before execution:\n", paste(unresolved, collapse = "\n")),
+    phenotype_text,
     paste0("Expected results:\n", paste0("- ", primary$expected_outputs, collapse = "\n")),
     paste0("Required figures:\n", paste0("- ", primary$recommended_figures, collapse = "\n")),
     paste0("QC and guardrails:\n", paste0("- ", primary$qc_and_guardrails, collapse = "\n")),

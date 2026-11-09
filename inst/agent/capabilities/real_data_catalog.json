@@ -1,0 +1,252 @@
+{
+  "catalog_version": "1.0.0",
+  "purpose": "Curated, public real-data examples for import validation. Records describe how to obtain data, required companion annotation, and safe checks. They do not bundle data, run remote downloads, or imply that all records are executable Shiny routes.",
+  "package_policy": {
+    "raw_data_in_git": false,
+    "large_data_in_package": false,
+    "tracked_assets": [
+      "catalog metadata",
+      "download scripts",
+      "dataset manifests",
+      "import tests using small fixtures"
+    ],
+    "local_data_root_example": "~/Documents/simitall_real_data"
+  },
+  "gene_annotation_contract": {
+    "required_for": [
+      "gene-level RNA-seq interpretation",
+      "peak-to-gene annotation",
+      "variant-to-gene annotation",
+      "GO-ready gene lists"
+    ],
+    "preferred_formats": ["GFF3", "GTF", "gene_coordinates_tsv_gz"],
+    "minimum_columns": ["gene_id", "chromosome", "start", "end", "strand"],
+    "required_checks": [
+      "assembly or reference build agrees with the assay/genotype data",
+      "gene ID namespace is recorded and count/feature IDs are mapped explicitly",
+      "chromosome naming is compatible between annotation, VCF/BED, and reference",
+      "gene intervals have valid chromosome/start/end coordinates"
+    ],
+    "go_policy": "Use a dated organism-specific GAF plus a reviewed identifier mapping. GO annotations are never inferred from gene symbols."
+  },
+  "datasets": [
+    {
+      "id": "airway_dexamethasone",
+      "status": "recommended_first_import",
+      "workflow": "bulk_rnaseq_differential_expression",
+      "organism": "Homo_sapiens",
+      "source": {
+        "provider": "Bioconductor",
+        "accession": "airway",
+        "url": "https://bioconductor.org/packages/release/data/experiment/html/airway.html",
+        "publication_accession": "GSE52778"
+      },
+      "download": {
+        "method": "R/Bioconductor package",
+        "command_hint": "BiocManager::install('airway'); data('airway', package = 'airway')"
+      },
+      "local_layout": {
+        "root": "rnaseq_airway",
+        "files": {
+          "counts": "counts.tsv",
+          "sample_metadata": "sample_metadata.tsv",
+          "dataset_manifest": "manifest.json",
+          "gene_annotation": "annotation/compatible.gtf"
+        }
+      },
+      "input_contract": {
+        "counts": "integer gene-by-sample count matrix",
+        "metadata_required_columns": ["sample_id", "cell", "dexamethasone"],
+        "contrast": "untreated vs dexamethasone",
+        "gene_annotation": "required before interval, GO, or gene-model interpretation; obtain the original compatible annotation after confirming the source build"
+      },
+      "expected_checks": [
+        "count columns exactly match metadata sample_id after import",
+        "eight samples and two treatment levels are present",
+        "counts are non-negative integers",
+        "PCA, DE table, MA plot, and volcano plot are produced"
+      ]
+    },
+    {
+      "id": "maize_drought_rnaseq_gse132113",
+      "status": "recommended_after_format_review",
+      "workflow": "bulk_rnaseq_differential_expression",
+      "organism": "Zea_mays",
+      "source": {
+        "provider": "NCBI GEO",
+        "accession": "GSE132113",
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132113"
+      },
+      "download": {
+        "method": "GEO supplementary files",
+        "command_hint": "GEOquery::getGEOSuppFiles('GSE132113', baseDir = '~/Documents/simitall_real_data/rnaseq_maize_drought')"
+      },
+      "local_layout": {
+        "root": "rnaseq_maize_drought",
+        "files": {
+          "processed_data": "GSE132113/",
+          "sample_metadata": "sample_metadata.tsv",
+          "dataset_manifest": "manifest.json",
+          "gene_annotation": "annotation/compatible.gff3"
+        }
+      },
+      "input_contract": {
+        "processed_data": "inspect supplementary files before routing: DESeq2 requires integer counts; TPM/FPKM requires a normalized-expression workflow",
+        "metadata_required_columns": ["sample_id", "treatment", "tissue", "biological_replicate"],
+        "contrast": "control vs drought, optionally stratified by tissue",
+        "gene_annotation": "must match the genome build and identifier namespace reported by the selected GEO files; do not assume NAM-5.0 compatibility"
+      },
+      "expected_checks": [
+        "sample metadata retains control/drought and ear/leaf/kernel labels",
+        "matrix type is detected before selecting a DE method",
+        "sample IDs align exactly",
+        "PCA, contrast-specific DE table, MA plot, and volcano plot are produced"
+      ]
+    },
+    {
+      "id": "encode_k562_h3k27ac_encsr000akp",
+      "status": "recommended_processed_peak_import",
+      "workflow": "chipseq_peak_annotation",
+      "organism": "Homo_sapiens",
+      "source": {
+        "provider": "ENCODE",
+        "accession": "ENCSR000AKP",
+        "url": "https://www.encodeproject.org/experiments/ENCSR000AKP/",
+        "assay": "H3K27ac ChIP-seq in K562"
+      },
+      "download": {
+        "method": "ENCODE portal file selection",
+        "select": ["IDR-thresholded narrowPeak", "bigWig signal", "experiment metadata"],
+        "defer_until_raw_route": ["BAM/CRAM", "FASTQ", "matched input reads"]
+      },
+      "local_layout": {
+        "root": "chipseq_encode_k562",
+        "files": {
+          "peaks": "peaks.narrowPeak",
+          "signal": "signal.bigWig",
+          "metadata": "experiment_metadata.json",
+          "dataset_manifest": "manifest.json",
+          "gene_annotation": "annotation/compatible.gtf"
+        }
+      },
+      "input_contract": {
+        "processed_peak_data": "narrowPeak/BED coordinates plus explicit assembly from ENCODE file metadata",
+        "gene_annotation": "must use the exact reference assembly recorded by the selected ENCODE files",
+        "route_scope": "processed-peak import, interval annotation, peak-width/distribution/signal summaries; not raw read peak calling"
+      },
+      "expected_checks": [
+        "peak coordinates are valid and consistently named",
+        "selected file metadata supplies a reference assembly",
+        "annotation chromosome labels match peak labels",
+        "peak annotation and QC summaries are produced"
+      ]
+    },
+    {
+      "id": "maize_nam_panzea_gwas",
+      "status": "recommended_subset_import",
+      "workflow": "gwas",
+      "organism": "Zea_mays",
+      "source": {
+        "provider": "Panzea and MaizeGDB",
+        "url": "https://www.panzea.org/data.html",
+        "phenotype_url": "https://www.panzea.org/phenotypes",
+        "genotype_subset_url": "https://wgs.maizegdb.org/"
+      },
+      "download": {
+        "method": "download one NAM phenotype and create a matching VCF subset",
+        "recommended_initial_scope": "100-300 overlapping lines, one quantitative trait, one chromosome"
+      },
+      "local_layout": {
+        "root": "gwas_maize_nam",
+        "files": {
+          "genotypes": "genotypes_chr10.vcf.gz",
+          "phenotypes": "phenotypes.tsv",
+          "covariates": "covariates.tsv",
+          "dataset_manifest": "manifest.json",
+          "gene_annotation": "annotation/compatible.gff3"
+        }
+      },
+      "input_contract": {
+        "genotypes": "bgzip VCF plus tabix index, or an explicitly converted PLINK dataset",
+        "phenotype_required_columns": ["sample_id", "trait_value"],
+        "covariates_optional_columns": ["family", "environment", "batch", "PC1", "PC2"],
+        "gene_annotation": "must match the VCF reference assembly; record this in the manifest"
+      },
+      "expected_checks": [
+        "VCF and phenotype sample IDs overlap and duplicates are reported",
+        "variants pass coordinate, missingness, and MAF checks",
+        "phenotype is numeric with sufficient non-missing lines",
+        "PCA/kinship, Manhattan, QQ, GWAS table, and annotation-ready loci are produced"
+      ]
+    },
+    {
+      "id": "arabidopsis_1001genomes_arapheno_gwas",
+      "status": "recommended_subset_import",
+      "workflow": "gwas",
+      "organism": "Arabidopsis_thaliana",
+      "source": {
+        "provider": "1001 Genomes and AraPheno",
+        "genotype_subset_url": "https://tools.1001genomes.org/",
+        "phenotype_url": "https://arapheno.1001genomes.org/"
+      },
+      "download": {
+        "method": "download a VCF subset for selected accessions and one AraPheno phenotype CSV",
+        "recommended_initial_scope": "one chromosome, one trait, 100-300 accessions"
+      },
+      "local_layout": {
+        "root": "gwas_arabidopsis",
+        "files": {
+          "genotypes": "genotypes_chr1.vcf.gz",
+          "phenotypes": "phenotypes.csv",
+          "dataset_manifest": "manifest.json",
+          "gene_annotation": "annotation/compatible.gff3"
+        }
+      },
+      "input_contract": {
+        "genotypes": "VCF subset with accession identifiers retained",
+        "phenotypes": "AraPheno values plus original accession IDs",
+        "gene_annotation": "TAIR10-compatible annotation only after the VCF reference has been confirmed"
+      },
+      "expected_checks": [
+        "accession-ID mapping is explicit rather than inferred",
+        "VCF and phenotype sample overlap is reported",
+        "trait transformation, covariate policy, and GWAS model are recorded",
+        "PCA/kinship, Manhattan, QQ, and annotated lead-locus outputs are produced"
+      ]
+    },
+    {
+      "id": "pbmc3k_10x",
+      "status": "recommended_first_single_cell_import",
+      "workflow": "single_cell_rnaseq",
+      "organism": "Homo_sapiens",
+      "source": {
+        "provider": "10x Genomics",
+        "url": "https://www.10xgenomics.com/support/software/cell-ranger/8.0/analysis/cr-outputs-mex-matrices",
+        "dataset": "PBMC 3K"
+      },
+      "download": {
+        "method": "10x filtered feature-barcode matrix",
+        "required_files": ["matrix.mtx.gz", "features.tsv.gz", "barcodes.tsv.gz"]
+      },
+      "local_layout": {
+        "root": "scrnaseq_pbmc3k",
+        "files": {
+          "matrix_directory": "filtered_feature_bc_matrix/",
+          "cell_metadata": "cell_metadata.tsv",
+          "dataset_manifest": "manifest.json"
+        }
+      },
+      "input_contract": {
+        "matrix": "10x sparse UMI matrix",
+        "gene_annotation": "feature table is sufficient for clustering; compatible GTF is additionally required for interval, GO, or gene-model interpretation",
+        "route_scope": "QC, normalization, variable genes, PCA/UMAP, clustering, marker discovery"
+      },
+      "expected_checks": [
+        "matrix/features/barcodes dimensions agree",
+        "UMI counts are non-negative integers",
+        "cell and gene QC are reported before clustering",
+        "PCA/UMAP, cluster summary, and marker-gene table are produced"
+      ]
+    }
+  ]
+}

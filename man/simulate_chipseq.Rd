@@ -21,12 +21,14 @@ simulate_chipseq(
   enrichment_sdlog = 0.4,
   signal_fraction = 0.3,
   conditions = "control",
+  design = NULL,
   biological_replicates = 3L,
   technical_replicates = 1L,
   differential_binding_fraction = 0.1,
   differential_effect_log2 = 1,
   differential_effect_sd = 0.25,
   replicate_effect_sd = 0.15,
+  sample_effect_sd = 0.12,
   n_reads = 100000L,
   input_reads = n_reads,
   read_length = 50L,
@@ -80,6 +82,11 @@ peak component before PCR duplication and sequencing error.}
 
 \item{conditions}{Experimental condition names. The first is the reference.}
 
+\item{design}{Optional aggregated experimental design. It must contain
+\code{sample} and may contain \code{condition}, \code{biological_replicates},
+\code{technical_replicates}, and \code{batch}. It permits, for example, matched
+inbred parental lines under every condition.}
+
 \item{biological_replicates}{Biological replicates per condition.}
 
 \item{technical_replicates}{Technical libraries per biological replicate.}
@@ -92,6 +99,8 @@ dependent binding in each non-reference condition.}
 \item{differential_effect_sd}{Standard deviation of absolute effects.}
 
 \item{replicate_effect_sd}{Peak-level replicate variation in log2 units.}
+
+\item{sample_effect_sd}{Peak-level source-sample variation in log2 units.}
 
 \item{n_reads}{ChIP reads generated per library.}
 

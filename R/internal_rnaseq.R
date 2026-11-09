@@ -389,6 +389,19 @@
     gxe_fraction,
     gxe_effect_sd,
     treatment_label) {
+  # RNA-seq differential-expression simulations may deliberately disable eQTL
+  # generation. Return a schema-compatible empty truth table rather than
+  # treating that valid request as a failed eQTL placement.
+  if (as.integer(n_cis_eqtl) == 0L && as.integer(n_trans_eqtl) == 0L) {
+    return(data.frame(
+      eqtl_id = character(), type = character(), gene_id = character(),
+      variant_id = character(), seqname = character(),
+      variant_seqname = character(), variant_pos = integer(), gene_tss = integer(),
+      distance_bp = integer(), effect_log2 = numeric(), gxe_effect_log2 = numeric(),
+      gxe_condition = character(), causal = logical(), gene_index = integer(),
+      variant_index = integer(), stringsAsFactors = FALSE
+    ))
+  }
   variable_variant <- apply(genotype, 1L, function(value) {
     stats::var(value, na.rm = TRUE) > 0
   })
