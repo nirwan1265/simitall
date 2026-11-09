@@ -27,7 +27,7 @@
   ],
   "totals": {
     "target": 377,
-    "have": 63
+    "have": 229
   },
   "workflows": [
     {
@@ -35,7 +35,7 @@
       "family": "annotation_and_function",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 5,
       "tutorial_source": "TUTORIAL 2"
     },
     {
@@ -43,7 +43,7 @@
       "family": "breeding_and_cross_design",
       "catalog_status": "partial",
       "target": 12,
-      "have": 10,
+      "have": 14,
       "tutorial_source": "TUTORIAL 4.1-4.6"
     },
     {
@@ -51,7 +51,7 @@
       "family": "bulk_rnaseq",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -59,7 +59,7 @@
       "family": "bulk_rnaseq",
       "catalog_status": "knowledge_catalog_only",
       "target": 8,
-      "have": 0,
+      "have": 4,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -67,7 +67,7 @@
       "family": "bulk_rnaseq",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 10,
       "tutorial_source": "TUTORIAL 6.1-6.3"
     },
     {
@@ -75,7 +75,7 @@
       "family": "bulk_rnaseq",
       "catalog_status": "knowledge_catalog_only",
       "target": 8,
-      "have": 0,
+      "have": 6,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -83,7 +83,7 @@
       "family": "bulk_rnaseq",
       "catalog_status": "knowledge_catalog_only",
       "target": 8,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -91,7 +91,7 @@
       "family": "bulk_rnaseq",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 5,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -99,7 +99,7 @@
       "family": "chromatin_epigenomics",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 8,
       "tutorial_source": "TUTORIAL 8; workflows/chipseq_from_annotations.Rmd"
     },
     {
@@ -107,7 +107,7 @@
       "family": "cross-cutting",
       "catalog_status": "",
       "target": 30,
-      "have": 4,
+      "have": 14,
       "tutorial_source": ""
     },
     {
@@ -115,7 +115,7 @@
       "family": "cross-cutting",
       "catalog_status": "",
       "target": 20,
-      "have": 6,
+      "have": 15,
       "tutorial_source": ""
     },
     {
@@ -123,7 +123,7 @@
       "family": "cross-cutting",
       "catalog_status": "",
       "target": 15,
-      "have": 4,
+      "have": 13,
       "tutorial_source": ""
     },
     {
@@ -131,7 +131,7 @@
       "family": "eqtl",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 6,
       "tutorial_source": "TUTORIAL 6.4; techniques/bulk_rnaseq_eqtl.Rmd"
     },
     {
@@ -139,7 +139,7 @@
       "family": "eqtl",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 4,
       "tutorial_source": "TUTORIAL 7.2; workflows/single_cell_eqtl.Rmd"
     },
     {
@@ -147,7 +147,7 @@
       "family": "eqtl",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -163,7 +163,7 @@
       "family": "gwas",
       "catalog_status": "partial",
       "target": 12,
-      "have": 4,
+      "have": 9,
       "tutorial_source": "workflows/maize_nam_binary_gwas.Rmd"
     },
     {
@@ -171,7 +171,7 @@
       "family": "gwas",
       "catalog_status": "planned",
       "target": 8,
-      "have": 2,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -179,7 +179,7 @@
       "family": "gwas",
       "catalog_status": "partial",
       "target": 12,
-      "have": 8,
+      "have": 20,
       "tutorial_source": "TUTORIAL 3-3.1"
     },
     {
@@ -187,7 +187,7 @@
       "family": "gwas",
       "catalog_status": "planned",
       "target": 8,
-      "have": 1,
+      "have": 2,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -203,7 +203,7 @@
       "family": "metagenomics",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -211,7 +211,7 @@
       "family": "multiomics_integration",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 5,
       "tutorial_source": "workflows/maize_nam_chr10_gxe_multiomics.Rmd"
     },
     {
@@ -219,7 +219,7 @@
       "family": "pedigree_and_inbreeding",
       "catalog_status": "planned",
       "target": 8,
-      "have": 6,
+      "have": 21,
       "tutorial_source": "TUTORIAL 4.7; techniques/pedigree_breeding.Rmd"
     },
     {
@@ -227,7 +227,7 @@
       "family": "pedigree_and_inbreeding",
       "catalog_status": "knowledge_catalog_only",
       "target": 8,
-      "have": 1,
+      "have": 3,
       "tutorial_source": "workflows/human_relatedness_gwas_calibration.Rmd"
     },
     {
@@ -243,7 +243,7 @@
       "family": "population_genetics",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 2,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -251,7 +251,7 @@
       "family": "population_genetics",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -259,7 +259,7 @@
       "family": "population_genetics",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -267,7 +267,7 @@
       "family": "sequencing_and_assembly",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 3,
       "tutorial_source": "TUTORIAL 5; workflows/hybrid_assembly_benchmark.Rmd"
     },
     {
@@ -275,7 +275,7 @@
       "family": "sequencing_and_assembly",
       "catalog_status": "",
       "target": 8,
-      "have": 0,
+      "have": 2,
       "tutorial_source": "TUTORIAL 1"
     },
     {
@@ -283,7 +283,7 @@
       "family": "sequencing_and_assembly",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 5,
       "tutorial_source": "TUTORIAL 5"
     },
     {
@@ -291,7 +291,7 @@
       "family": "sequencing_and_assembly",
       "catalog_status": "planned",
       "target": 8,
-      "have": 0,
+      "have": 4,
       "tutorial_source": "knowledge base / papers"
     },
     {
@@ -299,7 +299,7 @@
       "family": "single_cell_rnaseq",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 4,
       "tutorial_source": "TUTORIAL 7"
     },
     {
@@ -307,7 +307,7 @@
       "family": "single_cell_rnaseq",
       "catalog_status": "partial",
       "target": 12,
-      "have": 0,
+      "have": 7,
       "tutorial_source": "TUTORIAL 7.1"
     }
   ]

@@ -10,11 +10,11 @@ the authority.
 |---|---|
 | `study_spec_examples_draft.jsonl` | Draft examples (`review_status: draft`). Reviewed rows can later move to `capabilities/study_spec_examples.jsonl`. |
 | `coverage_map.json` | Target number of examples per catalog analysis, combinations, traps and not-yet-supported techniques, and how many exist. |
-| `review_batch1.md` | Human-readable sheet for reviewing batch 1. |
+| `review_batch1.md`, `review_batch2.md` | Human-readable review sheets (batch 1: genetics/breeding; batch 2: omics, GWAS and inbreeding across species, combinations, traps, unsupported). |
 | `score_examples.R` | Runs the local agent on every example and scores it (`Rscript inst/agent/prompt_eval/score_examples.R [dev|test]`). |
 | `results/` | Latest score tables (regenerated; safe to delete). |
 
-Generators live in `data-raw/agent_eval/` (one script per batch).
+Generators live in `data-raw/agent_eval/` (one script per batch). `review_sheet.py <batch>` rebuilds a review sheet and the `have` counts in `coverage_map.json`; run `score_examples.R` first to include what the current agent picks.
 
 ## Row format
 
