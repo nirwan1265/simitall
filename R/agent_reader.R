@@ -81,7 +81,7 @@
 }
 
 # Plain-language summary of a reading (used in plans and in the app's Design panel).
-.simitall_reader_summary <- function(reading) {
+.simitall_reader_summary <- function(reading, show_checks = TRUE) {
   if (is.null(reading)) return("")
   lex <- .simitall_lexicon()
   line <- function(k, v) if (length(v) && !all(is.na(v)) && any(nzchar(as.character(v)))) paste0("- ", k, ": ", paste(unlist(v), collapse = ", ")) else NULL
@@ -107,7 +107,7 @@
     line("Region", reading$region),
     if (!is.null(settings)) paste0("- Values read from the request:\n", settings),
     line("Not supported yet", if (length(reading$unsupported_techniques)) .simitall_reader_technique_label(reading$unsupported_techniques)),
-    if (length(reading$flags)) paste0("- Checks:\n", paste0("  - ", reading$flags, collapse = "\n"))
+    if (show_checks && length(reading$flags)) paste0("- Checks:\n", paste0("  - ", reading$flags, collapse = "\n"))
   ), collapse = "\n")
 }
 
@@ -123,7 +123,7 @@
     "simitall reader: this request was not run.",
     paste0("Question: ", question),
     paste0("Why it stopped:\n", paste0("- ", why, collapse = "\n")),
-    .simitall_reader_summary(reading),
+    .simitall_reader_summary(reading, show_checks = FALSE),
     "What to do: correct or confirm the points above (for example give real input files, a valid value, or a supported technique) and ask again.",
     sep = "\n\n"
   )
