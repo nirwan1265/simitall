@@ -50,6 +50,7 @@ presses **RUN**.
 | Fixed demo/validation runners | `analysis/paper_fig/` | Reproducible demonstrations such as human IRF6 and NAM GWAS. They are examples/validation runners, not the only way the agent should answer a new question. |
 | Agent knowledge | `inst/agent/knowledge/` | Local Rmd knowledge records used for retrieval and planning. |
 | Prompt aliases | `inst/agent/aliases.tsv` | Audited wording/inflection aliases, for example `inbred -> inbreeding` and `epistatic -> epistasis`. |
+| Organism and technique lexicon | `inst/agent/lexicon/`, `R/agent_lexicon.R` | Organisms (NCBI Taxonomy names, strains, panels, breeds, builds, ploidy/selfing facts) and techniques (EFO/OBI/EDAM/SRA assays, platforms, analyses -> catalog routes). Rebuild with `data-raw/lexicon/`; read-only helpers, not yet wired into routing. |
 | Tests | `tests/testthat/` | Add a focused test for new user-visible behavior. |
 
 ## Prompt and Recipe Contract
@@ -88,6 +89,7 @@ Use separate, auditable static registries for different jobs:
 | Registry | Suggested location | Purpose |
 | --- | --- | --- |
 | Alias lexicon | `inst/agent/aliases.tsv` | Map wording and inflections to canonical concepts only. |
+| Organism/technique lexicon | `inst/agent/lexicon/*.tsv` | Recognise organism (with ploidy, selfing, generation time) and assay/platform/analysis, and the catalog analysis each routes to or `not_supported`. |
 | StudySpec schema | `inst/agent/capabilities/study_spec.schema.json` | Define valid fields and status for a partial or final StudySpec. |
 | Analysis catalog | `inst/agent/capabilities/analysis_catalog.json` | Map aliases to analysis families, subanalyses/goals, candidate models, typed parameters, inputs, results, figures, QC, tools, and support status. |
 | Capability registry | `inst/agent/capabilities/workflows.json` | Map an analysis/design to required inputs, compatible modules, safe defaults, outputs, figures, and validators. |
