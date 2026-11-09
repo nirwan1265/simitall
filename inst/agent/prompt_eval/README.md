@@ -14,7 +14,7 @@ the authority.
 | `score_examples.R` | Runs the local agent on every example and scores it (`Rscript inst/agent/prompt_eval/score_examples.R [dev|test]`). |
 | `results/` | Latest score tables (regenerated; safe to delete). |
 
-Generators live in `data-raw/agent_eval/` (one script per batch). `score_lexicon.R [dev|test]` compares the organism/technique lexicon with the current agent. `review_sheet.py <batch>` rebuilds a review sheet and the `have` counts in `coverage_map.json`; run `score_examples.R` first to include what the current agent picks.
+Generators live in `data-raw/agent_eval/` (one script per batch). `score_lexicon.R [dev|test]` compares organism/technique recognition with the current agent; `score_reader.R [dev|test]` scores the full lexicon reader, the agent and both merged with the same scorer. `review_sheet.py <batch>` rebuilds a review sheet and the `have` counts in `coverage_map.json`; run `score_examples.R` first to include what the current agent picks.
 
 ## Row format
 

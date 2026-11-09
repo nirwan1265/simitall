@@ -50,7 +50,7 @@ presses **RUN**.
 | Fixed demo/validation runners | `analysis/paper_fig/` | Reproducible demonstrations such as human IRF6 and NAM GWAS. They are examples/validation runners, not the only way the agent should answer a new question. |
 | Agent knowledge | `inst/agent/knowledge/` | Local Rmd knowledge records used for retrieval and planning. |
 | Prompt aliases | `inst/agent/aliases.tsv` | Audited wording/inflection aliases, for example `inbred -> inbreeding` and `epistatic -> epistasis`. |
-| Organism and technique lexicon | `inst/agent/lexicon/`, `R/agent_lexicon.R` | Organisms (NCBI Taxonomy names, strains, panels, breeds, builds, ploidy/selfing facts) and techniques (EFO/OBI/EDAM/SRA assays, platforms, analyses -> catalog routes). Rebuild with `data-raw/lexicon/`; read-only helpers, not yet wired into routing. |
+| Prompt lexicon | `inst/agent/lexicon/`, `R/agent_lexicon.R` | Four tables: organisms (NCBI Taxonomy, strains, panels, breeds, builds, ploidy/selfing facts), techniques (EFO/OBI/EDAM/SRA -> catalog routes), methods/design terms and quantities (-> catalog parameter values), intent (goal, data source, negation, guard cues). `.simitall_lexicon_read_prompt()` returns a StudySpec view; read-only, not yet wired into routing. See `inst/agent/lexicon/SOURCES.md`. |
 | Tests | `tests/testthat/` | Add a focused test for new user-visible behavior. |
 
 ## Prompt and Recipe Contract

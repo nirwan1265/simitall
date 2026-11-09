@@ -1,0 +1,67 @@
+group	pattern	field	analyses	transform	notes
+heritability	\b(?:h2|h\^2|h²|heritability)\s*(?:of|=|:|is|~)?\s*(0?\.\d+|1\.0+|1)(?![.\d])	parameters.heritability	*	num	only values in [0, 1]; "h2 1.4" is not read
+n_causal	\b(\d+)\s+(?:additive\s+|known\s+)?(?:causal(?:\s+(?:snps|variants|loci))?|qtls?|qtns?)\b	parameters.n_causal	*	int
+n_pcs	\b(?:top\s+)?(\d+)\s+(?:pcs|principal components)\b	parameters.n_PCs	*	int
+min_donors	\bat least (\d+) donors\b	parameters.minimum_donors_per_cell_type	single_cell_eqtl	int
+donors	(?<!at least )\b(\d+)\s+(?:[a-z]+\s+)?donors\b	design.donors	*	int
+cases	\b(\d+)\s+cases\b	design.cases	*	int
+controls	\b(\d+)\s+controls\b	design.controls	*	int
+population_per_gen	\b(\d+)\s+(?:[a-z]+\s+)?(?:fish|birds?|animals|plants|individuals|ears)?\s*(?:/\s*gen|per gen(?:eration)?|each gen(?:eration)?)\b	parameters.population_size	pedigree_inbreeding	int
+population_of	\bpopulation (?:size )?of (\d+)\b	parameters.population_size	pedigree_inbreeding	int
+population_of	\bpopulation (?:size )?of (\d+)\b	design.population_size	*	int
+population_size	\b(\d+)\s+(?:[a-z0-9-]+\s+){0,2}(?:lines|plants|individuals|samples|accessions|inbreds|animals|mice|rats|dogs|cows|cattle|fish|birds|chickens|broilers|offspring|progeny|rils|nils|dh lines|clones|genotypes|strains|people|humans|segregants|exomes|labradors|german shepherds|ears|holsteins?|sorghum lines|maize inbreds|human genomes)\b	parameters.population_size	pedigree_inbreeding	int	pedigree analyses keep population size under parameters
+population_size	\b(\d+)\s+(?:[a-z0-9-]+\s+){0,2}(?:lines|plants|individuals|samples|accessions|inbreds|animals|mice|rats|dogs|cows|cattle|fish|birds|chickens|broilers|offspring|progeny|rils|nils|dh lines|clones|genotypes|strains|people|humans|segregants|exomes|labradors|german shepherds|ears|holsteins?|sorghum lines|maize inbreds|human genomes)\b	design.population_size	*	int
+founders	\b(\d+)\s+(?:[a-z]+\s+)?(?:founders?|founder strains|parents?|parental lines|inbreds? parents)\b	design.founder_count	*	int	"two founders", "8 founder strains", "two parent"
+founders_from	\bfrom (\d+) (?:accessions|founders|parents|inbreds)\b	design.founder_count	cross_design	int
+selfing_gens	\b(\d+)\s+(?:generations? of selfing|selfing generations?|rounds of selfing|selfed generations|generations of self)	parameters.generations	pedigree_inbreeding	int
+selfing_gens	\b(\d+)\s+(?:generations? of selfing|selfing generations?|rounds of selfing|selfed generations|generations of self)	design.selfing_generations	*	int
+selfed_for	\bselfed for (\d+) generations\b	design.selfing_generations	*	int
+bcs	\bbc(\d+)s(\d+)\b	design.backcross_generations	*	int	BC2S7: first number
+bcs_self	\bbc\d+s(\d+)\b	design.selfing_generations	*	int	BC2S7: second number
+backcrosses	\b(\d+)\s+(?:backcross(?:es|ing)?|backcross generations|rounds of backcrossing)\b	design.backcross_generations	cross_design	int
+generations	\b(\d+)\s+(?:generations?|gens?)\b	parameters.generations	pedigree_inbreeding	int
+coverage	(?<![-\d.])\b(\d+(?:\.\d+)?)\s*x\b(?!\s*\d)	parameters.coverage	*	num	"30x"; not "2x250"
+read_length	\b2\s*x\s*(\d+)\b	parameters.read_length	*	int	"2x250"
+read_length_bp	\b(\d+)\s*bp\b	parameters.read_length	*	int
+paired	\bpaired[- ]end\b|\b2\s*x\s*\d+	parameters.paired_end	*	const:true
+library_size	\b(\d+)\s+reads per (?:library|sample)\b	parameters.library_size	*	int
+cis_window	\b(\d+(?:\.\d+)?)\s*(kb|mb)\s+(?:cis\s+)?window\b	parameters.cis_window_bp	*	bp
+within_window	\bwithin (\d+(?:\.\d+)?)\s*(kb|mb|bp)\b	parameters.window_bp	*	bp
+ld_window	\bup to (\d+(?:\.\d+)?)\s*(kb|mb)\b	parameters.distance_window	*	bp
+fdr_value	\bfdr\s*(?:of|=|<|at|level)?\s*(0?\.\d+|\d+(?:\.\d+)?\s*%)	parameters.FDR	differential_expression	frac	numeric FDR only for DE; GWAS reads the method
+target_power	\b(\d+)\s*%\s*(?:target\s+)?power\b|\bpower (?:of )?(\d+)\s*%	parameters.target_power	*	frac
+power_grid	\b(\d+)\s+to\s+(\d+)\s+replicates\b	parameters.sample_size_grid	*	range
+technical_reps	\b(\d+)\s+technical\s+replicates\b	design.technical_replicates	*	int
+bio_reps	\b(\d+)\s+(?:biological\s+)?(?:replicates|reps)\b	parameters.replicates	chipseq_atacseq	int
+bio_reps	\b(\d+)\s+(?:biological\s+)?(?:replicates|reps)\b	design.biological_replicates_per_condition	*	int
+reps_x	\bx\s*(\d+)\s+(?:biological\s+)?(?:replicates|reps)\b	design.biological_replicates_per_condition	*	int
+time_points	\b(\d+)\s+(?:treatment\s+)?(?:time\s?points|timepoints|stages|time-points)\b	design.time_points	*	int
+time_list	\b((?:\d+\s*,\s*)+\d+\s*,?\s*and\s+\d+)\s*(?:hours|h|days|weeks)\b	design.time_points	*	count	"0, 2, 6, 24 and 48 hours" -> 5
+environments	\b(\d+)\s+(?:environments|locations|sites)\b	design.environments	*	int
+batches	\b(\d+)\s+batch(?:es)?\b	design.batches	*	int
+batches_across	\bacross (\d+) batches\b	design.batches	*	int
+cells_per	\b(\d+)\s+cells\s+(?:per|each)\b	parameters.cells_per_donor	*	int
+cells_x	\bx\s*(\d+)\s+cells\b	parameters.cells_per_donor	*	int	"20 donors x 100 cells"
+cell_types	\b(\d+)\s+cell types\b	design.cell_types	*	int
+n_genes	\b(\d+)\s+genes\b	parameters.n_genes	bulk_counts_simulation;scrnaseq_simulation	int
+n_peaks	\b(\d+)\s+peaks\b	parameters.n_peaks	*	int
+diff_binding	\b(\d+(?:\.\d+)?)\s*%\s+differential binding\b	parameters.differential_binding_fraction	*	frac
+gxe_fraction	\b(\d+(?:\.\d+)?)\s*%\s+gxe\b	parameters.gxe_fraction	*	frac
+ct_specific	\b(\d+(?:\.\d+)?)\s*%\s+(?:of eqtls\s+)?(?:are\s+)?(?:cell[- ]type[- ])?specific\b	parameters.cell_type_eqtl_fraction	*	frac
+doublets	\b(\d+(?:\.\d+)?)\s*%\s+doublets?\b	parameters.doublet_rate	*	frac
+dropout	\b(\d+(?:\.\d+)?)\s*%\s+dropout\b	parameters.dropout_rate	*	frac
+ambient	\b(\d+(?:\.\d+)?)\s*%\s+ambient\b	parameters.ambient_fraction	*	frac
+maternal	\bmaternal variance\s*(\d+(?:\.\d+)?)\s*%	parameters.maternal_variance	*	frac
+prevalence	\bprevalence\s*(?:of|=)?\s*(0?\.\d+)|\b(\d+(?:\.\d+)?)\s*%\s+affected\b	parameters.prevalence	*	frac
+consanguinity	\b(\d+(?:\.\d+)?)\s*%\s+of marriages\b	parameters.consanguinity_rate	*	frac
+maf	\bmaf\s*(?:<|below|under)\s*(\d+(?:\.\d+)?)\s*%	parameters.MAF_threshold	*	frac
+n_cis	\b(\d+)\s+cis(?:\s+and\s+\d+\s+trans)?\s+eqtls?\b	parameters.n_cis_eqtl	*	int
+n_trans	\b(\d+)\s+trans\s+eqtls?\b	parameters.n_trans_eqtl	*	int
+genome_size	\b(\d+(?:\.\d+)?)\s*(kb|mb|gb)\s+(?:synthetic\s+)?genome\b	parameters.genome_size_bp	*	bp
+chromosomes	\b(\d+)\s+chromosomes\b	parameters.n_chromosomes	*	int
+gc	\bgc(?: content)?\s*(\d+(?:\.\d+)?)\s*%	parameters.gc_content	*	frac
+min_coverage	\bmin(?:imum)?\.?\s+coverage\s*(?:of\s+)?(\d+)	parameters.minimum_coverage	*	int
+subpops	\b(\d+)\s+subpopulations\b	design.n_subpopulations	*	int
+categories	\bscore\s*1\s*-\s*(\d+)\b|\b(\d+)\s+categories\b	parameters.n_categories	*	int
+conditions	\b(\d+)\s+(?:conditions|groups|treatments|nitrogen levels|treatment levels)\b	design.conditions	*	int
+region	\bchr(?:omosome)?\s*(\d+|x|y)\b	region	*	chr

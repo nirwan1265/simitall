@@ -20,7 +20,11 @@ gene coordinates	annotation	analysis_catalog	strong	no
 gene ontology	annotation	curated	strong	no
 gene set enrichment	annotation	curated	strong	no
 Gene-set enrichment analysis	annotation	EDAM:operation_2436	weak	no
+genes are within	annotation	curated	strong	no
+genes close to	annotation	curated	strong	no
 genes near	annotation	curated	strong	no
+genes overlapping	annotation	curated	strong	no
+genes within	annotation	curated	strong	no
 GFF3	annotation	curated	weak	no
 GO enrichment	annotation	curated	strong	no
 GO mapping	annotation	curated	strong	no
@@ -30,6 +34,7 @@ GTF	annotation	curated	weak	no
 missense	annotation	curated	strong	no
 nearby genes	annotation	curated	strong	no
 nearest genes	annotation	curated	strong	no
+overlapping genes	annotation	curated	strong	no
 SnpEff	annotation	curated	strong	no
 stop gained	annotation	curated	strong	no
 variant effect	annotation	curated	strong	no

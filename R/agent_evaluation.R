@@ -169,12 +169,20 @@
 }
 
 # Run the local agent on every example and score it.
+# `view`, when given, maps a prompt straight to a StudySpec view (for example
+# `.simitall_lexicon_read_prompt`) and replaces `ask` + `.simitall_eval_view`.
 .simitall_evaluate_examples <- function(examples = .simitall_eval_examples(), split = NULL,
-                                        ask = function(q) simitall_ask(q, provider = "local")) {
+                                        ask = function(q) simitall_ask(q, provider = "local"),
+                                        view = NULL) {
   if (!is.null(split)) examples <- Filter(function(e) identical(e$split, split), examples)
   rows <- lapply(examples, function(e) {
-    answer <- tryCatch(suppressMessages(suppressWarnings(ask(e$prompt))), error = function(err) list())
-    .simitall_eval_score_one(e, .simitall_eval_view(answer))
+    v <- if (is.null(view)) {
+      answer <- tryCatch(suppressMessages(suppressWarnings(ask(e$prompt))), error = function(err) list())
+      .simitall_eval_view(answer)
+    } else {
+      tryCatch(view(e$prompt), error = function(err) list(design = list(), parameters = list()))
+    }
+    .simitall_eval_score_one(e, v)
   })
   res <- do.call(rbind, rows)
   pct <- function(a, b) if (sum(b)) round(100 * sum(a) / sum(b), 1) else NA
