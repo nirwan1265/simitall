@@ -50,6 +50,8 @@ presses **RUN**.
 | Fixed demo/validation runners | `analysis/paper_fig/` | Reproducible demonstrations such as human IRF6 and NAM GWAS. They are examples/validation runners, not the only way the agent should answer a new question. |
 | Agent knowledge | `inst/agent/knowledge/` | Local Rmd knowledge records used for retrieval and planning. |
 | Prompt aliases | `inst/agent/aliases.tsv` | Audited wording/inflection aliases, for example `inbred -> inbreeding` and `epistatic -> epistasis`. |
+| Prompt lexicon | `inst/agent/lexicon/`, `R/agent_lexicon.R` | Four tables: organisms (NCBI Taxonomy, strains, panels, breeds, builds, ploidy/selfing facts), techniques (EFO/OBI/EDAM/SRA -> catalog routes), methods/design terms and quantities (-> catalog parameter values), intent (goal, data source, negation, guard cues). `.simitall_lexicon_read_prompt()` returns a StudySpec view; read-only, not yet wired into routing. See `inst/agent/lexicon/SOURCES.md`. |
+| Prompt model (optional) | `training/`, `inst/python/prompt_model.py`, `R/agent_model.R` | Small BERT that tags number roles, condition/cell-type names and analysis roles; `.simitall_model_merge()` fills only what the lexicon left empty and adds nothing to stopped requests. Train with `training/run_overnight.sh`. |
 | Tests | `tests/testthat/` | Add a focused test for new user-visible behavior. |
 
 ## Prompt and Recipe Contract
@@ -88,6 +90,7 @@ Use separate, auditable static registries for different jobs:
 | Registry | Suggested location | Purpose |
 | --- | --- | --- |
 | Alias lexicon | `inst/agent/aliases.tsv` | Map wording and inflections to canonical concepts only. |
+| Organism/technique lexicon | `inst/agent/lexicon/*.tsv` | Recognise organism (with ploidy, selfing, generation time) and assay/platform/analysis, and the catalog analysis each routes to or `not_supported`. |
 | StudySpec schema | `inst/agent/capabilities/study_spec.schema.json` | Define valid fields and status for a partial or final StudySpec. |
 | Analysis catalog | `inst/agent/capabilities/analysis_catalog.json` | Map aliases to analysis families, subanalyses/goals, candidate models, typed parameters, inputs, results, figures, QC, tools, and support status. |
 | Capability registry | `inst/agent/capabilities/workflows.json` | Map an analysis/design to required inputs, compatible modules, safe defaults, outputs, figures, and validators. |
