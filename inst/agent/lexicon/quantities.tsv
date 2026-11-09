@@ -17,6 +17,8 @@ founders	\b(\d+)\s+(?:[a-z]+\s+)?(?:founders?|founder strains|parents?|parental 
 founders_from	\bfrom (\d+) (?:accessions|founders|parents|inbreds)\b	design.founder_count	cross_design	int
 selfing_gens	\b(\d+)\s+(?:generations? of selfing|selfing generations?|rounds of selfing|selfed generations|generations of self)	parameters.generations	pedigree_inbreeding	int
 selfing_gens	\b(\d+)\s+(?:generations? of selfing|selfing generations?|rounds of selfing|selfed generations|generations of self)	design.selfing_generations	*	int
+selfing_for	\bself(?:ing|ed|-pollinat\w*)\s+(?:[a-z]+\s+){0,4}for\s+(\d+)\s+gen(?:eration)?s?\b	parameters.generations	pedigree_inbreeding	int	"selfing in poplar for 5 generations"
+selfing_for	\bself(?:ing|ed|-pollinat\w*)\s+(?:[a-z]+\s+){0,4}for\s+(\d+)\s+gen(?:eration)?s?\b	design.selfing_generations	*	int	
 selfed_for	\bselfed for (\d+) generations\b	design.selfing_generations	*	int
 bcs	\bbc(\d+)s(\d+)\b	design.backcross_generations	*	int	BC2S7: first number
 bcs_self	\bbc\d+s(\d+)\b	design.selfing_generations	*	int	BC2S7: second number

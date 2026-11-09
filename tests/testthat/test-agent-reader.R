@@ -61,3 +61,21 @@ test_that("the reader option sets the default", {
   old <- options(simitall.reader = "new"); on.exit(options(old), add = TRUE)
   expect_equal(simitall_ask("selfing in dogs 5 generations", provider = "local")$plan_source, "reader")
 })
+
+test_that("typos, reversed phrasing, dropped assays and F1/selfing contradictions are caught", {
+  local_reader_options()
+  q <- "selfing in poplus tree for 5 generations and then rnaseq on the F1 siblings between 2 random parents"
+  a <- simitall_ask(q, provider = "local", reader = "new")
+  expect_equal(a$plan_source, "reader")
+  expect_equal(a$reading$organism, "poplar")
+  expect_equal(a$reading$design$selfing_generations, 5L)
+  expect_true(any(grepl("selfing is not possible in poplar", a$reading$flags)))
+  expect_true(any(grepl("assumed 'poplus'", a$reading$flags)))
+  expect_true(any(grepl("RNA-seq was mentioned without saying", a$reading$flags)))
+  expect_true(any(grepl("F1 siblings come from a single cross", a$reading$flags)))
+
+  expect_equal(.simitall_detect_organism("GWAS in sorgum for plant height")$organism, "sorghum")
+  expect_equal(.simitall_detect_organism("simulate drosphila sib mating")$organism, "drosophila")
+  expect_true(is.na(.simitall_detect_organism("make a new avenue of research")$organism))
+  expect_true(is.na(.simitall_detect_organism("please simulate the population")$organism))
+})

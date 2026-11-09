@@ -100,9 +100,52 @@
   use <- if (any(h$strength == "strong")) h[h$strength == "strong", , drop = FALSE] else h
   orgs <- unique(use$target)
   if (length(orgs) > 1) orgs <- setdiff(orgs, "bacteria")
+  assumed <- NULL
+  if (!length(orgs)) {
+    fz <- .simitall_fuzzy_organism(text)
+    if (!is.null(fz)) {
+      orgs <- fz$organism
+      assumed <- fz
+    }
+  }
   facts <- lex$organisms[match(orgs, lex$organisms$organism), , drop = FALSE]
   list(organism = if (length(orgs)) orgs[1] else NA_character_, all = orgs,
-       hits = h, facts = facts, multiple = length(orgs) > 1)
+       hits = h, facts = facts, multiple = length(orgs) > 1, assumed = assumed)
+}
+
+# Typo fallback ("poplus" -> Populus, "sorgum" -> sorghum), used only when no
+# alias matched. Targets are genus names and long common names (>= 6 letters),
+# which rarely collide with English words; one edit allowed (two for >= 9).
+.simitall_fuzzy_organism <- function(text) {
+  lex <- .simitall_lexicon()
+  if (is.null(lex$fuzzy_targets)) {
+    a <- lex$organism_aliases
+    genus <- vapply(strsplit(a$alias[a$alias_type %in% c("scientific_name", "genus")], " "), `[`, "", 1)
+    keep <- (a$alias_type %in% c("scientific_name", "genus")) |
+      (a$alias_type %in% c("common_name", "informal", "canonical_id") & !grepl(" ", a$alias) & nchar(a$alias) >= 7)
+    tg <- data.frame(word = tolower(c(genus, a$alias[keep & !a$alias_type %in% c("scientific_name")])),
+                     organism = c(a$organism[a$alias_type %in% c("scientific_name", "genus")],
+                                  a$organism[keep & !a$alias_type %in% c("scientific_name")]),
+                     stringsAsFactors = FALSE)
+    tg <- tg[nchar(tg$word) >= 6 & !grepl("[^a-z]", tg$word), , drop = FALSE]
+    tg <- tg[!duplicated(tg$word), , drop = FALSE]
+    # a word that names two organisms (a shared genus) is not a safe guess
+    amb <- tapply(tg$organism, tg$word, function(x) length(unique(x)))
+    lex$fuzzy_targets <- tg[tg$word %in% names(amb)[amb == 1], , drop = FALSE]
+    .simitall_lexicon_cache$lex <- lex
+  }
+  tg <- lex$fuzzy_targets
+  words <- unique(tolower(unlist(regmatches(text, gregexpr("[A-Za-z]{5,}", text)))))
+  for (w in words) {
+    d <- utils::adist(w, tg$word)[1, ]
+    lim <- ifelse(nchar(tg$word) >= 9, 2, 1)
+    ok <- which(d <= lim & d > 0 & abs(nchar(tg$word) - nchar(w)) <= lim)
+    if (length(ok)) {
+      best <- ok[which.min(d[ok])]
+      return(list(word = w, organism = tg$organism[best], matched = tg$word[best]))
+    }
+  }
+  NULL
 }
 
 .simitall_lexicon_binary_cue <- function(text) {
@@ -384,6 +427,23 @@
   if (identical(primary, "quantitative_gwas") && .simitall_lexicon_quant_trait_cue(text)) v$parameters$trait_type <- "continuous"
 
   flags <- c(.simitall_lexicon_checks(text, org$organism), .simitall_lexicon_range_checks(text))
+  if (!is.null(org$assumed)) {
+    flags <- c(flags, sprintf("assumed '%s' means %s (%s); correct me if not", org$assumed$word,
+                              lex$organisms$scientific_name[lex$organisms$organism == org$organism][1], org$organism))
+  }
+  # an assay named next to other analyses but with no say on what to do with it
+  if (length(analyses) && length(tq$unresolved_assays)) {
+    for (a in tq$unresolved_assays) {
+      lab <- lex$techniques$label[match(a, lex$techniques$technique)]
+      flags <- c(flags, sprintf("%s was mentioned without saying what to do with it (for example simulate it or test differences): which analysis?", lab))
+    }
+    v$unresolved_assays <- tq$unresolved_assays
+  }
+  # F1 siblings come from one cross; selfing for generations gives S-lines, not F1s
+  low_text <- tolower(text)
+  if (grepl("\\bf1\\b", low_text) && grepl("self", low_text) && grepl("\\d+\\s+gen|gen\\w*\\s+of\\s+self|for\\s+\\d+\\s+gen", low_text)) {
+    flags <- c(flags, "F1 siblings come from a single cross of two parents, but several generations of selfing give inbred (S) lines, not F1s: which population should the next step use?")
+  }
   if (grepl("ignore (?:your|all|previous|the) (?:rules|instructions)", tolower(text), perl = TRUE)) {
     flags <- c(flags, "request asks to ignore the agent's rules")
   }
