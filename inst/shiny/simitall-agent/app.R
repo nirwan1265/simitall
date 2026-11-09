@@ -369,7 +369,7 @@ ui <- fluidPage(
   })
 }
 
-.simitall_shiny_sections <- function(answer, question, plan_source = NULL) {
+.simitall_shiny_sections <- function(answer, question, plan_source = NULL, reading = NULL, reader = NULL) {
   answer <- .simitall_shiny_hide_grounding(answer)
   headings <- c(
     "Interpreted design", "Proposed stages", "Required inputs",
@@ -392,6 +392,8 @@ ui <- fluidPage(
   )
   plan <- if (identical(plan_source, "spec") && nzchar(stages)) {
     paste0("This plan and its R code were compiled from one validated request spec, so they describe the same ", length(grep("^[0-9]+\\.", strsplit(stages, "\n")[[1L]])), "-stage workflow. No language model was called. Open Design to see how your question was parsed, and Parameter Tunings to change the assumptions before RUN.")
+  } else if (identical(plan_source, "reader")) {
+    "The new reader stopped before planning: the request uses a technique simitall does not support yet, contains an impossible or out-of-range value, asks for a clinical decision, or needs real data that was not supplied. Open Design to see why and what to change."
   } else if (identical(plan_source, "catalog")) {
     "The agent created a partial StudySpec: a structured record of the requested analysis, inputs, parameters, figures, QC, and unanswered choices. It will ask for a missing goal before it considers any recipe, and it will not add unrequested analyses."
   } else if (nzchar(stages)) {
@@ -403,7 +405,14 @@ ui <- fluidPage(
     Question = question,
     Inputs = if (nzchar(inputs)) inputs else "No additional inputs were identified.",
     Plan = plan,
-    Design = if (nzchar(design)) design else "No separate interpreted design was returned for this question.",
+    Design = {
+      read_txt <- if (is.null(reading)) "" else simitall:::.simitall_reader_summary(reading)
+      if (nzchar(read_txt) && !identical(reader, "new")) {
+        read_txt <- paste0("New reader's interpretation, for comparison (not used for routing; switch to the New reader to use it):\n", read_txt)
+      }
+      parts <- c(read_txt, if (nzchar(design)) design else if (!nzchar(read_txt)) "No separate interpreted design was returned for this question.")
+      paste(parts[nzchar(parts)], collapse = "\n\n")
+    },
     Stages = if (nzchar(stages)) stages else "No staged workflow was returned for this question.",
     `R Code` = .simitall_shiny_code_blocks(answer),
     `Parameter Tunings` = .simitall_shiny_parameter_text(),
@@ -459,7 +468,8 @@ server <- function(input, output, session) {
         n_context = n_context,
         include_code = isTRUE(input$include_code %||% TRUE),
         input_files = input_files,
-        data_source = data_source
+        data_source = data_source,
+        reader = input$reader %||% getOption("simitall.reader", "legacy")
       ),
       error = function(e) structure(
         list(
@@ -584,7 +594,7 @@ server <- function(input, output, session) {
       # always show what RUN will execute.
       answer <- paste(simitall:::.simitall_agent_spec_plan(spec), spec$recipe, sep = "\n\n")
     }
-    .simitall_shiny_sections(answer, r$question %||% "", r$plan_source)
+    .simitall_shiny_sections(answer, r$question %||% "", r$plan_source, r$reading, r$reader)
   })
 
   needs_synthetic_offer <- reactive({
@@ -700,7 +710,9 @@ server <- function(input, output, session) {
           div(
             class = "composer-options",
             checkboxInput("include_code", "Include verified runnable code", value = TRUE),
-            radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE)
+            radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE),
+            radioButtons("reader", NULL, choices = c("Classic reader" = "legacy", "New reader (tables + model)" = "new"),
+                         selected = isolate(input$reader) %||% getOption("simitall.reader", "legacy"), inline = TRUE)
           )
         )
       ))
@@ -720,7 +732,9 @@ server <- function(input, output, session) {
           div(
             class = "composer-options",
             checkboxInput("include_code", "Include verified runnable code", value = TRUE),
-            radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE)
+            radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE),
+            radioButtons("reader", NULL, choices = c("Classic reader" = "legacy", "New reader (tables + model)" = "new"),
+                         selected = isolate(input$reader) %||% getOption("simitall.reader", "legacy"), inline = TRUE)
           )
         )
       ))

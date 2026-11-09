@@ -396,6 +396,12 @@
   v$flags <- flags
   v$negated <- negated
   v$unsupported_techniques <- tq$unsupported
+  # an assay that alone is ambiguous ("RNA-seq.") -> the analyses to choose from
+  if (is.na(primary) && length(tq$candidates) && !length(tq$unsupported)) {
+    v$candidates <- tq$candidates
+    amb <- tq$unresolved_assays[1] %||% tq$techniques[1]
+    v$candidate_label <- lex$techniques$label[match(amb, lex$techniques$technique)]
+  }
   v$defaulted <- character()
   v
 }

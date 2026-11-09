@@ -17,7 +17,8 @@ simitall_ask(
   include_code = FALSE,
   input_files = NULL,
   data_source = c("auto", "provided", "synthetic", "package_demo"),
-  dry_run = FALSE
+  dry_run = FALSE,
+  reader = getOption("simitall.reader", "legacy")
 )
 }
 \arguments{
@@ -60,6 +61,16 @@ of silently substituting a toy resource, \code{"provided"} requires
 \code{"package_demo"} permits only the bundled demonstration files.}
 
 \item{dry_run}{Return the constructed request without calling an API.}
+
+\item{reader}{Prompt reader. \code{"legacy"} (default) keeps the established
+routing and attaches a fast lexicon-only reading as \code{answer$reading}.
+\code{"new"} lets the lexicon tables and the optional trained prompt model
+(\code{inst/models/simitall-tagger}, used when Python with torch is available)
+decide the route: requests they flag (unsupported technique, impossible
+value, clinical use, missing real data) stop with an explanation; the
+compiled spec runs only when it agrees with the reading; otherwise the
+catalog plans the analysis that was read, or asks which one was meant.
+Set the default with \code{options(simitall.reader = "new")}.}
 }
 \value{
 A \code{simitall_agent_answer} object with \code{answer}, ranked \code{sources},

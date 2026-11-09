@@ -27,6 +27,20 @@
 
 # Flatten one agent answer into StudySpec vocabulary.
 .simitall_eval_view <- function(answer) {
+  # With the new reader, the reading is what the agent understood; when the
+  # legacy compiler also ran, its values (and its defaults) fill the gaps.
+  if (identical(answer$reader, "new") && !is.null(answer$reading)) {
+    v <- answer$reading
+    if (identical(answer$plan_source, "spec")) {
+      lv <- .simitall_eval_view(list(spec = answer$spec))
+      for (k in c("organism", "primary_analysis")) if (is.null(v[[k]])) v[[k]] <- lv[[k]]
+      for (k in c("design", "parameters")) for (f in names(lv[[k]])) if (is.null(v[[k]][[f]])) v[[k]][[f]] <- lv[[k]][[f]]
+      v$defaulted <- lv$defaulted
+      v$do_not_run <- FALSE
+    }
+    if (identical(answer$plan_source, "reader")) v$do_not_run <- TRUE
+    return(v)
+  }
   legacy <- answer$spec %||% list()
   catalog <- answer$catalog_study_spec %||% list()
   v <- list(design = list(), parameters = list())

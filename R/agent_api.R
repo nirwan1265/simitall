@@ -1671,6 +1671,15 @@ simitall_agent_tools <- function() {
 #'   `input_files`, `"synthetic"` explicitly permits a generated input, and
 #'   `"package_demo"` permits only the bundled demonstration files.
 #' @param dry_run Return the constructed request without calling an API.
+#' @param reader Prompt reader. `"legacy"` (default) keeps the established
+#'   routing and attaches a fast lexicon-only reading as `answer$reading`.
+#'   `"new"` lets the lexicon tables and the optional trained prompt model
+#'   (`inst/models/simitall-tagger`, used when Python with torch is available)
+#'   decide the route: requests they flag (unsupported technique, impossible
+#'   value, clinical use, missing real data) stop with an explanation; the
+#'   compiled spec runs only when it agrees with the reading; otherwise the
+#'   catalog plans the analysis that was read, or asks which one was meant.
+#'   Set the default with `options(simitall.reader = "new")`.
 #'
 #' @return A `simitall_agent_answer` object with `answer`, ranked `sources`,
 #'   `model`, and `question`. With `dry_run = TRUE`, `answer` is `NULL` and the
@@ -1697,8 +1706,10 @@ simitall_ask <- function(
     include_code = FALSE,
     input_files = NULL,
     data_source = c("auto", "provided", "synthetic", "package_demo"),
-    dry_run = FALSE) {
+    dry_run = FALSE,
+    reader = getOption("simitall.reader", "legacy")) {
   provider <- match.arg(provider)
+  reader <- match.arg(reader, c("legacy", "new"))
   data_source <- match.arg(data_source)
   if (is.null(model)) {
     model <- switch(
@@ -1711,10 +1722,27 @@ simitall_ask <- function(
   retrieval <- search_simitall_knowledge(question, n_context, knowledge_dir)
   preflight <- .simitall_agent_preflight(question, input_files, data_source)
   spec <- .simitall_agent_spec_pipeline(question, input_files %||% character(), data_source)
+  # Prompt reader (R/agent_reader.R). With reader = "new" it decides which
+  # route may act; with "legacy" it is only attached for comparison.
+  reading <- tryCatch(
+    .simitall_read_prompt(question, use_model = identical(reader, "new") &&
+                            isTRUE(getOption("simitall.reader_model", TRUE))),
+    error = function(e) NULL
+  )
+  reader_route <- if (identical(reader, "new") && !is.null(reading)) {
+    .simitall_reader_route(reading, spec, question, data_source, input_files %||% character())
+  } else {
+    NULL
+  }
+  if (!is.null(reader_route)) reading <- reader_route$reading
+  use_spec <- isTRUE(spec$supported) && (is.null(reader_route) || identical(reader_route$action, "spec"))
+  reader_stop <- identical(reader_route$action, "stop")
   # The capability catalog is a generic planning route for analyses that the
   # older structured compiler cannot yet execute. It may scope one requested
   # analysis, but never invents a downstream workflow or a code recipe.
-  catalog_resolution <- if (!isTRUE(spec$supported)) {
+  catalog_resolution <- if (identical(reader_route$action, "catalog")) {
+    reader_route$resolution
+  } else if (!use_spec && !reader_stop) {
     .simitall_agent_catalog_resolve(question, data_source, input_files %||% character())
   } else {
     NULL
@@ -1725,7 +1753,13 @@ simitall_ask <- function(
   } else {
     NULL
   }
-  if (isTRUE(spec$supported)) {
+  if (!is.null(reader_route)) catalog_study_spec <- .simitall_reader_enrich_spec(catalog_study_spec, reading)
+  if (reader_stop) {
+    preflight$status <- "needs_clarification"
+    preflight$action <- paste(c(reading$flags, if (length(reading$unsupported_techniques))
+      paste0("Unsupported technique: ", paste(.simitall_reader_technique_label(reading$unsupported_techniques), collapse = ", "))), collapse = "; ")
+  }
+  if (use_spec) {
     # The spec owns input resolution for the workflows it supports.
     if (length(spec$errors)) {
       preflight$status <- "invalid_spec"
@@ -1795,6 +1829,9 @@ simitall_ask <- function(
     spec = spec,
     catalog_resolution = catalog_resolution,
     catalog_study_spec = catalog_study_spec,
+    reader = reader,
+    reader_route = reader_route$action %||% NULL,
+    reading = reading,
     validation = NULL,
     execution = "code is shown for review; it runs only when the user presses RUN"
   )
@@ -1802,21 +1839,25 @@ simitall_ask <- function(
     # When the spec layer handles a request, its plan is authoritative: the
     # prose and the code are generated from the same validated spec, so they
     # cannot describe different methods. No model call is needed.
-    spec_handled <- isTRUE(spec$supported)
+    spec_handled <- use_spec
     # Only an unambiguous direct subanalysis match is allowed to replace the
     # legacy planner today. Broad family cues and multi-family questions stay
     # with the established planner until the final StudySpec resolver can
     # represent all requested analyses safely.
     catalog_handled <- !is.null(catalog_resolution) &&
-      ((identical(catalog_resolution$status, "recognized") &&
+      (identical(reader_route$action, "catalog") ||
+        (identical(catalog_resolution$status, "recognized") &&
           length(catalog_resolution$recognized_family_ids) == 1L) ||
         (identical(catalog_resolution$status, "needs_goal") &&
           identical(catalog_resolution$family$clarification_mode, "ask_goal")))
-    result$plan_source <- if (spec_handled) "spec" else if (catalog_handled) "catalog" else provider
-    if (spec_handled) {
+    result$plan_source <- if (reader_stop) "reader" else if (spec_handled) "spec" else if (catalog_handled) "catalog" else provider
+    if (reader_stop) {
+      result$answer <- .simitall_reader_stop_plan(reading, question)
+    } else if (spec_handled) {
       result$answer <- .simitall_agent_spec_plan(spec)
     } else if (catalog_handled) {
       result$answer <- .simitall_agent_catalog_plan(catalog_resolution, preflight)
+      if (!is.null(reader_route)) result$answer <- paste(result$answer, .simitall_reader_summary(reading), sep = "\n\n")
     } else if (!identical(preflight$status, "ready")) {
       result$answer <- paste(
         .simitall_local_answer(question, retrieval),
@@ -1839,7 +1880,7 @@ simitall_ask <- function(
       }
       result$answer <- .simitall_openai_request(question, instructions, model, api_key)
     }
-    if (!spec_handled && !catalog_handled && !identical(provider, "local")) {
+    if (!reader_stop && !spec_handled && !catalog_handled && !identical(provider, "local")) {
       result$answer <- .simitall_agent_validate_answer(
         result$answer, question, retrieval, allow_code
       )
@@ -1847,14 +1888,14 @@ simitall_ask <- function(
       attr(result$answer, "simitall_validation") <- NULL
     }
     if (isTRUE(include_code)) {
-      recipe <- if (isTRUE(spec$supported)) spec$recipe else if (catalog_handled) "" else .simitall_agent_code_recipe(question, preflight)
+      recipe <- if (reader_stop) "" else if (spec_handled) spec$recipe else if (catalog_handled) "" else .simitall_agent_code_recipe(question, preflight)
       if (nzchar(recipe)) {
         result$answer <- paste(result$answer, recipe, sep = "\n\n")
-      } else if (!spec_handled && !catalog_handled) {
+      } else if (!reader_stop && !spec_handled && !catalog_handled) {
         skeleton <- .simitall_agent_code_skeleton(question, preflight)
         if (nzchar(skeleton)) result$answer <- paste(result$answer, skeleton, sep = "\n\n")
       }
-      if (!spec_handled && !catalog_handled && !identical(preflight$status, "ready")) {
+      if (!reader_stop && !spec_handled && !catalog_handled && !identical(preflight$status, "ready")) {
         result$answer <- paste(
           result$answer,
           "The code skeleton is not runnable until the required input has been resolved.",
