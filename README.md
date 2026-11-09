@@ -138,6 +138,26 @@ go <- read_go_gaf("resources/go_annotations/ARATH-mod.gaf.gz")
 gene_go <- join_gene_go(genes, go)
 ```
 
+### Real-Data Import Catalogue
+
+SimItAll also maintains a machine-readable catalogue of public, real-data
+examples for bulk RNA-seq, ChIP-seq, GWAS, and single-cell RNA-seq. It records
+download sources, expected inputs, companion gene-annotation requirements, and
+import/QC checks without bundling large public datasets in the package.
+
+Use `inst/agent/capabilities/real_data_catalog.json` to select a documented
+example and keep downloaded files outside Git. Each local download folder
+should include a completed `manifest.json` based on
+`data-raw/real_data_manifests/manifest.template.json`; it records provenance,
+reference assembly, annotation release, gene-ID namespace, and sample-ID
+mappings.
+
+A JSON manifest points to annotation resources; it is not a substitute for a
+GFF3/GTF. Before reporting gene, peak, or locus annotations, SimItAll must
+confirm compatible assembly, chromosome labels, coordinates, and gene IDs. See
+[real-data import examples](docs/REAL_DATA.md) for the initial public datasets
+and download instructions.
+
 ### Sequencing Platforms
 
 Use `simitall_sequencing_profiles()` to see the validated platform labels:

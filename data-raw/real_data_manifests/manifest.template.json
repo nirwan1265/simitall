@@ -1,0 +1,29 @@
+{
+  "dataset_id": "replace_with_catalog_id",
+  "downloaded_at": "YYYY-MM-DD",
+  "downloaded_by": "local_user",
+  "source_url": "https://...",
+  "citation_or_accession": "GSE... / ENCSR... / DOI",
+  "organism": "Genus_species",
+  "assembly": "exact_reference_build_from_source_metadata",
+  "annotation": {
+    "path": "annotation/compatible.gff3",
+    "format": "GFF3",
+    "source": "provider and release",
+    "gene_id_namespace": "stable identifier namespace",
+    "compatible_with_data": false
+  },
+  "assets": {
+    "counts": null,
+    "sample_metadata": null,
+    "genotypes": null,
+    "phenotypes": null,
+    "peaks": null,
+    "signal": null
+  },
+  "sample_id_mapping": {
+    "authoritative_column": "sample_id",
+    "notes": "Record all source-to-local renaming here; never infer identifiers from order."
+  },
+  "notes": "Set annotation.compatible_with_data to true only after assembly, chromosome labels, and gene-ID namespace have been checked."
+}

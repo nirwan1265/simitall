@@ -191,8 +191,10 @@
   n_qtl <- .simitall_agent_first_number(text, "([0-9]+)\\s*(?:qtls?|causal (?:variants?|loci|markers?))")
   seed <- .simitall_agent_first_number(text, "seed\\s*(?:=|of|:)?\\s*([0-9]+)")
 
+  # Stress labels name the treatment. The unmentioned comparison arm remains
+  # a neutral control; do not turn a drought request into an irrigated study.
   conditions <- if (grepl("drought", text)) {
-    c("irrigated", "drought")
+    c("control", "drought")
   } else if (grepl("heat", text)) {
     c("control", "heat")
   } else if (grepl("cold|chill|freez", text)) {
@@ -213,7 +215,13 @@
     organism = organism,
     population = list(design = design, panel_id = panel_id),
     other_analyses = other_analyses,
-    rnaseq = if ("rnaseq" %in% analyses) list(conditions = conditions, n_genes = n_genes %||% 40L),
+    rnaseq = if ("rnaseq" %in% analyses) list(
+      conditions = conditions,
+      n_genes = n_genes %||% 40L,
+      # eQTL mapping is a separate analysis, never an implicit consequence
+      # of asking for RNA-seq or differential expression.
+      include_eqtl = grepl("\\beqtl\\b|expression quantitative trait|cis[- ]?eqtl|trans[- ]?eqtl", text, perl = TRUE)
+    ),
     normalised = normalised,
     trait = list(
       type = trait_type,
@@ -231,6 +239,7 @@
       if (is.null(heritability)) "trait.heritability",
       if (is.null(n_individuals)) "n_individuals",
       if (is.null(seed)) "seed",
+      if ("rnaseq" %in% analyses && is.null(n_genes)) "rnaseq.n_genes",
       if (design_defaulted) "population.design"
     )
   )
@@ -522,17 +531,79 @@
 # ---------------------------------------------------------------------------
 
 .simitall_agent_conditions <- function(text) {
-  if (grepl("drought", text)) c("control", "drought")
-  else if (grepl("heat", text)) c("control", "heat")
-  else if (grepl("cold|chill|freez", text)) c("control", "cold")
-  else if (grepl("salt|salin", text)) c("control", "salt")
-  else c("control", "treatment")
+  # Preserve an explicit contrast such as "cold and heat". A neutral control
+  # is supplied only when the user actually names one stress condition.
+  patterns <- c(drought = "drought", heat = "heat", cold = "cold|chill|freez", salt = "salt|salin")
+  starts <- vapply(patterns, function(pattern) {
+    hit <- regexpr(pattern, text, perl = TRUE)
+    if (hit[[1L]] < 0L) Inf else as.numeric(hit[[1L]])
+  }, numeric(1))
+  named <- names(starts)[is.finite(starts)]
+  named <- named[order(starts[named])]
+  if (length(named) >= 2L) return(named[seq_len(2L)])
+  if (length(named) == 1L) return(c("control", named))
+  c("control", "treatment")
+}
+
+.simitall_agent_peak_chromosome <- function(text) {
+  hit <- regmatches(text, regexec("\\b(?:chr(?:omosome)?)[[:space:]]*([0-9]+|x|y)\\b", text, perl = TRUE))[[1L]]
+  if (length(hit) != 2L) return(NA_character_)
+  paste0("chr", toupper(hit[2L]))
+}
+
+# Peak-study design wording is deliberately normalized before extraction so a
+# user can write "two parents", "a pair of parents", or "ten generations"
+# without having to match a single canned prompt. The original question is
+# retained in the StudySpec and shown unchanged in the UI.
+.simitall_agent_peak_normalise_numbers <- function(text) {
+  values <- c(
+    zero = 0L, one = 1L, two = 2L, three = 3L, four = 4L, five = 5L,
+    six = 6L, seven = 7L, eight = 8L, nine = 9L, ten = 10L,
+    eleven = 11L, twelve = 12L, thirteen = 13L, fourteen = 14L,
+    fifteen = 15L, sixteen = 16L, seventeen = 17L, eighteen = 18L,
+    nineteen = 19L, twenty = 20L
+  )
+  for (word in names(values)) {
+    text <- gsub(paste0("\\b", word, "\\b"), as.character(values[[word]]), text, perl = TRUE)
+  }
+  text <- gsub("\\b(?:a pair|a couple) of (?:random |selected |chosen )?(?:parents?|parental lines?|lines?)\\b", "2 parents", text, perl = TRUE)
+  text
+}
+
+.simitall_agent_peak_population_context <- function(text) {
+  parent_patterns <- c(
+    "([0-9]+)\\s*(?:random |selected |chosen )?(?:parents?|parental lines?)\\b",
+    "([0-9]+)\\s*(?:random |selected |chosen )?(?:inbred )?(?:nam )?lines?\\b"
+  )
+  parents <- NULL
+  for (pattern in parent_patterns) {
+    parents <- .simitall_agent_first_number(text, pattern)
+    if (!is.null(parents)) break
+  }
+  if (is.null(parents) && grepl("\\b(?:a pair|a couple) of\\b.*?\\b(?:parents?|parental lines?|lines?)\\b", text, perl = TRUE)) {
+    parents <- 2L
+  }
+  selfing_patterns <- c(
+    "(?:inbred|selfed|selfing)(?:[[:space:]]+(?:for|after|through))?[[:space:]]*([0-9]+)[[:space:]]*(?:generations?|cycles?)",
+    "([0-9]+)[[:space:]]*(?:generations?|cycles?)(?:[[:space:]]+of)?[[:space:]]*(?:selfing|selfed|inbreeding)",
+    "advance(?:d)?[[:space:]]+(?:through|for)?[[:space:]]*([0-9]+)[[:space:]]*(?:generations?|cycles?)"
+  )
+  selfing <- NULL
+  for (pattern in selfing_patterns) {
+    selfing <- .simitall_agent_first_number(text, pattern)
+    if (!is.null(selfing)) break
+  }
+  list(
+    design = if (grepl("\\bnam\\b|nested association", text, perl = TRUE)) "NAM" else NA_character_,
+    n_parents = as.integer(parents %||% 0L),
+    selfing_generations = as.integer(selfing %||% 0L)
+  )
 }
 
 .simitall_agent_extract_peak_study <- function(question, organism, data_source, input_files) {
-  text <- tolower(question)
+  text <- .simitall_agent_peak_normalise_numbers(tolower(question))
   atac <- grepl("atac|chromatin accessib|open chromatin|accessible (?:chromatin|regions?)|accessibility", text, perl = TRUE)
-  chip <- grepl("chip.?seq|chromatin immunoprecip|binding sites?|histone (?:marks?|modifications?)|\\bh3k[0-9]+(?:me[0-9]|ac)\\b|transcription factor binding|tf binding", text, perl = TRUE)
+  chip <- grepl("chip.?seq|\\bchip\\b|chromatin immunoprecip|binding sites?|histone (?:marks?|modifications?)|\\bh3k[0-9]+(?:me[0-9]|ac)\\b|transcription factor binding|tf binding", text, perl = TRUE)
   if (!atac && !chip) return(NULL)
   mark <- regmatches(text, regexpr("\\bh3k[0-9]+(?:me[0-9]|ac)\\b", text, perl = TRUE))
   supported_marks <- c(h3k4me3 = "H3K4me3", h3k27ac = "H3K27ac", h3k27me3 = "H3K27me3", h3k36me3 = "H3K36me3")
@@ -542,6 +613,10 @@
   reads <- .simitall_agent_first_number(text, "([0-9][0-9,]*)\\s*reads?\\b")
   seed <- number("seed\\s*(?:=|of|:)?\\s*([0-9]+)")
   histone <- chip && (length(mark) > 0L || grepl("histone", text))
+  population <- .simitall_agent_peak_population_context(text)
+  # In SimItAll, NAM denotes the maize NAM-style breeding context unless the
+  # user explicitly provides another organism.
+  if (identical(population$design, "NAM") && identical(organism, "unspecified")) organism <- "maize"
   list(
     spec_version = "1", extractor = "keyword_v1", question = question,
     task = "peak_study",
@@ -551,7 +626,8 @@
       if (mark %in% names(supported_marks)) unname(supported_marks[mark]) else sub("^h3k", "H3K", mark)
     } else if (histone) "H3K27ac" else NA_character_,
     organism = organism,
-    population = list(design = "peak_study", panel_id = NA_character_),
+    chromosome = .simitall_agent_peak_chromosome(text),
+    population = population,
     other_analyses = c(if (grepl("single[ -]?cell|scatac|sc-atac", text)) "single_cell"),
     conditions = .simitall_agent_conditions(text),
     n_peaks = n_peaks %||% 100L,
@@ -578,6 +654,18 @@
   if (!is_whole(spec$replicates) || spec$replicates < 2 || spec$replicates > 10) add("replicates: must be a whole number in [2, 10] (differential tests need at least 2 per condition); got ", format(spec$replicates))
   if (!is_whole(spec$n_reads) || spec$n_reads < 5000 || spec$n_reads > 2000000) add("n_reads: reads per library must be in [5,000, 2,000,000] for a local run; got ", format(spec$n_reads))
   if (!is_whole(spec$seed) || spec$seed < 1) add("seed: must be a positive whole number")
+  if (!is.na(spec$chromosome) && !grepl("^chr([1-9][0-9]*|X|Y)$", spec$chromosome)) {
+    add("chromosome: must be a simple chromosome label such as chr5, chrX, or chrY")
+  }
+  if (identical(spec$population$design, "NAM") &&
+      (spec$population$n_parents > 0L || spec$population$selfing_generations > 0L)) {
+    if (!is_whole(spec$population$n_parents) || spec$population$n_parents < 2 || spec$population$n_parents > 8) {
+      add("population.n_parents: NAM ChIP studies need 2 through 8 selected parent lines")
+    }
+    if (!is_whole(spec$population$selfing_generations) || spec$population$selfing_generations < 1 || spec$population$selfing_generations > 12) {
+      add("population.selfing_generations: must be a whole number in [1, 12] for an inbred NAM-parent study")
+    }
+  }
   missing <- spec$input_files[nzchar(spec$input_files) & !file.exists(path.expand(spec$input_files))]
   if (length(missing)) add("input_files: these files do not exist: ", paste(missing, collapse = ", "))
   errors
@@ -612,6 +700,10 @@
   q <- function(x) encodeString(x, quote = "\"")
   cond <- spec$conditions
   broad <- identical(spec$target, "histone")
+  chromosome <- spec$chromosome %|na|% "chr1"
+  parent_chrom_len <- 4000L
+  has_inbred_nam_parents <- identical(spec$population$design, "NAM") &&
+    spec$population$n_parents >= 2L && spec$population$selfing_generations >= 1L
   width <- if (broad && identical(spec$histone_mark, "H3K27me3")) 10000L else if (broad && identical(spec$histone_mark, "H3K36me3")) 5000L else if (broad) 1500L else 300L
   window <- if (broad) 1000L else 200L
   # Size the synthetic genome so peaks occupy at most ~10% of it.
@@ -622,9 +714,44 @@
   } else {
     c("genome <- simitall:::.simitall_simulate_peak_genome(",
       "  file.path(out_dir, \"genome.fa\"), file.path(out_dir, \"genome.gff3\"),",
-      paste0("  chromosome_length = ", chrom_len, "L, n_genes = ", max(120L, as.integer(spec$n_peaks)), "L, seed = params$seed"),
+      paste0("  n_chromosomes = 1L, chromosome_names = ", q(chromosome), ", chromosome_length = ", chrom_len, "L, n_genes = ", max(120L, as.integer(spec$n_peaks)), "L, seed = params$seed"),
       ")")
   }
+  parent_context <- if (has_inbred_nam_parents) c(
+    "cat(\"1. Simulating NAM-derived inbred parental lines...\\n\")",
+    "parent_panel <- file.path(out_dir, \"nam_parent_founders.fa\")",
+    paste0("generate_random_haplotype_panel(out_fa = parent_panel, n_haplotypes = 8L, length = ", parent_chrom_len, "L, n_chromosomes = 1L, snp_rate = 0.02, indel_rate = 0, seed = params$seed + 71L)"),
+    "parent_panel_lines <- readLines(parent_panel)",
+    paste0("parent_panel_lines[grepl(\"^>\", parent_panel_lines)] <- paste0(parent_panel_lines[grepl(\"^>\", parent_panel_lines)], \"|", chromosome, "\")"),
+    "writeLines(parent_panel_lines, parent_panel)",
+    "parent_map <- file.path(out_dir, \"nam_parent_map.tsv\")",
+    paste0("write.table(data.frame(chromosome = ", q(chromosome), ", pos_bp = c(1L, ", as.integer(parent_chrom_len %/% 2L), "L, ", parent_chrom_len, "L), cM = c(0, 50, 100)), parent_map, sep = \"\\t\", row.names = FALSE, quote = FALSE)"),
+    "parent_prefix <- file.path(out_dir, \"nam_inbred_lines\")",
+    "simulate_breeding(haplotype_fa = parent_panel, out_prefix = parent_prefix, scheme = \"NAM\", founders = paste0(\"hap\", 1:8, collapse = \",\"), n_offspring = 14L, self_generations = params$selfing_generations, recomb_map_in = parent_map, vcf_out = paste0(parent_prefix, \".vcf\"), seed = params$seed + 72L)",
+    "parent_meta <- read.delim(paste0(parent_prefix, \".meta.tsv\"), stringsAsFactors = FALSE)",
+    "parent_ids <- sort(sample(unique(parent_meta$sample), params$n_parent_lines))",
+    "parent_meta <- parent_meta[match(parent_ids, parent_meta$sample), , drop = FALSE]",
+    "parent_ancestry <- read.delim(paste0(parent_prefix, \".ancestry.tsv\"), stringsAsFactors = FALSE)",
+    "parent_composition <- simitall:::.simitall_line_composition(parent_ancestry, founders = sort(unique(parent_ancestry$founder)))",
+    "parent_composition <- parent_composition[match(parent_ids, parent_composition$sample), , drop = FALSE]",
+    "inbreeding_validation <- data.frame(parent_line = parent_ids, final_generation = parent_meta$generation, population = \"NAM\", selfing_generations = params$selfing_generations, observed_founder_tract_heterozygosity = parent_composition$heterozygosity, expected_fraction_of_starting_heterozygosity = 0.5 ^ params$selfing_generations, stringsAsFactors = FALSE)",
+    "write.table(inbreeding_validation, file.path(out_dir, \"inbreeding_validation.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+    "write.table(inbreeding_validation, file.path(out_dir, \"selected_parent_lines.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
+    "generation <- 0:params$selfing_generations",
+    "png(file.path(figure_dir, \"inbreeding_trajectory.png\"), width = 1400, height = 900, res = 170)",
+    "plot(generation, 0.5 ^ generation, type = \"b\", pch = 19, col = \"#1B6F8A\", ylim = c(0, 1), xlab = \"Selfing generation\", ylab = \"Expected fraction of starting heterozygosity\", main = \"Expected loss of heterozygosity under repeated selfing\", cex.main = 0.9)",
+    "abline(v = params$selfing_generations, lty = 2, col = \"#B85252\")",
+    "text(params$selfing_generations, 0.5 ^ params$selfing_generations, labels = paste0(\"F\", params$selfing_generations), pos = 4, col = \"#B85252\")",
+    "dev.off()",
+    "png(file.path(figure_dir, \"selected_parent_heterozygosity.png\"), width = 1400, height = 900, res = 170)",
+    "barplot(inbreeding_validation$observed_founder_tract_heterozygosity, names.arg = inbreeding_validation$parent_line, ylim = c(0, 1), col = \"#7A9CC6\", border = NA, ylab = \"Founder-tract heterozygosity\", main = paste0(\"Observed marker heterozygosity in selected F\", params$selfing_generations, \" parents\"), cex.main = 0.9)",
+    "dev.off()",
+    paste0("chip_design <- expand.grid(parent_line = parent_ids, condition = c(", q(cond[1L]), ", ", q(cond[2L]), "), stringsAsFactors = FALSE)"),
+    "chip_design$sample <- paste(chip_design$parent_line, chip_design$condition, sep = \"__\")",
+    "chip_design$biological_replicates <- params$replicates",
+    "chip_design$technical_replicates <- 1L",
+    "chip_design$batch <- \"batch1\""
+  ) else "chip_design <- NULL"
   simulate <- if (atac) {
     c("sim <- simulate_atacseq(",
       "  genome$fasta, file.path(out_dir, \"atac\"), annotation_gff3 = genome$gff3, n_peaks = params$n_peaks,",
@@ -635,38 +762,45 @@
     c("sim <- simulate_chipseq(",
       "  genome$fasta, file.path(out_dir, \"chip\"), annotation_gff3 = genome$gff3,",
       paste0("  assay_type = ", q(spec$target), if (broad) paste0(", histone_mark = ", q(spec$histone_mark)) else "", ", n_peaks = params$n_peaks,"),
-      paste0("  conditions = c(", q(cond[1L]), ", ", q(cond[2L]), "), biological_replicates = params$replicates,"),
+      paste0("  conditions = c(", q(cond[1L]), ", ", q(cond[2L]), "), design = chip_design, biological_replicates = params$replicates,"),
       "  n_reads = params$n_reads, differential_binding_fraction = 0.2, differential_effect_log2 = 1.5,",
       "  write_fastq = FALSE, write_read_bed = FALSE, backend = \"native\", seed = params$seed",
       ")")
   }
   kind <- if (atac) "accessibility" else "binding"
+  params <- c(
+    paste0("seed = ", as.integer(spec$seed)),
+    paste0("n_peaks = ", as.integer(spec$n_peaks), "L"),
+    paste0("replicates = ", as.integer(spec$replicates), "L"),
+    paste0("n_reads = ", as.integer(spec$n_reads), "L"),
+    if (has_inbred_nam_parents) paste0("n_parent_lines = ", as.integer(spec$population$n_parents), "L"),
+    if (has_inbred_nam_parents) paste0("selfing_generations = ", as.integer(spec$population$selfing_generations), "L")
+  )
   code <- c(
     "if (!\"simitall\" %in% loadedNamespaces()) library(simitall)",
     "params <- list(",
-    paste0("  seed = ", as.integer(spec$seed), ","),
-    paste0("  n_peaks = ", as.integer(spec$n_peaks), "L,"),
-    paste0("  replicates = ", as.integer(spec$replicates), "L,"),
-    paste0("  n_reads = ", as.integer(spec$n_reads), "L"),
+    paste0("  ", paste(params, collapse = ",\n  ")),
     ")",
     paste0("out_dir <- ", q(file.path("results", "agent_peaks", if (atac) "atacseq" else paste0("chipseq_", tolower(spec$histone_mark %|na|% "tf"))))),
     "figure_dir <- file.path(out_dir, \"figures\")",
     "dir.create(figure_dir, recursive = TRUE, showWarnings = FALSE)",
     "",
-    "cat(\"1. Preparing the reference genome and regulatory annotation...\\n\")",
+    parent_context,
+    "cat(\"2. Preparing the reference genome and regulatory annotation...\\n\")",
     genome,
-    paste0("cat(\"2. Simulating ", if (atac) "ATAC-seq" else "ChIP-seq", " libraries with known ", kind, " truth...\\n\")"),
+    paste0("cat(\"3. Simulating ", if (atac) "ATAC-seq" else "ChIP-seq", " libraries with known ", kind, " truth...\\n\")"),
     simulate,
     "reads <- read.delim(sim$read_positions, stringsAsFactors = FALSE)",
+    "if (!\"read_position\" %in% names(reads) && all(c(\"start\", \"end\") %in% names(reads))) reads$read_position <- floor((reads$start + reads$end) / 2)",
     "",
-    "cat(\"3. Calling peaks and scoring them against the true peaks...\\n\")",
+    "cat(\"4. Calling peaks and scoring them against the true peaks...\\n\")",
     paste0("called <- call_peaks_windowed(reads, genome$fasta, signal_assay = ", q(label), ", control_assay = ",
            if (atac) "NULL" else "\"input\"", ", window = ", window, "L, fdr = ", .simitall_agent_choice(spec, "peak_fdr"), ")"),
     "write.table(called, file.path(out_dir, \"called_peaks.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
     "peak_metrics <- score_peak_calls(called, sim$peaks)",
     "write.table(peak_metrics, file.path(out_dir, \"peak_calling_truth_recovery_metrics.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
     "",
-    paste0("cat(\"4. Testing differential ", kind, " and scoring it against the truth...\\n\")"),
+    paste0("cat(\"5. Testing differential ", kind, " and scoring it against the truth...\\n\")"),
     paste0("da <- test_differential_peaks(reads, called, assay = ", q(label), ", method = ", q(.simitall_agent_choice(spec, "diff_method")), ", fdr = 0.05)"),
     "write.table(da, file.path(out_dir, \"differential_peaks.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
     "diff_metrics <- score_differential_peaks(da, called, sim$peaks, sim$differential_truth)",
@@ -680,6 +814,11 @@
     paste0("  xlab = \"log2 fold change\", ylab = \"-log10 p\", main = ", q(paste0("Differential ", kind, ": red = truly differential (simulation truth)")), ", cex.main = 0.9)"),
     "abline(h = -log10(max(c(0, da$p_value[da$significant]))), lty = 2)",
     "dev.off()",
+    if (!atac) c(
+      "if (requireNamespace(\"ggplot2\", quietly = TRUE) && requireNamespace(\"patchwork\", quietly = TRUE)) {",
+      "  plot_chipseq_results(file.path(out_dir, \"chip\"), file.path(figure_dir, \"chipseq_validation\"), individual_panels_dir = figure_dir, seed = params$seed)",
+      "}"
+    ),
     if (atac) c(
       "png(file.path(figure_dir, \"fragment_lengths.png\"), width = 1400, height = 900, res = 170)",
       "hist(reads$fragment_length, breaks = 80, col = \"#7A9CC6\", border = NA, main = \"ATAC fragment lengths: nucleosome-free and mono-nucleosome\", xlab = \"Fragment length (bp)\", cex.main = 0.9)",
@@ -696,9 +835,13 @@
   assay_name <- if (atac) "ATAC-seq (chromatin accessibility)" else if (identical(spec$assay, "both")) "ChIP-seq and ATAC-seq" else
     paste0("ChIP-seq, ", if (identical(spec$target, "histone")) paste0("histone mark ", spec$histone_mark, was_default("histone_mark")) else "transcription-factor binding")
   kind <- if (atac) "accessibility" else "binding"
+  has_inbred_nam_parents <- identical(spec$population$design, "NAM") &&
+    spec$population$n_parents >= 2L && spec$population$selfing_generations >= 1L
   design <- c(
     paste0("- Assay: ", assay_name),
     paste0("- Conditions: ", spec$conditions[1L], " vs ", spec$conditions[2L], ", ", spec$replicates, " biological replicates each", was_default("replicates")),
+    if (!is.na(spec$chromosome)) paste0("- Region: synthetic ", spec$chromosome, " reference"),
+    if (has_inbred_nam_parents) paste0("- Parents: ", spec$population$n_parents, " random NAM-derived lines after ", spec$population$selfing_generations, " selfing generations; each parent is measured in both conditions."),
     paste0("- True peaks: ", spec$n_peaks, was_default("n_peaks"), ", 20% of them differential (about 1.5 log2-fold change)"),
     paste0("- Reads per library: ", format(spec$n_reads, big.mark = ","), was_default("n_reads"), " (scaled down for a fast local run)"),
     paste0("- Peak-calling FDR: ", .simitall_agent_choice(spec, "peak_fdr"), "; differential test: ", .simitall_agent_choice(spec, "diff_method")),
@@ -708,22 +851,27 @@
     .simitall_agent_normalised_line(spec)
   )
   stages <- c(
-    "1. Prepare the reference genome and its regulatory annotation.",
-    if (atac) "2. Simulate ATAC libraries: accessible regions at promoters/enhancers, nucleosome-free and mono-nucleosome fragments, Tn5 cut-site offsets, PCR duplicates."
-    else "2. Simulate ChIP and matched input libraries with known binding peaks and condition-dependent binding.",
-    paste0("3. Call peaks with a window-based Poisson test", if (atac) " against the genome background" else " against the input control", ", then score recall/precision against the true peaks."),
-    paste0("4. Test differential ", kind, " with `", .simitall_agent_choice(spec, "diff_method"), "` and score it against the true differential peaks.")
+    if (has_inbred_nam_parents) paste0("1. Generate a synthetic NAM population, advance it through ", spec$population$selfing_generations, " selfing generations, and randomly select ", spec$population$n_parents, " parental lines."),
+    if (has_inbred_nam_parents) "2. Prepare the synthetic chromosome reference and regulatory annotation." else "1. Prepare the reference genome and its regulatory annotation.",
+    if (atac) "Simulate ATAC libraries: accessible regions at promoters/enhancers, nucleosome-free and mono-nucleosome fragments, Tn5 cut-site offsets, PCR duplicates."
+    else "Simulate ChIP and matched input libraries with known binding peaks, parent-line variation, and condition-dependent binding.",
+    paste0("Call peaks with a window-based Poisson test", if (atac) " against the genome background" else " against the input control", ", then score recall/precision against the true peaks."),
+    paste0("Test differential ", kind, " with `", .simitall_agent_choice(spec, "diff_method"), "` and score it against the true differential peaks.")
   )
   inputs <- if (length(spec$errors)) paste0("- Fix before running: ", spec$errors) else if (identical(spec$resolution$status, "needs_input")) paste0("- ", spec$resolution$action) else "- None: everything needed is simulated."
   outputs <- c(
+    if (has_inbred_nam_parents) paste0("- Inbreeding validation: selected parent IDs, their final F", spec$population$selfing_generations, " labels, observed founder-tract heterozygosity, and the expected repeated-selfing trajectory."),
     "- True peaks and true differential effects; simulated read positions and per-library QC (FRiP, duplicates).",
     "- Called peaks with peak_calling_truth_recovery_metrics.",
     paste0("- Differential ", kind, " results with differential_truth_recovery_metrics and a volcano plot marking truly differential peaks."),
+    if (!atac) "- 6 ChIP-seq validation figures: binding landscape, peak-centered enrichment, FRiP, library complexity, signal by annotation class, and truth-versus-observed differential binding.",
+    if (has_inbred_nam_parents) "- 2 parent-line figures: expected selfing trajectory and observed final F-generation founder-tract heterozygosity.",
     if (atac) "- Fragment-length histogram showing the nucleosome-free and mono-nucleosome modes."
   )
   limitations <- c(
     if (!is.null(spec$resolution$note)) paste0("- ", spec$resolution$note),
     "- Peaks are called with a transparent window-based baseline caller, not MACS; real pipelines usually use MACS2/3.",
+    if (has_inbred_nam_parents) "- The parental lineage is simulated and recorded. The trajectory is the Mendelian expectation under repeated selfing; only the final F-generation heterozygosity is measured from the simulated ancestry tracts. Parent-specific binding variation is a random sample effect, not a peak difference attributed to a causal DNA variant.",
     "- Read depth is scaled down for speed; real ATAC libraries are typically around 10 million read pairs.",
     "- Recovering the programmed peaks shows the analysis works under these simulation assumptions. It is a benchmark, not a biological discovery."
   )
@@ -753,6 +901,14 @@
     return(list(tissue = "blood", types = c(T_cell = 0.35, B_cell = 0.25, Monocyte = 0.25, NK_cell = 0.15)))
   }
   list(tissue = "leaf", types = c(mesophyll = 0.4, epidermis = 0.3, vascular = 0.2, guard_cell = 0.1))
+}
+
+.simitall_agent_cell_type_profile_choices <- function() {
+  c(
+    "Leaf: mesophyll, epidermis, vascular, guard cells" = "leaf",
+    "Root: epidermis, cortex, endodermis, stele" = "root",
+    "Blood: T cells, B cells, monocytes, NK cells" = "blood"
+  )
 }
 
 .simitall_agent_extract_single_cell <- function(question, organism, data_source, input_files) {
@@ -790,6 +946,12 @@
   if (!is_whole(spec$n_donors) || spec$n_donors < 4 || spec$n_donors > 24) add("n_donors: must be a whole number in [4, 24] (at least 2 donors per condition for pseudobulk tests); got ", format(spec$n_donors))
   if (!is_whole(spec$cells_per_donor) || spec$cells_per_donor < 50 || spec$cells_per_donor > 2000) add("cells_per_donor: must be a whole number in [50, 2000]; got ", format(spec$cells_per_donor))
   if (!is_whole(spec$n_genes) || spec$n_genes < 100 || spec$n_genes > 3000) add("n_genes: must be a whole number in [100, 3000]; got ", format(spec$n_genes))
+  if (!is.numeric(spec$cell_types) || length(spec$cell_types) < 2L ||
+      is.null(names(spec$cell_types)) || any(!nzchar(names(spec$cell_types))) ||
+      any(!is.finite(spec$cell_types)) || any(spec$cell_types <= 0) ||
+      abs(sum(spec$cell_types) - 1) > 1e-8) {
+    add("cell_types: provide at least two named positive proportions that sum to 1")
+  }
   if (is_whole(spec$n_donors) && is_whole(spec$cells_per_donor) && is_whole(spec$n_genes) &&
       spec$n_donors * spec$cells_per_donor * spec$n_genes > 6e7) {
     add("size: donors x cells x genes is too large for a local run (limit 60 million); reduce one of them")
@@ -1544,8 +1706,12 @@
 # scored against its own simulation truth.
 # ---------------------------------------------------------------------------
 
-.simitall_agent_analysis_labels <- function() {
-  c(gwas = "GWAS", rnaseq = "RNA-seq (differential expression + eQTL)", genomic_selection = "genomic selection")
+.simitall_agent_analysis_labels <- function(spec = NULL) {
+  rnaseq_label <- "RNA-seq (differential expression)"
+  if (!is.null(spec) && isTRUE(spec$rnaseq$include_eqtl)) {
+    rnaseq_label <- "RNA-seq (differential expression + eQTL)"
+  }
+  c(gwas = "GWAS", rnaseq = rnaseq_label, genomic_selection = "genomic selection")
 }
 
 .simitall_agent_compile_population_study <- function(spec) {
@@ -1675,6 +1841,7 @@
 
   if ("rnaseq" %in% analyses) {
     cond <- spec$rnaseq$conditions
+    include_eqtl <- isTRUE(spec$rnaseq$include_eqtl)
     gff <- spec$input_files[grepl("\\.gff3?$", spec$input_files, ignore.case = TRUE)][1L]
     code <- c(code,
       say(paste0("Simulating RNA-seq (", cond[1L], " vs ", cond[2L], ") from the same genotypes")),
@@ -1688,11 +1855,11 @@
       "  vcf, rna_prefix, sample_metadata = rna_meta_file,",
       if (!is.na(gff)) paste0("  annotation_gff3 = ", q(normalizePath(path.expand(gff))), ",") else "  n_genes = params$n_genes,",
       paste0("  condition_levels = c(", q(cond[1L]), ", ", q(cond[2L]), "),"),
-      "  n_cis_eqtl = max(2L, round(params$n_genes / 5)), n_trans_eqtl = max(1L, round(params$n_genes / 15)),",
-      "  condition_effect_fraction = 0.3, gxe_fraction = 0.25, seed = params$seed + 2L",
+      if (include_eqtl) "  n_cis_eqtl = max(2L, round(params$n_genes / 5)), n_trans_eqtl = max(1L, round(params$n_genes / 15))," else "  n_cis_eqtl = 0L, n_trans_eqtl = 0L, ase_fraction = 0,",
+      if (include_eqtl) "  condition_effect_fraction = 0.3, gxe_fraction = 0.25, seed = params$seed + 2L" else "  condition_effect_fraction = 0.3, gxe_fraction = 0, seed = params$seed + 2L",
       ")",
       "",
-      say("Finding responsive genes (differential expression) and their regulators (eQTL)"),
+      say(if (include_eqtl) "Finding responsive genes (differential expression) and their regulators (eQTL)" else "Finding genes that respond to the treatment (differential expression)"),
       "rna_diagnostics <- plot_rnaseq_diagnostics(",
       "  paste0(rna_prefix, \".counts.tsv\"), paste0(rna_prefix, \".sample_metadata.tsv\"),",
       paste0("  out_dir = figure_dir, fdr_threshold = ", .simitall_agent_choice(spec, "rnaseq_fdr")),
@@ -1704,11 +1871,13 @@
       paste0("  analysis = ", q(paste0("genes responding to ", cond[2L], " (differential expression)"))),
       ")",
       "write.table(de_metrics, file.path(out_dir, \"rnaseq_de_truth_recovery_metrics.tsv\"), sep = \"\\t\", row.names = FALSE, quote = FALSE)",
-      "benchmark_eqtl(",
-      "  vcf, paste0(rna_prefix, \".expression.tsv\"), file.path(out_dir, \"eqtl\"),",
-      "  sample_metadata = paste0(rna_prefix, \".sample_metadata.tsv\"),",
-      "  truth_file = paste0(rna_prefix, \".eqtl_truth.tsv\")",
-      ")",
+      if (include_eqtl) c(
+        "benchmark_eqtl(",
+        "  vcf, paste0(rna_prefix, \".expression.tsv\"), file.path(out_dir, \"eqtl\"),",
+        "  sample_metadata = paste0(rna_prefix, \".sample_metadata.tsv\"),",
+        "  truth_file = paste0(rna_prefix, \".eqtl_truth.tsv\")",
+        ")"
+      ) else NULL,
       ""
     )
   }
@@ -1766,7 +1935,7 @@
   d <- .simitall_agent_spec_defaults(spec)
   is_nam <- identical(spec$population$design, "NAM")
   analyses <- spec$analyses
-  labels <- .simitall_agent_analysis_labels()
+  labels <- .simitall_agent_analysis_labels(spec)
   needs_trait <- any(c("gwas", "genomic_selection") %in% analyses)
   was_default <- function(field) if (field %in% spec$defaulted) " (default)" else ""
   n <- as.integer(spec$n_individuals %||% d$n_individuals)
@@ -1791,7 +1960,7 @@
     if (needs_trait) paste0("- Trait: `", spec$trait$name, "`, heritability ", spec$trait$heritability,
                             was_default("trait.heritability"), ", ", spec$trait$n_qtl %||% d$n_qtl, " causal markers",
                             if (is.null(spec$trait$n_qtl)) " (default)" else ""),
-    if ("rnaseq" %in% analyses) paste0("- RNA-seq: ", spec$rnaseq$n_genes, " genes, ", spec$rnaseq$conditions[1L], " vs ",
+    if ("rnaseq" %in% analyses) paste0("- RNA-seq: ", spec$rnaseq$n_genes, " genes", was_default("rnaseq.n_genes"), ", ", spec$rnaseq$conditions[1L], " vs ",
                                       spec$rnaseq$conditions[2L], ", samples alternate between the two conditions"),
     paste0("- Data source: ", spec$data_source, " -> ", source_text),
     paste0("- Seed: ", spec$seed, was_default("seed")),
@@ -1806,8 +1975,10 @@
                                     ") and score recovery with `benchmark_gwas()`."),
     if ("rnaseq" %in% analyses) paste0("Simulate RNA-seq counts from the same genotypes with `simulate_rnaseq_from_gwas()` (",
                                       spec$rnaseq$conditions[1L], " vs ", spec$rnaseq$conditions[2L], ")."),
-    if ("rnaseq" %in% analyses) paste0("Find genes that respond to ", spec$rnaseq$conditions[2L],
+    if ("rnaseq" %in% analyses && isTRUE(spec$rnaseq$include_eqtl)) paste0("Find genes that respond to ", spec$rnaseq$conditions[2L],
                                       " (differential expression) and variants that control expression (eQTL, `benchmark_eqtl()`); score both against the simulated truth."),
+    if ("rnaseq" %in% analyses && !isTRUE(spec$rnaseq$include_eqtl)) paste0("Find genes that respond to ", spec$rnaseq$conditions[2L],
+                                      " with differential expression and score the calls against the simulated truth."),
     if ("genomic_selection" %in% analyses) "Predict breeding values with GBLUP (`run_genomic_selection()`), select parents, and check them against the true genetic values."
   )
   stages <- paste0(seq_along(stages), ". ", stages)
@@ -1824,7 +1995,7 @@
     "- Population genotypes (VCF) and, for NAM, family, ancestry, and breakpoint truth.",
     if (needs_trait) "- Trait values and the causal-marker truth table.",
     if ("gwas" %in% analyses) "- GWAS results, Manhattan/QQ figures, and gwas_truth_recovery_metrics.",
-    if ("rnaseq" %in% analyses) "- RNA-seq counts, PCA/volcano/library-size figures, rnaseq_de_truth_recovery_metrics, and eQTL metrics.",
+    if ("rnaseq" %in% analyses) paste0("- RNA-seq counts, PCA/volcano/library-size figures, rnaseq_de_truth_recovery_metrics", if (isTRUE(spec$rnaseq$include_eqtl)) ", and eQTL metrics." else "."),
     if ("genomic_selection" %in% analyses) "- Breeding values, selected parents, and genomic_selection_truth_recovery_metrics."
   )
   rnaseq_only_hunt <- "rnaseq" %in% analyses && !needs_trait &&
@@ -2091,8 +2262,9 @@
 # is built from this list, so each workflow controls its own knobs.
 .simitall_agent_spec_knobs <- function(spec) {
   d <- .simitall_agent_spec_defaults(spec)
-  knob <- function(name, label, value, min, max, step) {
-    list(name = name, label = label, value = value, min = min, max = max, step = step)
+  knob <- function(name, label, value, min = NA, max = NA, step = NA, type = "numeric", choices = NULL) {
+    list(name = name, label = label, value = value, min = min, max = max,
+         step = step, type = type, choices = choices)
   }
   if (identical(spec$task, "family_risk")) {
     cond <- spec$condition
@@ -2115,18 +2287,25 @@
   if (identical(spec$task, "single_cell")) {
     return(list(
       knob("seed", "Random seed", spec$seed, 1, NA, 1),
+      knob("cell_type_profile", "Tissue and cell-type profile", spec$tissue,
+           type = "select", choices = .simitall_agent_cell_type_profile_choices()),
       knob("n_donors", "Donors (split across conditions)", as.integer(spec$n_donors), 4, 24, 2),
       knob("cells_per_donor", "Cells per donor", as.integer(spec$cells_per_donor), 50, 2000, 50),
       knob("n_genes", "Genes", as.integer(spec$n_genes), 100, 3000, 100)
     ))
   }
   if (identical(spec$task, "peak_study")) {
-    return(list(
+    inbred_nam_parents <- identical(spec$population$design, "NAM") &&
+      spec$population$n_parents >= 2L && spec$population$selfing_generations >= 1L
+    return(Filter(Negate(is.null), list(
       knob("seed", "Random seed", spec$seed, 1, NA, 1),
+      if (!is.na(spec$chromosome)) knob("chromosome_number", "Chromosome", as.integer(sub("^chr", "", spec$chromosome)), 1, 99, 1),
+      if (inbred_nam_parents) knob("n_parent_lines", "Random NAM-derived parents", as.integer(spec$population$n_parents), 2, 8, 1),
+      if (inbred_nam_parents) knob("selfing_generations", "Selfing generations", as.integer(spec$population$selfing_generations), 1, 12, 1),
       knob("n_peaks", "True peaks", as.integer(spec$n_peaks), 10, 2000, 10),
       knob("replicates", "Replicates per condition", as.integer(spec$replicates), 2, 10, 1),
       knob("n_reads", "Reads per library", as.integer(spec$n_reads), 5000, 2000000, 5000)
-    ))
+    )))
   }
   if (identical(spec$task, "population_study")) {
     needs_trait <- any(c("gwas", "genomic_selection") %in% spec$analyses)
@@ -2161,6 +2340,12 @@
     spec$choices[[name]] <- if (name %in% c("gs_model", "diff_method", "sc_de_method")) as.character(value) else as.numeric(value)
     return(spec)
   }
+  if (identical(name, "cell_type_profile")) {
+    profile <- .simitall_agent_cell_types(as.character(value), spec$organism)
+    spec$tissue <- profile$tissue
+    spec$cell_types <- profile$types
+    return(spec)
+  }
   value <- as.numeric(value)
   untag <- function(field) setdiff(spec$defaulted, field)
   switch(
@@ -2173,6 +2358,9 @@
     n_peaks = { spec$n_peaks <- value; spec$defaulted <- untag("n_peaks") },
     replicates = { spec$replicates <- value; spec$defaulted <- untag("replicates") },
     n_reads = { spec$n_reads <- value; spec$defaulted <- untag("n_reads") },
+    chromosome_number = { spec$chromosome <- paste0("chr", as.integer(value)) },
+    n_parent_lines = { spec$population$n_parents <- value },
+    selfing_generations = { spec$population$selfing_generations <- value },
     n_donors = { spec$n_donors <- value; spec$defaulted <- untag("n_donors") },
     cells_per_donor = { spec$cells_per_donor <- value; spec$defaulted <- untag("cells_per_donor") },
     n_lines = { spec$n_lines <- value; spec$defaulted <- untag("n_lines") },

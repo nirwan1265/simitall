@@ -27,6 +27,10 @@
 #' @param signal_fraction Expected fraction of ChIP reads sampled from the
 #'   peak component before PCR duplication and sequencing error.
 #' @param conditions Experimental condition names. The first is the reference.
+#' @param design Optional aggregated experimental design. It must contain
+#'   `sample` and may contain `condition`, `biological_replicates`,
+#'   `technical_replicates`, and `batch`. It permits, for example, matched
+#'   inbred parental lines under every condition.
 #' @param biological_replicates Biological replicates per condition.
 #' @param technical_replicates Technical libraries per biological replicate.
 #' @param differential_binding_fraction Fraction of peaks with condition-
@@ -34,6 +38,7 @@
 #' @param differential_effect_log2 Mean absolute differential-binding effect.
 #' @param differential_effect_sd Standard deviation of absolute effects.
 #' @param replicate_effect_sd Peak-level replicate variation in log2 units.
+#' @param sample_effect_sd Peak-level source-sample variation in log2 units.
 #' @param n_reads ChIP reads generated per library.
 #' @param input_reads Matched input-control reads generated per library.
 #' @param read_length Single-end read length.
@@ -87,12 +92,14 @@ simulate_chipseq <- function(
     enrichment_sdlog = 0.4,
     signal_fraction = 0.3,
     conditions = "control",
+    design = NULL,
     biological_replicates = 3L,
     technical_replicates = 1L,
     differential_binding_fraction = 0.1,
     differential_effect_log2 = 1,
     differential_effect_sd = 0.25,
     replicate_effect_sd = 0.15,
+    sample_effect_sd = 0.12,
     n_reads = 100000L,
     input_reads = n_reads,
     read_length = 50L,
@@ -137,7 +144,7 @@ simulate_chipseq <- function(
       read_length > fragment_min || peak_width_sd < 0 || peak_jitter < 0 ||
       enrichment_sdlog < 0 || fragment_sd <= 0 ||
       differential_effect_log2 < 0 || differential_effect_sd < 0 ||
-      replicate_effect_sd < 0) {
+      replicate_effect_sd < 0 || sample_effect_sd < 0) {
     stop("Peak, fragment, or effect parameters are inconsistent")
   }
   if (!length(conditions) || anyNA(conditions) || any(!nzchar(conditions)) ||
@@ -203,7 +210,8 @@ simulate_chipseq <- function(
     technical_replicates = technical_replicates,
     replicate_mode = "mixed",
     conditions = conditions,
-    batch_levels = "batch1"
+    batch_levels = "batch1",
+    design = design
   )
   metadata$assay_type <- assay_type
   metadata$histone_mark <- if (assay_type == "histone") histone_mark else NA_character_
@@ -214,6 +222,11 @@ simulate_chipseq <- function(
   input_reads <- as.integer(.simitall_recycle_parameter(
     input_reads, nrow(metadata), "input_reads"
   ))
+  source_samples <- unique(metadata$sample)
+  sample_effects <- matrix(
+    stats::rnorm(nrow(peaks) * length(source_samples), 0, sample_effect_sd),
+    nrow = nrow(peaks), dimnames = list(peaks$peak_id, source_samples)
+  )
 
   all_positions <- list()
   qc_rows <- list()
@@ -232,7 +245,8 @@ simulate_chipseq <- function(
         condition_truth$effect_log2
     }
     replicate_effect <- stats::rnorm(nrow(peaks), 0, replicate_effect_sd)
-    peak_strength <- peaks$baseline_enrichment * 2^(effect + replicate_effect)
+    sample_effect <- sample_effects[, metadata$sample[library_index]]
+    peak_strength <- peaks$baseline_enrichment * 2^(effect + sample_effect + replicate_effect)
 
     for (assay in c("chip", "input")) {
       read_count <- if (assay == "chip") n_reads[library_index] else {
@@ -366,7 +380,8 @@ simulate_chipseq <- function(
     parameters = list(
       signal_fraction = signal_fraction, peak_width = peak_width,
       read_length = read_length, fragment_mean = fragment_mean,
-      duplicate_rate = duplicate_rate, sequencing_error_rate = sequencing_error_rate
+      duplicate_rate = duplicate_rate, sequencing_error_rate = sequencing_error_rate,
+      sample_effect_sd = sample_effect_sd
     )
   )
   jsonlite::write_json(summary, paths$summary, pretty = TRUE, auto_unbox = TRUE)

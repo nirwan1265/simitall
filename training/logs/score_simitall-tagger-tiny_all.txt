@@ -1,0 +1,14 @@
+Split: all   predictions: training/logs/preds_simitall-tagger-tiny.json
+
+                                     lexicon hybrid
+n                                      229.0  229.0
+reading_recall                          78.7   83.4
+goal_and_source                         80.0   81.4
+primary_analysis                        75.0   81.7
+secondary_exact                         83.0   83.0
+must_not_violations                      0.0    0.0
+stops_when_it_should                    96.2   96.2
+examples_with_invented_values            1.0    2.0
+examples_defaulted_instead_of_asking     0.0    0.0
+
+examples the model improved: 33   made worse: 1 

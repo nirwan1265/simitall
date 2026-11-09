@@ -23,6 +23,10 @@ ui <- fluidPage(
       .question-text { color:var(--ink); font-size:16px; line-height:1.55; padding:12px 20px 20px; }
       .empty-answer { color:var(--muted); font-size:16px; line-height:1.55; padding:14px 20px 20px; }
       .answer-browser { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 24px rgba(27,52,38,.06); margin-bottom:18px; padding:16px; }
+      .panel-heading { color:var(--forest-dark); font-size:11px; font-weight:850; letter-spacing:.13em; margin:1px 2px 12px; text-transform:uppercase; }
+      .results-browser { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 24px rgba(27,52,38,.06); margin:18px 0; padding:16px; }
+      .results-empty { color:var(--muted); font-size:13px; line-height:1.5; padding:8px 2px 2px; }
+      .file-list { color:var(--muted); font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:11px; line-height:1.55; margin:0; max-height:220px; overflow:auto; padding-left:20px; }
       .section-nav { display:grid; gap:9px; grid-template-columns:repeat(3, 1fr); }
       .section-card { background:#f5f7f1; border:1px solid var(--line); border-radius:11px; color:var(--forest-dark); cursor:pointer; font-size:13px; font-weight:800; min-height:48px; padding:10px 12px; text-align:left; transition:background .15s ease, border-color .15s ease, transform .15s ease; }
       .section-card:hover { background:var(--mint); border-color:#9abfa9; transform:translateY(-1px); }
@@ -128,37 +132,12 @@ ui <- fluidPage(
     uiOutput("question_top"),
     div(
       class = "answer-browser",
-      uiOutput("section_nav"),
-      uiOutput("section_detail")
+      div(class = "panel-heading", "Planning"),
+      uiOutput("planning_nav"),
+      uiOutput("planning_detail")
     ),
     uiOutput("run_button"),
-    div(
-      class = "composer",
-      div(
-        class = "composer-row",
-        textInput("question", NULL, placeholder = "Describe the simulation or analysis you want to plan..."),
-        actionButton("ask", "Send", class = "btn-primary send-button")
-      ),
-      div(
-        class = "composer-options",
-        checkboxInput("include_code", "Include verified runnable code", value = TRUE),
-        radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE)
-      ),
-      tags$details(
-        tags$summary("Optional input details"),
-        div(
-          class = "advanced-grid",
-          selectInput("data_source", "Data source", choices = c("Ask for required data" = "auto", "Generate synthetic inputs" = "synthetic", "I supplied local files" = "provided", "Use package demo only" = "package_demo"), selected = "auto"),
-          textInput("input_files", "Local input file paths", placeholder = "Comma-separated paths; files stay on this computer"),
-          div(
-            sliderInput("context_level", "Knowledge depth", min = 1, max = 5,
-                        value = 3, step = 1, ticks = TRUE),
-            div(class = "knowledge-scale",
-                span("Low: ~5"), span("Medium: ~20"), span("High: ~50"))
-          )
-        )
-      )
-    )
+    uiOutput("results_panel")
   ),
   uiOutput("run_status")
 )
@@ -422,13 +401,13 @@ ui <- fluidPage(
   }
   list(
     Question = question,
+    Inputs = if (nzchar(inputs)) inputs else "No additional inputs were identified.",
     Plan = plan,
     Design = if (nzchar(design)) design else "No separate interpreted design was returned for this question.",
     Stages = if (nzchar(stages)) stages else "No staged workflow was returned for this question.",
-    Inputs = if (nzchar(inputs)) inputs else "No additional inputs were identified.",
-    Limitations = if (nzchar(limitations)) limitations else "No additional limitations were returned.",
     `R Code` = .simitall_shiny_code_blocks(answer),
     `Parameter Tunings` = .simitall_shiny_parameter_text(),
+    Limitations = if (nzchar(limitations)) limitations else "No additional limitations were returned.",
     Outputs = if (nzchar(trimws(outputs))) trimws(outputs) else "No output contract was returned."
   )
 }
@@ -436,20 +415,24 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   project_dir <- .simitall_shiny_project_dir()
   resource_roots <- .simitall_shiny_resource_roots(project_dir)
-  selected_section <- reactiveVal("Plan")
+  selected_section <- reactiveVal("Question")
+  planning_step <- reactiveVal(1L)
+  selected_result_section <- reactiveVal("Run Status")
   # The current answer. A reactiveVal (not eventReactive) so the empty state
   # renders before the first question and answers can be replaced in place.
   current_answer <- reactiveVal(NULL)
   answer_count <- reactiveVal(0L)
   run_state <- reactiveValues(
     log = "No recipe has been run in this session.", files = character(),
-    completed = FALSE, running = FALSE, stage = "Ready",
-    detail = "No local recipe is running.", process = NULL, started_at = NULL
+    completed = FALSE, running = FALSE, attempted = FALSE, stage = "Ready",
+    detail = "No local recipe is running.", process = NULL, started_at = NULL,
+    recipe_path = NULL
   )
 
   ask_agent <- function(question, data_source) {
     question <- trimws(question)
     req(nzchar(question))
+    data_source <- data_source %||% "auto"
     # In the chat interface, an explicit request to simulate a chromosome is
     # consent to a labelled synthetic chromosome. All other chromosome prompts
     # keep the conservative "ask for data" policy unless the user chooses a
@@ -468,13 +451,13 @@ server <- function(input, output, session) {
     uploaded_paths <- input$uploaded_files$datapath
     if (is.null(uploaded_paths)) uploaded_paths <- character()
     input_files <- unique(c(input_files, uploaded_paths))
-    n_context <- .simitall_shiny_context_count(input$context_level)
+    n_context <- .simitall_shiny_context_count(input$context_level %||% 3L)
     result <- tryCatch(
       simitall_ask(
         question,
-        provider = input$provider,
+        provider = input$provider %||% "local",
         n_context = n_context,
-        include_code = isTRUE(input$include_code),
+        include_code = isTRUE(input$include_code %||% TRUE),
         input_files = input_files,
         data_source = data_source
       ),
@@ -495,7 +478,7 @@ server <- function(input, output, session) {
     current_answer(result)
   }
 
-  observeEvent(input$ask, ask_agent(input$question, input$data_source))
+  observeEvent(input$ask, ask_agent(input$question, input$data_source %||% "auto"))
 
   # One-click recovery when a spec needs a panel simitall does not bundle.
   observeEvent(input$use_synthetic, {
@@ -537,20 +520,46 @@ server <- function(input, output, session) {
   })
 
   observeEvent(current_answer(), {
-    selected_section("Plan")
+    selected_section("Inputs")
+    planning_step(max(2L, planning_step()))
+    selected_result_section("Run Status")
     if (!isTRUE(run_state$running)) {
       preflight <- response()$preflight
       needs_input <- !is.null(preflight) && !identical(preflight$status, "ready")
       run_state$stage <- if (needs_input) "Needs input" else "Ready"
       run_state$detail <- if (needs_input) preflight$action else "A new recipe is ready to run locally."
       run_state$completed <- FALSE
+      run_state$attempted <- FALSE
       run_state$files <- character()
+      run_state$recipe_path <- NULL
       run_state$log <- "No recipe has been run for this answer."
     }
   })
 
   observeEvent(input$answer_section, {
-    selected_section(input$answer_section)
+    choices <- c("Question", "Inputs", "Parameter Tunings", "Plan", "Design", "Stages", "Recipe Preview")
+    index <- match(input$answer_section, choices)
+    if (!is.na(index) && index <= planning_step()) selected_section(input$answer_section)
+  })
+  observeEvent(input$result_section, {
+    selected_result_section(input$result_section)
+  })
+  observeEvent(input$planning_back, {
+    choices <- c("Question", "Inputs", "Parameter Tunings", "Plan", "Design", "Stages", "Recipe Preview")
+    index <- match(selected_section(), choices)
+    if (!is.na(index) && index > 1L) selected_section(choices[[index - 1L]])
+  })
+  observeEvent(input$planning_next, {
+    choices <- c("Question", "Inputs", "Parameter Tunings", "Plan", "Design", "Stages", "Recipe Preview")
+    index <- match(selected_section(), choices)
+    req(!is.na(index))
+    if (identical(selected_section(), "Inputs")) {
+      req(response())
+      ask_agent(response()$question, input$data_source %||% "auto")
+    }
+    next_index <- min(index + 1L, length(choices))
+    planning_step(max(planning_step(), next_index))
+    selected_section(choices[[next_index]])
   })
 
   observeEvent(input$continue_catalog_goal, {
@@ -601,12 +610,12 @@ server <- function(input, output, session) {
     )
   })
 
-  output$section_nav <- renderUI({
-    if (is.null(response())) return(NULL)
-    choices <- names(sections())
+  output$planning_nav <- renderUI({
+    choices <- c("Question", "Inputs", "Parameter Tunings", "Plan", "Design", "Stages", "Recipe Preview")
+    available <- seq_len(planning_step())
     div(
       class = "section-nav",
-      lapply(choices, function(choice) {
+      lapply(choices[available], function(choice) {
         is_active <- identical(choice, selected_section())
         tags$button(
           type = "button",
@@ -626,16 +635,18 @@ server <- function(input, output, session) {
     if (is_spec_answer(r)) {
       # Each workflow declares its own knobs and starts from the values the
       # spec runs with, not from regex guesses.
-      is_nam <- identical(r$spec$population$design, "NAM")
       knobs <- lapply(simitall:::.simitall_agent_spec_knobs(r$spec), function(k) {
-        numericInput(tune_id(k$name), k$label, value = k$value, min = k$min,
-                     max = if (is.na(k$max)) NA else k$max, step = k$step)
+        if (identical(k$type %||% "numeric", "select")) {
+          selectInput(tune_id(k$name), k$label, choices = k$choices, selected = k$value)
+        } else {
+          numericInput(tune_id(k$name), k$label, value = k$value, min = k$min,
+                       max = if (is.na(k$max)) NA else k$max, step = k$step)
+        }
       })
       return(tagList(
         div(class = "section-text", "These values feed the request spec. Each change is re-validated and the recipe is recompiled, so the Design, Stages, and R Code panels always show what RUN will execute."),
         div(class = "parameter-inputs", knobs),
-        uiOutput("tuning_errors"),
-        div(class = "tuning-note", if (is_nam) "The NAM runner fixes the QTL architecture (1 focal + 6 background QTL), so it is not tunable here." else NULL)
+        uiOutput("tuning_errors")
       ))
     }
     code <- isolate(sections())[["R Code"]]
@@ -660,19 +671,65 @@ server <- function(input, output, session) {
         tags$ul(lapply(spec$errors, tags$li)))
   })
 
-  output$section_detail <- renderUI({
+  planning_footer <- function(choice) {
+    steps <- c("Question", "Inputs", "Parameter Tunings", "Plan", "Design", "Stages", "Recipe Preview")
+    index <- match(choice, steps)
+    if (is.na(index) || identical(choice, "Question")) return(NULL)
+    div(
+      class = "guided-box",
+      if (index > 1L) actionButton("planning_back", "Back"),
+      if (index < length(steps)) actionButton(
+        "planning_next",
+        if (identical(choice, "Inputs")) "Apply inputs and continue" else "Next"
+      ) else div(class = "upload-note", "Recipe reviewed. RUN is now available below.")
+    )
+  }
+
+  output$planning_detail <- renderUI({
     if (is.null(response())) {
       return(div(
         class = "section-detail",
-        div(class = "section-detail-label", "Answer sections"),
-        div(class = "section-text", "After you send a question, use these cards to inspect the plan, inputs, outputs, runnable R code, and parameters separately.")
+        div(class = "section-detail-label", "Question"),
+        div(
+          class = "composer",
+          div(
+            class = "composer-row",
+            textInput("question", NULL, placeholder = "Describe the simulation or analysis you want to plan..."),
+            actionButton("ask", "Next: Inputs", class = "btn-primary send-button")
+          ),
+          div(
+            class = "composer-options",
+            checkboxInput("include_code", "Include verified runnable code", value = TRUE),
+            radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE)
+          )
+        )
       ))
     }
     choice <- selected_section()
+    if (identical(choice, "Question")) {
+      return(div(
+        class = "section-detail",
+        div(class = "section-detail-label", "Question"),
+        div(
+          class = "composer",
+          div(
+            class = "composer-row",
+            textInput("question", NULL, value = response()$question, placeholder = "Describe the simulation or analysis you want to plan..."),
+            actionButton("ask", "Next: Inputs", class = "btn-primary send-button")
+          ),
+          div(
+            class = "composer-options",
+            checkboxInput("include_code", "Include verified runnable code", value = TRUE),
+            radioButtons("provider", NULL, choices = c("Free local" = "local", "Ollama" = "ollama", "OpenAI API" = "openai"), selected = "local", inline = TRUE)
+          )
+        )
+      ))
+    }
+    section_key <- if (identical(choice, "Recipe Preview")) "R Code" else choice
     # The tuning panel must not re-render while the user types into it.
-    content <- if (identical(choice, "Parameter Tunings")) isolate(sections())[[choice]] else sections()[[choice]]
+    content <- if (identical(section_key, "Parameter Tunings")) isolate(sections())[[section_key]] else sections()[[section_key]]
     if (is.null(content)) content <- ""
-    if (identical(choice, "R Code")) {
+    if (identical(section_key, "R Code")) {
       if (!nzchar(content)) {
         content <- "No runnable R code is available. Enable 'Include verified runnable code', provide any required local inputs, fix any parameter errors, or ask for a synthetic design."
       }
@@ -688,6 +745,15 @@ server <- function(input, output, session) {
       body <- tagList(
         div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
         div(
+          class = "advanced-grid",
+          selectInput("data_source", "Data source", choices = c("Let the agent decide from the question" = "auto", "Generate synthetic inputs" = "synthetic", "I supplied local files" = "provided", "Use package demo only" = "package_demo"), selected = response()$data_source %||% "auto"),
+          textInput("input_files", "Local input file paths", placeholder = "Comma-separated paths; files stay on this computer"),
+          div(
+            sliderInput("context_level", "Knowledge depth", min = 1, max = 5, value = 3, step = 1, ticks = TRUE),
+            div(class = "knowledge-scale", span("Low: ~5"), span("Medium: ~20"), span("High: ~50"))
+          )
+        ),
+        div(
           class = "upload-area",
           fileInput("uploaded_files", "Upload local input files", multiple = TRUE,
                     accept = c(".fa", ".fasta", ".fna", ".vcf", ".vcf.gz", ".bcf", ".tsv", ".csv", ".gff", ".gff3", ".gtf", ".bed", ".map")),
@@ -701,11 +767,6 @@ server <- function(input, output, session) {
       )
     } else if (identical(choice, "Parameter Tunings")) {
       body <- tuning_panel(content)
-    } else if (identical(choice, "Outputs")) {
-      body <- tagList(
-        div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(content), fixed = TRUE))),
-        uiOutput("run_output")
-      )
     } else {
       badge <- if (identical(choice, "Plan") && is_spec_answer()) {
         div(class = "spec-badge", paste0("Compiled from spec - parsed by ", response()$spec$extractor))
@@ -719,12 +780,89 @@ server <- function(input, output, session) {
     div(
       class = "section-detail",
       div(class = "section-detail-label", choice),
+      body,
+      planning_footer(choice)
+    )
+  })
+
+  output$results_panel <- renderUI({
+    if (is.null(response())) return(NULL)
+    if (!isTRUE(run_state$attempted) && !isTRUE(run_state$running) && !isTRUE(run_state$completed)) {
+      return(div(
+        class = "results-browser",
+        div(class = "panel-heading", "Results"),
+        div(class = "results-empty", "No analysis has been run yet. Review the recipe preview, then select RUN to create results here.")
+      ))
+    }
+    choices <- c("Run Status", "Outputs", "Figures", "Download Files", "Executed R Code", "Limitations")
+    div(
+      class = "results-browser",
+      div(class = "panel-heading", "Results"),
+      div(
+        class = "section-nav",
+        lapply(choices, function(choice) {
+          tags$button(
+            type = "button",
+            class = paste("section-card", if (identical(choice, selected_result_section())) "is-active"),
+            onclick = sprintf("Shiny.setInputValue('result_section', '%s', {priority: 'event'});", choice),
+            choice
+          )
+        })
+      ),
+      uiOutput("results_detail")
+    )
+  })
+
+  output$results_detail <- renderUI({
+    req(response())
+    choice <- selected_result_section()
+    files <- run_state$files
+    output_contract <- sections()[["Outputs"]]
+    limitations <- sections()[["Limitations"]]
+    body <- switch(
+      choice,
+      "Run Status" = tagList(
+        div(class = "section-text", paste0(run_state$stage, ": ", run_state$detail)),
+        tags$pre(class = "section-code", run_state$log)
+      ),
+      "Outputs" = tagList(
+        div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(output_contract), fixed = TRUE))),
+        if (isTRUE(run_state$completed)) .simitall_shiny_metrics_ui(files)
+      ),
+      "Figures" = if (isTRUE(run_state$completed)) {
+        tagList(.simitall_shiny_figures_ui(files, resource_roots),
+                if (!length(files[grepl("\\.(png|pdf|svg)$", files, ignore.case = TRUE)])) div(class = "section-text", "This completed recipe did not create a figure file."))
+      } else {
+        div(class = "section-text", "Figures appear here after a successful run.")
+      },
+      "Download Files" = if (length(files)) {
+        tagList(
+          downloadButton("download_run", "Download run outputs"),
+          tags$ul(class = "file-list", lapply(files, function(path) basename(path)))
+        )
+      } else {
+        div(class = "section-text", "Files will be listed here when the recipe has produced outputs.")
+      },
+      "Executed R Code" = if (!is.null(run_state$recipe_path) && file.exists(run_state$recipe_path)) {
+        tags$pre(class = "section-code", paste(readLines(run_state$recipe_path, warn = FALSE), collapse = "\n"))
+      } else {
+        div(class = "section-text", "The exact R recipe will appear here once RUN has started.")
+      },
+      "Limitations" = tagList(
+        div(class = "section-text", HTML(gsub("\n", "<br>", htmltools::htmlEscape(limitations), fixed = TRUE))),
+        if (!isTRUE(run_state$completed)) div(class = "upload-note", "Execution note: ", run_state$detail)
+      )
+    )
+    div(
+      class = "section-detail",
+      div(class = "section-detail-label", choice),
       body
     )
   })
 
   output$run_button <- renderUI({
     if (is.null(response())) return(NULL)
+    if (!identical(selected_section(), "Recipe Preview")) return(NULL)
     has_code <- nzchar(sections()[["R Code"]])
     offer <- if (isTRUE(needs_synthetic_offer())) {
       div(
@@ -813,7 +951,8 @@ server <- function(input, output, session) {
     if (length(spec$errors)) {
       run_state$stage <- "Needs fixes"
       run_state$detail <- "Fix the parameter errors before comparing options."
-      selected_section("Outputs")
+      run_state$attempted <- TRUE
+      selected_result_section("Run Status")
       return(invisible(NULL))
     }
     recipe <- tryCatch(simitall:::.simitall_agent_compile_comparison(spec, input$compare_question),
@@ -829,10 +968,11 @@ server <- function(input, output, session) {
       spec <- compiled_spec()
       if (length(spec$errors) || !nzchar(spec$recipe)) {
         run_state$completed <- FALSE
+        run_state$attempted <- TRUE
         run_state$stage <- "Needs fixes"
         run_state$detail <- "The tuned request did not validate."
         run_state$log <- paste(c("Not run. Fix these parameters:", paste0("- ", spec$errors)), collapse = "\n")
-        selected_section("Outputs")
+        selected_result_section("Run Status")
         return(invisible(NULL))
       }
       # Compiled straight from the validated spec; no regex rewriting.
@@ -843,6 +983,7 @@ server <- function(input, output, session) {
       if (grepl("PATH_TO_", code, fixed = TRUE)) {
         run_state$completed <- FALSE
         run_state$running <- FALSE
+        run_state$attempted <- TRUE
         run_state$files <- character()
         run_state$stage <- "Needs updated recipe"
         run_state$detail <- "Choose a data source, then press Send to regenerate the recipe."
@@ -851,7 +992,7 @@ server <- function(input, output, session) {
           "Upload or provide the requested real files, or choose 'Use package demo only' under Optional input details and send the question again.",
           sep = "\n"
         )
-        selected_section("Outputs")
+        selected_result_section("Run Status")
         return(invisible(NULL))
       }
       # Legacy recipes: start from the recipe's own values and rewrite only
@@ -893,16 +1034,19 @@ server <- function(input, output, session) {
     writeLines(c(bootstrap, code), script)
     if (!requireNamespace("processx", quietly = TRUE)) {
       run_state$completed <- FALSE
+      run_state$attempted <- TRUE
       run_state$stage <- "Cannot start"
       run_state$detail <- "Install the R package processx to run recipes in the background."
       run_state$log <- run_state$detail
-      selected_section("Outputs")
+      selected_result_section("Run Status")
       return(invisible(NULL))
     }
     run_state$started_at <- Sys.time()
     run_state$running <- TRUE
     run_state$completed <- FALSE
+    run_state$attempted <- TRUE
     run_state$files <- character()
+    run_state$recipe_path <- script
     run_state$stage <- "Running"
     run_state$detail <- paste("Executing", label)
     run_state$log <- paste("Recipe:", script, "\nProcess started in the background.")
@@ -910,7 +1054,7 @@ server <- function(input, output, session) {
       command = file.path(R.home("bin"), "Rscript"), args = script,
       stdout = "|", stderr = "|", cleanup = FALSE
     )
-    selected_section("Outputs")
+    selected_result_section("Run Status")
     invisible(NULL)
   }
 
@@ -945,27 +1089,6 @@ server <- function(input, output, session) {
     }
     run_state$log <- paste(run_state$log, paste("Process exited with status", status), sep = "\n")
     run_state$process <- NULL
-  })
-
-  output$run_output <- renderUI({
-    no_run_yet <- !isTRUE(run_state$completed) && !isTRUE(run_state$running) &&
-      grepl("^No recipe has been run", run_state$log)
-    if (no_run_yet) {
-      note <- if (identical(run_state$stage, "Needs input")) {
-        paste("No run has started.", run_state$detail)
-      } else {
-        "Run a recipe to see generated figures, metrics, files, and the local execution log here."
-      }
-      return(div(class = "run-output", div(class = "upload-note", note)))
-    }
-    div(
-      class = "run-output",
-      if (run_state$completed) .simitall_shiny_metrics_ui(run_state$files),
-      if (run_state$completed) .simitall_shiny_figures_ui(run_state$files, resource_roots),
-      if (length(run_state$files)) downloadButton("download_run", "Download run outputs") else NULL,
-      div(class = "upload-note", if (run_state$running) "Recipe is running in the background; the log updates live." else if (run_state$completed) paste("Run completed. Detected", length(run_state$files), "new or updated output file(s). Figures and metrics are shown above; use Download run outputs for everything.") else "Run returned an error. Inspect the local log below."),
-      tags$pre(run_state$log)
-    )
   })
 
   output$download_run <- downloadHandler(

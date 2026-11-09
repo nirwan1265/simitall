@@ -66,6 +66,46 @@ test_that("sample naming contract keeps treatment and time unambiguous", {
   expect_match(.simitall_agent_sample_naming_text(), "Trt = treatment, Ti = time", fixed = TRUE)
 })
 
+test_that("phenotype registry keeps outcome, architecture, and design separate", {
+  registry <- .simitall_agent_phenotype_module_registry()
+  outcomes <- registry$outcome_models
+  outcome_ids <- vapply(outcomes, `[[`, character(1), "id")
+  expect_equal(anyDuplicated(outcome_ids), 0L)
+  expect_true(all(c(
+    "gaussian", "bernoulli", "binomial_count", "poisson",
+    "negative_binomial", "zero_inflated_count", "ordinal", "survival",
+    "longitudinal"
+  ) %in% outcome_ids))
+  expect_true(all(vapply(outcomes, function(x) length(x$compatible_analyses) > 0L, logical(1))))
+  expect_true(all(vapply(outcomes, function(x) {
+    x$implementation$status %in% c("validated", "partial", "planned")
+  }, logical(1))))
+  expect_true(length(registry$genetic_architectures) >= 6L)
+  expect_true(length(registry$observation_designs) >= 5L)
+})
+
+test_that("phenotype resolver does not collapse requested distributions", {
+  nb <- .simitall_agent_resolve_phenotype_modules(
+    "Simulate an overdispersed negative-binomial count trait with polygenic effects and blocks."
+  )
+  expect_identical(nb$outcome_model$id, "negative_binomial")
+  expect_identical(nb$genetic_architecture$id, "additive_polygenic")
+  expect_identical(nb$observation_design$id, "replicated_block_design")
+  expect_identical(nb$execution_status, "planned")
+  expect_false("binary_gwas" %in% nb$outcome_model$compatible_analyses)
+
+  binary <- .simitall_agent_resolve_phenotype_modules(
+    "Simulate a binary case-control phenotype with additive QTL."
+  )
+  expect_identical(binary$outcome_model$id, "bernoulli")
+  expect_true("binary_gwas" %in% binary$outcome_model$compatible_analyses)
+  expect_false("quantitative_gwas" %in% binary$outcome_model$compatible_analyses)
+
+  defaulted <- .simitall_agent_resolve_phenotype_modules("Simulate a yield trait.")
+  expect_identical(defaulted$outcome_model$id, "gaussian")
+  expect_identical(defaulted$outcome_source, "explicit")
+})
+
 test_that("tutorial maps and reviewed examples are well formed", {
   map_path <- .simitall_agent_capability_path("tutorial_map.json")
   tutorial_map <- jsonlite::fromJSON(map_path, simplifyVector = FALSE)

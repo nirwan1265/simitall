@@ -708,7 +708,10 @@ main_11_simulate_breeding <- function(args = commandArgs(trailingOnly = TRUE)) {
         "NAM_F2", "NAM", paste0("NAM_F", i)
       )
     }), recursive = FALSE)
-    sequence_tokens <- character()
+    # NAM F2 lines can be advanced by selfing just like other breeding
+    # populations. Keeping this explicit lets a request for inbred NAM-derived
+    # parents retain the requested number of selfing generations.
+    sequence_tokens <- rep("SELF", self_generations)
   } else if (!is.na(scheme) && scheme == "F2") {
     sequence_tokens <- c("F1", "SELF")
   } else if (!is.na(scheme) && scheme == "RIL") {

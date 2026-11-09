@@ -1,0 +1,12 @@
+[Sun 23:59:57] start: python 2.15.0, device=auto, Ollama model=llama3.1
+wrote 60000 sentences to training/data/train.jsonl; 245 dropped as too close to eval prompts; 0 tokenisation mismatches
+families: {'gwas': 4592, 'combo': 3909, 'pedigree': 3648, 'cross': 3595, 'bulk_sim': 2985, 'de': 2406, 'unsupported': 2378, 'chip': 2370, 'scsim': 2305, 'sceqtl': 1894, 'eqtl': 1862, 'timeseries': 1805, 'popgen': 1797, 'reads': 1759, 'gs': 1747, 'pheno': 1743, 'scan': 1726, 'qtl': 1718, 'multiomics': 1210, 'assembly': 1205, 'pedigree_prov': 1194, 'microbiome': 1185, 'cross_animal': 1185, 'variants': 1183, 'gwas_panel': 1180, 'annot': 1147, 'multitrait': 1135, 'power': 1111, 'splicing': 1092, 'ase': 637, 'sqtl': 621, 'rare': 604, 'relcal': 600, 'demo': 313, 'vague': 159}
+wrote 3000 sentences to training/data/dev.jsonl; 12 dropped as too close to eval prompts; 0 tokenisation mismatches
+families: {'gwas': 240, 'combo': 217, 'cross': 179, 'pedigree': 177, 'bulk_sim': 159, 'de': 111, 'unsupported': 110, 'scsim': 108, 'qtl': 107, 'popgen': 104, 'chip': 101, 'timeseries': 93, 'sceqtl': 87, 'eqtl': 86, 'pheno': 85, 'reads': 83, 'scan': 78, 'pedigree_prov': 75, 'gs': 74, 'assembly': 64, 'power': 63, 'microbiome': 61, 'multitrait': 60, 'variants': 57, 'splicing': 53, 'annot': 51, 'gwas_panel': 48, 'multiomics': 46, 'vague': 45, 'cross_animal': 41, 'rare': 30, 'ase': 30, 'relcal': 28, 'sqtl': 27, 'demo': 22}
+[Mon 00:00:10] paraphrasing up to 12000 x 2 sentences for at most 360 minutes
+[Mon 06:00:30] training tiny model (10 epochs)
+[Mon 07:57:54] start: python 2.15.0, device=cpu, Ollama model=llama3.1
+[Mon 07:57:55] training tiny model (6 epochs)
+[Mon 08:30:03] done. Scores: training/logs/score_*_test.txt  (frozen test split).  Models: training/models/
+[Mon 08:30:03] If hybrid beats lexicon on the test split with no more invented values, copy the tiny model:
+[Mon 08:30:03]   rm -rf inst/models/simitall-tagger && cp -r training/models/simitall-tagger-tiny inst/models/simitall-tagger

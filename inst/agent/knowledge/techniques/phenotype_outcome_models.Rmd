@@ -18,6 +18,21 @@ figures unless the question explicitly asks for them. `NAM` identifies a
 mapping-population context; it does not itself request that family labels be
 shown in the final figure.
 
+Resolve every phenotype simulation through three independent layers:
+
+1. **Outcome distribution**: what observations look like (for example,
+   Gaussian, Bernoulli, negative binomial, ordinal, or survival).
+2. **Genetic architecture**: how genotype contributes (additive QTL,
+   polygenic, dominance, epistasis, pleiotropy, GxE, or a rare-variant burden).
+3. **Observation design**: how the phenotype was measured (independent
+   individuals, blocks, multi-environment trial, spatial field layout, batch,
+   or repeated measurements).
+
+These are not interchangeable drop-down labels. The chosen downstream analysis
+must be compatible with the outcome, and the recipe must expose the parameters
+required by each selected layer. The machine-readable source of truth is
+`inst/agent/capabilities/phenotype_modules.json`.
+
 ## Distribution Decision Table
 
 | User wording | Canonical model | Outcome values | Required extra input | Default diagnostic |
@@ -53,6 +68,21 @@ common example.
   instead of silently applying a Gaussian or binary model.
 - Ordinal trait: retain category thresholds/probabilities. An ordinal-GWAS
   wrapper is not yet implemented.
+
+## Architecture and Design Match
+
+| Layer | Examples | What the plan must retain |
+| --- | --- | --- |
+| Additive genetic architecture | sparse QTL, polygenic effects | causal variants, effect-size distribution, genetic variance |
+| Non-additive architecture | dominance, epistasis, imprinting | genotype coding, interaction/parent-of-origin terms |
+| Shared architecture | pleiotropy, multi-trait | trait covariance and shared causal effects |
+| Environment-dependent architecture | GxE, multi-environment trial | named environments, environmental and interaction variance |
+| Observation design | blocks, spatial layout, batch | blocking/layout variables or batch labels |
+| Correlated observations | longitudinal/repeated measures | subject ID, time points, within-subject correlation |
+
+For a requested model not yet implemented, return a complete design and input
+contract but mark it `planned`; never approximate it with a different outcome
+or pretend that a compatible association method was run.
 
 ## Minimal NAM Example
 
