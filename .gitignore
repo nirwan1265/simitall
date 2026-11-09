@@ -23,3 +23,7 @@ reads/
 assemblies/
 evaluation/
 analysis/results/
+
+# Prompt-model training outputs (training/data is covered by data/)
+training/models/
+training/logs/

@@ -51,6 +51,7 @@ presses **RUN**.
 | Agent knowledge | `inst/agent/knowledge/` | Local Rmd knowledge records used for retrieval and planning. |
 | Prompt aliases | `inst/agent/aliases.tsv` | Audited wording/inflection aliases, for example `inbred -> inbreeding` and `epistatic -> epistasis`. |
 | Prompt lexicon | `inst/agent/lexicon/`, `R/agent_lexicon.R` | Four tables: organisms (NCBI Taxonomy, strains, panels, breeds, builds, ploidy/selfing facts), techniques (EFO/OBI/EDAM/SRA -> catalog routes), methods/design terms and quantities (-> catalog parameter values), intent (goal, data source, negation, guard cues). `.simitall_lexicon_read_prompt()` returns a StudySpec view; read-only, not yet wired into routing. See `inst/agent/lexicon/SOURCES.md`. |
+| Prompt model (optional) | `training/`, `inst/python/prompt_model.py`, `R/agent_model.R` | Small BERT that tags number roles, condition/cell-type names and analysis roles; `.simitall_model_merge()` fills only what the lexicon left empty and adds nothing to stopped requests. Train with `training/run_overnight.sh`. |
 | Tests | `tests/testthat/` | Add a focused test for new user-visible behavior. |
 
 ## Prompt and Recipe Contract
