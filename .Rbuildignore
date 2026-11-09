@@ -10,3 +10,4 @@
 
 # Source-controlled external GO downloads; do not ship in the R package
 ^resources$
+^data-raw$

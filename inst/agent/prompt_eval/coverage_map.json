@@ -1,0 +1,314 @@
+{
+  "description": "Coverage targets for the prompt -> StudySpec evaluation set. partial routes get 12 examples, planned/knowledge-only 8; plus combinations, traps and not-yet-supported techniques.",
+  "situations": [
+    "simulate",
+    "provided",
+    "ask",
+    "demo",
+    "trap",
+    "unsupported"
+  ],
+  "styles": [
+    "expert",
+    "beginner",
+    "terse",
+    "chatty",
+    "nonnative"
+  ],
+  "unsupported_techniques": [
+    "ribo-seq",
+    "hi-c",
+    "bisulfite/methylation",
+    "proteomics",
+    "cut&run/cut&tag",
+    "spatial transcriptomics",
+    "long-read isoform sequencing",
+    "crispr screens"
+  ],
+  "totals": {
+    "target": 377,
+    "have": 63
+  },
+  "workflows": [
+    {
+      "workflow": "gene_coordinate_annotation",
+      "family": "annotation_and_function",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 2"
+    },
+    {
+      "workflow": "cross_design",
+      "family": "breeding_and_cross_design",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 10,
+      "tutorial_source": "TUTORIAL 4.1-4.6"
+    },
+    {
+      "workflow": "allele_specific_expression",
+      "family": "bulk_rnaseq",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "alternative_splicing",
+      "family": "bulk_rnaseq",
+      "catalog_status": "knowledge_catalog_only",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "bulk_counts_simulation",
+      "family": "bulk_rnaseq",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 6.1-6.3"
+    },
+    {
+      "workflow": "differential_expression",
+      "family": "bulk_rnaseq",
+      "catalog_status": "knowledge_catalog_only",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "rnaseq_power",
+      "family": "bulk_rnaseq",
+      "catalog_status": "knowledge_catalog_only",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "time_series_rnaseq",
+      "family": "bulk_rnaseq",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "chipseq_atacseq",
+      "family": "chromatin_epigenomics",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 8; workflows/chipseq_from_annotations.Rmd"
+    },
+    {
+      "workflow": "combination",
+      "family": "cross-cutting",
+      "catalog_status": "",
+      "target": 30,
+      "have": 4,
+      "tutorial_source": ""
+    },
+    {
+      "workflow": "trap",
+      "family": "cross-cutting",
+      "catalog_status": "",
+      "target": 20,
+      "have": 6,
+      "tutorial_source": ""
+    },
+    {
+      "workflow": "unsupported",
+      "family": "cross-cutting",
+      "catalog_status": "",
+      "target": 15,
+      "have": 4,
+      "tutorial_source": ""
+    },
+    {
+      "workflow": "bulk_eqtl",
+      "family": "eqtl",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 6.4; techniques/bulk_rnaseq_eqtl.Rmd"
+    },
+    {
+      "workflow": "single_cell_eqtl",
+      "family": "eqtl",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 7.2; workflows/single_cell_eqtl.Rmd"
+    },
+    {
+      "workflow": "splicing_qtl",
+      "family": "eqtl",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "genomic_prediction",
+      "family": "genomic_selection",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 6,
+      "tutorial_source": "TUTORIAL 3.2; workflows/genomic_selection_cycle.Rmd"
+    },
+    {
+      "workflow": "binary_gwas",
+      "family": "gwas",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 4,
+      "tutorial_source": "workflows/maize_nam_binary_gwas.Rmd"
+    },
+    {
+      "workflow": "multitrait_longitudinal_gwas",
+      "family": "gwas",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 2,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "quantitative_gwas",
+      "family": "gwas",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 8,
+      "tutorial_source": "TUTORIAL 3-3.1"
+    },
+    {
+      "workflow": "rare_variant_and_gene_based_gwas",
+      "family": "gwas",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 1,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "linkage_qtl",
+      "family": "linkage_qtl_mapping",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 5,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "microbiome_analysis",
+      "family": "metagenomics",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "gxe_multiomics",
+      "family": "multiomics_integration",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "workflows/maize_nam_chr10_gxe_multiomics.Rmd"
+    },
+    {
+      "workflow": "pedigree_inbreeding",
+      "family": "pedigree_and_inbreeding",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 6,
+      "tutorial_source": "TUTORIAL 4.7; techniques/pedigree_breeding.Rmd"
+    },
+    {
+      "workflow": "population_relatedness_gwas_calibration",
+      "family": "pedigree_and_inbreeding",
+      "catalog_status": "knowledge_catalog_only",
+      "target": 8,
+      "have": 1,
+      "tutorial_source": "workflows/human_relatedness_gwas_calibration.Rmd"
+    },
+    {
+      "workflow": "phenotype_outcome_model",
+      "family": "phenotype_simulation",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 6,
+      "tutorial_source": "TUTORIAL 3, 4.9"
+    },
+    {
+      "workflow": "linkage_disequilibrium",
+      "family": "population_genetics",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "population_structure",
+      "family": "population_genetics",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "selection_scan",
+      "family": "population_genetics",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "genome_assembly",
+      "family": "sequencing_and_assembly",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 5; workflows/hybrid_assembly_benchmark.Rmd"
+    },
+    {
+      "workflow": "genome_simulation",
+      "family": "sequencing_and_assembly",
+      "catalog_status": "",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 1"
+    },
+    {
+      "workflow": "read_simulation",
+      "family": "sequencing_and_assembly",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 5"
+    },
+    {
+      "workflow": "variant_calling",
+      "family": "sequencing_and_assembly",
+      "catalog_status": "planned",
+      "target": 8,
+      "have": 0,
+      "tutorial_source": "knowledge base / papers"
+    },
+    {
+      "workflow": "scrnaseq_analysis",
+      "family": "single_cell_rnaseq",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 7"
+    },
+    {
+      "workflow": "scrnaseq_simulation",
+      "family": "single_cell_rnaseq",
+      "catalog_status": "partial",
+      "target": 12,
+      "have": 0,
+      "tutorial_source": "TUTORIAL 7.1"
+    }
+  ]
+}
