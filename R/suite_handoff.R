@@ -15,7 +15,11 @@
 .suite_check_version <- function(spec, rules) {
   v <- spec$handoff_version %||% ""
   mm <- sub("^(\\d+\\.\\d+).*$", "\\1", v)
-  if (!nzchar(v) || !mm %in% unlist(rules$supported_handoff_versions)) {
+  if (!nzchar(v)) {
+    stop("study_spec.json has no handoff_version: it was written by a Biodes (BioDesignGPT) checkout older than commit 30f184b. Run `git pull` in BioDesignGPT, reload it, and write the design folder again with write_design_package().",
+         call. = FALSE)
+  }
+  if (!mm %in% unlist(rules$supported_handoff_versions)) {
     stop(sprintf(
       "study_spec.json has handoff_version '%s'; this simitall reads %s. Regenerate the package with a matching Biodes, or add the version to inst/suite/handoff.json after checking the schema.",
       v, paste(unlist(rules$supported_handoff_versions), collapse = ", ")
