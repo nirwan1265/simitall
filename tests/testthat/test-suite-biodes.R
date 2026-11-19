@@ -85,5 +85,6 @@ test_that("unsupported models, wrong versions and unknown columns stop with a cl
   s$analysis$model <- "y ~ treatment + greenhouse_door"
   jsonlite::write_json(s, file.path(d, "study_spec.json"), auto_unbox = TRUE)
   expect_error(simitall_from_biodes(d), "no matching column")
-  expect_error(simitall_from_biodes(tempdir()), "Not a Biodes design package")
+  e <- file.path(tempdir(), "empty_dir_for_test"); dir.create(e, showWarnings = FALSE)
+  expect_error(simitall_from_biodes(e), "Not a Biodes design folder")
 })

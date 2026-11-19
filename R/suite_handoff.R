@@ -32,7 +32,19 @@
   if (!dir.exists(biodes_dir)) stop("Biodes folder not found: ", biodes_dir, call. = FALSE)
   missing <- setdiff(unlist(rules$required_files), list.files(biodes_dir))
   if (length(missing)) {
-    stop("Not a Biodes design package; missing: ", paste(missing, collapse = ", "), call. = FALSE)
+    found <- list.files(biodes_dir, pattern = "^study_spec\\.json$", recursive = TRUE)
+    is_repo <- file.exists(file.path(biodes_dir, "DESCRIPTION")) &&
+      any(grepl("^Package:\\s*studyforge", readLines(file.path(biodes_dir, "DESCRIPTION"), warn = FALSE)))
+    hint <- if (length(found)) {
+      paste0(" Design folders found inside it: ", paste(file.path(biodes_dir, dirname(utils::head(found, 5))), collapse = ", "), ".")
+    } else if (is_repo) {
+      paste0(" This is the Biodes source repository, not a design folder. Create one first, e.g.:\n",
+             "  book <- make_design(\"rcbd\", paste0(\"G\", 1:6), reps = 4, seed = 42)\n",
+             "  write_design_package(book, extract_spec_local(\"<your question>\"), \"~/biodes_runs/test\")\n",
+             "then call simitall_from_biodes(\"~/biodes_runs/test\").")
+    } else ""
+    stop("Not a Biodes design folder (the folder write_design_package() writes); missing: ",
+         paste(missing, collapse = ", "), ".", hint, call. = FALSE)
   }
   spec <- jsonlite::read_json(file.path(biodes_dir, "study_spec.json"), simplifyVector = FALSE)
   .suite_check_version(spec, rules)
