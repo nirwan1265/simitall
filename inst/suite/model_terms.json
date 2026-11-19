@@ -1,0 +1,125 @@
+{
+  "_about": "Model term -> layout column and role. Terms come from analysis.model in study_spec.json (Biodes design_catalog.json). role: treatment (effects of interest), block (nuisance, fitted), unit (experimental unit id). columns: candidate layout columns in priority order. from_spec_factor: take the column named by the n-th entry of spec$factors (factorial designs). If no candidate is in the layout, a column with the term's own name is used.",
+  "unknown_term_role": "treatment",
+  "terms": {
+    "treatment": {
+      "role": "treatment",
+      "columns": [
+        "treatment"
+      ]
+    },
+    "genotype": {
+      "role": "treatment",
+      "columns": [
+        "genotype",
+        "entry",
+        "line",
+        "treatment"
+      ]
+    },
+    "check_or_entry": {
+      "role": "treatment",
+      "columns": [
+        "check_or_entry",
+        "treatment"
+      ]
+    },
+    "main": {
+      "role": "treatment",
+      "columns": [
+        "main",
+        "main_plot",
+        "mainplot"
+      ]
+    },
+    "sub": {
+      "role": "treatment",
+      "columns": [
+        "sub",
+        "sub_plot",
+        "subplot_treatment"
+      ]
+    },
+    "A": {
+      "role": "treatment",
+      "from_spec_factor": 1,
+      "columns": [
+        "A"
+      ]
+    },
+    "B": {
+      "role": "treatment",
+      "from_spec_factor": 2,
+      "columns": [
+        "B"
+      ]
+    },
+    "time": {
+      "role": "treatment",
+      "columns": [
+        "time",
+        "timepoint",
+        "time_point",
+        "day"
+      ]
+    },
+    "block": {
+      "role": "block",
+      "columns": [
+        "block",
+        "bench",
+        "rep_block"
+      ]
+    },
+    "rep": {
+      "role": "block",
+      "columns": [
+        "rep",
+        "replicate"
+      ]
+    },
+    "run": {
+      "role": "block",
+      "columns": [
+        "run",
+        "batch"
+      ]
+    },
+    "chamber": {
+      "role": "block",
+      "columns": [
+        "chamber"
+      ]
+    },
+    "tray": {
+      "role": "block",
+      "columns": [
+        "tray"
+      ]
+    },
+    "row": {
+      "role": "block",
+      "columns": [
+        "row"
+      ]
+    },
+    "col": {
+      "role": "block",
+      "columns": [
+        "col",
+        "column"
+      ]
+    },
+    "unit": {
+      "role": "unit",
+      "columns": [
+        "unit_id",
+        "plot",
+        "unit",
+        "pot",
+        "cage",
+        "animal"
+      ]
+    }
+  }
+}

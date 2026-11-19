@@ -1,0 +1,51 @@
+{
+  "_about": "Defaults Simitall uses when study_spec.json does not give a value. Every default used is written to sim_truth.json under assumptions, so the user sees it. Variances are given as ratios of the residual SD so the default scale follows the outcome.",
+  "seed": 1,
+  "intercept": {
+    "value": 100,
+    "note": "baseline mean of the primary outcome when the spec gives none"
+  },
+  "residual_sd": {
+    "value": 10,
+    "note": "used when power.residual_sd is missing (10% of the default intercept)"
+  },
+  "effect_in_residual_sd": {
+    "value": 1.0,
+    "note": "when power.minimum_detectable_difference is missing, the largest treatment difference = this many residual SDs"
+  },
+  "level_effect_pattern": {
+    "value": "even_spread",
+    "note": "k levels get effects evenly spread from 0 (first level, sorted) to the full effect; with 2 levels the difference equals the effect",
+    "allowed": [
+      "even_spread"
+    ]
+  },
+  "interaction_effect": {
+    "value": 0,
+    "note": "no interaction between treatment factors unless the spec gives one"
+  },
+  "block_sd_ratio": {
+    "value": 0.5,
+    "note": "SD of fixed block/rep effects, as a ratio of residual SD"
+  },
+  "random_sd_ratio": {
+    "value": 0.5,
+    "note": "SD of each random term in the model, as a ratio of residual SD"
+  },
+  "subsample_sd_ratio": {
+    "value": 0.5,
+    "note": "within-unit SD of subsamples (leaves of one plant), as a ratio of residual SD"
+  },
+  "attrition": {
+    "value": 0,
+    "note": "fraction of units lost; from power.attrition when given"
+  },
+  "counts": {
+    "n_genes": 1000,
+    "de_fraction": 0.1,
+    "de_log2fc_sd": 1.0,
+    "batch_effect_sd": 0.15,
+    "library_size_mean": 5000000,
+    "note": "passed to simulate_rnaseq_experiment(); condition = first treatment term, batch = first block term"
+  }
+}

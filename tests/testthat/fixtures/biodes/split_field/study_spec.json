@@ -1,0 +1,31 @@
+{
+  "status": "needs_clarification",
+  "assumptions": [],
+  "system": "field",
+  "organism": "Zea mays",
+  "primary_outcome": {
+    "name": "grain_yield",
+    "type": "continuous"
+  },
+  "factors": [
+    {
+      "name": "genotype",
+      "n_levels": 4
+    },
+    {
+      "name": "water"
+    }
+  ],
+  "design": {
+    "reps": 4,
+    "randomization_seed": 42,
+    "chosen": "split"
+  },
+  "experimental_unit": "plot",
+  "goal": "design",
+  "question": "Maize field trial, irrigation (wet, dry) as main plots and 4 hybrids as subplots, 4 blocks, yield",
+  "analysis": {
+    "model": "y ~ main * sub + block + (1 | block:main)"
+  },
+  "handoff_version": "0.4.0"
+}

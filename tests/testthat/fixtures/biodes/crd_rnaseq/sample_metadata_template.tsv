@@ -1,0 +1,13 @@
+plot	rep	block	treatment	sample_id	date_measured	primary_outcome	notes
+101	1	1	drought	SF_crd_0001			
+102	1	1	control	SF_crd_0002			
+103	2	1	drought	SF_crd_0003			
+104	3	1	drought	SF_crd_0004			
+105	4	1	drought	SF_crd_0005			
+106	2	1	control	SF_crd_0006			
+107	5	1	drought	SF_crd_0007			
+108	3	1	control	SF_crd_0008			
+109	6	1	drought	SF_crd_0009			
+110	4	1	control	SF_crd_0010			
+111	5	1	control	SF_crd_0011			
+112	6	1	control	SF_crd_0012			

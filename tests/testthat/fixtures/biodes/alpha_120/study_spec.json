@@ -1,0 +1,27 @@
+{
+  "status": "needs_clarification",
+  "assumptions": [],
+  "organism": "Zea mays",
+  "primary_outcome": {
+    "name": "grain_yield",
+    "type": "continuous"
+  },
+  "factors": [
+    {
+      "name": "genotype",
+      "n_levels": 120
+    }
+  ],
+  "design": {
+    "reps": 2,
+    "type": "alpha",
+    "randomization_seed": 42,
+    "chosen": "alpha"
+  },
+  "goal": "design",
+  "question": "120 maize lines, alpha lattice, 2 reps, block size 10, yield",
+  "analysis": {
+    "model": "y ~ genotype + rep + (1 | rep:block)"
+  },
+  "handoff_version": "0.4.0"
+}

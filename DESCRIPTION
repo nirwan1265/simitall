@@ -36,6 +36,8 @@ Suggests:
     pedtricks,
     Rsubread,
     httr2,
+    lme4,
+    lmerTest,
     ggplot2,
     patchwork,
     processx,
