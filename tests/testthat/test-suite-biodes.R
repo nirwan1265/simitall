@@ -93,3 +93,22 @@ test_that("analysing before simulating says to run simitall_from_biodes() first"
   d <- copy_fixture("rcbd_greenhouse")
   expect_error(bioana_fit_biodes(d), "Run simitall_from_biodes")
 })
+
+test_that("layouts that do not match Biodes' plan are flagged", {
+  d <- copy_fixture("rcbd_greenhouse")
+  spec <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  spec$factors <- list(list(name = "genotype", n_levels = 6), list(name = "water", n_levels = 3))
+  jsonlite::write_json(spec, file.path(d, "study_spec.json"), auto_unbox = TRUE)
+  ok <- list(candidates = c("rcbd", "row_column"), recipe = 'book <- make_design("rcbd", paste0("G", 1:6), reps = 4)')
+  expect_match(.suite_layout_issues(ok, d), "factor 'water' has 3 levels")
+  bad <- list(candidates = c("met_fa", "alpha"), recipe = 'make_design("factorial", factor_levels = list(A = c("a1", "a2")))')
+  iss <- .suite_layout_issues(bad, d)
+  expect_true(any(grepl("first-choice design is 'met_fa'", iss)))
+  expect_true(any(grepl("placeholder factor levels", iss)))
+  expect_equal(.suite_slug("Greenhouse drought on 6 sorghum genotypes, 4 benches"), "greenhouse_drought_sorghum_genotypes_benches")
+})
+
+test_that("simitall_from_question explains how to get Biodes when it is missing", {
+  skip_if(requireNamespace("studyforge", quietly = TRUE), "Biodes is available")
+  expect_error(simitall_from_question("anything"), "needs Biodes")
+})
