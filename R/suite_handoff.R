@@ -75,9 +75,9 @@
                  if (length(bad)) paste0(" (", paste(bad, collapse = ", "), ")") else ""), call. = FALSE)
   }
   term_rules <- .suite_rules("model_terms")
-  fixed <- lme4::nobars(f)
+  fixed <- .suite_nobars(f)
   fixed_labels <- attr(stats::terms(fixed), "term.labels")
-  bars <- lme4::findbars(f)
+  bars <- .suite_findbars(f)
   random <- lapply(bars, function(b) {
     g <- b[[3]]
     list(label = paste(deparse(g), collapse = ""), vars = all.vars(g))
@@ -125,4 +125,12 @@
 .suite_write_json <- function(x, path) {
   jsonlite::write_json(x, path, auto_unbox = TRUE, pretty = TRUE, digits = NA, null = "null")
   path
+}
+
+# lme4 moved nobars()/findbars() to the reformulas package; use it when present.
+.suite_nobars <- function(f) {
+  if (requireNamespace("reformulas", quietly = TRUE)) reformulas::nobars(f) else lme4::nobars(f)
+}
+.suite_findbars <- function(f) {
+  if (requireNamespace("reformulas", quietly = TRUE)) reformulas::findbars(f) else lme4::findbars(f)
 }

@@ -88,3 +88,8 @@ test_that("unsupported models, wrong versions and unknown columns stop with a cl
   e <- file.path(tempdir(), "empty_dir_for_test"); dir.create(e, showWarnings = FALSE)
   expect_error(simitall_from_biodes(e), "Not a Biodes design folder")
 })
+
+test_that("analysing before simulating says to run simitall_from_biodes() first", {
+  d <- copy_fixture("rcbd_greenhouse")
+  expect_error(bioana_fit_biodes(d), "Run simitall_from_biodes")
+})

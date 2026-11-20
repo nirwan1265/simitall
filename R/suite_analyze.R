@@ -62,7 +62,7 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
       f <- stats::update(f, . ~ . + (1 | unit_id_))
     }
     frame <- .suite_frame(dat, p)
-    has_random <- length(lme4::findbars(f)) > 0
+    has_random <- length(.suite_findbars(f)) > 0
     fit <- if (has_random) {
       if (requireNamespace("lmerTest", quietly = TRUE)) lmerTest::lmer(f, data = frame) else lme4::lmer(f, data = frame)
     } else {
@@ -118,7 +118,8 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
     out$de <- de$table
   }
   if (!fit_outcome && !file.exists(cpath)) {
-    stop("No primary_outcome values in sample_metadata_template.tsv and no counts.tsv: nothing to analyze.", call. = FALSE)
+    stop(sprintf("Nothing to analyze in %s: the primary_outcome column is empty and there is no counts.tsv. Run simitall_from_biodes(\"%s\") first to simulate data, or fill primary_outcome with your measurements.",
+                 biodes_dir, biodes_dir), call. = FALSE)
   }
   summary$warnings <- warn
   paths <- c(paths, summary = .suite_write_json(summary, file.path(outdir, "fit_summary.json")))

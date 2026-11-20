@@ -38,6 +38,7 @@ Suggests:
     httr2,
     lme4,
     lmerTest,
+    reformulas,
     ggplot2,
     patchwork,
     processx,
