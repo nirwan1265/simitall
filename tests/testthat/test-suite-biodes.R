@@ -112,3 +112,9 @@ test_that("simitall_from_question explains how to get Biodes when it is missing"
   skip_if(requireNamespace("studyforge", quietly = TRUE), "Biodes is available")
   expect_error(simitall_from_question("anything"), "needs Biodes")
 })
+
+test_that("genotype levels sort naturally (G2 before G10)", {
+  expect_equal(.suite_natural_sort(c("G10", "G2", "G1", "G11")), c("G1", "G2", "G10", "G11"))
+  expect_equal(.suite_natural_sort(c("10", "9", "100")), c("9", "10", "100"))
+  expect_equal(.suite_natural_sort(c("wet", "dry")), c("dry", "wet"))
+})

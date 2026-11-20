@@ -37,8 +37,10 @@ own plan (a different design, or placeholder factor levels). Off by
 default: that would simulate a different experiment from the one asked.}
 }
 \value{
-Invisibly: the Biodes answer, the design folder, and the simulation
-and analysis results.
+Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),
+the design folder (\verb{$dir}), open questions, and the simulation and
+analysis results (\verb{$analysis$results}, \verb{$analysis$recovery}). Printing it
+shows a short summary.
 }
 \description{
 One call across the suite: Biodes (package \code{studyforge},

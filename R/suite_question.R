@@ -24,8 +24,10 @@
 #' @param force Simulate even when the layout Biodes wrote does not match its
 #'   own plan (a different design, or placeholder factor levels). Off by
 #'   default: that would simulate a different experiment from the one asked.
-#' @return Invisibly: the Biodes answer, the design folder, and the simulation
-#'   and analysis results.
+#' @return Invisibly, a `simitall_suite_run`: the Biodes answer (`$answer`),
+#'   the design folder (`$dir`), open questions, and the simulation and
+#'   analysis results (`$analysis$results`, `$analysis$recovery`). Printing it
+#'   shows a short summary.
 #' @examples
 #' \dontrun{
 #' devtools::load_all("~/Documents/Github/BioDesignGPT")   # Biodes
@@ -63,7 +65,8 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
     open <- c(open, issues)
   }
 
-  out <- list(answer = ans, dir = outdir, open_questions = open, layout_issues = issues, simulation = NULL, analysis = NULL)
+  out <- structure(list(answer = ans, dir = outdir, open_questions = open, layout_issues = issues, simulation = NULL,
+                        analysis = NULL), class = "simitall_suite_run")
   if (!simulate) return(invisible(out))
   if (length(issues) && !isTRUE(force)) {
     message("Not simulated: the layout does not match Biodes' plan (see above). This needs a fix in Biodes ",
@@ -96,7 +99,8 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   spec <- jsonlite::read_json(file.path(outdir, "study_spec.json"), simplifyVector = FALSE)
   fl <- function(x) if (is.null(x) || !length(x)) "-" else paste(unlist(x), collapse = ", ")
   factors <- vapply(s$factors %||% list(), function(f) sprintf("%s (%s levels)", f$name %||% "?", f$n_levels %||% "?"), "")
-  missing <- unlist(ans$validation$missing)
+  # fields the plan itself fills (design.candidates) are Biodes bookkeeping, not questions for the user
+  missing <- setdiff(unlist(ans$validation$missing), "design.candidates")
   open <- unique(c(if (length(missing)) paste0("missing: ", missing), unlist(ans$questions)))
   cat("Biodes plan\n",
       "  organism:          ", fl(s$organism), "\n",
@@ -135,4 +139,31 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
     issues <- c(issues, "the layout uses placeholder factor levels (a1/a2, b1/b2), not the study's factors.")
   }
   issues
+}
+
+#' @export
+print.simitall_suite_run <- function(x, ...) {
+  s <- x$answer$spec
+  cat("Biodes -> Simitall -> Bioana\n")
+  cat("  question:  ", x$answer$question, "\n", sep = "")
+  cat("  folder:    ", x$dir, "\n", sep = "")
+  fs <- x$analysis$summary
+  if (is.null(fs)) {
+    cat("  status:    not simulated", if (length(x$layout_issues)) " (layout does not match the plan)", "\n", sep = "")
+  } else {
+    cat(sprintf("  design:    %s, %s; %d units fitted with %s\n", fs$design, fs$model_from_spec, fs$n_units_fitted, fs$method))
+    for (a in fs$anova %||% list()) {
+      if (!is.null(a$term) && a$term != "Residuals" && !is.null(a[["Pr(>F)"]])) {
+        cat(sprintf("  %-10s F = %.2f on %s df, p = %.3g\n", paste0(a$term, ":"), a[["F value"]], a$Df, a[["Pr(>F)"]]))
+      }
+    }
+    if (!is.null(fs$recovery)) {
+      cat(sprintf("  recovery:  %d/%d treatment effects inside their %d%% CI (bias %.3g, RMSE %.3g)\n",
+                  fs$recovery$covered, fs$recovery$n_terms, round(100 * fs$recovery$nominal), fs$recovery$bias, fs$recovery$rmse))
+    }
+    if (length(fs$warnings)) cat("  warnings:  ", paste(fs$warnings, collapse = "; "), "\n", sep = "")
+  }
+  if (length(x$open_questions)) cat("  open questions: ", length(x$open_questions), " (see $open_questions)\n", sep = "")
+  cat("  files:     results.tsv, recovery.tsv, fit_summary.json in the folder\n")
+  invisible(x)
 }

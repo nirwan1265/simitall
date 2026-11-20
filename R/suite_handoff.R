@@ -109,9 +109,7 @@
   out <- data
   for (v in parsed$vars) {
     x <- as.character(data[[parsed$col[[v]]]])
-    lev <- unique(x)
-    num <- suppressWarnings(as.numeric(lev))
-    lev <- if (!anyNA(num)) lev[order(num)] else sort(lev)
+    lev <- .suite_natural_sort(unique(x))
     out[[v]] <- factor(x, levels = lev)
   }
   out
@@ -133,4 +131,14 @@
 }
 .suite_findbars <- function(f) {
   if (requireNamespace("reformulas", quietly = TRUE)) reformulas::findbars(f) else lme4::findbars(f)
+}
+
+# G1, G2, ..., G10 (not G1, G10, G11, G2): order by text with each number compared as a number.
+.suite_natural_sort <- function(x) {
+  num <- suppressWarnings(as.numeric(x))
+  if (!anyNA(num)) return(x[order(num)])
+  prefix <- sub("\\d+$", "", x)
+  suffix <- suppressWarnings(as.numeric(sub("^.*?(\\d+)$", "\\1", x)))
+  suffix[!grepl("\\d$", x)] <- -Inf
+  x[order(prefix, suffix, x)]
 }
