@@ -1,0 +1,25 @@
+plot	rep	block	treatment	sample_id	date_measured	primary_outcome	notes
+101	1	1	G4	SF_rcbd_0001			
+102	1	1	G5	SF_rcbd_0002			
+103	1	1	G3	SF_rcbd_0003			
+104	1	1	G1	SF_rcbd_0004			
+105	1	1	G2	SF_rcbd_0005			
+106	1	1	G6	SF_rcbd_0006			
+201	2	2	G1	SF_rcbd_0007			
+202	2	2	G3	SF_rcbd_0008			
+203	2	2	G5	SF_rcbd_0009			
+204	2	2	G2	SF_rcbd_0010			
+205	2	2	G4	SF_rcbd_0011			
+206	2	2	G6	SF_rcbd_0012			
+301	3	3	G2	SF_rcbd_0013			
+302	3	3	G4	SF_rcbd_0014			
+303	3	3	G6	SF_rcbd_0015			
+304	3	3	G5	SF_rcbd_0016			
+305	3	3	G3	SF_rcbd_0017			
+306	3	3	G1	SF_rcbd_0018			
+401	4	4	G3	SF_rcbd_0019			
+402	4	4	G6	SF_rcbd_0020			
+403	4	4	G4	SF_rcbd_0021			
+404	4	4	G5	SF_rcbd_0022			
+405	4	4	G1	SF_rcbd_0023			
+406	4	4	G2	SF_rcbd_0024			

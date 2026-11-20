@@ -60,8 +60,16 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
 
   # treatment main effects: levels spread evenly from 0 to the full effect
   treat_vars <- intersect(names(p$role)[p$role == "treatment"], p$fixed_labels)
-  treatment_effects <- list()
+  treatment_effects <- numeric_effects <- list()
   for (v in treat_vars) {
+    if (v %in% p$numeric) {
+      # numeric factor (response surface): linear over its range, no curvature
+      rng <- range(frame[[v]], na.rm = TRUE)
+      slope <- if (diff(rng) > 0) eff / diff(rng) else 0
+      numeric_effects[[v]] <- slope
+      y <- y + slope * frame[[v]]
+      next
+    }
     lev <- levels(frame[[v]])
     e <- stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
     treatment_effects[[v]] <- as.list(e)
@@ -121,7 +129,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     outcome = spec$primary_outcome$name %||% "primary_outcome", seed = seed,
     intercept = mu, residual_sd = rsd, effect = eff,
     level_effect_pattern = d$level_effect_pattern$value,
-    treatment_effects = treatment_effects,
+    treatment_effects = treatment_effects, numeric_effects = numeric_effects,
     interaction_effects = if (length(interactions)) stats::setNames(as.list(rep(d$interaction_effect$value, length(interactions))), interactions) else list(),
     block_effects = block_effects, random_sd = random_sd,
     subsamples_per_unit = n_sub, subsample_sd = if (n_sub > 1) d$subsample_sd_ratio$value * rsd else 0,

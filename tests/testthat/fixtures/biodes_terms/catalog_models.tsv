@@ -1,0 +1,75 @@
+id	model
+crd	y ~ treatment
+rcbd	y ~ treatment + block
+alpha	y ~ treatment + rep + (1 | rep:block)
+split	y ~ treatment * treatment2 + block + (1 | block:treatment)
+factorial	y ~ treatment * treatment2 + block
+augmented	y ~ treatment + block
+prep	y ~ (1 | treatment) + (1 | row) + (1 | col)
+repeated_measures	y ~ treatment * time + (1 | unit)
+row_column	y ~ treatment + rep + (1 | rep:row) + (1 | rep:col)
+spatial_analysis	y ~ treatment + (1 | row) + (1 | col)
+diagonal_checks	y ~ (1 | treatment) + check + (1 | row) + (1 | col)
+line_source	y ~ treatment * treatment2 + (1 | block) + (1 | block:treatment2)
+augmented_tray	y ~ treatment + (1 | block)
+chamber_runs	y ~ treatment + (1 | block) + (1 | block:unit)
+vial_lifespan	y ~ treatment + (1 | unit) + (1 | block)
+diallel	y ~ env + (1 | treatment) + (1 | treatment2) + (1 | treatment:treatment2)
+nc_design	y ~ env + (1 | treatment) + (1 | treatment2) + (1 | treatment:treatment2)
+mapping_population	y ~ treatment2 + rep + (1 | treatment) + (1 | rep:block)
+met_fa	y ~ treatment * env + (1 | env:rep)
+gh_field_validation	y ~ treatment * env + (1 | env:block)
+gwas_eqtl	y ~ rep + (1 | treatment)
+riboseq_rnaseq	y ~ treatment * treatment2
+atac_replicated	y ~ treatment + block
+cross_species_validation	y ~ treatment + block + (1 | unit)
+latin_square	y ~ treatment + row + col
+balanced_incomplete_block	y ~ treatment + (1 | block)
+strip_plot	y ~ treatment * treatment2 + (1 | rep) + (1 | rep:treatment) + (1 | rep:treatment2)
+split_split_plot	y ~ treatment * treatment2 + (1 | rep) + (1 | rep:treatment) + (1 | rep:treatment:treatment2)
+crossover_ab_ba	y ~ treatment + period + sequence + (1 | subject)
+youden_square	y ~ treatment + row + col
+cluster_randomized	y ~ treatment + (1 | unit)
+nested_subsampling	y ~ treatment + (1 | unit) + (1 | unit:subject)
+ancova_baseline	y ~ treatment
+greenhouse_bench_position_latin_square	y ~ treatment + row + col
+repeated_measures_baseline	y ~ treatment * time + (1 | subject)
+graeco_latin_square	y ~ treatment + treatment2 + row + col
+latin_rectangle	y ~ treatment + row + col
+resolvable_incomplete_block	y ~ treatment + (1 | rep) + (1 | rep:block)
+square_lattice	y ~ treatment + (1 | rep) + (1 | rep:block)
+rectangular_lattice	y ~ treatment + (1 | rep) + (1 | rep:block)
+cyclic_block	y ~ treatment + (1 | rep) + (1 | block)
+partially_replicated	y ~ treatment + (1 | row) + (1 | col)
+augmented_rcbd	y ~ treatment + block
+multi_environment_trial	y ~ treatment * env + (1 | env:rep)
+randomized_matched_pairs	y ~ treatment + block
+split_body	y ~ treatment + (1 | subject)
+litter_blocked	y ~ treatment + (1 | block)
+batch_blocked	y ~ treatment + (1 | block)
+longitudinal_repeated_measures	y ~ treatment * time + (1 | subject)
+cluster_longitudinal	y ~ treatment * time + (1 | unit) + (1 | unit:subject)
+stepped_wedge_cluster	y ~ treatment + period + (1 | unit)
+cluster_crossover	y ~ treatment + period + sequence + (1 | unit)
+williams_crossover	y ~ treatment + period + sequence + (1 | subject)
+incomplete_block_crossover	y ~ treatment + period + sequence + (1 | subject)
+latin_square_crossover	y ~ treatment + period + (1 | subject)
+factorial_longitudinal	y ~ treatment * treatment2 * time + (1 | subject)
+factorial_rcbd	y ~ treatment * treatment2 + (1 | block)
+strip_split_plot	y ~ treatment * treatment2 + (1 | rep) + (1 | rep:treatment) + (1 | rep:treatment2)
+fractional_factorial	y ~ treatment * treatment2
+plackett_burman	y ~ treatment + treatment2
+central_composite	y ~ treatment + treatment2 + I(treatment^2) + I(treatment2^2) + treatment:treatment2
+box_behnken	y ~ treatment + treatment2 + I(treatment^2) + I(treatment2^2) + treatment:treatment2
+d_optimal	y ~ treatment * treatment2
+orthogonal_array	y ~ treatment + treatment2
+microplate_row_column	y ~ treatment + (1 | rep) + (1 | row) + (1 | col)
+sequencing_batch_balanced	y ~ treatment + block
+paired_donor_culture	y ~ treatment + (1 | subject)
+split_batch_sequencing	y ~ treatment + (1 | subject) + (1 | block)
+dose_response	y ~ treatment
+nested_growth_chamber	y ~ treatment + (1 | unit)
+randomized_complete_block_repeated	y ~ treatment * time + (1 | block) + (1 | unit)
+multi_location_augmented	y ~ treatment * env + (1 | env:block)
+nested_factorial	y ~ treatment + treatment:treatment2
+blocked_crossover	y ~ treatment + period + sequence + (1 | block) + (1 | subject)

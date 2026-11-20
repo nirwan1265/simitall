@@ -84,24 +84,59 @@
   })
   vars <- setdiff(all.vars(f), all.vars(f[[2]]))
   factor_names <- vapply(spec$factors %||% list(), function(x) x$name %||% "", "")
-  col <- role <- stats::setNames(character(length(vars)), vars)
+  role <- vapply(vars, function(v) term_rules$terms[[v]]$role %||% term_rules$unknown_term_role, "")
+  # variables used inside I(), e.g. I(treatment^2) in response-surface designs, are numeric, not factors
+  numeric_vars <- intersect(vars, .suite_numeric_vars(fixed))
+  # analysis.terms (Biodes 6e49dab+): which generic terms are layout columns, optionally term -> column
+  aterms <- spec$analysis$terms %||% list()
+  layout_terms <- unlist(aterms$layout_columns)
+  explicit <- aterms$columns %||% list()
+  fixed_treat <- intersect(vars[role == "treatment"], unlist(lapply(fixed_labels, function(l) all.vars(str2lang(l)))))
+  sep <- term_rules$combined_level_separator %||% ":"
+  is_cell_label <- function(column) {
+    x <- layout[[column]]
+    length(fixed_treat) > 1 && length(x) && all(grepl(sep, x, fixed = TRUE))
+  }
+  col <- stats::setNames(character(length(vars)), vars)
   for (v in vars) {
     r <- term_rules$terms[[v]]
-    cands <- unlist(r$columns)
+    cands <- c(explicit[[v]], if (v %in% layout_terms) v)
     if (!is.null(r$from_spec_factor) && length(factor_names) >= r$from_spec_factor) {
-      cands <- c(factor_names[[r$from_spec_factor]], cands)
+      cands <- c(cands, factor_names[[r$from_spec_factor]])
     }
-    cands <- c(cands, v)
-    hit <- cands[cands %in% names(layout)][1]
+    cands <- unique(c(cands, unlist(r$columns), v))
+    ok <- cands[cands %in% names(layout)]
+    skipped <- Filter(is_cell_label, ok)
+    hit <- setdiff(ok, skipped)[1]
     if (is.na(hit)) {
-      stop(sprintf("Model term '%s' in '%s' has no matching column in field_layout.csv (looked for: %s). Add the column name to inst/suite/model_terms.json.",
-                   v, model, paste(unique(cands), collapse = ", ")), call. = FALSE)
+      stop(sprintf("Model term '%s' in '%s' has no matching column in field_layout.csv (looked for: %s%s). Add the column name to inst/suite/model_terms.json, or have Biodes list it in analysis.terms.",
+                   v, model, paste(cands, collapse = ", "),
+                   if (length(skipped)) sprintf("; skipped %s: its levels join several factors", paste(skipped, collapse = ", ")) else ""),
+           call. = FALSE)
     }
     col[[v]] <- hit
-    role[[v]] <- r$role %||% term_rules$unknown_term_role
+  }
+  # two fixed terms read from one column would make the model rank deficient
+  fixed_vars <- intersect(vars, all.vars(fixed))
+  dup <- col[fixed_vars][duplicated(col[fixed_vars])]
+  if (length(dup)) {
+    stop(sprintf("Model '%s': terms %s all map to layout column '%s'. Biodes should write one column per model term (or give analysis.terms.columns).",
+                 model, paste(fixed_vars[col[fixed_vars] %in% dup], collapse = ", "), dup[1]), call. = FALSE)
   }
   list(formula = f, response = all.vars(f[[2]]), fixed_labels = fixed_labels, random = random,
-       vars = vars, col = col, role = role)
+       vars = vars, col = col, role = role, numeric = numeric_vars)
+}
+
+# Variables that appear inside I(...) in a formula.
+.suite_numeric_vars <- function(f) {
+  out <- character()
+  walk <- function(e) {
+    if (is.call(e)) {
+      if (identical(e[[1]], as.name("I"))) out <<- c(out, all.vars(e)) else for (a in as.list(e)[-1]) walk(a)
+    }
+  }
+  walk(f[[length(f)]])
+  unique(out)
 }
 
 # Model frame: one factor column per model variable, named as in the model.
@@ -109,6 +144,12 @@
   out <- data
   for (v in parsed$vars) {
     x <- as.character(data[[parsed$col[[v]]]])
+    if (v %in% parsed$numeric) {
+      num <- suppressWarnings(as.numeric(x))
+      if (anyNA(num[!is.na(x)])) stop(sprintf("Model uses %s as a number (inside I()), but layout column '%s' is not numeric.", v, parsed$col[[v]]), call. = FALSE)
+      out[[v]] <- num
+      next
+    }
     lev <- .suite_natural_sort(unique(x))
     out[[v]] <- factor(x, levels = lev)
   }

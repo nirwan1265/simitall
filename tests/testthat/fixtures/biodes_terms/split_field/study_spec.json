@@ -1,0 +1,43 @@
+{
+  "status": "needs_clarification",
+  "assumptions": [],
+  "system": "field",
+  "organism": "Zea mays",
+  "primary_outcome": {
+    "name": "grain_yield",
+    "type": "continuous"
+  },
+  "factors": [
+    {
+      "name": "genotype",
+      "n_levels": 4
+    },
+    {
+      "name": "water"
+    }
+  ],
+  "design": {
+    "reps": 4,
+    "randomization_seed": 42,
+    "chosen": "split"
+  },
+  "experimental_unit": "plot",
+  "goal": "design",
+  "question": "Maize field trial, irrigation (wet, dry) as main plots and 4 hybrids as subplots, 4 blocks, yield",
+  "analysis": {
+    "model": "y ~ treatment * treatment2 + block + (1 | block:treatment)",
+    "note": "treatment = main-plot factor, treatment2 = subplot factor; (1 | block:treatment) is the main-plot error. Original model text: y ~ main * sub + block + (1 | block:main)",
+    "terms": {
+      "treatment": "genotype",
+      "treatment2": "water",
+      "unit": "plot",
+      "block": "block",
+      "layout_columns": [
+        "treatment",
+        "block",
+        "rep"
+      ]
+    }
+  },
+  "handoff_version": "0.4.0"
+}

@@ -1,0 +1,39 @@
+{
+  "status": "needs_clarification",
+  "assumptions": [],
+  "organism": "Sorghum bicolor",
+  "factors": [
+    {
+      "name": "water",
+      "n_levels": 2
+    },
+    {
+      "name": "treatment",
+      "n_levels": 2
+    }
+  ],
+  "design": {
+    "reps": 6,
+    "type": "crd",
+    "randomization_seed": 42,
+    "chosen": "crd"
+  },
+  "assays": "rnaseq",
+  "goal": "design",
+  "tissue": "leaf",
+  "question": "Drought RNA-seq in sorghum leaves, control vs drought, 6 biological replicates, completely randomized",
+  "analysis": {
+    "model": "y ~ treatment",
+    "terms": {
+      "treatment": "water",
+      "treatment2": "treatment",
+      "block": "block",
+      "layout_columns": [
+        "treatment",
+        "block",
+        "rep"
+      ]
+    }
+  },
+  "handoff_version": "0.4.0"
+}

@@ -43,7 +43,10 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
   if (fit_outcome) {
     meta$y_ <- y
     unit <- .suite_unit_id(meta)
-    has_subs <- anyDuplicated(unit[!is.na(unit)]) > 0
+    # subsamples: rows of one unit that agree on every model variable (repeated
+    # measures over time or period differ in a model variable, so they are not subsamples)
+    cell <- do.call(paste, c(list(unit), lapply(p$vars, function(v) meta[[p$col[[v]]]]), sep = "\r"))
+    has_subs <- anyDuplicated(cell[!is.na(unit)]) > 0
     f <- p$formula
     f[[2]] <- as.name("y_")
     if (has_subs && subsamples == "as_replicates") {
@@ -52,13 +55,13 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
     }
     dropped <- meta$sample_id[is.na(y)]
     dat <- meta[!is.na(y), , drop = FALSE]
+    dcell <- cell[!is.na(y)]
     if (has_subs && subsamples == "aggregate") {
-      u <- .suite_unit_id(dat)
-      first <- dat[!duplicated(u), , drop = FALSE]
-      first$y_ <- as.numeric(tapply(dat$y_, u, mean)[first[[if ("unit_id" %in% names(dat)) "unit_id" else "sample_id"]]])
+      first <- dat[!duplicated(dcell), , drop = FALSE]
+      first$y_ <- as.numeric(tapply(dat$y_, dcell, mean)[dcell[!duplicated(dcell)]])
       dat <- first
     } else if (has_subs && subsamples == "nest") {
-      dat$unit_id_ <- .suite_unit_id(dat)
+      dat$unit_id_ <- dcell
       f <- stats::update(f, . ~ . + (1 | unit_id_))
     }
     frame <- .suite_frame(dat, p)
@@ -138,7 +141,7 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
   if (term == "(Intercept)") return("intercept")
   parts <- strsplit(term, ":", fixed = TRUE)[[1]]
   roles <- vapply(parts, function(x) {
-    v <- p$vars[startsWith(x, p$vars)]
+    v <- if (startsWith(x, "I(")) intersect(all.vars(str2lang(x)), p$vars) else p$vars[startsWith(x, p$vars)]
     if (length(v)) p$role[[v[which.max(nchar(v))]]] else "other"
   }, "")
   if (all(roles == "treatment")) "treatment" else if (any(roles == "block")) "block" else roles[1]
@@ -147,13 +150,16 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
 # True coefficients under the same parametrisation: fit the fixed treatment
 # part of the model to the noise-free treatment means.
 .suite_recovery <- function(res, truth, frame, p, alpha) {
-  tv <- names(truth$treatment_effects)
+  fv <- names(truth$treatment_effects)
+  nv <- names(truth$numeric_effects)
+  tv <- c(fv, nv)
   if (!length(tv)) return(NULL)
   grid <- unique(frame[tv])
   mu <- rep(as.numeric(truth$intercept), nrow(grid))
-  for (v in tv) mu <- mu + unlist(truth$treatment_effects[[v]])[as.character(grid[[v]])]
+  for (v in fv) mu <- mu + unlist(truth$treatment_effects[[v]])[as.character(grid[[v]])]
+  for (v in nv) mu <- mu + as.numeric(truth$numeric_effects[[v]]) * grid[[v]]
   for (it in names(truth$interaction_effects)) mu <- mu + as.numeric(truth$interaction_effects[[it]])
-  labels <- p$fixed_labels[vapply(strsplit(p$fixed_labels, ":"), function(x) all(x %in% tv), logical(1))]
+  labels <- p$fixed_labels[vapply(p$fixed_labels, function(l) all(all.vars(str2lang(l)) %in% tv), logical(1))]
   if (!length(labels)) return(NULL)
   grid$true_mean_ <- mu
   tf <- stats::reformulate(labels, response = "true_mean_")

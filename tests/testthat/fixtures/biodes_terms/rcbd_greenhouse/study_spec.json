@@ -1,0 +1,44 @@
+{
+  "status": "needs_clarification",
+  "assumptions": [],
+  "system": "greenhouse",
+  "organism": "Sorghum bicolor",
+  "primary_outcome": {
+    "name": "chlorophyll_content",
+    "type": "continuous"
+  },
+  "factors": [
+    {
+      "name": "genotype",
+      "n_levels": 6
+    },
+    {
+      "name": "water"
+    }
+  ],
+  "design": {
+    "reps": 4,
+    "randomization_seed": 42,
+    "chosen": "rcbd"
+  },
+  "experimental_unit": "pot",
+  "blocking_factors": "bench",
+  "goal": "design",
+  "tissue": "leaf",
+  "question": "Greenhouse drought on 6 sorghum genotypes, 4 benches as blocks, pot is the unit, 3 leaves sampled per plant, measure chlorophyll content",
+  "analysis": {
+    "model": "y ~ treatment + block",
+    "terms": {
+      "treatment": "genotype",
+      "treatment2": "water",
+      "unit": "pot",
+      "block": "bench",
+      "layout_columns": [
+        "treatment",
+        "block",
+        "rep"
+      ]
+    }
+  },
+  "handoff_version": "0.4.0"
+}

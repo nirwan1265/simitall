@@ -1,0 +1,38 @@
+{
+  "status": "needs_clarification",
+  "assumptions": [],
+  "organism": "Zea mays",
+  "primary_outcome": {
+    "name": "grain_yield",
+    "type": "continuous"
+  },
+  "factors": [
+    {
+      "name": "genotype",
+      "n_levels": 120
+    }
+  ],
+  "design": {
+    "reps": 2,
+    "type": "alpha",
+    "randomization_seed": 42,
+    "chosen": "alpha"
+  },
+  "goal": "design",
+  "question": "120 maize lines, alpha lattice, 2 reps, block size 10, yield",
+  "analysis": {
+    "model": "y ~ treatment + rep + (1 | rep:block)",
+    "note": "treatment = genotype/entry; block = incomplete block within rep. Original model text: y ~ genotype + rep + (1 | rep:block)",
+    "terms": {
+      "treatment": "genotype",
+      "block": "block",
+      "layout_columns": [
+        "treatment",
+        "block",
+        "rep",
+        "col"
+      ]
+    }
+  },
+  "handoff_version": "0.4.0"
+}
