@@ -54,6 +54,10 @@ outcomes, effect size / SD), matched to the question, system, organism and
 assays. `use_suggestions = TRUE` fills every missing item with its first
 suggestion, prints what it filled, and runs; your own `answers` always win.
 
+Figures: `biopaint_biodes(dir)` (run automatically by `simitall_from_question()`)
+writes `figures/layout.png`, `outcome.png`, `recovery.png`, `power.png` (after a
+power sweep) and `volcano.png` (count assays), using whatever the folder holds.
+
 `simitall_power_sweep(dir_or_run)` rebuilds the layout for several values of
 `design.reps`, simulates and fits each many times, and writes
 `power_sweep.tsv` / `power_sweep.json` (power per model term).

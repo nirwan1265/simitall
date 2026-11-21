@@ -16,7 +16,8 @@ simitall_from_question(
   force = FALSE,
   design = NULL,
   layout_seed = 42,
-  use_suggestions = FALSE
+  use_suggestions = FALSE,
+  figures = TRUE
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ that would simulate a different experiment from the one asked.}
 first suggestion (Biodes' traits and units, \code{inst/suite/suggestions.tsv})
 and run. Every filled value is printed and kept in \verb{$filled_from_suggestions}.
 Your own \code{answers} always win.}
+
+\item{figures}{Draw the figures (\code{\link[=biopaint_biodes]{biopaint_biodes()}}) into \verb{<outdir>/figures}.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),

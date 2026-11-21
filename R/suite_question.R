@@ -30,6 +30,7 @@
 #'   that would simulate a different experiment from the one asked.
 #' @param design Catalog design to lay out instead of Biodes' first candidate.
 #' @param layout_seed Randomization seed for the layout.
+#' @param figures Draw the figures ([biopaint_biodes()]) into `<outdir>/figures`.
 #' @param use_suggestions Fill each item the study details leave open with its
 #'   first suggestion (Biodes' traits and units, `inst/suite/suggestions.tsv`)
 #'   and run. Every filled value is printed and kept in `$filled_from_suggestions`.
@@ -49,7 +50,8 @@
 simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    engine = c("rules", "hybrid", "llm", "auto"),
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
-                                   force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE) {
+                                   force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE,
+                                   figures = TRUE) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
@@ -116,6 +118,12 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   }
   out$simulation <- simitall_from_biodes(outdir, seed = seed)
   if (analyze) out$analysis <- bioana_fit_biodes(outdir)
+  if (isTRUE(figures) && requireNamespace("ggplot2", quietly = TRUE)) {
+    out$figures <- tryCatch(biopaint_biodes(outdir), error = function(e) {
+      message("biopaint: figures skipped (", conditionMessage(e), ")")
+      NULL
+    })
+  }
   invisible(out)
 }
 
@@ -215,5 +223,6 @@ print.simitall_suite_run <- function(x, ...) {
   }
   if (length(x$open_questions)) cat("  open questions: ", length(x$open_questions), " (see $open_questions)\n", sep = "")
   cat("  files:     results.tsv, recovery.tsv, fit_summary.json in the folder\n")
+  if (length(x$figures)) cat("  figures:   ", paste(basename(x$figures), collapse = ", "), " in ", dirname(x$figures[[1]]), "\n", sep = "")
   invisible(x)
 }

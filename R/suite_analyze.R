@@ -81,8 +81,11 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
     pcol <- grep("^Pr\\(", colnames(co), value = TRUE)
     # degrees of freedom per coefficient: residual df (lm), Satterthwaite (lmerTest), else n - rank
     dfv <- if ("df" %in% colnames(co)) co[, "df"] else if (!has_random) rep(stats::df.residual(fit), nrow(co)) else rep(max(1, nrow(frame) - nrow(co)), nrow(co))
-    pv <- if (length(pcol)) co[, pcol] else 2 * stats::pt(-abs(co[, 3]), dfv)
-    res <- data.frame(term = rownames(co), estimate = co[, 1], se = co[, 2], df = dfv, statistic = co[, 3], p = pv,
+    # lmerTest puts df before the t value, so find the statistic by name
+    tcol <- grep("^[tz] value$", colnames(co), value = TRUE)[1]
+    stat <- if (!is.na(tcol)) co[, tcol] else co[, 1] / co[, 2]
+    pv <- if (length(pcol)) co[, pcol] else 2 * stats::pt(-abs(stat), dfv)
+    res <- data.frame(term = rownames(co), estimate = co[, 1], se = co[, 2], df = dfv, statistic = stat, p = pv,
                       stringsAsFactors = FALSE, row.names = NULL)
     res$role <- vapply(res$term, function(t) .suite_coef_role(t, p), "")
     res$padj <- NA_real_

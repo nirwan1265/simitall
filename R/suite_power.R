@@ -24,8 +24,8 @@
 #' @param max_minutes Stop before running when the sweep is estimated to take
 #'   longer (one fit is timed first).
 #' @return Invisibly, a data frame (reps, n_units, term, factor, role,
-#'   simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to `power_sweep.tsv` and
-#'   `power_sweep.json` in the folder.
+#'   simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to `power_sweep.tsv`,
+#'   `power_sweep.json` and `figures/power.png` in the folder.
 #' @export
 simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1,
                                  max_minutes = NULL, interaction_effect = NULL) {
@@ -121,6 +121,7 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
                          target_power = target, smallest_reps_reaching_target = enough,
                          note = "Terms with simulated_effect = false show the false-positive rate, not power."),
                     file.path(dir, "power_sweep.json"))
+  if (requireNamespace("ggplot2", quietly = TRUE)) tryCatch(suppressMessages(biopaint_biodes(dir, which = "power")), error = function(e) NULL)
   structure(out, class = c("simitall_power_sweep", "data.frame"), target = target, enough = enough, alpha = alpha, n_sim = n_sim)
 }
 

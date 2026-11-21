@@ -35,8 +35,8 @@ longer (one fit is timed first).}
 }
 \value{
 Invisibly, a data frame (reps, n_units, term, factor, role,
-simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to \code{power_sweep.tsv} and
-\code{power_sweep.json} in the folder.
+simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to \code{power_sweep.tsv},
+\code{power_sweep.json} and \code{figures/power.png} in the folder.
 }
 \description{
 Takes a design folder (or the result of \code{\link[=simitall_from_question]{simitall_from_question()}}) and,
