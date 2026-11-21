@@ -10,7 +10,8 @@ simitall_from_biodes(
   seed = NULL,
   effect = NULL,
   residual_sd = NULL,
-  n_genes = NULL
+  n_genes = NULL,
+  interaction_effect = NULL
 )
 }
 \arguments{
@@ -27,6 +28,11 @@ simitall_from_biodes(
 \code{power.residual_sd} from the spec.}
 
 \item{n_genes}{Genes in the count matrix (count assays only).}
+
+\item{interaction_effect}{Size of the interaction between treatment factors
+(e.g. genotype x water). Default: \code{power.interaction_effect} from the spec,
+else \code{interaction_effect_ratio} x the main effect
+(\code{simulation_defaults.json}). 0 for no interaction.}
 }
 \value{
 Invisibly, the paths written.

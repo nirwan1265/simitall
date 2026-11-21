@@ -9,16 +9,17 @@
 #' model, effect size and residual SD all come from the folder's
 #' `study_spec.json`, and defaults from `inst/suite/power_defaults.json`.
 #'
-#' Terms with no simulated effect (interactions by default, see
-#' `simulation_defaults.json`) show the false-positive rate instead of power;
-#' the `simulated_effect` column says which is which.
+#' Interactions between treatment factors are simulated with
+#' `interaction_effect` (default from the spec or `simulation_defaults.json`);
+#' terms with no simulated effect (e.g. `interaction_effect = 0`) show the
+#' false-positive rate instead of power; the `simulated_effect` column says which.
 #'
 #' @param x A design folder written by [simitall_from_question()] or Biodes
 #'   `write_design_package()`, or a `simitall_suite_run`.
 #' @param reps Values of `design.reps` to try.
 #' @param n_sim Simulated experiments per value.
 #' @param alpha Significance level.
-#' @param effect,residual_sd Override the spec's power values.
+#' @param effect,residual_sd,interaction_effect Override the spec's power values.
 #' @param seed First simulation seed.
 #' @param max_minutes Stop before running when the sweep is estimated to take
 #'   longer (one fit is timed first).
@@ -27,7 +28,7 @@
 #'   `power_sweep.json` in the folder.
 #' @export
 simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1,
-                                 max_minutes = NULL) {
+                                 max_minutes = NULL, interaction_effect = NULL) {
   dir <- if (inherits(x, "simitall_suite_run")) x$dir else x
   if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
     stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
@@ -67,7 +68,8 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
       t0 <- Sys.time()
       res <- tryCatch({
         suppressMessages(suppressWarnings(simitall_from_biodes(base, outdir = sim, seed = seed + k - 1, effect = effect,
-                                                               residual_sd = residual_sd, n_genes = d$n_genes$value)))
+                                                               residual_sd = residual_sd, n_genes = d$n_genes$value,
+                                                               interaction_effect = interaction_effect)))
         suppressMessages(suppressWarnings(bioana_fit_biodes(sim)))
       }, error = function(e) NULL)
       if (!checked) {
@@ -93,7 +95,7 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     for (term in names(sig)) {
       vars <- all.vars(str2lang(term))
       role <- if (all(p$role[vars] == "treatment")) "treatment" else "nuisance"
-      eff <- if (role != "treatment") NA else if (grepl(":", term)) any(unlist(truth$interaction_effects[[term]]) != 0) else
+      eff <- if (role != "treatment") NA else if (grepl(":", term)) isTRUE(abs(as.numeric(truth$interaction_effects[[term]]$size %||% 0)) > 0) else
         term %in% names(truth$treatment_effects) || term %in% names(truth$numeric_effects)
       rows[[length(rows) + 1]] <- data.frame(
         reps = r, n_units = n_units, term = term,
@@ -115,6 +117,7 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
   .suite_write_json(list(design = design, model = model, alpha = alpha, n_sim = n_sim, reps = reps,
                          effect = effect %||% spec$power$minimum_detectable_difference,
                          residual_sd = residual_sd %||% spec$power$residual_sd,
+                         interaction_effect = interaction_effect %||% spec$power$interaction_effect %||% "simulation_defaults.json interaction_effect_ratio x effect",
                          target_power = target, smallest_reps_reaching_target = enough,
                          note = "Terms with simulated_effect = false show the false-positive rate, not power."),
                     file.path(dir, "power_sweep.json"))

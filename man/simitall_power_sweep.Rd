@@ -12,7 +12,8 @@ simitall_power_sweep(
   effect = NULL,
   residual_sd = NULL,
   seed = 1,
-  max_minutes = NULL
+  max_minutes = NULL,
+  interaction_effect = NULL
 )
 }
 \arguments{
@@ -25,7 +26,7 @@ simitall_power_sweep(
 
 \item{alpha}{Significance level.}
 
-\item{effect, residual_sd}{Override the spec's power values.}
+\item{effect, residual_sd, interaction_effect}{Override the spec's power values.}
 
 \item{seed}{First simulation seed.}
 
@@ -48,7 +49,8 @@ model, effect size and residual SD all come from the folder's
 \code{study_spec.json}, and defaults from \code{inst/suite/power_defaults.json}.
 }
 \details{
-Terms with no simulated effect (interactions by default, see
-\code{simulation_defaults.json}) show the false-positive rate instead of power;
-the \code{simulated_effect} column says which is which.
+Interactions between treatment factors are simulated with
+\code{interaction_effect} (default from the spec or \code{simulation_defaults.json});
+terms with no simulated effect (e.g. \code{interaction_effect = 0}) show the
+false-positive rate instead of power; the \code{simulated_effect} column says which.
 }

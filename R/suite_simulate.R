@@ -21,6 +21,10 @@
 #' @param residual_sd Residual SD of the unit means. Default:
 #'   `power.residual_sd` from the spec.
 #' @param n_genes Genes in the count matrix (count assays only).
+#' @param interaction_effect Size of the interaction between treatment factors
+#'   (e.g. genotype x water). Default: `power.interaction_effect` from the spec,
+#'   else `interaction_effect_ratio` x the main effect
+#'   (`simulation_defaults.json`). 0 for no interaction.
 #' @return Invisibly, the paths written.
 #' @examples
 #' \dontrun{
@@ -29,7 +33,7 @@
 #' }
 #' @export
 simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, effect = NULL,
-                                 residual_sd = NULL, n_genes = NULL) {
+                                 residual_sd = NULL, n_genes = NULL, interaction_effect = NULL) {
   h <- .suite_read_biodes(biodes_dir)
   d <- .suite_rules("simulation_defaults")
   rules <- .suite_rules("handoff")
@@ -75,7 +79,27 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     treatment_effects[[v]] <- as.list(e)
     y <- y + e[as.character(frame[[v]])]
   }
+  # interactions among treatment factors: linear-by-linear, the first factor's
+  # first-to-last effect changes by `inter` from the second factor's first to last level
   interactions <- p$fixed_labels[grepl(":", p$fixed_labels)]
+  inter_default <- list(value = d$interaction_effect_ratio$value * eff, note = d$interaction_effect_ratio$note)
+  treat_inter <- Filter(function(l) all(all.vars(str2lang(l)) %in% names(p$role)[p$role == "treatment"]), interactions)
+  inter <- if (length(treat_inter)) as.numeric(pick(interaction_effect, spec$power$interaction_effect, inter_default, "interaction effect")) else 0
+  interaction_effects <- list()
+  for (term in interactions) {
+    vars <- all.vars(str2lang(term))
+    size <- if (term %in% treat_inter) inter else 0
+    score <- lapply(vars, function(v) {
+      x <- frame[[v]]
+      if (is.numeric(x)) { r <- range(x, na.rm = TRUE); if (diff(r) > 0) (x - r[1]) / diff(r) else 0 * x }
+      else if (nlevels(x) > 1) (as.integer(x) - 1) / (nlevels(x) - 1) else 0 * as.integer(x)
+    })
+    add <- size * Reduce(`*`, score)
+    y <- y + add
+    key <- do.call(paste, c(lapply(vars, function(v) as.character(frame[[v]])), sep = ":"))
+    cells <- tapply(add, key, `[`, 1)
+    interaction_effects[[term]] <- list(size = size, pattern = "linear_by_linear", cells = as.list(cells))
+  }
   # fixed nuisance terms (block, rep): random draws, fitted as fixed effects
   block_vars <- intersect(names(p$role)[p$role == "block"], p$fixed_labels)
   block_effects <- list()
@@ -130,7 +154,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     intercept = mu, residual_sd = rsd, effect = eff,
     level_effect_pattern = d$level_effect_pattern$value,
     treatment_effects = treatment_effects, numeric_effects = numeric_effects,
-    interaction_effects = if (length(interactions)) stats::setNames(as.list(rep(d$interaction_effect$value, length(interactions))), interactions) else list(),
+    interaction_effects = interaction_effects,
     block_effects = block_effects, random_sd = random_sd,
     subsamples_per_unit = n_sub, subsample_sd = if (n_sub > 1) d$subsample_sd_ratio$value * rsd else 0,
     dropped_units = dropped, assumptions = assumptions,

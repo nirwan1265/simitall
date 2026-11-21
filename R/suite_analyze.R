@@ -168,7 +168,14 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
   mu <- rep(as.numeric(truth$intercept), nrow(grid))
   for (v in fv) mu <- mu + unlist(truth$treatment_effects[[v]])[as.character(grid[[v]])]
   for (v in nv) mu <- mu + as.numeric(truth$numeric_effects[[v]]) * grid[[v]]
-  for (it in names(truth$interaction_effects)) mu <- mu + as.numeric(truth$interaction_effects[[it]])
+  for (it in names(truth$interaction_effects)) {
+    ie <- truth$interaction_effects[[it]]
+    vars <- all.vars(str2lang(it))
+    if (!is.list(ie) || !all(vars %in% names(grid))) next
+    key <- do.call(paste, c(lapply(vars, function(v) as.character(grid[[v]])), sep = ":"))
+    v <- unlist(ie$cells)[key]
+    mu <- mu + ifelse(is.na(v), 0, v)
+  }
   labels <- p$fixed_labels[vapply(p$fixed_labels, function(l) all(all.vars(str2lang(l)) %in% tv), logical(1))]
   if (!length(labels)) return(NULL)
   grid$true_mean_ <- mu
