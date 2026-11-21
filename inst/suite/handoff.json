@@ -48,7 +48,14 @@
     "rna_seq",
     "mrna-seq",
     "3' tag-seq",
-    "quantseq"
+    "quantseq",
+    "scrna_seq",
+    "scrna-seq",
+    "scrnaseq",
+    "single_cell",
+    "single-cell rna-seq",
+    "snrna_seq",
+    "snrna-seq"
   ],
   "check_factor_names": [
     "check",
@@ -67,5 +74,6 @@
   ],
   "_main_plot_applied_to": "Spec factor applied_to values that put the factor on main plots (split-plot layouts).",
   "satterthwaite_max_fixed_coefficients": 200,
-  "_satterthwaite_max_fixed_coefficients": "Bioana: mixed models with more fixed coefficients than this are fitted with lme4::lmer (no lmerTest Satterthwaite df, which does not finish on thousands of coefficients); p-values then use the residual df (n - rank), stated in fit_summary.json warnings."
+  "_satterthwaite_max_fixed_coefficients": "Bioana: mixed models with more fixed coefficients than this are fitted with lme4::lmer (no lmerTest Satterthwaite df, which does not finish on thousands of coefficients); p-values then use the residual df (n - rank), stated in fit_summary.json warnings.",
+  "_count_assays": "Assays that get counts.tsv. Single-cell assays are simulated as pseudobulk counts: one column per experimental unit (animal, donor, plant), not per cell."
 }
