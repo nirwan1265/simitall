@@ -92,6 +92,11 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
     utils::write.table(res, rpath, sep = "\t", row.names = FALSE, quote = FALSE)
     paths <- c(paths, results = rpath)
     aov <- tryCatch(as.data.frame(stats::anova(fit)), error = function(e) NULL)
+    if (!is.null(aov) && has_random && !"Pr(>F)" %in% names(aov) && "F value" %in% names(aov)) {
+      # lme4 without lmerTest gives F only: denominator df = rows - fixed coefficients (as for the coefficients above)
+      aov$DenDF <- max(1, nrow(frame) - n_fixed)
+      aov[["Pr(>F)"]] <- stats::pf(aov[["F value"]], aov$npar, aov$DenDF, lower.tail = FALSE)
+    }
     summary <- c(summary, list(
       method = if (has_random) class(fit)[1] else "lm", model_fitted = paste(deparse(f), collapse = ""),
       response = spec$primary_outcome$name %||% "primary_outcome",
