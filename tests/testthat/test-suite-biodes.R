@@ -94,7 +94,7 @@ test_that("analysing before simulating says to run simitall_from_biodes() first"
   expect_error(bioana_fit_biodes(d), "Run simitall_from_biodes")
 })
 
-test_that("layouts that do not match Biodes' plan are flagged", {
+test_that("layouts that do not match the plan are flagged", {
   d <- copy_fixture("rcbd_greenhouse")
   spec <- jsonlite::read_json(file.path(d, "study_spec.json"))
   spec$factors <- list(list(name = "genotype", n_levels = 6), list(name = "water", n_levels = 3))
@@ -109,11 +109,9 @@ test_that("layouts that do not match Biodes' plan are flagged", {
   expect_length(.suite_layout_issues(ok, d), 0)
   spec$factors <- list(list(name = "water", n_levels = NA))
   jsonlite::write_json(spec, file.path(d, "study_spec.json"), auto_unbox = TRUE)
-  expect_true(any(grepl("Biodes' default", .suite_layout_issues(ok, d))))
-  bad <- list(candidates = c("met_fa", "alpha"), recipe = 'make_design("factorial", factor_levels = list(A = c("a1", "a2")))')
-  iss <- .suite_layout_issues(bad, d)
-  expect_true(any(grepl("first-choice design is 'met_fa'", iss)))
-  expect_true(any(grepl("placeholder factor levels", iss)))
+  expect_true(any(grepl("are a default, not the study's", .suite_layout_issues(ok, d))))
+  bad <- list(candidates = c("met_fa", "alpha"))
+  expect_true(any(grepl("planned design is 'met_fa'", .suite_layout_issues(bad, d))))
   expect_equal(.suite_slug("Greenhouse drought on 6 sorghum genotypes, 4 benches"), "greenhouse_drought_sorghum_genotypes_benches")
 })
 

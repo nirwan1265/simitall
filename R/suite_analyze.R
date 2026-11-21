@@ -66,17 +66,22 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
     }
     frame <- .suite_frame(dat, p)
     has_random <- length(.suite_findbars(f)) > 0
+    n_fixed <- ncol(stats::model.matrix(stats::reformulate(c("1", p$fixed_labels)), data = frame))
+    max_sat <- .suite_rules("handoff")$satterthwaite_max_fixed_coefficients %||% Inf
+    big <- has_random && n_fixed > max_sat
+    if (big) warn <- c(warn, sprintf("%d fixed coefficients: fitted with lme4 without Satterthwaite df (limit %s in handoff.json); p-values use residual df %d",
+                                     n_fixed, max_sat, nrow(frame) - n_fixed))
     fit <- if (has_random) {
-      if (requireNamespace("lmerTest", quietly = TRUE)) lmerTest::lmer(f, data = frame) else lme4::lmer(f, data = frame)
+      if (!big && requireNamespace("lmerTest", quietly = TRUE)) lmerTest::lmer(f, data = frame) else lme4::lmer(f, data = frame)
     } else {
       stats::lm(f, data = frame)
     }
     if (has_random && lme4::isSingular(fit)) warn <- c(warn, "singular fit: a random-effect variance was estimated as ~0")
     co <- if (has_random) summary(fit)$coefficients else summary(fit)$coefficients
     pcol <- grep("^Pr\\(", colnames(co), value = TRUE)
-    pv <- if (length(pcol)) co[, pcol] else 2 * stats::pnorm(-abs(co[, 3]))
-    # degrees of freedom per coefficient: residual df (lm) or Satterthwaite (lmerTest)
-    dfv <- if ("df" %in% colnames(co)) co[, "df"] else if (!has_random) rep(stats::df.residual(fit), nrow(co)) else rep(Inf, nrow(co))
+    # degrees of freedom per coefficient: residual df (lm), Satterthwaite (lmerTest), else n - rank
+    dfv <- if ("df" %in% colnames(co)) co[, "df"] else if (!has_random) rep(stats::df.residual(fit), nrow(co)) else rep(max(1, nrow(frame) - nrow(co)), nrow(co))
+    pv <- if (length(pcol)) co[, pcol] else 2 * stats::pt(-abs(co[, 3]), dfv)
     res <- data.frame(term = rownames(co), estimate = co[, 1], se = co[, 2], df = dfv, statistic = co[, 3], p = pv,
                       stringsAsFactors = FALSE, row.names = NULL)
     res$role <- vapply(res$term, function(t) .suite_coef_role(t, p), "")

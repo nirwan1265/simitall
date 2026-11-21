@@ -13,7 +13,9 @@ simitall_from_question(
   analyze = TRUE,
   confirm = interactive(),
   seed = NULL,
-  force = FALSE
+  force = FALSE,
+  design = NULL,
+  layout_seed = 42
 )
 }
 \arguments{
@@ -32,9 +34,13 @@ simitall_from_question(
 
 \item{seed}{Simulation seed (default: the design's randomization seed).}
 
-\item{force}{Simulate even when the layout Biodes wrote does not match its
-own plan (a different design, or placeholder factor levels). Off by
-default: that would simulate a different experiment from the one asked.}
+\item{force}{Simulate even when the layout does not match the plan (a study
+factor missing from the model, level counts that differ). Off by default:
+that would simulate a different experiment from the one asked.}
+
+\item{design}{Catalog design to lay out instead of Biodes' first candidate.}
+
+\item{layout_seed}{Randomization seed for the layout.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),
@@ -45,15 +51,19 @@ shows a short summary.
 \description{
 One call across the suite: Biodes (package \code{studyforge},
 github.com/nirwan1265/BioDesignGPT) reads the question, chooses the design
-and lists what it still needs to know; the design folder is written; Simitall
-simulates data under that exact design (\code{\link[=simitall_from_biodes]{simitall_from_biodes()}}); Bioana fits
-the model the design calls for and checks it recovers the truth
-(\code{\link[=bioana_fit_biodes]{bioana_fit_biodes()}}).
+and lists what it still needs to know; Simitall builds the layout from those
+study details (\code{\link[=simitall_layout_from_spec]{simitall_layout_from_spec()}}, rules in
+\code{inst/suite/layouts.tsv}) and writes the design folder, then simulates data
+under that exact design (\code{\link[=simitall_from_biodes]{simitall_from_biodes()}}); Bioana fits the model the
+design calls for and checks it recovers the truth (\code{\link[=bioana_fit_biodes]{bioana_fit_biodes()}}).
+When the study details lack something the layout needs (a factor's number of
+levels, the number of environments), nothing is simulated and the missing
+details are listed.
 }
 \details{
 Biodes' open questions are shown before anything is simulated. Answer them
 with \code{answers} (Biodes field paths, as in \code{studyforge::studyforge_fix()}),
-e.g. \code{answers = list(design.reps = 4, subsamples_per_unit = 3, power.minimum_detectable_difference = 2, power.residual_sd = 3)}. Unanswered
+e.g. \code{answers = list(factors = "genotype:6, water:3", design.reps = 4, subsamples_per_unit = 3, power.minimum_detectable_difference = 2, power.residual_sd = 3)}. Unanswered
 values fall back to the defaults Simitall declares in \code{sim_truth.json}.
 }
 \examples{

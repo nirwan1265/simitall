@@ -1,0 +1,75 @@
+design	treatments	main_plot	blocking	within	per_env	unit	subject	obs_per_unit	subjects_per_unit	default_reps	note
+crd	one		none	none	no	no	no	1		3	
+rcbd	one		complete	none	no	no	no	1		3	
+alpha	one		incomplete	none	no	no	no	1		2	resolvable incomplete blocks: each rep is randomly cut into blocks of block_size (spec design.block_size, else the divisor of the entry count nearest its square root)
+split	split	treatment	complete	none	no	no	no	1		3	main-plot factor: the spec factor applied to main plots, else the second factor
+factorial	crossed		complete	none	no	no	no	1		3	
+augmented	entries_checks		complete	none	no	no	no	1		4	entries once over all blocks, every check in every block; blocks = design.reps
+prep	one		row_column	none	no	no	no	1		2	every entry at design.reps (partial replication is not laid out); field grid per rep
+repeated_measures	one		none	time	no	yes	no	1		4	each unit measured at every time point
+row_column	one		row_column	none	no	no	no	1		2	field grid per rep
+spatial_analysis	one		row_column	none	no	no	no	1		2	field grid per rep
+diagonal_checks	entries_checks		row_column	none	no	no	no	1		4	checks in every block, laid out on a field grid
+line_source	split	treatment2	complete	none	no	no	no	1		3	distance-from-line factor (spec factor applied to distance_from_line) on the strips
+augmented_tray	entries_checks		complete	none	no	no	no	1		4	block = tray
+chamber_runs	one		complete	none	no	yes	no	3		3	block = chamber run, unit = chamber, rows = plants per chamber
+vial_lifespan	one		complete	none	no	yes	no	10		3	block = setup day, unit = vial, rows = flies per vial
+diallel	pairs		none	none	yes	no	no	1		2	all crosses between parents (no reciprocals or selfs); treatment and treatment2 = the two parents
+nc_design	crossed		none	none	yes	no	no	1		2	North Carolina II: males (treatment) x females (treatment2)
+mapping_population	none										needs a population plan (lines per family, families) that Biodes does not record yet
+met_fa	one		complete	none	yes	no	no	1		2	RCBD in every environment
+gh_field_validation	one		complete	none	yes	no	no	1		3	environments = greenhouse and field settings
+gwas_eqtl	one		complete	none	no	no	no	1		2	panel phenotyping in complete blocks
+riboseq_rnaseq	crossed		none	none	no	no	no	1		3	treatment2 = library type (footprint, mRNA)
+atac_replicated	one		complete	none	no	no	no	1		3	block = nuclei-prep day
+cross_species_validation	one		complete	none	no	yes	no	2		3	unit = independent allele or line; rows = plants per line
+latin_square	one		latin	none	no	no	no	1		1	one square per rep
+balanced_incomplete_block	one		incomplete	none	no	no	no	1		3	random incomplete blocks (not a balanced incomplete block design)
+strip_plot	strip		complete	none	no	no	no	1		3	
+split_split_plot	none										the catalog model has two treatment terms, but a split-split plot needs three factors (main, sub, sub-sub); the third random term is then the residual and cannot be fitted
+crossover_ab_ba	one		none	crossover	no	no	yes	1		4	sequences from a cyclic Latin square; rep = subjects per sequence
+youden_square	one		latin	none	no	no	no	1		1	laid out as a full Latin square
+cluster_randomized	one		none	none	no	yes	no	3		3	unit = cluster, rows = individuals per cluster
+nested_subsampling	one		none	none	no	yes	nested	2	3	3	subjects within each unit, rows = measurements per subject
+ancova_baseline	one		none	none	no	no	no	1		3	baseline covariate is measured, not laid out
+greenhouse_bench_position_latin_square	one		latin	none	no	no	no	1		1	rows and columns = bench positions
+repeated_measures_baseline	one		none	time	no	no	yes	1		4	
+graeco_latin_square	crossed		graeco	none	no	no	no	1		1	needs an odd number of levels, the same for both factors
+latin_rectangle	one		row_column	none	no	no	no	1		2	
+resolvable_incomplete_block	one		incomplete	none	no	no	no	1		2	
+square_lattice	one		incomplete	none	no	no	no	1		2	
+rectangular_lattice	one		incomplete	none	no	no	no	1		2	
+cyclic_block	one		incomplete	none	no	no	no	1		2	random incomplete blocks (not cyclic)
+partially_replicated	one		row_column	none	no	no	no	1		2	every entry at design.reps (partial replication is not laid out)
+augmented_rcbd	entries_checks		complete	none	no	no	no	1		4	
+multi_environment_trial	one		complete	none	yes	no	no	1		2	
+randomized_matched_pairs	one		complete	none	no	no	no	1		6	block = matched pair or set
+split_body	one		complete	none	no	no	block	1		6	each subject (block) gets every treatment
+litter_blocked	one		complete	none	no	no	no	1		6	block = litter
+batch_blocked	one		complete	none	no	no	no	1		3	block = batch
+longitudinal_repeated_measures	one		none	time	no	no	yes	1		6	
+cluster_longitudinal	one		none	time	no	yes	nested	1	3	3	subjects within clusters, measured at every time point
+stepped_wedge_cluster	one		none	stepped	no	yes	no	1		4	needs a two-level treatment (control first); one cluster per step, rep = clusters per step
+cluster_crossover	one		none	crossover	no	yes	no	1		2	the crossing unit is the cluster
+williams_crossover	one		none	crossover	no	no	yes	1		3	sequences from a cyclic Latin square (not Williams-balanced)
+incomplete_block_crossover	one		none	crossover	no	no	yes	1		3	laid out as a full crossover
+latin_square_crossover	one		none	crossover	no	no	yes	1		3	
+factorial_longitudinal	crossed		none	time	no	no	yes	1		4	
+factorial_rcbd	crossed		complete	none	no	no	no	1		3	
+strip_split_plot	strip		complete	none	no	no	no	1		3	
+fractional_factorial	crossed		none	none	no	no	no	1		2	laid out as the full factorial
+plackett_burman	crossed		none	none	no	no	no	1		2	laid out as the full factorial
+central_composite	coded		none	none	no	no	no	1		3	coded levels from -1 to 1 (full grid)
+box_behnken	coded		none	none	no	no	no	1		3	coded levels from -1 to 1 (full grid)
+d_optimal	crossed		none	none	no	no	no	1		2	laid out as the full factorial
+orthogonal_array	crossed		none	none	no	no	no	1		2	laid out as the full factorial
+microplate_row_column	one		row_column	none	no	no	no	1		3	rows and columns = plate positions
+sequencing_batch_balanced	one		complete	none	no	no	no	1		3	block = sequencing batch
+paired_donor_culture	one		complete	none	no	no	block	1		4	each donor (block) gets every treatment
+split_batch_sequencing	one		complete	none	no	no	block_batched	1		4	each donor gets every treatment; donors in batches of two
+dose_response	one		none	none	no	no	no	1		3	
+nested_growth_chamber	one		none	none	no	yes	no	3		3	unit = chamber, rows = plants per chamber
+randomized_complete_block_repeated	one		complete	time	no	yes	no	1		3	
+multi_location_augmented	entries_checks		complete	none	yes	no	no	1		4	
+nested_factorial	crossed		none	none	no	no	no	1		3	treatment2 nested in treatment (same layout as crossed)
+blocked_crossover	one		complete	crossover	no	no	yes	1		2	one subject per sequence in each block

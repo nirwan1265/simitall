@@ -2,14 +2,18 @@
 #'
 #' One call across the suite: Biodes (package `studyforge`,
 #' github.com/nirwan1265/BioDesignGPT) reads the question, chooses the design
-#' and lists what it still needs to know; the design folder is written; Simitall
-#' simulates data under that exact design ([simitall_from_biodes()]); Bioana fits
-#' the model the design calls for and checks it recovers the truth
-#' ([bioana_fit_biodes()]).
+#' and lists what it still needs to know; Simitall builds the layout from those
+#' study details ([simitall_layout_from_spec()], rules in
+#' `inst/suite/layouts.tsv`) and writes the design folder, then simulates data
+#' under that exact design ([simitall_from_biodes()]); Bioana fits the model the
+#' design calls for and checks it recovers the truth ([bioana_fit_biodes()]).
+#' When the study details lack something the layout needs (a factor's number of
+#' levels, the number of environments), nothing is simulated and the missing
+#' details are listed.
 #'
 #' Biodes' open questions are shown before anything is simulated. Answer them
 #' with `answers` (Biodes field paths, as in `studyforge::studyforge_fix()`),
-#' e.g. `answers = list(design.reps = 4, subsamples_per_unit = 3,
+#' e.g. `answers = list(factors = "genotype:6, water:3", design.reps = 4, subsamples_per_unit = 3,
 #' power.minimum_detectable_difference = 2, power.residual_sd = 3)`. Unanswered
 #' values fall back to the defaults Simitall declares in `sim_truth.json`.
 #'
@@ -21,9 +25,11 @@
 #' @param confirm Ask before simulating when Biodes still has open questions
 #'   (default: in interactive sessions).
 #' @param seed Simulation seed (default: the design's randomization seed).
-#' @param force Simulate even when the layout Biodes wrote does not match its
-#'   own plan (a different design, or placeholder factor levels). Off by
-#'   default: that would simulate a different experiment from the one asked.
+#' @param force Simulate even when the layout does not match the plan (a study
+#'   factor missing from the model, level counts that differ). Off by default:
+#'   that would simulate a different experiment from the one asked.
+#' @param design Catalog design to lay out instead of Biodes' first candidate.
+#' @param layout_seed Randomization seed for the layout.
 #' @return Invisibly, a `simitall_suite_run`: the Biodes answer (`$answer`),
 #'   the design folder (`$dir`), open questions, and the simulation and
 #'   analysis results (`$analysis$results`, `$analysis$recovery`). Printing it
@@ -39,7 +45,7 @@
 simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    engine = c("rules", "hybrid", "llm", "auto"),
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
-                                   force = FALSE) {
+                                   force = FALSE, design = NULL, layout_seed = 42) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
@@ -48,28 +54,33 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   ans <- studyforge::studyforge_ask(question, engine = engine, fix = answers)
   outdir <- path.expand(outdir %||% file.path("~", "biodes_runs", .suite_slug(question)))
 
-  # the layout code Biodes generated for its first-choice design
-  if (!length(ans$recipe) || !any(nzchar(trimws(ans$recipe)))) {
-    stop(sprintf("Biodes returned no layout code for this question (candidate designs: %s), so there is no design to simulate. Build one with studyforge::make_design() + write_design_package() and call simitall_from_biodes().",
-                 paste(unlist(ans$candidates), collapse = ", ") %||% "none"), call. = FALSE)
+  # the layout, built here from Biodes' study details for its first-choice design (inst/suite/layouts.tsv)
+  design <- design %||% ans$candidates[1]
+  if (is.null(design) || is.na(design)) stop("Biodes proposed no design for this question.", call. = FALSE)
+  book <- simitall_layout_from_spec(ans$spec, design, seed = layout_seed)
+  if (inherits(book, "simitall_layout_needs")) {
+    .suite_show_plan(ans, NULL, design)
+    print(book)
+    message("Not simulated. Give the missing details with answers = list(...), e.g. answers = list(factors = \"genotype:6, water:3\", design.reps = 4), ",
+            "or choose another of Biodes' candidate designs with design = (", paste(ans$candidates, collapse = ", "), ").")
+    return(invisible(structure(list(answer = ans, dir = NULL, design = design, layout_needs = book$needs,
+                                    open_questions = book$needs, layout_issues = character(), simulation = NULL, analysis = NULL),
+                               class = "simitall_suite_run")))
   }
-  env <- new.env(parent = asNamespace("studyforge"))
-  eval(parse(text = ans$recipe), envir = env)
-  book <- if (exists("field", envir = env, inherits = FALSE)) env$field else if (exists("book", envir = env, inherits = FALSE)) env$book else NULL
-  if (is.null(book)) {
-    stop(sprintf("Biodes chose '%s', which writes an allocation (trays or vials) rather than a field book; the bridge cannot simulate it yet. Biodes' code:\n%s",
-                 ans$candidates[1] %||% "?", ans$recipe), call. = FALSE)
-  }
-  studyforge::write_design_package(book, ans$spec, outdir, ans$audit)
-  open <- .suite_show_plan(ans, outdir)
-  issues <- .suite_layout_issues(ans, outdir)
+  spec_out <- ans$spec
+  spec_out$layout <- list(built_by = "simitall", rule = "inst/suite/layouts.tsv", design = design,
+                          factor_map = attr(book, "factor_map"), assumptions = attr(book, "assumptions"))
+  studyforge::write_design_package(book, spec_out, outdir, ans$audit)
+  open <- .suite_show_plan(ans, outdir, design)
+  if (length(attr(book, "assumptions"))) cat("Layout assumptions:\n", paste0("  - ", attr(book, "assumptions"), "\n"), sep = "")
+  issues <- .suite_layout_issues(ans, outdir, design)
   if (length(issues)) {
     cat("Layout does NOT match Biodes' plan (simulating it would test a different experiment):\n",
         paste0("  ! ", issues, "\n"), sep = "")
     open <- c(open, issues)
   }
 
-  out <- structure(list(answer = ans, dir = outdir, open_questions = open, layout_issues = issues, simulation = NULL,
+  out <- structure(list(answer = ans, dir = outdir, design = design, open_questions = open, layout_issues = issues, simulation = NULL,
                         analysis = NULL), class = "simitall_suite_run")
   if (!simulate) return(invisible(out))
   if (length(issues) && !isTRUE(force)) {
@@ -98,9 +109,10 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
 }
 
 # Print what Biodes understood and what it still needs; return the open items.
-.suite_show_plan <- function(ans, outdir) {
+.suite_show_plan <- function(ans, outdir, design = NULL) {
   s <- ans$spec
-  spec <- jsonlite::read_json(file.path(outdir, "study_spec.json"), simplifyVector = FALSE)
+  spec <- if (!is.null(outdir)) jsonlite::read_json(file.path(outdir, "study_spec.json"), simplifyVector = FALSE) else
+    list(design = list(chosen = design), analysis = list(model = tryCatch(studyforge::lookup_design(design)$model, error = function(e) NULL)))
   fl <- function(x) if (is.null(x) || !length(x)) "-" else paste(unlist(x), collapse = ", ")
   factors <- vapply(s$factors %||% list(), function(f) sprintf("%s (%s levels)", f$name %||% "?", f$n_levels %||% "?"), "")
   # fields the plan itself fills (design.candidates) are Biodes bookkeeping, not questions for the user
@@ -116,53 +128,48 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
       "  design:            ", fl(spec$design$chosen), " (candidates: ", fl(ans$candidates), ")\n",
       "  model:             ", fl(spec$analysis$model), "\n",
       "  power:             effect ", fl(s$power$minimum_detectable_difference), ", residual SD ", fl(s$power$residual_sd), "\n",
-      "  design folder:     ", outdir, "\n", sep = "")
+      "  design folder:     ", outdir %||% "-", "\n", sep = "")
   if (length(open)) cat("Open questions (answer with answers = list(...)):\n", paste0("  - ", open, "\n"), sep = "")
   open
 }
 
-# Does the written layout match what Biodes planned? Biodes' layout code is a
-# template; flag a different design or factors whose level counts do not appear.
-.suite_layout_issues <- function(ans, outdir) {
+# Does the written layout match the plan? Flag a different design, study factors
+# whose level counts no treatment column has, and factors the model leaves out.
+.suite_layout_issues <- function(ans, outdir, design = NULL) {
   spec <- jsonlite::read_json(file.path(outdir, "study_spec.json"), simplifyVector = FALSE)
   layout <- utils::read.csv(file.path(outdir, "field_layout.csv"), check.names = FALSE, colClasses = "character")
   issues <- character()
   chosen <- spec$design$chosen %||% ""
-  first <- ans$candidates[1] %||% chosen
+  first <- design %||% ans$candidates[1] %||% chosen
   if (nzchar(first) && !identical(chosen, first)) {
-    issues <- c(issues, sprintf("Biodes' first-choice design is '%s' but its layout code produced '%s'.", first, chosen))
+    issues <- c(issues, sprintf("the planned design is '%s' but the layout written is '%s'.", first, chosen))
   }
   # compare the study's factors with the treatment columns the model will use (not rep/block columns)
   parsed <- tryCatch(.suite_parse_model(spec$analysis$model, spec, layout), error = function(e) NULL)
-  tvars <- if (is.null(parsed)) character() else
-    intersect(names(parsed$role)[parsed$role == "treatment"], unlist(lapply(parsed$fixed_labels, function(l) all.vars(str2lang(l)))))
-  tcols <- if (is.null(parsed)) names(layout) else unname(parsed$col[tvars])
+  tvars <- if (is.null(parsed)) character() else names(parsed$role)[parsed$role == "treatment"]
+  tcols <- if (is.null(parsed)) names(layout) else unique(unname(parsed$col[tvars]))
   counts <- vapply(layout[tcols], function(x) length(unique(x)), integer(1))
-  factors <- spec$factors %||% list()
-  n_lev <- vapply(factors, function(f) suppressWarnings(as.integer(f$n_levels %||% NA)), integer(1))
-  # check entries share the treatment column with the test entries (augmented, p-rep)
-  is_check <- tolower(vapply(factors, function(f) f$name %||% "", "")) %in% tolower(unlist(.suite_rules("handoff")$check_factor_names)) &
-    !"check" %in% tvars
-  n_checks <- sum(n_lev[is_check], na.rm = TRUE)
-  for (i in seq_along(factors)) {
-    n <- n_lev[i]
-    ok <- if (is_check[i]) any(counts == n) || any(counts == sum(n_lev, na.rm = TRUE)) else any(counts %in% c(n, n + n_checks))
+  if (length(tcols) > 1) counts <- c(counts, all = length(unique(unlist(layout[tcols]))))   # diallel parents span two columns
+  f <- .suite_spec_factors(spec)
+  study <- c(f$treatment, if (!is.null(f$time)) list(f$time))
+  n_checks <- if (!is.null(f$check) && !"check" %in% tvars) f$check$n else 0
+  for (x in c(study, if (!is.null(f$check)) list(f$check))) {
+    n <- x$n
+    ok <- any(counts %in% c(n, n + if (identical(x, f$check)) 0 else n_checks)) ||
+      (identical(x, f$check) && any(counts == sum(vapply(study, function(z) z$n, 0L), na.rm = TRUE) + n))
     if (!is.na(n) && n > 1 && !ok) {
       issues <- c(issues, sprintf("factor '%s' has %d levels in the spec, but no treatment column in the layout has %d levels (it has %s).",
-                                  factors[[i]]$name, n, n, paste(counts, collapse = ", ")))
+                                  x$name, n, n, paste(counts, collapse = ", ")))
     }
   }
-  if (!length(factors) || all(is.na(n_lev))) {
-    issues <- c(issues, sprintf("the spec gives no factor with a known number of levels, so the layout's %s treatment levels are Biodes' default, not the study's.",
+  if (!length(study) || all(is.na(vapply(study, function(z) z$n, 0L)))) {
+    issues <- c(issues, sprintf("the spec gives no factor with a known number of levels, so the layout's %s treatment levels are a default, not the study's.",
                                 paste(counts, collapse = " x ")))
   }
-  real <- sum((is.na(n_lev) | n_lev > 1) & !is_check)
+  real <- sum(vapply(study, function(z) is.na(z$n) || z$n > 1, logical(1)))
   if (!is.null(parsed) && real > length(tvars)) {
     issues <- c(issues, sprintf("the spec has %d factors (%s) but the model has %d treatment term(s); the design leaves factors out.",
-                                real, paste(vapply(factors[!is_check], function(f) f$name %||% "?", ""), collapse = ", "), length(tvars)))
-  }
-  if (grepl("\"a1\"|\"b1\"", ans$recipe)) {
-    issues <- c(issues, "the layout uses placeholder factor levels (a1/a2, b1/b2), not the study's factors.")
+                                real, paste(vapply(study, function(z) z$name, ""), collapse = ", "), length(tvars)))
   }
   issues
 }
@@ -175,7 +182,7 @@ print.simitall_suite_run <- function(x, ...) {
   cat("  folder:    ", x$dir, "\n", sep = "")
   fs <- x$analysis$summary
   if (is.null(fs)) {
-    cat("  status:    not simulated", if (length(x$layout_issues)) " (layout does not match the plan)", "\n", sep = "")
+    cat("  status:    not simulated", if (length(x$layout_needs)) " (the layout needs more study details)" else if (length(x$layout_issues)) " (layout does not match the plan)", "\n", sep = "")
   } else {
     cat(sprintf("  design:    %s, %s; %d units fitted with %s\n", fs$design, fs$model_from_spec, fs$n_units_fitted, fs$method))
     for (a in fs$anova %||% list()) {

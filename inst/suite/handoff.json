@@ -57,5 +57,15 @@
     "check_cultivar",
     "control_check"
   ],
-  "_check_factor_names": "Spec factors that are check entries: in augmented and p-rep layouts they share the treatment column with the test entries, so that column has entries + checks levels."
+  "_check_factor_names": "Spec factors that are check entries: in augmented and p-rep layouts they share the treatment column with the test entries, so that column has entries + checks levels.",
+  "main_plot_applied_to": [
+    "main_plot",
+    "whole_plot",
+    "mainplot",
+    "distance_from_line",
+    "strip"
+  ],
+  "_main_plot_applied_to": "Spec factor applied_to values that put the factor on main plots (split-plot layouts).",
+  "satterthwaite_max_fixed_coefficients": 200,
+  "_satterthwaite_max_fixed_coefficients": "Bioana: mixed models with more fixed coefficients than this are fitted with lme4::lmer (no lmerTest Satterthwaite df, which does not finish on thousands of coefficients); p-values then use the residual df (n - rank), stated in fit_summary.json warnings."
 }

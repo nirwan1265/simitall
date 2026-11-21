@@ -1,0 +1,5 @@
+pattern	role	note
+^(time|time_?point|timepoint|day|days|week|weeks|hour|hours|month|months|sampling_time|harvest_time)$	time	measured within each unit
+^(check|checks|check_variety|check_cultivar|control_check)$	check	check entries share the treatment column with the test entries
+^(env|environment|environments|location|locations|site|sites|year|years|season|seasons)$	env	one layout per environment
+^(period|periods)$	period	crossover period
