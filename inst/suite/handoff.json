@@ -49,5 +49,13 @@
     "mrna-seq",
     "3' tag-seq",
     "quantseq"
-  ]
+  ],
+  "check_factor_names": [
+    "check",
+    "checks",
+    "check_variety",
+    "check_cultivar",
+    "control_check"
+  ],
+  "_check_factor_names": "Spec factors that are check entries: in augmented and p-rep layouts they share the treatment column with the test entries, so that column has entries + checks levels."
 }

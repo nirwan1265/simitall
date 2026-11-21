@@ -49,6 +49,10 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   outdir <- path.expand(outdir %||% file.path("~", "biodes_runs", .suite_slug(question)))
 
   # the layout code Biodes generated for its first-choice design
+  if (!length(ans$recipe) || !any(nzchar(trimws(ans$recipe)))) {
+    stop(sprintf("Biodes returned no layout code for this question (candidate designs: %s), so there is no design to simulate. Build one with studyforge::make_design() + write_design_package() and call simitall_from_biodes().",
+                 paste(unlist(ans$candidates), collapse = ", ") %||% "none"), call. = FALSE)
+  }
   env <- new.env(parent = asNamespace("studyforge"))
   eval(parse(text = ans$recipe), envir = env)
   book <- if (exists("field", envir = env, inherits = FALSE)) env$field else if (exists("book", envir = env, inherits = FALSE)) env$book else NULL
@@ -128,12 +132,34 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   if (nzchar(first) && !identical(chosen, first)) {
     issues <- c(issues, sprintf("Biodes' first-choice design is '%s' but its layout code produced '%s'.", first, chosen))
   }
-  counts <- vapply(layout, function(x) length(unique(x)), integer(1))
-  for (f in spec$factors %||% list()) {
-    n <- suppressWarnings(as.integer(f$n_levels %||% NA))
-    if (!is.na(n) && n > 1 && !any(counts == n)) {
-      issues <- c(issues, sprintf("factor '%s' has %d levels in the spec, but no layout column has %d levels.", f$name, n, n))
+  # compare the study's factors with the treatment columns the model will use (not rep/block columns)
+  parsed <- tryCatch(.suite_parse_model(spec$analysis$model, spec, layout), error = function(e) NULL)
+  tvars <- if (is.null(parsed)) character() else
+    intersect(names(parsed$role)[parsed$role == "treatment"], unlist(lapply(parsed$fixed_labels, function(l) all.vars(str2lang(l)))))
+  tcols <- if (is.null(parsed)) names(layout) else unname(parsed$col[tvars])
+  counts <- vapply(layout[tcols], function(x) length(unique(x)), integer(1))
+  factors <- spec$factors %||% list()
+  n_lev <- vapply(factors, function(f) suppressWarnings(as.integer(f$n_levels %||% NA)), integer(1))
+  # check entries share the treatment column with the test entries (augmented, p-rep)
+  is_check <- tolower(vapply(factors, function(f) f$name %||% "", "")) %in% tolower(unlist(.suite_rules("handoff")$check_factor_names)) &
+    !"check" %in% tvars
+  n_checks <- sum(n_lev[is_check], na.rm = TRUE)
+  for (i in seq_along(factors)) {
+    n <- n_lev[i]
+    ok <- if (is_check[i]) any(counts == n) || any(counts == sum(n_lev, na.rm = TRUE)) else any(counts %in% c(n, n + n_checks))
+    if (!is.na(n) && n > 1 && !ok) {
+      issues <- c(issues, sprintf("factor '%s' has %d levels in the spec, but no treatment column in the layout has %d levels (it has %s).",
+                                  factors[[i]]$name, n, n, paste(counts, collapse = ", ")))
     }
+  }
+  if (!length(factors) || all(is.na(n_lev))) {
+    issues <- c(issues, sprintf("the spec gives no factor with a known number of levels, so the layout's %s treatment levels are Biodes' default, not the study's.",
+                                paste(counts, collapse = " x ")))
+  }
+  real <- sum((is.na(n_lev) | n_lev > 1) & !is_check)
+  if (!is.null(parsed) && real > length(tvars)) {
+    issues <- c(issues, sprintf("the spec has %d factors (%s) but the model has %d treatment term(s); the design leaves factors out.",
+                                real, paste(vapply(factors[!is_check], function(f) f$name %||% "?", ""), collapse = ", "), length(tvars)))
   }
   if (grepl("\"a1\"|\"b1\"", ans$recipe)) {
     issues <- c(issues, "the layout uses placeholder factor levels (a1/a2, b1/b2), not the study's factors.")
