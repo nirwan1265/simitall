@@ -206,8 +206,15 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
   df <- nrow(X) - qrx$rank
   s2 <- colSums(resid^2) / df
   xtxi <- chol2inv(qr.R(qrx))
-  treat <- names(p$role)[p$role == "treatment"][1]
-  rows <- grep(paste0("^", treat), colnames(X))
+  fixed_vars <- unlist(lapply(p$fixed_labels, function(l) all.vars(str2lang(l))))
+  treat <- intersect(names(p$role)[p$role == "treatment"], fixed_vars)[1]
+  rows <- if (is.na(treat)) integer() else grep(paste0("^", treat), colnames(X))
+  if (!length(rows)) {
+    return(list(table = data.frame(gene_id = character(), contrast = character(), log2fc = numeric(), se = numeric(),
+                                   p = numeric(), padj = numeric()),
+                warnings = "counts not tested per gene: the model has no fixed treatment term (treatment is random here)",
+                summary = list(method = "not run: no fixed treatment term", design = paste(deparse(rhs), collapse = ""))))
+  }
   tabs <- lapply(rows, function(j) {
     se <- sqrt(s2 * xtxi[j, j])
     tt <- beta[j, ] / se

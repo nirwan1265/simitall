@@ -32,9 +32,20 @@ simitall_layout_from_spec <- function(spec, design, seed = 42) {
   f <- .suite_spec_factors(spec)
   treat <- f$treatment
   reps <- suppressWarnings(as.integer(spec$design$reps %||% NA))
-  if (is.na(reps) || reps < 1) {
+  if (rules$treatments == "entries_checks") {
+    # entries are unreplicated: design.reps does not set the number of blocks
+    blocks <- suppressWarnings(as.integer(spec$design$blocks %||% NA))
+    if (is.na(blocks) && !is.na(reps) && reps > 1) blocks <- reps
+    if (is.na(blocks) || blocks < 2) {
+      blocks <- as.integer(rules$default_reps)
+      assumptions <- c(assumptions, sprintf("blocks = %d (default for %s; the spec gives no design.blocks)", blocks, design))
+    }
+    reps <- blocks
+  } else if (is.na(reps) || reps < 1) {
     reps <- as.integer(rules$default_reps)
     assumptions <- c(assumptions, sprintf("reps = %d (default for %s; the spec gives no design.reps)", reps, design))
+  } else if (reps < 2 && rules$blocking %in% c("complete", "incomplete", "row_column")) {
+    needs <- c(needs, sprintf("at least 2 reps: '%s' is a blocked design and the spec has design.reps = %d, so block effects and error cannot be separated (unreplicated; see Biodes' replication check).", design, reps))
   }
   need_levels <- function(x, what) {
     if (is.null(x)) {
@@ -45,7 +56,7 @@ simitall_layout_from_spec <- function(spec, design, seed = 42) {
   }
   two <- rules$treatments %in% c("crossed", "split", "strip", "pairs", "coded")
   if (rules$treatments == "split") {
-    main <- f$main %||% treat[[2]]
+    main <- f$main %||% treat[2][[1]]
     other <- Filter(function(x) !identical(x$name, main$name), treat)[1][[1]]
     t1 <- if (rules$main_plot == "treatment2") other else main
     t2 <- if (rules$main_plot == "treatment2") main else other
@@ -53,8 +64,13 @@ simitall_layout_from_spec <- function(spec, design, seed = 42) {
     t1 <- treat[1][[1]]
     t2 <- treat[2][[1]]
   }
-  need_levels(t1, "the treatment factor")
-  if (two) need_levels(t2, "the second treatment factor (treatment2)")
+  if (rules$treatments == "split") {
+    need_levels(main, "the main-plot factor")
+    need_levels(other, "the sub-plot factor")
+  } else {
+    need_levels(t1, "the treatment factor")
+    if (two) need_levels(t2, "the second treatment factor (treatment2)")
+  }
   if (rules$treatments == "entries_checks") need_levels(f$check, "the check entries")
   if (rules$within == "time") need_levels(f$time, "time points measured on each unit")
   n_env <- 1L
