@@ -68,7 +68,7 @@ test_that("layouts follow the study's factors and ask instead of inventing level
   b <- simitall_layout_from_spec(sp, "split")
   expect_setequal(unique(b$treatment), paste0("irrigation_", 1:2))      # main plots
   expect_setequal(unique(b$treatment2), paste0("rootstock_", 1:4))
-  expect_true(all(tapply(b$treatment, b$main_plot, function(x) length(unique(x))) == 1))
+  expect_true(all(tapply(b$treatment, b$main_plot_id, function(x) length(unique(x))) == 1))
 
   aug <- simitall_layout_from_spec(list(factors = list(list(name = "genotype", n_levels = 20), list(name = "check", n_levels = 3)),
                                         design = list(reps = 4)), "augmented")

@@ -130,7 +130,7 @@
       "role": "treatment",
       "columns": [
         "main",
-        "main_plot",
+        "treatment",
         "mainplot"
       ]
     },
@@ -138,6 +138,7 @@
       "role": "treatment",
       "columns": [
         "sub",
+        "treatment2",
         "sub_plot",
         "subplot_treatment"
       ]
@@ -146,14 +147,16 @@
       "role": "treatment",
       "from_spec_factor": 1,
       "columns": [
-        "A"
+        "A",
+        "treatment"
       ]
     },
     "B": {
       "role": "treatment",
       "from_spec_factor": 2,
       "columns": [
-        "B"
+        "B",
+        "treatment2"
       ]
     },
     "run": {

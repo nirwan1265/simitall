@@ -203,7 +203,7 @@ print.simitall_layout_needs <- function(x, ...) {
           mains <- sample(unique(cells$treatment))
           do.call(rbind, lapply(seq_along(mains), function(m) {
             d <- shuffle(cells[cells$treatment == mains[m], , drop = FALSE])
-            d$block <- as.character(k); d$rep <- as.character(k); d$main_plot <- paste0(k, "_", m)
+            d$block <- as.character(k); d$rep <- as.character(k); d$main_plot_id <- paste0(k, "_", m)
             d
           }))
         }))
@@ -318,7 +318,7 @@ print.simitall_layout_needs <- function(x, ...) {
   }
   obs <- as.integer(rules$obs_per_unit %||% "1")
   if (!is.na(obs) && obs > 1) b <- b[rep(seq_len(nrow(b)), each = obs), , drop = FALSE]
-  keep <- intersect(c("rep", "block", "main_plot", "row", "col", "unit", "subject", "sequence", "period", "time",
+  keep <- intersect(c("rep", "block", "main_plot_id", "row", "col", "unit", "subject", "sequence", "period", "time",
                       "treatment", "treatment2", "check"), names(b))
   if (rules$unit == "no" && !rules$within %in% c("time", "crossover", "stepped") && rules$subject == "no") keep <- setdiff(keep, "unit")
   out <- b[, keep, drop = FALSE]
