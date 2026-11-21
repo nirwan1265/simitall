@@ -20,11 +20,14 @@
 #' @param alpha Significance level.
 #' @param effect,residual_sd Override the spec's power values.
 #' @param seed First simulation seed.
+#' @param max_minutes Stop before running when the sweep is estimated to take
+#'   longer (one fit is timed first).
 #' @return Invisibly, a data frame (reps, n_units, term, factor, role,
 #'   simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to `power_sweep.tsv` and
 #'   `power_sweep.json` in the folder.
 #' @export
-simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1) {
+simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1,
+                                 max_minutes = NULL) {
   dir <- if (inherits(x, "simitall_suite_run")) x$dir else x
   if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
     stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
@@ -33,6 +36,8 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
   reps <- reps %||% unlist(d$reps$value)
   n_sim <- n_sim %||% d$n_sim$value
   alpha <- alpha %||% d$alpha$value
+  max_minutes <- max_minutes %||% d$max_minutes$value
+  checked <- FALSE
   spec <- jsonlite::read_json(file.path(dir, "study_spec.json"), simplifyVector = FALSE)
   design <- spec$design$chosen %||% stop("study_spec.json has no design.chosen.", call. = FALSE)
   model <- spec$analysis$model %||% stop("study_spec.json has no analysis.model.", call. = FALSE)
@@ -59,11 +64,22 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     sig <- list()
     n_units <- NA
     for (k in seq_len(n_sim)) {
+      t0 <- Sys.time()
       res <- tryCatch({
         suppressMessages(suppressWarnings(simitall_from_biodes(base, outdir = sim, seed = seed + k - 1, effect = effect,
                                                                residual_sd = residual_sd, n_genes = d$n_genes$value)))
         suppressMessages(suppressWarnings(bioana_fit_biodes(sim)))
       }, error = function(e) NULL)
+      if (!checked) {
+        # one fit timed: scale by the number of units at the largest reps value
+        checked <- TRUE
+        secs <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
+        est <- secs * n_sim * sum(reps / r) / 60
+        if (est > max_minutes) {
+          stop(sprintf("The sweep would take about %.0f minutes (one simulated fit of %d rows took %.1f s; %d experiments x %d reps values). Limit: max_minutes = %s (power_defaults.json). Use fewer reps values or a smaller n_sim, or raise max_minutes.",
+                       est, nrow(book), secs, n_sim, length(reps), max_minutes), call. = FALSE)
+        }
+      }
       if (is.null(res)) next
       n_units <- res$summary$n_units_fitted
       for (a in res$summary$anova %||% list()) {

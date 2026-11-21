@@ -26,5 +26,9 @@
   "n_genes": {
     "value": 50,
     "note": "genes per count simulation during the sweep (power is computed for the primary outcome only)"
+  },
+  "max_minutes": {
+    "value": 15,
+    "note": "stop before running when one simulated fit, times n_sim and the reps values (scaled by size), is estimated to take longer than this"
   }
 }

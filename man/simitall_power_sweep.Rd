@@ -11,7 +11,8 @@ simitall_power_sweep(
   alpha = NULL,
   effect = NULL,
   residual_sd = NULL,
-  seed = 1
+  seed = 1,
+  max_minutes = NULL
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ simitall_power_sweep(
 \item{effect, residual_sd}{Override the spec's power values.}
 
 \item{seed}{First simulation seed.}
+
+\item{max_minutes}{Stop before running when the sweep is estimated to take
+longer (one fit is timed first).}
 }
 \value{
 Invisibly, a data frame (reps, n_units, term, factor, role,
