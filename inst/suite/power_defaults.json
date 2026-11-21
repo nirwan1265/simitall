@@ -1,0 +1,30 @@
+{
+  "_about": "Defaults for simitall_power_sweep(). Every value can be overridden by the function arguments; the ones used are written to power_sweep.json.",
+  "reps": {
+    "value": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8
+    ],
+    "note": "values of design.reps to lay out; for designs with entries and checks this is the number of blocks"
+  },
+  "n_sim": {
+    "value": 200,
+    "note": "simulated experiments per reps value"
+  },
+  "alpha": {
+    "value": 0.05,
+    "note": "significance level of each model term's test (ANOVA F test from Bioana)"
+  },
+  "target_power": {
+    "value": 0.8,
+    "note": "power used to report the smallest adequate reps"
+  },
+  "n_genes": {
+    "value": 50,
+    "note": "genes per count simulation during the sweep (power is computed for the primary outcome only)"
+  }
+}

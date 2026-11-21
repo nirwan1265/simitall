@@ -179,5 +179,20 @@
       ]
     }
   },
-  "combined_level_separator": ":"
+  "combined_level_separator": ":",
+  "generic_terms": [
+    "treatment",
+    "treatment2",
+    "block",
+    "rep",
+    "row",
+    "col",
+    "unit",
+    "subject",
+    "time",
+    "env",
+    "period",
+    "sequence",
+    "check"
+  ]
 }

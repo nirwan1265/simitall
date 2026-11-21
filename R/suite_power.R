@@ -1,0 +1,141 @@
+#' Power over replication for any Biodes design
+#'
+#' Takes a design folder (or the result of [simitall_from_question()]) and,
+#' for each value of `design.reps`, rebuilds the layout from the study details
+#' ([simitall_layout_from_spec()]), simulates `n_sim` experiments
+#' ([simitall_from_biodes()]) and fits the design's model ([bioana_fit_biodes()]).
+#' Power is the share of experiments in which a model term's ANOVA test is
+#' significant. Nothing here depends on the question: the design, factors,
+#' model, effect size and residual SD all come from the folder's
+#' `study_spec.json`, and defaults from `inst/suite/power_defaults.json`.
+#'
+#' Terms with no simulated effect (interactions by default, see
+#' `simulation_defaults.json`) show the false-positive rate instead of power;
+#' the `simulated_effect` column says which is which.
+#'
+#' @param x A design folder written by [simitall_from_question()] or Biodes
+#'   `write_design_package()`, or a `simitall_suite_run`.
+#' @param reps Values of `design.reps` to try.
+#' @param n_sim Simulated experiments per value.
+#' @param alpha Significance level.
+#' @param effect,residual_sd Override the spec's power values.
+#' @param seed First simulation seed.
+#' @return Invisibly, a data frame (reps, n_units, term, factor, role,
+#'   simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to `power_sweep.tsv` and
+#'   `power_sweep.json` in the folder.
+#' @export
+simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1) {
+  dir <- if (inherits(x, "simitall_suite_run")) x$dir else x
+  if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
+    stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
+  }
+  d <- .suite_rules("power_defaults")
+  reps <- reps %||% unlist(d$reps$value)
+  n_sim <- n_sim %||% d$n_sim$value
+  alpha <- alpha %||% d$alpha$value
+  spec <- jsonlite::read_json(file.path(dir, "study_spec.json"), simplifyVector = FALSE)
+  design <- spec$design$chosen %||% stop("study_spec.json has no design.chosen.", call. = FALSE)
+  model <- spec$analysis$model %||% stop("study_spec.json has no analysis.model.", call. = FALSE)
+  if (is.null(spec$primary_outcome) && .suite_is_count_assay(spec)) {
+    stop("This study has no primary outcome (count assay only); the power sweep is for the primary outcome.", call. = FALSE)
+  }
+  meaning <- spec$layout$factor_map %||% spec$analysis$terms %||% list()
+  root <- tempfile("simitall_power_")
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  rows <- list()
+  for (r in reps) {
+    s <- spec
+    s$design$reps <- r
+    book <- simitall_layout_from_spec(s, design, seed = spec$design$randomization_seed %||% 42)
+    if (inherits(book, "simitall_layout_needs")) {
+      warning(sprintf("reps = %d: %s", r, paste(book$needs, collapse = "; ")), call. = FALSE)
+      next
+    }
+    base <- file.path(root, paste0("reps_", r))
+    .suite_write_package(book, s, model, base)
+    sim <- file.path(base, "sim")
+    dir.create(sim)
+    file.copy(file.path(base, c("study_spec.json", "field_layout.csv")), sim)
+    sig <- list()
+    n_units <- NA
+    for (k in seq_len(n_sim)) {
+      res <- tryCatch({
+        suppressMessages(suppressWarnings(simitall_from_biodes(base, outdir = sim, seed = seed + k - 1, effect = effect,
+                                                               residual_sd = residual_sd, n_genes = d$n_genes$value)))
+        suppressMessages(suppressWarnings(bioana_fit_biodes(sim)))
+      }, error = function(e) NULL)
+      if (is.null(res)) next
+      n_units <- res$summary$n_units_fitted
+      for (a in res$summary$anova %||% list()) {
+        pv <- a[["Pr(>F)"]]
+        if (is.null(a$term) || a$term == "Residuals" || is.null(pv) || is.na(pv)) next
+        sig[[a$term]] <- c(sig[[a$term]], pv < alpha)
+      }
+    }
+    truth <- tryCatch(jsonlite::read_json(file.path(sim, "sim_truth.json")), error = function(e) list())
+    p <- .suite_parse_model(model, s, book)
+    for (term in names(sig)) {
+      vars <- all.vars(str2lang(term))
+      role <- if (all(p$role[vars] == "treatment")) "treatment" else "nuisance"
+      eff <- if (role != "treatment") NA else if (grepl(":", term)) any(unlist(truth$interaction_effects[[term]]) != 0) else
+        term %in% names(truth$treatment_effects) || term %in% names(truth$numeric_effects)
+      rows[[length(rows) + 1]] <- data.frame(
+        reps = r, n_units = n_units, term = term,
+        factor = paste(vapply(vars, function(v) as.character(unlist(meaning[[v]])[1] %||% v), ""), collapse = " x "),
+        role = role, simulated_effect = eff, power = mean(sig[[term]]),
+        mc_se = sqrt(mean(sig[[term]]) * (1 - mean(sig[[term]])) / length(sig[[term]])), n_fits = length(sig[[term]]),
+        stringsAsFactors = FALSE)
+    }
+  }
+  if (!length(rows)) stop("No reps value could be laid out and fitted; see the warnings.", call. = FALSE)
+  out <- do.call(rbind, rows)
+  target <- d$target_power$value
+  real <- out$simulated_effect %in% TRUE
+  enough <- lapply(split(out[real, ], out$term[real]), function(z) {
+    hit <- z$reps[z$power >= target]
+    if (length(hit)) min(hit) else NA
+  })
+  utils::write.table(out, file.path(dir, "power_sweep.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+  .suite_write_json(list(design = design, model = model, alpha = alpha, n_sim = n_sim, reps = reps,
+                         effect = effect %||% spec$power$minimum_detectable_difference,
+                         residual_sd = residual_sd %||% spec$power$residual_sd,
+                         target_power = target, smallest_reps_reaching_target = enough,
+                         note = "Terms with simulated_effect = false show the false-positive rate, not power."),
+                    file.path(dir, "power_sweep.json"))
+  structure(out, class = c("simitall_power_sweep", "data.frame"), target = target, enough = enough, alpha = alpha, n_sim = n_sim)
+}
+
+#' @export
+print.simitall_power_sweep <- function(x, ...) {
+  y <- as.data.frame(unclass(x))
+  wide <- stats::reshape(y[, c("reps", "n_units", "term", "power")], idvar = c("reps", "n_units"), timevar = "term", direction = "wide")
+  names(wide) <- sub("^power\\.", "", names(wide))
+  labels <- unique(y[, c("term", "factor", "simulated_effect")])
+  cat(sprintf("Power at alpha = %s over %d simulated experiments per row (Monte Carlo SE up to %.2f)\n", attr(x, "alpha"), attr(x, "n_sim"),
+              max(y$mc_se[y$simulated_effect %in% TRUE], 0)))
+  for (i in seq_len(nrow(labels))) {
+    cat(sprintf("  %-22s %s%s\n", labels$term[i], labels$factor[i],
+                if (is.na(labels$simulated_effect[i])) "  (blocking/nuisance term)" else if (!labels$simulated_effect[i]) "  (no simulated effect: false-positive rate)" else ""))
+  }
+  print(format(wide, digits = 2), row.names = FALSE)
+  en <- attr(x, "enough")
+  for (t in names(en)) {
+    cat(sprintf("  %s: %s\n", t, if (is.na(en[[t]])) sprintf("power %s not reached in this range", attr(x, "target")) else
+      sprintf("power >= %s from reps = %d", attr(x, "target"), en[[t]])))
+  }
+  invisible(x)
+}
+
+# A minimal design folder from a layout (the files simitall_from_biodes() reads).
+.suite_write_package <- function(book, spec, model, dir) {
+  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(book, file.path(dir, "field_layout.csv"), row.names = FALSE)
+  meta <- cbind(book, sample_id = sprintf("S%04d", seq_len(nrow(book))), primary_outcome = "")
+  utils::write.table(meta, file.path(dir, "sample_metadata_template.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+  spec$design$chosen <- attr(book, "design")
+  spec$analysis$model <- model
+  spec$analysis$terms$layout_columns <- intersect(unlist(.suite_rules("model_terms")$generic_terms %||%
+    c("treatment", "treatment2", "block", "rep", "row", "col", "unit", "subject", "time", "env", "period", "sequence", "check")), names(book))
+  .suite_write_json(spec, file.path(dir, "study_spec.json"))
+  dir
+}
