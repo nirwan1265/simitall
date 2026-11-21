@@ -30,6 +30,10 @@
 #'   that would simulate a different experiment from the one asked.
 #' @param design Catalog design to lay out instead of Biodes' first candidate.
 #' @param layout_seed Randomization seed for the layout.
+#' @param use_suggestions Fill each item the study details leave open with its
+#'   first suggestion (Biodes' traits and units, `inst/suite/suggestions.tsv`)
+#'   and run. Every filled value is printed and kept in `$filled_from_suggestions`.
+#'   Your own `answers` always win.
 #' @return Invisibly, a `simitall_suite_run`: the Biodes answer (`$answer`),
 #'   the design folder (`$dir`), open questions, and the simulation and
 #'   analysis results (`$analysis$results`, `$analysis$recovery`). Printing it
@@ -45,13 +49,22 @@
 simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    engine = c("rules", "hybrid", "llm", "auto"),
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
-                                   force = FALSE, design = NULL, layout_seed = 42) {
+                                   force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
          call. = FALSE)
   }
   ans <- studyforge::studyforge_ask(question, engine = engine, fix = answers)
+  sug <- .suite_suggestions(ans)
+  suggested <- list()
+  if (isTRUE(use_suggestions) && !is.null(sug)) {
+    # fill only what the user did not answer; every filled value is reported
+    suggested <- .suite_suggested_answers(sug, ans$spec)
+    suggested <- suggested[setdiff(names(suggested), names(answers))]
+    if (length(suggested)) ans <- studyforge::studyforge_ask(question, engine = engine, fix = c(answers, suggested))
+    sug <- .suite_suggestions(ans)
+  }
   outdir <- path.expand(outdir %||% file.path("~", "biodes_runs", .suite_slug(question)))
 
   # the layout, built here from Biodes' study details for its first-choice design (inst/suite/layouts.tsv)
@@ -60,10 +73,11 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   book <- simitall_layout_from_spec(ans$spec, design, seed = layout_seed)
   if (inherits(book, "simitall_layout_needs")) {
     .suite_show_plan(ans, NULL, design)
+    .suite_show_suggestions(ans, sug)
     print(book)
-    message("Not simulated. Give the missing details with answers = list(...), e.g. answers = list(factors = \"genotype:6, water:3\", design.reps = 4), ",
+    message("Not simulated. Give the missing details with answers = list(...) (suggestions above), or run again with use_suggestions = TRUE, ",
             "or choose another of Biodes' candidate designs with design = (", paste(ans$candidates, collapse = ", "), ").")
-    return(invisible(structure(list(answer = ans, dir = NULL, design = design, layout_needs = book$needs,
+    return(invisible(structure(list(answer = ans, dir = NULL, design = design, suggestions = sug, filled_from_suggestions = suggested, layout_needs = book$needs,
                                     open_questions = book$needs, layout_issues = character(), simulation = NULL, analysis = NULL),
                                class = "simitall_suite_run")))
   }
@@ -72,6 +86,9 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                           factor_map = attr(book, "factor_map"), assumptions = attr(book, "assumptions"))
   studyforge::write_design_package(book, spec_out, outdir, ans$audit)
   open <- .suite_show_plan(ans, outdir, design)
+  if (length(suggested)) cat("Filled from suggestions (assumptions, change with answers = list(...)):\n",
+                             paste0("  - ", names(suggested), " = ", vapply(suggested, function(v) paste(format(v), collapse = ", "), ""), "\n"), sep = "")
+  .suite_show_suggestions(ans, sug)
   if (length(attr(book, "assumptions"))) cat("Layout assumptions:\n", paste0("  - ", attr(book, "assumptions"), "\n"), sep = "")
   issues <- .suite_layout_issues(ans, outdir, design)
   if (length(issues)) {
@@ -80,7 +97,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
     open <- c(open, issues)
   }
 
-  out <- structure(list(answer = ans, dir = outdir, design = design, open_questions = open, layout_issues = issues, simulation = NULL,
+  out <- structure(list(answer = ans, dir = outdir, design = design, suggestions = sug, filled_from_suggestions = suggested, open_questions = open, layout_issues = issues, simulation = NULL,
                         analysis = NULL), class = "simitall_suite_run")
   if (!simulate) return(invisible(out))
   if (length(issues) && !isTRUE(force)) {

@@ -15,7 +15,8 @@ simitall_from_question(
   seed = NULL,
   force = FALSE,
   design = NULL,
-  layout_seed = 42
+  layout_seed = 42,
+  use_suggestions = FALSE
 )
 }
 \arguments{
@@ -41,6 +42,11 @@ that would simulate a different experiment from the one asked.}
 \item{design}{Catalog design to lay out instead of Biodes' first candidate.}
 
 \item{layout_seed}{Randomization seed for the layout.}
+
+\item{use_suggestions}{Fill each item the study details leave open with its
+first suggestion (Biodes' traits and units, \code{inst/suite/suggestions.tsv})
+and run. Every filled value is printed and kept in \verb{$filled_from_suggestions}.
+Your own \code{answers} always win.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),

@@ -1,0 +1,17 @@
+field	context	suggestion	answer	source
+factors	(single.?cell|scrna|snrna|sc-?seq)	a condition compared between animals or donors (e.g. knockout vs wild type); cells are not replicates	factors = "genotype:2"	
+factors	(uter|pregnan|embryo|e[0-9]+\.5|day [0-9.]+|stage|develop)	developmental or pregnancy stage, each animal sampled once (name it stage, not time, unless the same animal is measured repeatedly)	factors = "stage:2"	
+factors	(mouse|mice|rat|rats)	genotype: knockout vs wild type	factors = "genotype:2"	
+factors	(mouse|mice|rat|rats)	treatment vs vehicle control	factors = "treatment:2"	
+factors	(mouse|mice|rat|rats)	treatment in both sexes (treatment x sex)	factors = "treatment:2, sex:2"	Clayton & Collins 2014, Nature 509:282-283 (sex as a biological variable)
+factors	(greenhouse|field|growth chamber|sorghum|maize|wheat|rice|arabidopsis|soybean|plant)	genotypes x a treatment (e.g. water)	factors = "genotype:6, water:2"	
+factors	(greenhouse|field|growth chamber|sorghum|maize|wheat|rice|arabidopsis|soybean|plant)	genotypes only	factors = "genotype:10"	
+factors	(cell|culture|organoid|well|plate)	compound vs vehicle (e.g. DMSO)	factors = "treatment:2"	
+factors	(drosophila|fly|flies)	mutant vs control genotype	factors = "genotype:2"	
+factors	.	two-group comparison (treatment vs control)	factors = "treatment:2"	
+experimental_unit	(single.?cell|scrna|snrna|sc-?seq)	the animal, plant or donor the cells came from (cells from one sample are not replicates)		Squair et al. 2021, Nat Commun 12:5692 (pseudobulk: samples, not cells, are replicates)
+primary_outcome	(single.?cell|scrna|snrna|sc-?seq)	pseudobulk expression per sample (counts summed per cell type per animal), log2 scale	primary_outcome.name = "pseudobulk log2 expression", primary_outcome.type = "continuous"	Squair et al. 2021, Nat Commun 12:5692
+primary_outcome	(single.?cell|scrna|snrna|sc-?seq)	cell-type proportion per sample	primary_outcome.name = "cell-type proportion", primary_outcome.type = "proportion"	
+primary_outcome	(rna-?seq|transcriptom)	log2 expression of the genes of interest per sample	primary_outcome.name = "log2 expression", primary_outcome.type = "continuous"	
+power	(single.?cell|scrna|snrna|sc-?seq|rna-?seq|transcriptom|log2)	on the log2 scale a 2-fold change is 1.0; take the SD between biological replicates from pilot or published data	power.minimum_detectable_difference = 1	
+power	.	no pilot data: work in SD units (residual SD = 1) and pick a standardized difference: 0.5 medium, 0.8 large	power.residual_sd = 1, power.minimum_detectable_difference = 0.8	Cohen 1988, Statistical Power Analysis for the Behavioral Sciences

@@ -46,6 +46,14 @@ r <- simitall_from_question("Greenhouse drought on 6 sorghum genotypes ...",
 ps <- simitall_power_sweep(r)
 ```
 
+When details are missing, `simitall_from_question()` prints suggestions for
+each one: what to measure and possible experimental units from Biodes'
+registries (`traits`, `experimental_units`, each cited), Biodes' setup
+hazards, and Simitall's `inst/suite/suggestions.tsv` (what to compare, omics
+outcomes, effect size / SD), matched to the question, system, organism and
+assays. `use_suggestions = TRUE` fills every missing item with its first
+suggestion, prints what it filled, and runs; your own `answers` always win.
+
 `simitall_power_sweep(dir_or_run)` rebuilds the layout for several values of
 `design.reps`, simulates and fits each many times, and writes
 `power_sweep.tsv` / `power_sweep.json` (power per model term).
@@ -89,6 +97,7 @@ map (`{"treatment": "main"}`) is also read.
 | `inst/suite/model_terms.json` | model term -> role and candidate columns (old names A/B, main/sub, genotype still work) |
 | `inst/suite/simulation_defaults.json` | effect, residual SD, interaction ratio, block/random/subsample SDs, count settings |
 | `inst/suite/power_defaults.json` | reps tried, simulations, alpha, target power, time limit |
+| `inst/suite/suggestions.tsv` | suggestions for missing factors, unit, outcome, effect/SD: field, context regex, suggestion, answer, source |
 
 When Biodes adds a design to `design_catalog.json`, add a row to
 `layouts.tsv` with the same id. A design without a row (or with
