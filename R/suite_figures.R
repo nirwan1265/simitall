@@ -16,8 +16,8 @@
 #' - `volcano.png`: per-gene results for count assays (`de_results.tsv`).
 #'
 #' In an interactive session (RStudio, R console) the figures are also shown
-#' in the plot window, one after another; in RStudio use the arrows of the
-#' Plots pane to page through them. `plot(r)` on a [simitall_from_question()]
+#' in the plot window, all on one page; `separate = TRUE` gives one window per
+#' figure. `plot(r)` on a [simitall_from_question()]
 #' result and `plot(ps)` on a [simitall_power_sweep()] result show them again.
 #'
 #' Biopaint will move to its own package; this is the version inside Simitall.
@@ -25,13 +25,16 @@
 #' @param dir Design folder (or a `simitall_suite_run`).
 #' @param outdir Where to write the PNGs. Default `<dir>/figures`.
 #' @param which Figures to draw (default: all that the folder has data for).
-#' @param show Show the figures in the plot window (default: in interactive sessions).
+#' @param show Show the figures in the plot window (default: in interactive
+#'   sessions): all on one page, so they are visible in any plot window.
+#' @param separate Show each figure on its own instead: a new plot window per
+#'   figure (quartz, windows, X11), or one plot each in RStudio's Plots history.
 #' @param save Write the PNG files.
 #' @return Invisibly, the paths written (named by figure), with the ggplot
 #'   objects in `attr(, "plots")`.
 #' @export
 biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "recovery", "power", "volcano"),
-                            show = interactive(), save = TRUE) {
+                            show = interactive(), save = TRUE, separate = FALSE) {
   if (inherits(dir, "simitall_suite_run")) dir <- dir$dir
   if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Figures need ggplot2: install.packages('ggplot2')", call. = FALSE)
   outdir <- outdir %||% file.path(dir, "figures")
@@ -76,16 +79,35 @@ biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "
     save(.suite_plot_volcano(utils::read.delim(vpath, stringsAsFactors = FALSE), truth), "volcano")
   }
   if (length(paths)) message("biopaint: wrote ", paste(basename(paths), collapse = ", "), " in ", outdir)
-  if (isTRUE(show)) .suite_show_plots(plots)
+  if (isTRUE(show)) .suite_show_plots(plots, separate = separate)
   attr(paths, "plots") <- plots
   invisible(paths)
 }
 
-# Print each figure to the active graphics device (RStudio Plots pane, quartz, X11, ...).
-.suite_show_plots <- function(plots) {
-  for (g in plots) print(g)
-  if (length(plots) > 1) message("biopaint: ", length(plots), " figures in the plot window (", paste(names(plots), collapse = ", "),
-                                 "); in RStudio, use the Plots pane arrows to page through them.")
+# Show figures. Default: all on one page (a grid), so every figure is visible in
+# any plot window (RStudio Plots pane, quartz, windows, X11). separate = TRUE:
+# one window per figure (a new device each), or one plot each in RStudio's history.
+.suite_show_plots <- function(plots, separate = FALSE) {
+  if (!length(plots)) return(invisible(plots))
+  if (isTRUE(separate) || length(plots) == 1) {
+    rstudio <- identical(names(grDevices::dev.cur()), "RStudioGD") || nzchar(Sys.getenv("RSTUDIO"))
+    for (i in seq_along(plots)) {
+      if (!rstudio && i > 1 && interactive()) grDevices::dev.new()
+      print(plots[[i]])
+    }
+    return(invisible(plots))
+  }
+  n <- length(plots)
+  nc <- if (n <= 2) n else if (n <= 4) 2 else 3
+  nr <- ceiling(n / nc)
+  grid::grid.newpage()
+  grid::pushViewport(grid::viewport(layout = grid::grid.layout(nr, nc)))
+  for (i in seq_len(n)) {
+    print(plots[[i]], vp = grid::viewport(layout.pos.row = (i - 1) %/% nc + 1, layout.pos.col = (i - 1) %% nc + 1))
+  }
+  grid::popViewport()
+  message("biopaint: ", n, " figures on one page (", paste(names(plots), collapse = ", "),
+          "). Enlarge the plot window, or plot(r, separate = TRUE) for one window per figure, or plot(r, which = \"outcome\") for one.")
   invisible(plots)
 }
 
@@ -93,11 +115,12 @@ biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "
 #'
 #' @param x Result of [simitall_from_question()].
 #' @param which Figures to show (default: all that the folder has data for).
+#' @param separate One plot window per figure instead of one page.
 #' @param ... Unused.
 #' @export
-plot.simitall_suite_run <- function(x, which = c("layout", "outcome", "recovery", "power", "volcano"), ...) {
+plot.simitall_suite_run <- function(x, which = c("layout", "outcome", "recovery", "power", "volcano"), separate = FALSE, ...) {
   if (is.null(x$dir)) stop("This run has no design folder (it stopped before the layout was written).", call. = FALSE)
-  invisible(biopaint_biodes(x$dir, which = which, show = TRUE, save = FALSE))
+  invisible(biopaint_biodes(x$dir, which = which, show = TRUE, save = FALSE, separate = separate))
 }
 
 #' Show the power figure of a power sweep in the plot window

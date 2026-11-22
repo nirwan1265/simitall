@@ -4,12 +4,19 @@
 \alias{plot.simitall_suite_run}
 \title{Show the figures of a suite run in the plot window}
 \usage{
-\method{plot}{simitall_suite_run}(x, which = c("layout", "outcome", "recovery", "power", "volcano"), ...)
+\method{plot}{simitall_suite_run}(
+  x,
+  which = c("layout", "outcome", "recovery", "power", "volcano"),
+  separate = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Result of \code{\link[=simitall_from_question]{simitall_from_question()}}.}
 
 \item{which}{Figures to show (default: all that the folder has data for).}
+
+\item{separate}{One plot window per figure instead of one page.}
 
 \item{...}{Unused.}
 }
