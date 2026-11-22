@@ -121,6 +121,8 @@ simitall_routes <- function(biodes_dir, params = NULL) {
                    if (any(routes$layer == "genetics" & routes$status == "ready")) "suite_genetics",
                    if (any(routes$route %in% c("assay_chip_seq", "assay_atac_seq"))) "suite_peak_genome"))
   sims <- setdiff(sims, "-")
+  # template-based count assays share simulate_counts_from_template()'s parameters
+  if (any(grepl("_template$", sims))) sims <- unique(c(sims[!grepl("_template$", sims)], "simulate_counts_from_template"))
   args <- stats::setNames(lapply(sims, function(s) .suite_args(s, h$spec, params)), sims)
   # outcome settings: only those of the matched outcome type
   keep <- switch(routes$route[routes$layer == "outcome"][1],

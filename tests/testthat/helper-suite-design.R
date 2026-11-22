@@ -3,7 +3,7 @@
 # (R package 'studyforge') is not installed.
 make_design_folder <- function(design, model = NULL, factors, reps = 3, extra = list(), seed = 42) {
   testthat::skip_if_not_installed("studyforge")
-  spec <- c(list(system = "field", organism = "Zea mays", factors = factors,
+  spec <- utils::modifyList(list(system = "field", organism = "Zea mays", factors = factors,
                  design = list(reps = reps, chosen = design, randomization_seed = seed),
                  primary_outcome = list(name = "yield", type = "continuous"),
                  power = list(residual_sd = 10, minimum_detectable_difference = 10)), extra)
