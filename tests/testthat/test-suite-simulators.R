@@ -174,7 +174,7 @@ test_that("a factor named 'treatment' that is not the first factor maps through 
 
 test_that("templates: each is real integer counts with a sample sheet and provenance", {
   tab <- simitall_templates()
-  expect_true(all(c("small_rnaseq_human_mirna_atlas", "small_rnaseq_mouse_mirna_atlas", "microbiome_plant_root_16s", "microbiome_human_hmp_16s") %in% tab$id))
+  expect_true(all(c("small_rnaseq_human_mirna_atlas", "small_rnaseq_mouse_mirna_atlas", "microbiome_plant_root_16s", "microbiome_human_gut_hmp_16s") %in% tab$id))
   expect_true(all(nzchar(tab$source) & nzchar(tab$license)))
   for (id in tab$id) {
     t <- simitall_template(id)
@@ -216,6 +216,6 @@ test_that("small RNA-seq and microbiome designs pick the template by organism", 
   expect_equal(m$t$assays$assay_microbiome$template_choice$template, "microbiome_plant_root_16s")
   expect_match(m$t$assays$assay_microbiome$template_choice$why, "same kingdom")
   g <- run("Mus musculus", "mouse", "16s")
-  expect_equal(g$t$assays$assay_microbiome$template_choice$template, "microbiome_human_hmp_16s")
+  expect_equal(g$t$assays$assay_microbiome$template_choice$template, "microbiome_human_gut_hmp_16s")
   expect_gt(length(g$t$counts$de_genes[[1]]), 0)
 })
