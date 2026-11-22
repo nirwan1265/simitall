@@ -11,43 +11,38 @@ it perfectly) -> Biodes design choice -> `studyforge::layout_from_spec()` ->
 replicate count (mostly "how many per group?"); they were run with 3 reps
 (`reps_given = FALSE`, `REPS_IF_MISSING`), since the power sweep tries several.
 
-## Current result (Biodes f8c2317, Simitall 74bc601+, 2026-11-22)
+## Current result (Biodes 568c9b5, Simitall main, 2026-11-22)
 
-| verdict | n | was (first run) |
+| verdict | n | first run |
 |---|---|---|
-| simulated_all: every data type it needs | 400 | 277 |
-| simulated_outcome_question: needs only a measured trait | 42 | 37 |
-| simulated_part: some data types have no simulator | 81 | 59 |
-| no_simulator_for_data_type | 270 | 189 |
-| not_run: Biodes `treatment` column clash (below) | 95 | - |
+| simulated_all: every data type it needs | 437 | 277 |
+| simulated_outcome_question: needs only a measured trait | 50 | 37 |
+| simulated_part: some data types have no simulator | 89 | 59 |
+| no_simulator_for_data_type | 313 | 189 |
 | not_run: no level count for a factor | 58 | 33 |
 | not_run: spec has no factors | 46 | 45 |
-| not_run: other (genetics without genotype factor 4, Biodes error 2) | 6 | 42 |
-| layout_drops_factor | 2 | 260 |
+| not_run: other (genetics without genotype factor 2, Biodes error 2, ...) | 7 | 42 |
+| layout_drops_factor | 0 | 260 |
 
-**442 / 1000 (44%) get everything they need; 81 more get part of it** (31% before).
-Among the 639 questions that give a replicate count: 297 all, 61 part.
-
-"Layout drops a factor" went from 260 to 2: Biodes now keeps every factor.
-"No simulator" went up because those questions now run (they used to stop at
-the layout); it is the list of simulators to build.
+**487 / 1000 (49%) get everything they need; 89 more get part of it** (31% at
+the first run). Among the 639 questions that give a replicate count: 322 all,
+68 part. Every design that can be laid out now runs; what is left is missing
+simulators (313) and questions for the user (111).
 
 ## What we can simulate (by data type)
 
 | data type | questions | simulated | blocked |
 |---|---|---|---|
-| rnaseq (+ 3' tag-seq) | 330 | 276 | 54 |
-| chip_seq (+ CUT&Tag) | 74 | 57 | 17 |
-| atac_seq | 60 | 50 | 10 |
+| rnaseq (+ 3' tag-seq) | 330 | 305 | 25 |
+| chip_seq (+ CUT&Tag) | 74 | 66 | 8 |
+| atac_seq | 60 | 55 | 5 |
 | gwas | 55 | 41 | 14 |
-| single_cell | 43 | 38 | 5 |
-| qtl_mapping | 35 | 20 | 15 |
+| single_cell | 43 | 40 | 3 |
+| qtl_mapping | 35 | 21 | 14 |
 | long_read_rna | 25 | 24 | 1 |
-| gbs, wgs, bsa_seq, pool_seq, targeted_capture | 39 | 22 | 17 |
-| nascent_rna, trap_seq, eqtl | 15 | 11 | 4 |
 
-"Blocked" = the simulator exists but the design did not run (mostly the
-`treatment` clash, level counts, or panels with no genotype factor).
+"Blocked" = the simulator exists but the spec gives no factor or level count
+(GWAS / QTL panels mostly have no genotype factor).
 
 ## What we cannot simulate (no simulator), in build order
 
@@ -75,26 +70,22 @@ The first five take the ceiling (all data types needed have a simulator) from
 
 **Biodes**
 
-1. **A factor named `treatment` clashes with the joined `treatment` column: 95.**
-   In factorial layouts Biodes writes a `treatment` column with joined levels
-   (`treatment_2:time_1`); when a spec factor is itself called `treatment`, its
-   own column is overwritten, so the model term has no column. Fix: give the
-   joined column another name (e.g. `treatment_combination`) or never write it
-   over a factor column.
-2. No level count (58), no factors (46: mostly panels and populations whose size
+1. No level count (58), no factors (46: mostly panels and populations whose size
    is in the prompt). These are questions for the user or reader rules.
-3. Two reviewed specs make `studyforge_ask` fail with "non-character argument".
+2. Two reviewed specs make `studyforge_ask` fail with "non-character argument".
 
 **Simitall**
 
-4. "How many per group?" questions (361) have no `design.reps`. They should go
+3. "How many per group?" questions (361) have no `design.reps`. They should go
    to `simitall_power_sweep()` over a range of reps instead of stopping.
-5. Genetics asked for but no genotype factor (4).
 
 ## Fixed since the first run
 
 - Biodes: factor-aware design choice and `layout_from_spec()` (every factor a
   column, factorial/split crossing, within-unit factors such as tissue).
+- Biodes 568c9b5: joined levels go to `treatment_combination`; Simitall maps
+  each model term through `analysis.terms` (a factor named `treatment` can be
+  the second factor).
 - Simitall: layouts come from Biodes; factors the model does not hold get
   effects and a unit's rows share its effect; amplicon is microbiome, not
   genotyping; CRISPR/overexpression are treatments; `suggestions.tsv` no longer

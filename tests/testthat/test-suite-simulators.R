@@ -157,3 +157,16 @@ test_that("factors the model does not hold (tissue within each plant) get effect
   pairs <- do.call(rbind, pr[lengths(pr) == 2])
   expect_gt(stats::cor(pairs[, 1], pairs[, 2]), 0.2)
 })
+
+test_that("a factor named 'treatment' that is not the first factor maps through analysis.terms", {
+  d <- make_design_folder("factorial", NULL, list(design_factor("soil", 2), design_factor("treatment", 3)), reps = 3)
+  s <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  expect_equal(s$analysis$terms$treatment, "soil")
+  expect_equal(s$analysis$terms$treatment2, "treatment")
+  h <- simitall:::.suite_read_biodes(d)
+  expect_equal(unname(h$parsed$col[c("treatment", "treatment2")]), c("soil", "treatment"))
+  suppressMessages(simitall_from_biodes(d))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_length(t$treatment_effects$treatment, 2)
+  expect_length(t$treatment_effects$treatment2, 3)
+})
