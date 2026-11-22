@@ -100,7 +100,9 @@
   col <- stats::setNames(character(length(vars)), vars)
   for (v in vars) {
     r <- term_rules$terms[[v]]
-    cands <- c(explicit[[v]], if (v %in% layout_terms) v)
+    # Biodes f8c2317+: analysis.terms.<term> is the layout column itself (treatment = "soil")
+    named <- if (is.character(aterms[[v]]) && length(aterms[[v]]) == 1L) aterms[[v]]
+    cands <- c(explicit[[v]], named, if (v %in% layout_terms) v)
     if (!is.null(r$from_spec_factor) && length(factor_names) >= r$from_spec_factor) {
       cands <- c(cands, factor_names[[r$from_spec_factor]])
     }

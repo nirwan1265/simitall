@@ -2,7 +2,7 @@
 #'
 #' Takes a design folder (or the result of [simitall_from_question()]) and,
 #' for each value of `design.reps`, rebuilds the layout from the study details
-#' ([simitall_layout_from_spec()]), simulates `n_sim` experiments
+#' (Biodes `studyforge::layout_from_spec()`), simulates `n_sim` experiments
 #' ([simitall_from_biodes()]) and fits the design's model ([bioana_fit_biodes()]).
 #' Power is the share of experiments in which a model term's ANOVA test is
 #' significant. Nothing here depends on the question: the design, factors,
@@ -35,6 +35,9 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
   if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
     stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
   }
+  if (!requireNamespace("studyforge", quietly = TRUE)) {
+    stop("simitall_power_sweep() lays out each replicate count with Biodes (R package 'studyforge'); load or install it first.", call. = FALSE)
+  }
   d <- .suite_rules("power_defaults")
   reps <- reps %||% unlist(d$reps$value)
   n_sim <- n_sim %||% d$n_sim$value
@@ -54,13 +57,13 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
   for (r in reps) {
     s <- spec
     s$design$reps <- r
-    book <- simitall_layout_from_spec(s, design, seed = spec$design$randomization_seed %||% 42)
-    if (inherits(book, "simitall_layout_needs")) {
-      warning(sprintf("reps = %d: %s", r, paste(book$needs, collapse = "; ")), call. = FALSE)
+    book <- tryCatch(studyforge::layout_from_spec(s, seed = spec$design$randomization_seed %||% 42), error = function(e) e)
+    if (inherits(book, "error")) {
+      warning(sprintf("reps = %d: %s", r, .suite_layout_missing(conditionMessage(book))), call. = FALSE)
       next
     }
     base <- file.path(root, paste0("reps_", r))
-    .suite_write_package(book, s, model, base)
+    studyforge::write_design_package(book, s, base)
     sim <- file.path(base, "sim")
     dir.create(sim)
     file.copy(file.path(base, c("study_spec.json", "field_layout.csv")), sim)
@@ -146,18 +149,4 @@ print.simitall_power_sweep <- function(x, ...) {
       sprintf("power >= %s from reps = %d", attr(x, "target"), en[[t]])))
   }
   invisible(x)
-}
-
-# A minimal design folder from a layout (the files simitall_from_biodes() reads).
-.suite_write_package <- function(book, spec, model, dir) {
-  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  utils::write.csv(book, file.path(dir, "field_layout.csv"), row.names = FALSE)
-  meta <- cbind(book, sample_id = sprintf("S%04d", seq_len(nrow(book))), primary_outcome = "")
-  utils::write.table(meta, file.path(dir, "sample_metadata_template.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
-  spec$design$chosen <- attr(book, "design")
-  spec$analysis$model <- model
-  spec$analysis$terms$layout_columns <- intersect(unlist(.suite_rules("model_terms")$generic_terms %||%
-    c("treatment", "treatment2", "block", "rep", "row", "col", "unit", "subject", "time", "env", "period", "sequence", "check")), names(book))
-  .suite_write_json(spec, file.path(dir, "study_spec.json"))
-  dir
 }

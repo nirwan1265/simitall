@@ -67,8 +67,8 @@ shows a short summary.
 One call across the suite: Biodes (package \code{studyforge},
 github.com/nirwan1265/BioDesignGPT) reads the question, chooses the design
 and lists what it still needs to know; Simitall builds the layout from those
-study details (\code{\link[=simitall_layout_from_spec]{simitall_layout_from_spec()}}, rules in
-\code{inst/suite/layouts.tsv}) and writes the design folder, then simulates data
+study details (Biodes \code{studyforge::layout_from_spec()}, every factor kept)
+and writes the design folder, then simulates data
 under that exact design (\code{\link[=simitall_from_biodes]{simitall_from_biodes()}}); Bioana fits the model the
 design calls for and checks it recovers the truth (\code{\link[=bioana_fit_biodes]{bioana_fit_biodes()}}).
 When the study details lack something the layout needs (a factor's number of

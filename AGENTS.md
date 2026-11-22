@@ -59,10 +59,10 @@ Biodes design folder (study_spec.json, field_layout.csv, sample_metadata_templat
 | --- | --- | --- |
 | Routes | `inst/suite/simulators.tsv`, `R/suite_routes.R` | One row per route: spec field, values (Biodes' canonical ids, normalised to lower case with `_`), simulator, status. Several genetics rows: the cross wins over the panel. eQTL turns on the panel. |
 | Parameters | `inst/suite/simulator_parameters.tsv` | Argument, default, type, spec field that overrides it. Order: `params` > spec field > table default > the function's own default. `simitall_simulator_parameters(sim)` lists every argument. |
-| Outcome | `R/suite_simulate.R` | Effects from `analysis.model` (treatment levels spread to the minimum detectable difference, block/random variance, subsamples, attrition), then the outcome family. |
+| Outcome | `R/suite_simulate.R` | Effects from `analysis.model` (treatment levels spread to the minimum detectable difference, block/random variance, subsamples, attrition), plus main effects for `analysis.terms.uncovered_factors` (e.g. tissue) and a shared effect for the rows of one unit, then the outcome family. |
 | Genetics | `R/suite_genetics.R`, `inst/suite/genetics.json`, `mating_schemes.tsv`, `phenotype_models.tsv` | Genotype term = treatment term whose `analysis.terms` meaning matches `genotype_pattern`. Panel: Balding-Nichols, inbred or outbred by `system`. Cross: `generate_random_haplotype_panel()` + `simulate_breeding()`. Genetic values (additive / dominance / epistasis / GxE) scaled to plot-level h2 = Vg / (Vg + residual SD^2); they replace the even-spread genotype effects. |
 | Assays | `R/suite_assays.R` | One library per unit, named by `sample_id`. Condition = first non-genotype treatment term, batch = first block term. One count assay owns `counts.tsv` (eQTL > RNA-seq > single-cell); the others write `<assay>/unit_counts.tsv`. |
-| Layout from spec | `R/suite_layout.R`, `inst/suite/layouts.tsv`, `factor_roles.tsv` | `simitall_layout_from_spec()` builds Biodes' catalog designs. |
+| Layout | Biodes `studyforge::layout_from_spec()` | Simitall builds no layouts. Biodes keeps every factor as its own column (factorial/split crossing, within-unit factors such as tissue repeat each unit's row) and stops with `missing: ...` when the spec cannot support a layout; Simitall reports those as questions for the user. Simitall's old builder is in `old_model/`. |
 | From a question | `R/suite_question.R` | `simitall_from_question()` asks Biodes (`studyforge_ask`), builds the layout, simulates, fits. |
 | Fit, power, figures | `R/suite_analyze.R`, `R/suite_power.R`, `R/suite_figures.R` | Bioana, power sweep, Biopaint. |
 | Simulators | `R/*_api.R`, `R/internal_*.R`, `R/peak_studies.R`, `R/scrna_studies.R`, `R/breeding_*.R` | The package simulators the routes call. |
@@ -78,8 +78,8 @@ Biodes design folder (study_spec.json, field_layout.csv, sample_metadata_templat
 4. Add a test in `tests/testthat/test-suite-simulators.R` that builds a design
    with `make_design_folder()` and checks unit alignment and truth.
 
-Known gaps: methylation (`planned`, being rebuilt), survival and compositional
-outcomes (`planned`); genotype-factor level order follows natural sort, so the
+Known gaps: methylation and microbiome (`planned`), survival and compositional
+outcomes (`planned`); see `docs/SIMULATION_COVERAGE.md`; genotype-factor level order follows natural sort, so the
 reference level is the alphabetically first one.
 
 ## Data-Source Policy
