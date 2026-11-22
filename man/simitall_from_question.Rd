@@ -17,7 +17,8 @@ simitall_from_question(
   design = NULL,
   layout_seed = 42,
   use_suggestions = FALSE,
-  figures = TRUE
+  figures = TRUE,
+  params = NULL
 )
 }
 \arguments{
@@ -52,6 +53,9 @@ Your own \code{answers} always win.}
 \item{figures}{Draw the figures (\code{\link[=biopaint_biodes]{biopaint_biodes()}}) into \verb{<outdir>/figures}
 and, in interactive sessions, show them in the plot window (\code{plot(r)}
 shows them again).}
+
+\item{params}{Simulator parameter overrides passed to \code{\link[=simitall_from_biodes]{simitall_from_biodes()}},
+e.g. \code{list(suite_genetics = list(heritability = 0.7))}.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),

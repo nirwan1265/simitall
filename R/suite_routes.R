@@ -122,6 +122,14 @@ simitall_routes <- function(biodes_dir, params = NULL) {
                    if (any(routes$route %in% c("assay_chip_seq", "assay_atac_seq"))) "suite_peak_genome"))
   sims <- setdiff(sims, "-")
   args <- stats::setNames(lapply(sims, function(s) .suite_args(s, h$spec, params)), sims)
+  # outcome settings: only those of the matched outcome type
+  keep <- switch(routes$route[routes$layer == "outcome"][1],
+                 outcome_binary = "prevalence", outcome_count = c("count_distribution", "dispersion", "min_mean"),
+                 outcome_ordinal = "category_probabilities", character())
+  if (!is.null(args$suite_outcome)) {
+    args$suite_outcome$args <- args$suite_outcome$args[intersect(names(args$suite_outcome$args), keep)]
+    args$suite_outcome$source <- args$suite_outcome$source[intersect(names(args$suite_outcome$source), keep)]
+  }
   cat("simitall routes for design '", h$spec$design$chosen %||% "?", "' (", h$model, "):\n", sep = "")
   for (i in seq_len(nrow(routes))) {
     r <- routes[i, ]

@@ -25,6 +25,8 @@
 #' @param confirm Ask before simulating when Biodes still has open questions
 #'   (default: in interactive sessions).
 #' @param seed Simulation seed (default: the design's randomization seed).
+#' @param params Simulator parameter overrides passed to [simitall_from_biodes()],
+#'   e.g. `list(suite_genetics = list(heritability = 0.7))`.
 #' @param force Simulate even when the layout does not match the plan (a study
 #'   factor missing from the model, level counts that differ). Off by default:
 #'   that would simulate a different experiment from the one asked.
@@ -53,7 +55,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    engine = c("rules", "hybrid", "llm", "auto"),
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
                                    force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE,
-                                   figures = TRUE) {
+                                   figures = TRUE, params = NULL) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
@@ -118,7 +120,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
       return(invisible(out))
     }
   }
-  out$simulation <- simitall_from_biodes(outdir, seed = seed)
+  out$simulation <- simitall_from_biodes(outdir, seed = seed, params = params)
   if (analyze) out$analysis <- bioana_fit_biodes(outdir)
   if (isTRUE(figures) && requireNamespace("ggplot2", quietly = TRUE)) {
     out$figures <- tryCatch(biopaint_biodes(outdir), error = function(e) {
