@@ -62,6 +62,7 @@ Biodes design folder (study_spec.json, field_layout.csv, sample_metadata_templat
 | Outcome | `R/suite_simulate.R` | Effects from `analysis.model` (treatment levels spread to the minimum detectable difference, block/random variance, subsamples, attrition), plus main effects for `analysis.terms.uncovered_factors` (e.g. tissue) and a shared effect for the rows of one unit, then the outcome family. |
 | Genetics | `R/suite_genetics.R`, `inst/suite/genetics.json`, `mating_schemes.tsv`, `phenotype_models.tsv` | Genotype term = treatment term whose `analysis.terms` meaning matches `genotype_pattern`. Panel: Balding-Nichols, inbred or outbred by `system`. Cross: `generate_random_haplotype_panel()` + `simulate_breeding()`. Genetic values (additive / dominance / epistasis / GxE) scaled to plot-level h2 = Vg / (Vg + residual SD^2); they replace the even-spread genotype effects. |
 | Assays | `R/suite_assays.R` | One library per unit, named by `sample_id`. Condition = first non-genotype treatment term, batch = first block term. One count assay owns `counts.tsv` (eQTL > RNA-seq > single-cell); the others write `<assay>/unit_counts.tsv`. |
+| Templates | `inst/extdata/templates/` (`templates.tsv`), `R/template_engine.R`, `inst/suite/templates.json`, built by `data-raw/templates/make_templates.R` | Real count matrices (small RNA, 16S, bulk RNA) per organism. `simulate_counts_from_template()`: each unit gets a real sample from one homogeneous group and effects are added by binomial thinning (or NB learned from the template when units outnumber samples). Template choice: same species, else same kingdom, else native fallback. Add a template: put the files in `data-raw/templates_incoming/`, add it to `make_templates.R`, register it with source and license. |
 | Layout | Biodes `studyforge::layout_from_spec()` | Simitall builds no layouts. Biodes keeps every factor as its own column (factorial/split crossing, within-unit factors such as tissue repeat each unit's row) and stops with `missing: ...` when the spec cannot support a layout; Simitall reports those as questions for the user. Simitall's old builder is in `old_model/`. |
 | From a question | `R/suite_question.R` | `simitall_from_question()` asks Biodes (`studyforge_ask`), builds the layout, simulates, fits. |
 | Fit, power, figures | `R/suite_analyze.R`, `R/suite_power.R`, `R/suite_figures.R` | Bioana, power sweep, Biopaint. |
@@ -78,7 +79,7 @@ Biodes design folder (study_spec.json, field_layout.csv, sample_metadata_templat
 4. Add a test in `tests/testthat/test-suite-simulators.R` that builds a design
    with `make_design_folder()` and checks unit alignment and truth.
 
-Known gaps: methylation and microbiome (`planned`), survival and compositional
+Known gaps: methylation (`planned`), survival and compositional
 outcomes (`planned`); see `docs/SIMULATION_COVERAGE.md`; genotype-factor level order follows natural sort, so the
 reference level is the alphabetically first one.
 

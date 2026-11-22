@@ -13,21 +13,19 @@ replicate count (mostly "how many per group?"); they were run with 3 reps
 
 ## Current result (Biodes 568c9b5, Simitall main, 2026-11-22)
 
-| verdict | n | first run |
-|---|---|---|
-| simulated_all: every data type it needs | 437 | 277 |
-| simulated_outcome_question: needs only a measured trait | 50 | 37 |
-| simulated_part: some data types have no simulator | 89 | 59 |
-| no_simulator_for_data_type | 313 | 189 |
-| not_run: no level count for a factor | 58 | 33 |
-| not_run: spec has no factors | 46 | 45 |
-| not_run: other (genetics without genotype factor 2, Biodes error 2, ...) | 7 | 42 |
-| layout_drops_factor | 0 | 260 |
+| verdict | n | before templates | first run |
+|---|---|---|---|
+| simulated_all: every data type it needs | 594 | 437 | 277 |
+| simulated_outcome_question: needs only a measured trait | 50 | 50 | 37 |
+| simulated_part: some data types have no simulator | 95 | 89 | 59 |
+| no_simulator_for_data_type | 149 | 313 | 189 |
+| not_run: no level count for a factor | 54 | 58 | 33 |
+| not_run: spec has no factors | 46 | 46 | 45 |
+| not_run: other (genetics without genotype factor 3, Biodes error 2, ...) | 6 | 7 | 42 |
 
-**487 / 1000 (49%) get everything they need; 89 more get part of it** (31% at
-the first run). Among the 639 questions that give a replicate count: 322 all,
-68 part. Every design that can be laid out now runs; what is left is missing
-simulators (313) and questions for the user (111).
+**644 / 1000 (64%) get everything they need; 95 more get part of it.** Small
+RNA-seq and 16S/ITS microbiome now simulate from real templates
+(`simitall_templates()`), which moved 164 questions out of "no simulator".
 
 ## What we can simulate (by data type)
 
@@ -40,6 +38,8 @@ simulators (313) and questions for the user (111).
 | single_cell | 43 | 40 | 3 |
 | qtl_mapping | 35 | 21 | 14 |
 | long_read_rna | 25 | 24 | 1 |
+| small_rnaseq (template / native NB) | 140 | 132 | 8 |
+| amplicon (16S/ITS) + metagenomics (template) | 55 | 48 | 7 |
 
 "Blocked" = the simulator exists but the spec gives no factor or level count
 (GWAS / QTL panels mostly have no genotype factor).
@@ -50,9 +50,7 @@ Gain = questions that become fully covered when this data type is added.
 
 | data type | questions | gain | nearest existing machinery |
 |---|---|---|---|
-| small_rnaseq (miRNA, siRNA, lncRNA, circRNA) | 140 | +120 | count matrix like `simulate_rnaseq_experiment()`, small-RNA feature set |
 | methylation + medip | 89 | +86 | rebuild `simulate_methylation()` / `call_dmrs()` (design in the handoff doc) |
-| amplicon (16S/ITS) + metagenomics | 55 | +51 | taxa count matrix, Dirichlet-multinomial (route `assay_microbiome`, planned) |
 | m6a_seq (MeRIP) | 41 | +40 | IP + input counts per peak, like ChIP |
 | ribo_seq | 29 | +27 | RNA + footprint counts per gene, translational-efficiency truth |
 | hic | 23 | +23 | contact matrices with planted loops/TAD changes (new) |

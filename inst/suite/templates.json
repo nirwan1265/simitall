@@ -1,0 +1,15 @@
+{
+  "_about": "How a template is chosen for a design: same species (organism), else same kingdom (from organism genus, else from system), else none (native negative binomial for count assays that have a fallback). Templates live in inst/extdata/templates/templates.tsv. For microbiome assays the kingdom is the host's.",
+  "kingdom_by_genus": {
+    "plant": ["zea", "sorghum", "oryza", "arabidopsis", "glycine", "triticum", "hordeum", "solanum", "nicotiana", "medicago", "brassica", "populus", "vitis", "gossypium", "setaria", "brachypodium", "phaseolus", "pisum", "lotus", "cucumis", "capsicum", "helianthus", "manihot", "musa", "malus", "camellia", "citrus", "marchantia", "physcomitrium", "physcomitrella", "chlamydomonas"],
+    "animal": ["homo", "mus", "rattus", "bos", "sus", "gallus", "danio", "drosophila", "caenorhabditis", "ovis", "capra", "equus", "canis", "felis", "macaca", "oryctolagus", "xenopus", "apis", "bombyx"]
+  },
+  "kingdom_by_system": {
+    "plant": ["field", "greenhouse", "growth_chamber"],
+    "animal": ["mouse", "livestock", "drosophila", "human", "clinical"]
+  },
+  "native_fallback": {
+    "small_rnaseq": "simulate_rnaseq_experiment",
+    "microbiome": null
+  }
+}

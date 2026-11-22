@@ -59,3 +59,10 @@ simulate_atacseq	n_peaks	200	integer
 simulate_atacseq	n_reads	40000	integer		reads per library
 simulate_atacseq	differential_fraction	0.2	numeric
 simulate_atacseq	differential_effect_log2	1.5	numeric
+simulate_counts_from_template	template		character		template id (simitall_templates()); default: same species, else same kingdom
+simulate_counts_from_template	template_group		character		template group to draw from; default: the template's default_group
+simulate_counts_from_template	mode	auto	character		auto (resample real samples when enough, else parametric), resample, parametric
+simulate_counts_from_template	condition_effect_fraction	0.1	numeric		share of features that respond to each non-reference condition
+simulate_counts_from_template	condition_effect_sd	1	numeric		SD of the true log2 fold changes
+simulate_counts_from_template	batch_effect_sd	0.15	numeric		SD of block (batch) effects on log2 counts
+simulate_counts_from_template	n_features_native	500	integer		features when no template fits (native negative binomial fallback)

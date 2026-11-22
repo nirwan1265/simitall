@@ -181,5 +181,68 @@
          simulate_scrnaseq_experiment = .suite_assay_single_cell,
          simulate_chipseq = .suite_assay_chip_seq,
          simulate_atacseq = .suite_assay_atac_seq,
+         small_rnaseq_template = function(ctx) .suite_assay_template(ctx, "small_rnaseq", c("small_rnaseq", "mirna_seq", "srna_seq")),
+         microbiome_template = function(ctx) .suite_assay_template(ctx, "microbiome", c("amplicon", "16s", "its", "amplicon_16s", "metagenomics", "microbiome")),
          stop("No runner for simulator ", simulator, call. = FALSE))
+}
+
+# Template for a count assay: same species, else same kingdom (inst/suite/templates.json), else NULL.
+.suite_pick_template <- function(assay_values, spec, user = NULL) {
+  tab <- simitall_templates()
+  if (!is.null(user) && nzchar(user)) {
+    if (!user %in% tab$id) stop("Unknown template '", user, "'. See simitall_templates().", call. = FALSE)
+    return(list(id = user, why = "chosen in params"))
+  }
+  ok <- vapply(strsplit(tab$assays, "|", fixed = TRUE), function(a) any(assay_values %in% a), logical(1))
+  tab <- tab[ok, , drop = FALSE]
+  if (!nrow(tab)) return(NULL)
+  rules <- .suite_rules("templates")
+  org <- tolower(trimws(paste(unlist(spec$organism), collapse = " ")))
+  same <- tab[nzchar(org) & tolower(tab$organism) == org, , drop = FALSE]
+  if (nrow(same)) return(list(id = same$id[1], why = sprintf("same species (%s)", spec$organism)))
+  genus <- sub(" .*", "", org)
+  kingdom <- names(Filter(function(g) genus %in% g, rules$kingdom_by_genus))
+  if (!length(kingdom)) kingdom <- names(Filter(function(s) any(.suite_norm(spec$system) %in% s), rules$kingdom_by_system))
+  if (length(kingdom)) {
+    k <- tab[tab$kingdom == kingdom[1], , drop = FALSE]
+    if (nrow(k)) return(list(id = k$id[1], why = sprintf("nearest template: same kingdom (%s); no %s template", kingdom[1], if (nzchar(org)) spec$organism else "species-specific")))
+  }
+  NULL
+}
+
+# Count assays simulated from a reference template (small RNA-seq, 16S/ITS microbiome), with a
+# native negative-binomial fallback where templates.json names one.
+.suite_assay_template <- function(ctx, kind, assay_values) {
+  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
+  a <- .suite_args("simulate_counts_from_template", ctx$spec, ctx$params)
+  pick <- .suite_pick_template(assay_values, ctx$spec, a$args$template)
+  odir <- file.path(ctx$outdir, kind); dir.create(odir, showWarnings = FALSE)
+  if (is.null(pick)) {
+    fb <- .suite_rules("templates")$native_fallback[[kind]]
+    if (is.null(fb)) stop(sprintf("No %s template fits organism '%s' and there is no native fallback.", kind, ctx$spec$organism %||% "?"), call. = FALSE)
+    na <- .suite_args(fb, ctx$spec, ctx$params)
+    na$args$n_genes <- a$args$n_features_native %||% na$args$n_genes
+    res <- .suite_call(get(fb, envir = asNamespace("simitall")),
+                       list(out_prefix = file.path(odir, kind), replicate_mode = "biological", design = d, seed = ctx$seed),
+                       na$args[setdiff(names(na$args), "n_features_native")])
+    counts <- utils::read.delim(res$counts, check.names = FALSE)
+    sm <- utils::read.delim(res$sample_metadata, stringsAsFactors = FALSE)
+    names(counts)[-1] <- sm$sample[match(names(counts)[-1], sm$library_id)]
+    tinfo <- list(template = NULL, mode = "native_negative_binomial",
+                  why = sprintf("no %s template for organism '%s' (simitall_templates()); native negative binomial", kind, ctx$spec$organism %||% "?"))
+    ct <- res$condition_truth
+  } else {
+    targs <- a$args[setdiff(names(a$args), c("template", "n_features_native"))]
+    res <- .suite_call(simulate_counts_from_template,
+                       list(template = pick$id, design = d, out_prefix = file.path(odir, kind), seed = ctx$seed), targs)
+    counts <- utils::read.delim(res$counts, check.names = FALSE)
+    tinfo <- c(res$truth[setdiff(names(res$truth), "template_sample_per_unit")], list(why = pick$why))
+    ct <- res$condition_truth
+  }
+  counts <- counts[, c("gene_id", ctx$meta$sample_id)]
+  path <- .suite_write_counts(counts, ctx)
+  list(paths = c(counts = path, condition_truth = ct), args = a,
+       counts_truth = list(n_genes = nrow(counts), condition_term = ctx$cond_term, batch_term = attr(d, "batch_term"),
+                           reference = attr(d, "levels")[1], feature_type = kind, de_genes = .suite_de_truth(ct)),
+       truth = c(list(template_choice = tinfo), list(condition_truth = sub(paste0("^", ctx$outdir, "/"), "", ct))))
 }

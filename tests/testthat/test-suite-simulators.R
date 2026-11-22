@@ -9,7 +9,7 @@ test_that("routes come from spec fields, not words, and unsupported requests are
   # amplicon is 16S/ITS microbiome, not genotyping; CRISPR / overexpression are treatments, not data
   r3 <- simitall:::.suite_match_routes(list(assays = list("amplicon", "crispr")))
   expect_false(any(r3$layer == "genetics"))
-  expect_equal(r3$status[r3$route == "assay_microbiome"], "planned")
+  expect_equal(r3$status[r3$route == "assay_microbiome"], "ready")
   expect_equal(r3$status[r3$route == "treatment_only"], "treatment")
   expect_equal(r$route[r$layer == "genetics"], "genetics_cross")          # the cross wins over the panel
   expect_true("assay_rnaseq" %in% r$route)
@@ -21,8 +21,9 @@ test_that("routes come from spec fields, not words, and unsupported requests are
   expect_true("genetics_panel" %in% r2$route)
   # every simulator named in the table exists
   tab <- simitall:::.suite_tsv("simulators")
-  fns <- setdiff(tab$simulator, c("-", "suite_outcome", "suite_genotype_panel", "suite_genotype_cross"))
-  expect_true(all(vapply(fns, exists, logical(1), envir = asNamespace("simitall"))))
+  fns <- setdiff(tab$simulator[tab$layer == "assay"], "-")
+  runs <- vapply(fns, function(f) is.function(tryCatch(simitall:::.suite_assay_runner(f), error = function(e) NULL)), logical(1))
+  expect_true(all(runs))
 })
 
 test_that("parameters: params beat spec fields, spec fields beat defaults, and every argument is listed", {
@@ -169,4 +170,52 @@ test_that("a factor named 'treatment' that is not the first factor maps through 
   t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
   expect_length(t$treatment_effects$treatment, 2)
   expect_length(t$treatment_effects$treatment2, 3)
+})
+
+test_that("templates: each is real integer counts with a sample sheet and provenance", {
+  tab <- simitall_templates()
+  expect_true(all(c("small_rnaseq_human_mirna_atlas", "small_rnaseq_mouse_mirna_atlas", "microbiome_plant_root_16s", "microbiome_human_hmp_16s") %in% tab$id))
+  expect_true(all(nzchar(tab$source) & nzchar(tab$license)))
+  for (id in tab$id) {
+    t <- simitall_template(id)
+    expect_identical(colnames(t$counts), t$samples$sample)
+    expect_true(t$info$default_group %in% t$samples$group)
+    expect_true(is.integer(t$counts) && min(t$counts) >= 0)
+  }
+})
+
+test_that("template engine recovers the planted fold changes in both modes", {
+  d <- data.frame(sample = paste0("u", 1:10), condition = rep(c("ctrl", "heat"), each = 5), batch = "b1")
+  for (m in c("resample", "parametric")) {
+    r <- simulate_counts_from_template("small_rnaseq_mouse_mirna_atlas", d, file.path(tempfile(), m), mode = m, seed = 2)
+    y <- as.matrix(read.delim(r$counts, row.names = 1, check.names = FALSE)); tr <- read.delim(r$condition_truth)
+    expect_identical(colnames(y), d$sample)
+    cpm <- log2(t(t(y) / colSums(y)) * 1e6 + 1)
+    obs <- rowMeans(cpm[, 6:10]) - rowMeans(cpm[, 1:5])
+    expect_gt(stats::cor(obs[tr$gene_id], tr$effect_log2), 0.6)
+    expect_lt(stats::median(abs(obs[setdiff(rownames(y), tr$gene_id)])), 0.2)
+  }
+  if (TRUE) expect_error(simulate_counts_from_template("small_rnaseq_human_mirna_atlas", data.frame(sample = paste0("u", 1:30), condition = "a"), tempfile(), mode = "resample"), "one template sample per unit")
+})
+
+test_that("small RNA-seq and microbiome designs pick the template by organism", {
+  run <- function(organism, system, assay) {
+    d <- make_design_folder("crd", NULL, list(design_factor("treatment", 2)), reps = 4,
+                            extra = list(organism = organism, system = system, assays = list(assay)))
+    suppressMessages(simitall_from_biodes(d))
+    list(t = jsonlite::read_json(file.path(d, "sim_truth.json")), meta = read.delim(file.path(d, "sample_metadata_template.tsv")),
+         counts = read.delim(file.path(d, "counts.tsv"), check.names = FALSE))
+  }
+  h <- run("Homo sapiens", "clinical", "small_rnaseq")
+  expect_equal(h$t$assays$assay_small_rnaseq$template_choice$template, "small_rnaseq_human_mirna_atlas")
+  expect_identical(names(h$counts)[-1], h$meta$sample_id)
+  expect_true(any(grepl("^hsa-", h$counts$gene_id)))
+  p <- run("Sorghum bicolor", "greenhouse", "small_rnaseq")            # no plant miRNA template yet: native fallback
+  expect_equal(p$t$assays$assay_small_rnaseq$template_choice$mode, "native_negative_binomial")
+  m <- run("Zea mays", "field", "amplicon")
+  expect_equal(m$t$assays$assay_microbiome$template_choice$template, "microbiome_plant_root_16s")
+  expect_match(m$t$assays$assay_microbiome$template_choice$why, "same kingdom")
+  g <- run("Mus musculus", "mouse", "16s")
+  expect_equal(g$t$assays$assay_microbiome$template_choice$template, "microbiome_human_hmp_16s")
+  expect_gt(length(g$t$counts$de_genes[[1]]), 0)
 })

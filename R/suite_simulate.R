@@ -282,7 +282,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
 
   # ---- assays ----
   if (nrow(assay_routes)) {
-    owners <- c("assay_eqtl", "assay_rnaseq", "assay_single_cell")
+    owners <- c("assay_eqtl", "assay_rnaseq", "assay_single_cell", "assay_small_rnaseq", "assay_microbiome")
     counts_owner <- owners[owners %in% assay_routes$route][1]
     if ("assay_eqtl" %in% assay_routes$route && "assay_rnaseq" %in% assay_routes$route) {
       note("RNA-seq and eQTL both requested: counts.tsv comes from the eQTL simulator (it includes the treatment effects)")

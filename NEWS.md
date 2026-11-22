@@ -1,5 +1,10 @@
 # simitall (development)
 
+- Real-data templates for count simulation: `simitall_templates()`,
+  `simitall_template()`, `simulate_counts_from_template()` (binomial thinning
+  of real samples, or NB learned from them). Small RNA-seq (human and mouse
+  miRNA atlas) and 16S/ITS microbiome (plant root, human HMP) now simulate
+  from them for Biodes designs.
 - Simitall now creates data for a Biodes design from the spec's fields:
   `inst/suite/simulators.tsv` routes `primary_outcome.type` (continuous,
   binary, count, ordinal), genetics (`assays` gwas/qtl_mapping/eqtl,
