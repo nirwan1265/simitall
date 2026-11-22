@@ -42,11 +42,16 @@ o <- keep_detected(o, 5)
 put("microbiome_plant_root_16s", o,
     data.frame(sample = colnames(o), group = g$zone, time = g$times, week = g$weeks, plot_group = g$group))
 
-# human 16S: HMP (V3-V5), body sites; taxonomy as features
-h <- as.matrix(rd("hmp16s_counts.csv", row.names = 1)); s <- rd("hmp16s_samples.csv"); tx <- rd("hmp16s_taxonomy.csv")
-h <- keep_detected(h, 3)
-s <- s[match(colnames(h), s[[1]]), ]
-tx <- tx[match(rownames(h), tx[[1]]), ]; names(tx)[1] <- "feature_id"
-put("microbiome_human_hmp_16s", h,
-    data.frame(sample = colnames(h), group = gsub(" ", "_", tolower(s$HMP_BODY_SUBSITE)), body_site = s$HMP_BODY_SITE, sex = s$SEX),
-    tx[, c("feature_id", "PHYLUM", "CLASS", "ORDER", "FAMILY", "GENUS")])
+# human 16S: HMP V35 (V3-V5). Gut: 60 stool samples; body sites: the first 60 V35 samples. Taxonomy as features.
+tx_all <- rd("hmp16s_taxonomy.csv"); names(tx_all)[1] <- "feature_id"
+hmp <- function(id, counts_file, samples_file, min_samples) {
+  h <- as.matrix(rd(counts_file, row.names = 1)); s <- rd(samples_file)
+  h <- keep_detected(h, min_samples)
+  s <- s[match(colnames(h), s[[1]]), ]
+  tx <- tx_all[match(rownames(h), tx_all$feature_id), ]
+  put(id, h,
+      data.frame(sample = colnames(h), group = gsub(" ", "_", tolower(s$HMP_BODY_SUBSITE)), body_site = s$HMP_BODY_SITE, sex = s$SEX),
+      tx[, c("feature_id", "PHYLUM", "CLASS", "ORDER", "FAMILY", "GENUS")])
+}
+hmp("microbiome_human_gut_hmp_16s", "hmp16s_stool_counts.csv", "hmp16s_stool_samples.csv", 3)
+hmp("microbiome_human_body_sites_hmp_16s", "hmp16s_counts.csv", "hmp16s_samples.csv", 3)
