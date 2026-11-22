@@ -62,6 +62,45 @@ power sweep) and `volcano.png` (count assays), using whatever the folder holds.
 `design.reps`, simulates and fits each many times, and writes
 `power_sweep.tsv` / `power_sweep.json` (power per model term).
 
+## What Simitall simulates for a design (routes)
+
+`simitall_routes(dir)` lists, without simulating, what `simitall_from_biodes(dir)`
+will run and the value and source of every parameter. Routes are rows of
+`inst/suite/simulators.tsv`, matched on spec fields (Biodes' canonical ids,
+lower case, `-` read as `_`):
+
+| layer | spec field | values | simulator |
+|---|---|---|---|
+| outcome | `primary_outcome.type` | continuous (or missing), binary, count, ordinal | built in: Gaussian from `analysis.model`, liability threshold, negative binomial, ordinal thresholds |
+| genetics | `assays` | gwas, gbs, wgs, amplicon, targeted_capture | diversity panel of the genotype factor's levels |
+| genetics | `population.mating` | ril, dh, nam, magic, backcross, selfing, sib_mating, biparental, f2 | `simulate_breeding()` cross (`mating_schemes.tsv`) |
+| genetics | `assays` | qtl_mapping, bsa_seq, pool_seq | cross (scheme from `population.mating`, else F2) |
+| assay | `assays` | rnaseq (+ synonyms) | `simulate_rnaseq_experiment()` |
+| assay | `assays` | eqtl | `simulate_rnaseq_from_gwas()`, each unit carries its line's genotypes |
+| assay | `assays` | single_cell | `simulate_scrnaseq_experiment()`, pseudobulk per unit |
+| assay | `assays` | chip_seq, atac_seq | `simulate_chipseq()`, `simulate_atacseq()` on a synthetic genome |
+| - | `assays` | methylation | planned |
+
+Genetics needs a genotype term: a treatment term whose `analysis.terms` meaning
+(or factor name) matches `genotype_pattern` in `inst/suite/genetics.json`
+(genotype, line, accession, variety, ril, ...). Its levels become the lines;
+their genetic values (phenotype model from `phenotype_models.tsv`: additive,
+additive_dominance, epistatic, gxe, full) replace the even-spread genotype
+effects, scaled to plot-level heritability h2 = Vg / (Vg + `power.residual_sd`^2).
+
+Spec fields read by genetics: `population.mating`, `population.generations`
+(`F6` = 5 selfing generations), `population.parents` (a list of names gives the
+founder count), `system` (inbred or outbred lines, `genetics.json`). Fields
+Biodes does not have yet (heritability, phenotype model, QTN counts) come from
+`simulator_parameters.tsv` and are listed in `sim_truth.json$assumptions`;
+`params = list(suite_genetics = list(heritability = 0.7))` sets them.
+
+Outputs: `genotypes.vcf` (lines), `genetic_truth/` (`genetic_values.tsv`,
+`qtn_truth.tsv`, `population_structure.tsv` or `founder_ancestry.tsv`),
+`counts.tsv` (eQTL > RNA-seq > single-cell; other count assays write
+`<assay>/unit_counts.tsv`), `eqtl/`, `single_cell/`, `chipseq/`, `atacseq/`,
+and `sim_truth.json` with `routes`, `genetics`, `assays`, `not_simulated`.
+
 ## Spec fields Simitall reads (Biodes should fill these)
 
 | field | meaning | if missing |
@@ -83,7 +122,7 @@ power sweep) and `volcano.png` (count assays), using whatever the folder holds.
 | `power.attrition` | share of units lost | 0 |
 | `primary_outcome.name`, `.baseline_mean` | outcome name and intercept | intercept 100 |
 | `subsamples_per_unit` | leaves per plant etc. (not replicates) | 1 |
-| `assays` | `rnaseq` and similar give `counts.tsv` | outcome only |
+| `assays` | routes in `inst/suite/simulators.tsv` (see above) | outcome only |
 
 `analysis.model` must use Biodes' generic terms (`treatment treatment2 block
 rep row col unit subject time env period sequence check`). Simitall's layouts
@@ -97,9 +136,12 @@ map (`{"treatment": "main"}`) is also read.
 |---|---|
 | `inst/suite/layouts.tsv` | one row per Biodes catalog design (74): treatment structure, blocking, within-unit structure, per environment, units/subjects, observations per unit, default reps, note |
 | `inst/suite/factor_roles.tsv` | which spec factor name is time, check, environment, period |
-| `inst/suite/handoff.json` | supported handoff versions, count assays, unsupported model tokens, check names, main-plot `applied_to` values |
+| `inst/suite/handoff.json` | supported handoff versions, unsupported model tokens, check names, main-plot `applied_to` values |
 | `inst/suite/model_terms.json` | model term -> role and candidate columns (old names A/B, main/sub, genotype still work) |
-| `inst/suite/simulation_defaults.json` | effect, residual SD, interaction ratio, block/random/subsample SDs, count settings |
+| `inst/suite/simulation_defaults.json` | effect, residual SD, interaction ratio, block/random/subsample SDs |
+| `inst/suite/simulators.tsv` | spec field value -> simulator, status |
+| `inst/suite/simulator_parameters.tsv` | each simulator's arguments, defaults, spec field |
+| `inst/suite/genetics.json`, `mating_schemes.tsv`, `phenotype_models.tsv` | genotype term, inbred systems, cross schemes, genetic architectures |
 | `inst/suite/power_defaults.json` | reps tried, simulations, alpha, target power, time limit |
 | `inst/suite/suggestions.tsv` | suggestions for missing factors, unit, outcome, effect/SD: field, context regex, suggestion, answer, source |
 

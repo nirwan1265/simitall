@@ -7,27 +7,27 @@ annotation generation, DNA read simulation and assembly, breeding populations,
 GWAS and genomic selection, bulk and single-cell RNA-seq/eQTLs, ChIP-seq, and
 reproducible reports through one R API. In short, simulate all seq analysis.
 
-The aim of is be able to provide easy simulated data for researchers while also providing a platform where researchers can use an agentic AI model to ask questions and even have their data analyzed using known available software. `SimItAll` provides the
-reproducible layer around those tools: it keeps inputs, parameters, random
-seeds, provenance, and compatible truth outputs together so that an entire
-study can be rerun and checked.
+SimItAll keeps inputs, parameters, random seeds, provenance, and truth outputs
+together so that an entire study can be rerun and checked.
 
-An optional local Shiny interface makes the retrieval-grounded agent easy to
-use interactively. It runs in the user's own R session, does not require a
-GitHub connection, and defaults to the free offline knowledge briefing:
+SimItAll is the **Simitall** head of the Biodes suite. Biodes
+([BioDesignGPT](https://github.com/nirwan1265/BioDesignGPT)) reads the
+experiment in plain language and writes a design folder (`study_spec.json`,
+`field_layout.csv`); SimItAll creates data for every unit of that layout:
 
 ```r
-install.packages(c("shiny", "httr2"))
 library(simitall)
-launch_simitall_agent()
+simitall_routes("~/biodes_runs/my_design")        # what will be simulated, with which values
+simitall_from_biodes("~/biodes_runs/my_design",   # outcome + genetics + omics, with sim_truth.json
+  params = list(suite_genetics = list(heritability = 0.6, phenotype_model = "gxe")))
 ```
 
-The interface uses a one-line chat-style prompt. **Include verified runnable
-code** is enabled by default, so supported requests return their deterministic
-R recipe directly in the answer panel; data-source and local-file options stay
-under **Optional input details**. A chromosome-specific request keeps the
-conservative real-data policy unless the prompt explicitly asks to simulate a
-chromosome or the user explicitly selects synthetic inputs.
+What runs is looked up from the spec's fields in
+[`inst/suite/simulators.tsv`](inst/suite/simulators.tsv) (outcome type,
+genetics from `assays`/`population.mating`, RNA-seq, eQTL, single-cell,
+ChIP-seq, ATAC-seq); parameters and their defaults are in
+[`inst/suite/simulator_parameters.tsv`](inst/suite/simulator_parameters.tsv).
+See [docs/BIODES_BRIDGE.md](docs/BIODES_BRIDGE.md).
 
 **Start here:** [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Validation and benchmarks](docs/VALIDATION.md)
 
@@ -50,7 +50,7 @@ powershell -ExecutionPolicy Bypass -File install_simitall_windows.ps1 -Profile p
 
 | Profile | Includes |
 | --- | --- |
-| `minimal` | R package, free local agent, Shiny interface, and basic simulation dependencies |
+| `minimal` | R package and basic simulation dependencies |
 | `population` | SimuPOP, breeding, phenotype simulation, GWAS/genomic-selection R packages, TASSEL, and GEMMA where the platform supports it |
 | `omics` | Bulk RNA-seq, single-cell, ChIP-seq, and supporting R/Bioconductor packages |
 | `sequencing` | ART, PBSIM/PBSIM3, Badread, Unicycler, QUAST, and helper tools |
@@ -64,39 +64,9 @@ what is available.
 
 ## What SimItAll Does
 
-| `SIMULATE` | `ANALYZE` | `AGENTIC AI` |
-| --- | --- | --- |
-| Create genomes, annotations, reads, founder panels, pedigrees, populations, phenotypes, and multi-omics truth. | Run and benchmark assembly, GWAS, eQTL, and genomic-selection analyses against known simulated truth. | Retrieve project knowledge, identify missing inputs, propose a reviewable workflow, and provide deterministic package recipes when supported. |
-
-```mermaid
-flowchart TB
-  S["SimItAll"]
-  SIM["Simulation"]
-  ANA["Analysis"]
-  AGENT["Agentic AI"]
-  SIMDESC["Generate biological truth<br/>and datasets"]
-  ANADESC["Analyze simulated<br/>or real datasets"]
-  AGENTDESC["Understand requests;<br/>plan and explain"]
-  BENCH["Benchmark against truth"]
-  OUTPUT["Reports, figures, and QC"]
-
-  S --> SIM
-  S --> ANA
-  S --> AGENT
-  SIM --> SIMDESC
-  ANA --> ANADESC
-  AGENT --> AGENTDESC
-  SIMDESC --> BENCH
-  ANADESC --> BENCH
-  AGENTDESC --> BENCH
-  BENCH --> OUTPUT
-```
-
-The agent is a planning and explanation layer, not an autonomous analysis
-runner. The user remains in control of running code, downloads, and
-simulations. Free offline retrieval is the default; optional Ollama inference
-runs a local model with retrieved `SimItAll` context, while the OpenAI backend
-is optional and paid.
+| `SIMULATE` | `ANALYZE` |
+| --- | --- |
+| Create genomes, annotations, reads, founder panels, pedigrees, populations, phenotypes, and multi-omics truth, directly or for a Biodes design. | Run and benchmark assembly, GWAS, eQTL, and genomic-selection analyses against known simulated truth. |
 
 ## Simulate, Analyze, and Validate
 
@@ -145,7 +115,7 @@ examples for bulk RNA-seq, ChIP-seq, GWAS, and single-cell RNA-seq. It records
 download sources, expected inputs, companion gene-annotation requirements, and
 import/QC checks without bundling large public datasets in the package.
 
-Use `inst/agent/capabilities/real_data_catalog.json` to select a documented
+Use `inst/extdata/real_data_catalog.json` to select a documented
 example and keep downloaded files outside Git. Each local download folder
 should include a completed `manifest.json` based on
 `data-raw/real_data_manifests/manifest.template.json`; it records provenance,
@@ -258,7 +228,7 @@ simitall/
 ├── tests/testthat/     automated tests
 ├── DESCRIPTION         package metadata and dependencies
 ├── NAMESPACE           generated exports
-├── README.md           project overview, installation, and agent guide
+├── README.md           project overview and installation
 ├── docs/TUTORIAL.md    detailed simulation workflows
 └── docs/VALIDATION.md  reproducible figures and validation notes
 ```

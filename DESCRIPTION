@@ -35,7 +35,6 @@ Suggests:
     data.table,
     pedtricks,
     Rsubread,
-    httr2,
     lme4,
     lmerTest,
     reformulas,

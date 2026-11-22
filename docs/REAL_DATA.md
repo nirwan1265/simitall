@@ -6,7 +6,7 @@ preserve their provenance, apply the correct analysis, and report input/QC
 checks without inventing a biological truth set.
 
 The curated download records are in
-`inst/agent/capabilities/real_data_catalog.json`. They describe sources,
+`inst/extdata/real_data_catalog.json`. They describe sources,
 expected file layouts, annotation requirements, and checks; they do **not**
 download data or make an external dataset part of the R package.
 

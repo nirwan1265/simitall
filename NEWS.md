@@ -1,3 +1,18 @@
+# simitall (development)
+
+- Simitall now creates data for a Biodes design from the spec's fields:
+  `inst/suite/simulators.tsv` routes `primary_outcome.type` (continuous,
+  binary, count, ordinal), genetics (`assays` gwas/qtl_mapping/eqtl,
+  `population.mating`) and omics assays (RNA-seq, eQTL, single-cell, ChIP-seq,
+  ATAC-seq) to simulators, with parameters in
+  `inst/suite/simulator_parameters.tsv`. New: `simitall_routes()`,
+  `simitall_simulator_parameters()`, `params` in `simitall_from_biodes()`.
+- Removed the prompt readers (`simitall_ask()`, `launch_simitall_agent()`,
+  `search_simitall_knowledge()`, `simitall_agent_tools()`, the keyword spec,
+  lexicon, prompt model and capability catalog): Biodes reads the user's
+  question. The last version with them is tag `v0.1-pre-biodes`; the Shiny
+  app is paused.
+
 # simitall 0.1.0
 
 - Added a retrieval-grounded, read-only agent interface through

@@ -546,25 +546,12 @@ simulate_breeding(
 )
 ```
 
-### Agent worked example: biparental BC2S7 with an allele-frequency figure
+### Worked example: biparental BC2S7 with an allele-frequency figure
 
-The agent can return a package-verified recipe when the request is explicit
-about using synthetic input. This is useful for turning a natural-language
-request into a reviewable starting point, but it does **not** make the agent an
-autonomous executor. Named maize NAM founders are not bundled: use real input
-files for a biological NAM claim.
+Named maize NAM founders are not bundled: use real input files for a
+biological NAM claim.
 
-```r
-answer <- simitall_ask(
-  "Simulate a synthetic biparental cross for chromosome 10 with 2 backcrosses and 7 selfing generations, then show final allele frequencies.",
-  provider = "ollama",
-  data_source = "synthetic",
-  include_code = TRUE
-)
-cat(answer$answer)
-```
-
-The deterministic code supplied by `include_code = TRUE` follows this design:
+The design:
 F1, two backcrosses to parent 1, then seven selfing generations
 (`F1,BC:P1:2,SELF:7`). It writes final haplotypes, metadata, VCF genotypes,
 ancestry and breakpoint truth, a per-site allele-frequency table, and a PNG
