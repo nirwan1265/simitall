@@ -97,21 +97,19 @@ test_that("analysing before simulating says to run simitall_from_biodes() first"
 test_that("layouts that do not match the plan are flagged", {
   d <- copy_fixture("rcbd_greenhouse")
   spec <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  lay <- utils::read.csv(file.path(d, "field_layout.csv"))
+  # every spec factor must be a layout column (Biodes layout_from_spec keeps them all)
   spec$factors <- list(list(name = "genotype", n_levels = 6), list(name = "water", n_levels = 3))
   jsonlite::write_json(spec, file.path(d, "study_spec.json"), auto_unbox = TRUE)
-  ok <- list(candidates = c("rcbd", "row_column"), recipe = 'book <- make_design("rcbd", paste0("G", 1:6), reps = 4)')
-  iss0 <- .suite_layout_issues(ok, d)
-  expect_true(any(grepl("factor 'water' has 3 levels", iss0)))
-  expect_true(any(grepl("the design leaves factors out", iss0)))
-  # check entries share the treatment column: 4 test entries + 2 checks = 6 levels is consistent
-  spec$factors <- list(list(name = "genotype", n_levels = 4), list(name = "check", n_levels = 2))
-  jsonlite::write_json(spec, file.path(d, "study_spec.json"), auto_unbox = TRUE)
-  expect_length(.suite_layout_issues(ok, d), 0)
-  spec$factors <- list(list(name = "water", n_levels = NA))
-  jsonlite::write_json(spec, file.path(d, "study_spec.json"), auto_unbox = TRUE)
-  expect_true(any(grepl("are a default, not the study's", .suite_layout_issues(ok, d))))
-  bad <- list(candidates = c("met_fa", "alpha"))
-  expect_true(any(grepl("planned design is 'met_fa'", .suite_layout_issues(bad, d))))
+  iss <- .suite_layout_issues(list(), d)
+  expect_true(any(grepl("factor 'water' is in the spec but not a column", iss)))
+  # a factor column holding joined levels of several factors is not that factor
+  lay$genotype <- paste0(lay$treatment, ":wet"); lay$water <- "wet"
+  utils::write.csv(lay, file.path(d, "field_layout.csv"), row.names = FALSE)
+  expect_true(any(grepl("holds joined levels", .suite_layout_issues(list(), d))))
+  lay$genotype <- lay$treatment
+  utils::write.csv(lay, file.path(d, "field_layout.csv"), row.names = FALSE)
+  expect_length(.suite_layout_issues(list(), d), 0)
   expect_equal(.suite_slug("Greenhouse drought on 6 sorghum genotypes, 4 benches"), "greenhouse_drought_sorghum_genotypes_benches")
 })
 

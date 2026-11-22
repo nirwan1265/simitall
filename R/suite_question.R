@@ -163,42 +163,18 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
 # Does the written layout match the plan? Flag a different design, study factors
 # whose level counts no treatment column has, and factors the model leaves out.
 .suite_layout_issues <- function(ans, outdir, design = NULL) {
+  # Biodes' layout keeps every factor as its own column (layout_from_spec); a spec factor that is not a
+  # column, or a factor column whose levels join several factors, means the data would test another experiment
   spec <- jsonlite::read_json(file.path(outdir, "study_spec.json"), simplifyVector = FALSE)
   layout <- utils::read.csv(file.path(outdir, "field_layout.csv"), check.names = FALSE, colClasses = "character")
   issues <- character()
-  chosen <- spec$design$chosen %||% ""
-  first <- design %||% ans$candidates[1] %||% chosen
-  if (nzchar(first) && !identical(chosen, first)) {
-    issues <- c(issues, sprintf("the planned design is '%s' but the layout written is '%s'.", first, chosen))
-  }
-  # compare the study's factors with the treatment columns the model will use (not rep/block columns)
-  parsed <- tryCatch(.suite_parse_model(spec$analysis$model, spec, layout), error = function(e) NULL)
-  tvars <- if (is.null(parsed)) character() else names(parsed$role)[parsed$role == "treatment"]
-  tcols <- if (is.null(parsed)) names(layout) else unique(unname(parsed$col[tvars]))
-  # factors the model does not hold (a third factor, tissue within units) are still layout columns
-  tcols <- unique(c(tcols, intersect(unlist(spec$analysis$terms$uncovered_factors), names(layout))))
-  counts <- vapply(layout[tcols], function(x) length(unique(x)), integer(1))
-  if (length(tcols) > 1) counts <- c(counts, all = length(unique(unlist(layout[tcols]))))   # diallel parents span two columns
-  f <- .suite_spec_factors(spec)
-  study <- c(f$treatment, if (!is.null(f$time)) list(f$time))
-  n_checks <- if (!is.null(f$check) && !"check" %in% tvars) f$check$n else 0
-  for (x in c(study, if (!is.null(f$check)) list(f$check))) {
-    n <- x$n
-    ok <- any(counts %in% c(n, n + if (identical(x, f$check)) 0 else n_checks)) ||
-      (identical(x, f$check) && any(counts == sum(vapply(study, function(z) z$n, 0L), na.rm = TRUE) + n))
-    if (!is.na(n) && n > 1 && !ok) {
-      issues <- c(issues, sprintf("factor '%s' has %d levels in the spec, but no treatment column in the layout has %d levels (it has %s).",
-                                  x$name, n, n, paste(counts, collapse = ", ")))
+  fac <- Filter(nzchar, vapply(spec$factors %||% list(), function(f) f$name %||% "", ""))
+  for (f in fac) {
+    if (!f %in% names(layout)) {
+      issues <- c(issues, sprintf("factor '%s' is in the spec but not a column of the layout.", f))
+    } else if (length(fac) > 1 && any(grepl(":", layout[[f]], fixed = TRUE))) {
+      issues <- c(issues, sprintf("layout column '%s' holds joined levels of several factors (e.g. '%s'), not factor '%s' itself.", f, layout[[f]][1], f))
     }
-  }
-  if (!length(study) || all(is.na(vapply(study, function(z) z$n, 0L)))) {
-    issues <- c(issues, sprintf("the spec gives no factor with a known number of levels, so the layout's %s treatment levels are a default, not the study's.",
-                                paste(counts, collapse = " x ")))
-  }
-  real <- sum(vapply(study, function(z) is.na(z$n) || z$n > 1, logical(1)))
-  if (!is.null(parsed) && real > length(tvars)) {
-    issues <- c(issues, sprintf("the spec has %d factors (%s) but the model has %d treatment term(s); the design leaves factors out.",
-                                real, paste(vapply(study, function(z) z$name, ""), collapse = ", "), length(tvars)))
   }
   issues
 }

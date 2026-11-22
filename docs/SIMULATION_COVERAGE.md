@@ -1,58 +1,63 @@
-# Can Simitall simulate Biodes' questions? (1,000 paper questions, 2026-11-22)
+# Can Simitall simulate Biodes' questions? (1,000 paper questions)
 
 Questions: Biodes `training/paper_questions/splits/test.jsonl` (764) + the first
 236 of `dev.jsonl`, one question per paper, stratified by species x technique.
-Per-question results: [`data-raw/coverage/coverage_1000.tsv`](../data-raw/coverage/coverage_1000.tsv).
-Nothing was fixed in this pass; this is the list of what works and what does not.
+Per-question results: [`data-raw/coverage/coverage_1000.tsv`](../data-raw/coverage/coverage_1000.tsv)
+(`verdict`, `needs_status`, `blocker`, `reps_given`, and the rules-reader result).
 
-Each question was run twice:
+Each question is run on its **reviewed spec** (`expected_spec`, as if Biodes read
+it perfectly) -> Biodes design choice -> `studyforge::layout_from_spec()` ->
+`write_design_package()` -> `simitall_from_biodes()`. 361 questions give no
+replicate count (mostly "how many per group?"); they were run with 3 reps
+(`reps_given = FALSE`, `REPS_IF_MISSING`), since the power sweep tries several.
 
-1. **Reviewed spec** (`expected_spec`, as if Biodes read the question
-   perfectly) -> Biodes design choice -> layout -> `simitall_from_biodes()`.
-   This measures Simitall plus the design hand-off.
-2. **Biodes rules reader** on the prompt (no Qwen here) -> same pipeline,
-   without `use_suggestions`. This measures today's end-to-end path.
+## Current result (Biodes f8c2317, Simitall 74bc601+, 2026-11-22)
 
-## Result (reviewed specs)
-
-| verdict | n | meaning |
+| verdict | n | was (first run) |
 |---|---|---|
-| simulated_all | 277 | every data type the question needs was simulated |
-| simulated_outcome_question | 37 | question needs only a measured trait; simulated |
-| simulated_part | 59 | some of its data types simulated, others have no simulator |
-| no_simulator_for_data_type | 189 | ran, but its data type has no simulator (only a placeholder outcome was made) |
-| layout_drops_factor | 260 | ran, but the layout kept only one of the spec's factors, so the data test a different experiment |
-| not_run_design | 136 | no layout could be built from the spec |
-| not_run_simitall_error | 42 | Simitall stopped (genetics asked for, no genotype factor) |
+| simulated_all: every data type it needs | 400 | 277 |
+| simulated_outcome_question: needs only a measured trait | 42 | 37 |
+| simulated_part: some data types have no simulator | 81 | 59 |
+| no_simulator_for_data_type | 270 | 189 |
+| not_run: Biodes `treatment` column clash (below) | 95 | - |
+| not_run: no level count for a factor | 58 | 33 |
+| not_run: spec has no factors | 46 | 45 |
+| not_run: other (genetics without genotype factor 4, Biodes error 2) | 6 | 42 |
+| layout_drops_factor | 2 | 260 |
 
-**314 / 1000 (31%) get everything they need today; 59 more get part of it.**
+**442 / 1000 (44%) get everything they need; 81 more get part of it** (31% before).
+Among the 639 questions that give a replicate count: 297 all, 61 part.
 
-## What we can simulate (by data type, reviewed specs)
+"Layout drops a factor" went from 260 to 2: Biodes now keeps every factor.
+"No simulator" went up because those questions now run (they used to stop at
+the layout); it is the list of simulators to build.
 
-| data type | questions | simulated | blocked by design/layout |
+## What we can simulate (by data type)
+
+| data type | questions | simulated | blocked |
 |---|---|---|---|
-| rnaseq (+ 3' tag-seq) | 330 | 168 | 162 |
-| chip_seq (+ CUT&Tag) | 74 | 48 | 26 |
-| atac_seq | 60 | 35 | 25 |
-| gwas | 55 | 38 | 17 |
-| single_cell | 43 | 28 | 15 |
-| qtl_mapping | 35 | 17 | 18 |
-| long_read_rna | 25 | 17 | 8 |
-| gbs, wgs, bsa_seq, pool_seq, targeted_capture | 39 | 18 | 21 |
-| nascent_rna, trap_seq, eqtl | 15 | 6 | 9 |
+| rnaseq (+ 3' tag-seq) | 330 | 276 | 54 |
+| chip_seq (+ CUT&Tag) | 74 | 57 | 17 |
+| atac_seq | 60 | 50 | 10 |
+| gwas | 55 | 41 | 14 |
+| single_cell | 43 | 38 | 5 |
+| qtl_mapping | 35 | 20 | 15 |
+| long_read_rna | 25 | 24 | 1 |
+| gbs, wgs, bsa_seq, pool_seq, targeted_capture | 39 | 22 | 17 |
+| nascent_rna, trap_seq, eqtl | 15 | 11 | 4 |
 
-These simulators work; what stops them is the design hand-off (below).
+"Blocked" = the simulator exists but the design did not run (mostly the
+`treatment` clash, level counts, or panels with no genotype factor).
 
-## What we cannot simulate (no simulator)
+## What we cannot simulate (no simulator), in build order
 
-Gain = questions that become fully covered when this data type is added (with
-the design issues fixed), in priority order:
+Gain = questions that become fully covered when this data type is added.
 
 | data type | questions | gain | nearest existing machinery |
 |---|---|---|---|
 | small_rnaseq (miRNA, siRNA, lncRNA, circRNA) | 140 | +120 | count matrix like `simulate_rnaseq_experiment()`, small-RNA feature set |
-| methylation + medip | 89 | +86 | rebuild the lost `simulate_methylation()` / `call_dmrs()` (design in the handoff doc) |
-| amplicon (16S/ITS) + metagenomics | 55 | +51 | taxa count matrix, Dirichlet-multinomial, treatment shifts on a few taxa |
+| methylation + medip | 89 | +86 | rebuild `simulate_methylation()` / `call_dmrs()` (design in the handoff doc) |
+| amplicon (16S/ITS) + metagenomics | 55 | +51 | taxa count matrix, Dirichlet-multinomial (route `assay_microbiome`, planned) |
 | m6a_seq (MeRIP) | 41 | +40 | IP + input counts per peak, like ChIP |
 | ribo_seq | 29 | +27 | RNA + footprint counts per gene, translational-efficiency truth |
 | hic | 23 | +23 | contact matrices with planted loops/TAD changes (new) |
@@ -60,61 +65,52 @@ the design issues fixed), in priority order:
 | degradome | 20 | +3 | cleavage-site counts (mostly asked with small RNA) |
 | mnase_seq | 11 | +10 | nucleosome positions, like ATAC |
 | spatial | 10 | +10 | scRNA counts on a grid |
-| metabolomics, lipidomics | 12 | +8 | log-normal feature matrix with treatment effects (easy) |
+| metabolomics, lipidomics | 12 | +8 | log-normal feature matrix (easy) |
 | rip_clip | 6 | +6 | IP + input counts, like ChIP |
 
-With all of them and the design issues fixed, every one of the 1,000 is
-covered. The first five (small RNA, methylation, 16S, m6A, Ribo-seq) take
-coverage of needs from 57% to 90%.
+The first five take the ceiling (all data types needed have a simulator) from
+57% to 90%.
 
-## Design / hand-off blockers (fix before adding simulators)
+## Blockers left, by owner
 
-1. **Multi-factor specs get one-factor designs: 260 questions.** Spec has
-   genotype x time, treatment x tissue, genotype x temperature, ...; Biodes picks
-   `rcbd`/`alpha` (model `y ~ treatment + block`) and the layout keeps only the
-   first factor. Fix in Biodes design choice (factorial / split-plot when the
-   spec has >1 factor), or have the layout cross all spec factors inside the
-   blocks. Biggest single win: ~124 RNA-seq questions alone.
-2. **Factor with no level count: 33.** ("several time points"). A real
-   question for the user; keep asking.
-3. **Only factor is `time`: 37.** The layout needs a treatment factor and does
-   not take time as one. Time-course-only studies should use time as the
-   treatment (or repeated-measures design).
-4. **No factors at all: 45.** GWAS panels, mapping populations, genebank
-   collections ("800 accessions", "4,300 rats", "192 F1 progeny"). The number
-   of lines is in the prompt but not in a factor. Biodes should record it (e.g.
-   `population.size` or a genotype factor) so Simitall gets its lines.
-5. **Genetics with no genotype term: 42.** 36 are the amplicon misroute below;
-   the other 6 are #4.
-6. Unreplicated blocked design (3), population-plan designs with no layout
-   rule (2), Biodes error on 2 specs ("non-character argument").
+**Biodes**
 
-## Bugs found in Simitall (to fix)
+1. **A factor named `treatment` clashes with the joined `treatment` column: 95.**
+   In factorial layouts Biodes writes a `treatment` column with joined levels
+   (`treatment_2:time_1`); when a spec factor is itself called `treatment`, its
+   own column is overwritten, so the model term has no column. Fix: give the
+   joined column another name (e.g. `treatment_combination`) or never write it
+   over a factor column.
+2. No level count (58), no factors (46: mostly panels and populations whose size
+   is in the prompt). These are questions for the user or reader rules.
+3. Two reviewed specs make `studyforge_ask` fail with "non-character argument".
 
-- **`amplicon` is routed to genetics.** In these questions amplicon means
-  16S/ITS microbiome (46 of 48) or edit amplicons; it must leave the genetics
-  row (`simulators.tsv`) and become a microbiome route.
-- **`inst/suite/suggestions.tsv` invents factors.** With `use_suggestions =
-  TRUE`, any plant prompt with open factors gets `genotype:6, water:2`; 97 of
-  1,000 questions got a made-up genotype x water experiment. It is also a
-  word-matching reader. Remove the factor suggestions (keep only numeric
-  defaults like residual SD, listed as assumptions), or move them to Biodes.
-- `crispr` / `overexpression` are listed as unsupported assays; they are
-  treatments (the edited lines), not data to simulate.
-- Factor reference level follows natural sort, not Biodes' listed order.
+**Simitall**
 
-## Today's end-to-end path (Biodes rules reader)
+4. "How many per group?" questions (361) have no `design.reps`. They should go
+   to `simitall_power_sweep()` over a range of reps instead of stopping.
+5. Genetics asked for but no genotype factor (4).
 
-526 / 1000 reached simulation. 430 stopped before a layout: in 191 the rules
-reader found no factor that the reviewed spec has, in 134 it found the factor
-but not its level count. Rerun this with the Qwen reader (`engine = "llm"`)
-before judging the reader; the rules engine is the fallback.
+## Fixed since the first run
+
+- Biodes: factor-aware design choice and `layout_from_spec()` (every factor a
+  column, factorial/split crossing, within-unit factors such as tissue).
+- Simitall: layouts come from Biodes; factors the model does not hold get
+  effects and a unit's rows share its effect; amplicon is microbiome, not
+  genotyping; CRISPR/overexpression are treatments; `suggestions.tsv` no longer
+  invents factors (it gave 97 plant questions a made-up genotype x water design).
+
+## Today's end-to-end path (Biodes rules reader, no Qwen here)
+
+303 / 1000 reach simulation with the rules reader alone (`rules_reader_stage`).
+Most stop at the layout because the reader leaves out replicate counts or factor
+levels. Rerun with the Qwen reader (`engine = "llm"`) before judging the reader.
 
 ## Rerun
 
 ```sh
-BIODES_DIR=~/Documents/Github/BioDesignGPT SIMITALL_DIR=~/Documents/Github/simitall \
-  Rscript data-raw/coverage/run_gold_specs.R 1 1000 gold_run.tsv      # reviewed specs
+export BIODES_DIR=~/Documents/Github/BioDesignGPT SIMITALL_DIR=~/Documents/Github/simitall
+Rscript data-raw/coverage/run_gold_specs.R 1 1000 gold_run.tsv      # reviewed specs
 Rscript data-raw/coverage/run_rules_reader.R 1 1000 rules_run.tsv     # rules reader
 Rscript data-raw/coverage/route_gold_specs.R                          # routes only
 ```

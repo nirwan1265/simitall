@@ -3,6 +3,8 @@
 BIODES <- Sys.getenv("BIODES_DIR", "~/Documents/Github/BioDesignGPT")
 SIMITALL <- Sys.getenv("SIMITALL_DIR", "~/Documents/Github/simitall")
 .split <- function(f) lapply(readLines(file.path(BIODES, "training/paper_questions/splits", f)), jsonlite::fromJSON, simplifyVector = FALSE)
+# "how many per group?" questions have no design.reps; REPS_IF_MISSING (default 3, "" = none) stands in
+REPS_IF_MISSING <- Sys.getenv("REPS_IF_MISSING", "3")
 QUESTIONS <- function() utils::head(c(.split("test.jsonl"), .split("dev.jsonl")), 1000)
 # usage: Rscript <this file> <start> <end> <out.tsv>
 args <- commandArgs(TRUE); i0 <- as.integer(args[1]); i1 <- as.integer(args[2]); out <- args[3]
@@ -20,9 +22,9 @@ rows <- list()
 for (i in i0:i1) {
   q <- qs[[i]]
   d <- file.path(tempdir(), q$id)
-  r <- list(id = q$id, species = q$species %||% "", technique = q$technique %||% "", prompt = clean(q$prompt))
+  r <- list(reps_assumed = FALSE, id = q$id, species = q$species %||% "", technique = q$technique %||% "", prompt = clean(q$prompt))
+  GOLD$spec <- q$expected_spec; if (is.null(GOLD$spec$design$reps) && nzchar(REPS_IF_MISSING)) { GOLD$spec$design$reps <- as.integer(REPS_IF_MISSING); r$reps_assumed <- TRUE }
   t0 <- Sys.time()
-  GOLD$spec <- q$expected_spec
   run <- tryCatch({
     utils::capture.output(x <- suppressMessages(simitall_from_question(q$prompt, outdir = d, simulate = FALSE, use_suggestions = FALSE,
                                                                        confirm = FALSE, figures = FALSE, analyze = FALSE)))
@@ -56,6 +58,6 @@ for (i in i0:i1) {
   unlink(d, recursive = TRUE)
   rows[[length(rows) + 1]] <- r
 }
-cols <- c("id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
+cols <- c("reps_assumed","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
 df <- do.call(rbind, lapply(rows, function(r) as.data.frame(setNames(lapply(cols, function(k) if (is.null(r[[k]])) "" else as.character(r[[k]])), cols))))
 utils::write.table(df, out, sep = "\t", row.names = FALSE, quote = FALSE)
