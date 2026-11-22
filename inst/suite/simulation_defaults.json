@@ -40,14 +40,6 @@
     "value": 0,
     "note": "fraction of units lost; from power.attrition when given"
   },
-  "counts": {
-    "n_genes": 1000,
-    "de_fraction": 0.1,
-    "de_log2fc_sd": 1.0,
-    "batch_effect_sd": 0.15,
-    "library_size_mean": 5000000,
-    "note": "passed to simulate_rnaseq_experiment(); condition = first treatment term, batch = first block term"
-  },
   "interaction_effect_ratio": {
     "value": 1.0,
     "note": "interaction between treatment factors (e.g. genotype x water, treatment x time): the effect of the first factor between its first and last level differs by this ratio x the main effect between the first and last level of the second factor (linear-by-linear pattern; first levels get 0). Spec power.interaction_effect or the interaction_effect argument gives the size directly; 0 means no interaction"

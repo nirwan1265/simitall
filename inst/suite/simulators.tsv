@@ -1,0 +1,18 @@
+route	layer	field	values	simulator	status	needs	writes	note
+outcome_continuous	outcome	primary_outcome.type	continuous	suite_outcome	ready		sample_metadata_template.tsv	Gaussian outcome from analysis.model: treatment, block, random terms, subsamples, attrition. Also used when the spec gives no outcome type.
+outcome_binary	outcome	primary_outcome.type	binary	suite_outcome	ready		sample_metadata_template.tsv	Liability threshold: the Gaussian outcome is the liability; units above the (1 - prevalence) quantile are 1.
+outcome_count	outcome	primary_outcome.type	count	suite_outcome	ready		sample_metadata_template.tsv	Negative binomial (or Poisson) counts with mean = the model's unit mean (identity link, floored at min_mean).
+outcome_ordinal	outcome	primary_outcome.type	ordinal	suite_outcome	ready		sample_metadata_template.tsv	Ordinal score: the Gaussian outcome cut at quantile thresholds (category_probabilities).
+outcome_survival	outcome	primary_outcome.type	survival	-	planned			No time-to-event simulator yet.
+outcome_compositional	outcome	primary_outcome.type	compositional	-	planned			No compositional (e.g. microbiome proportions) simulator yet.
+genetics_panel	genetics	assays	gwas|gbs|wgs|amplicon|targeted_capture	suite_genotype_panel	ready	genotype factor	genotypes.vcf, genetic_truth/	Diversity panel of the genotype factor's levels (inbred or outbred by system, see genetics.json); genetic values from a phenotype model in phenotype_models.tsv replace the genotype treatment effects.
+genetics_cross	genetics	population.mating	ril|dh|nam|backcross|selfing|biparental|f2|magic|sib_mating	suite_genotype_cross	ready	genotype factor	genotypes.vcf, genetic_truth/	Lines from simulate_breeding() with the scheme in mating_schemes.tsv; founder ancestry kept as truth.
+genetics_mapping	genetics	assays	qtl_mapping|bsa_seq|pool_seq	suite_genotype_cross	ready	genotype factor	genotypes.vcf, genetic_truth/	QTL mapping needs a cross; the scheme comes from population.mating, else the mapping default in mating_schemes.tsv.
+genetics_study_type	genetics	study_type	breeding_genetics	suite_genotype_panel	ready	genotype factor	genotypes.vcf, genetic_truth/	Breeding-genetics study with no assay or mating given: diversity panel.
+assay_rnaseq	assay	assays	rnaseq|rna_seq|bulk_rnaseq|mrna_seq|3_tag_seq|quantseq|nascent_rna|trap_seq|long_read_rna	simulate_rnaseq_experiment	ready		counts.tsv	One biological replicate per experimental unit; condition = first treatment term that is not the genotype, batch = first block term.
+assay_eqtl	assay	assays	eqtl	simulate_rnaseq_from_gwas	ready	genetics layer	counts.tsv, eqtl/	Each unit gets its line's genotypes; cis/trans eQTL truth written. Turns on the genetics layer when the spec has a genotype factor.
+assay_single_cell	assay	assays	single_cell|scrna_seq|scrnaseq|snrna_seq|single_cell_rna_seq|sc_rnaseq	simulate_scrnaseq_experiment	ready		single_cell/, counts.tsv	Cells per unit with cell-type truth; counts.tsv is the pseudobulk (sum of cells) per unit.
+assay_chip_seq	assay	assays	chip_seq	simulate_chipseq	ready		chipseq/	Synthetic genome; one ChIP library per unit with matched input; peak and differential-binding truth.
+assay_atac_seq	assay	assays	atac_seq	simulate_atacseq	ready		atacseq/	Synthetic genome; one library per unit; peak and differential-accessibility truth.
+assay_methylation	assay	assays	methylation|medip	-	planned			Methylation simulator is being rebuilt.
+assay_other	assay	assays	scatac_seq|m6a_seq|hic|ribo_seq|small_rnaseq|rip_clip|mnase_seq|degradome|spatial|metagenomics|metabolomics|lipidomics|crispr|overexpression|complementation|heterologous|in_silico	-	not_supported			No simulator for this assay; the outcome is still simulated.

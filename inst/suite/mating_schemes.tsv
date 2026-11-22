@@ -1,0 +1,11 @@
+mating	scheme	n_founders	self_generations	backcross_generations	ril_mating	note
+ril	RIL	2	6	0	SSD	recombinant inbred lines by single-seed descent
+dh	DH	2	0	0	SSD	doubled haploids from F1 gametes
+nam	NAM	4	6	0	SSD	nested association mapping: common parent crossed to founders, RILs per family
+magic	MAGIC	8	6	0	SSD	multiparent funnel, each line from its own funnel
+backcross	NIL	2	3	3	SSD	backcross to parent 1 then selfing (near-isogenic lines)
+selfing	RIL	2	6	0	SSD	selfing after the F1, as RILs
+sib_mating	RIL	2	6	0	SIB	inbreeding by sib mating
+biparental	F2	2	0	0	SSD	F2 from two parents
+f2	F2	2	0	0	SSD	F2 from two parents
+default_mapping	F2	2	0	0	SSD	used for qtl_mapping / bsa_seq / pool_seq when population.mating is not given

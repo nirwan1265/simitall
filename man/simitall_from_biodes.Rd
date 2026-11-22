@@ -11,7 +11,8 @@ simitall_from_biodes(
   effect = NULL,
   residual_sd = NULL,
   n_genes = NULL,
-  interaction_effect = NULL
+  interaction_effect = NULL,
+  params = NULL
 )
 }
 \arguments{
@@ -27,34 +28,52 @@ simitall_from_biodes(
 \item{residual_sd}{Residual SD of the unit means. Default:
 \code{power.residual_sd} from the spec.}
 
-\item{n_genes}{Genes in the count matrix (count assays only).}
+\item{n_genes}{Genes in count matrices (shortcut for the \code{n_genes} parameter
+of the RNA-seq, eQTL and single-cell simulators).}
 
 \item{interaction_effect}{Size of the interaction between treatment factors
-(e.g. genotype x water). Default: \code{power.interaction_effect} from the spec,
+(e.g. treatment x time). Default: \code{power.interaction_effect} from the spec,
 else \code{interaction_effect_ratio} x the main effect
-(\code{simulation_defaults.json}). 0 for no interaction.}
+(\code{simulation_defaults.json}). 0 for no interaction. Genotype x treatment
+interactions in genetics studies come from the phenotype model instead.}
+
+\item{params}{Parameter overrides, a list named by simulator, e.g.
+\code{list(suite_genetics = list(heritability = 0.8, phenotype_model = "gxe"), simulate_chipseq = list(n_peaks = 500))}.}
 }
 \value{
 Invisibly, the paths written.
 }
 \description{
 Reads a Biodes design folder (\code{study_spec.json}, \code{field_layout.csv},
-\code{sample_metadata_template.tsv}) and simulates the primary outcome for every
-experimental unit from the spec's \code{analysis.model}: treatment effects of the
-size the study was powered for, a variance for each blocking factor and
-random term, subsamples nested in their unit, and attrition. For count
-assays (RNA-seq) it also simulates a gene x sample count matrix with
-\code{\link[=simulate_rnaseq_experiment]{simulate_rnaseq_experiment()}}, using the treatment as condition and the
-block as batch. The true values used are written to \code{sim_truth.json}, so
-\code{\link[=bioana_fit_biodes]{bioana_fit_biodes()}} can check that it recovers them.
+\code{sample_metadata_template.tsv}) and creates data for every experimental
+unit of the layout. What is simulated is looked up in
+\code{inst/suite/simulators.tsv} from the spec's fields (see \code{\link[=simitall_routes]{simitall_routes()}}):
 }
 \details{
-Values the spec does not give come from \code{inst/suite/simulation_defaults.json}
-and are listed under \code{assumptions} in \code{sim_truth.json}.
+\itemize{
+\item \strong{Outcome} (\code{primary_outcome.type}): the primary outcome from
+\code{analysis.model} (treatment effects of the size the study was powered for,
+a variance for each blocking factor and random term, subsamples nested in
+their unit, attrition), as a continuous, binary (liability threshold),
+count (negative binomial) or ordinal score.
+\item \strong{Genetics} (\code{assays} gwas/qtl_mapping/eqtl/..., \code{population.mating},
+\code{study_type} breeding_genetics): genotypes for the levels of the genotype
+factor, from a diversity panel or a cross (\code{\link[=simulate_breeding]{simulate_breeding()}}), and
+genetic values from a phenotype model in \code{inst/suite/phenotype_models.tsv}
+(additive, dominance, epistasis, GxE) at the requested heritability. These
+genetic values are the genotype effects in the outcome.
+\item \strong{Assays} (\code{assays}): bulk RNA-seq, eQTL, single-cell RNA-seq, ChIP-seq
+and ATAC-seq, one library per unit named by its \code{sample_id}.
+}
+
+Parameters come from \code{inst/suite/simulator_parameters.tsv} (see
+\code{\link[=simitall_simulator_parameters]{simitall_simulator_parameters()}}); a spec field overrides a default and
+\code{params} overrides both. Every default used is listed under \code{assumptions}
+in \code{sim_truth.json}, with the true values of every effect.
 }
 \examples{
 \dontrun{
+simitall_routes("studyforge_run")
 simitall_from_biodes("studyforge_run")
-bioana_fit_biodes("studyforge_run")
 }
 }

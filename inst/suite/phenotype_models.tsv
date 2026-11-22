@@ -1,0 +1,6 @@
+model	n_add_qtn	n_dom_qtn	degree_of_dom	n_epi_pairs	gxe_share	effect_distribution	note
+additive	10	0	0	0	0	geometric	additive QTN only; default for any genetics route
+additive_dominance	10	5	0.5	0	0	geometric	additive QTN plus dominance QTN (heterozygotes shifted by degree_of_dom x the additive effect); needs heterozygotes (F2, outbred panels)
+epistatic	10	0	0	3	0	geometric	additive QTN plus pairwise additive x additive interactions
+gxe	10	0	0	0	0.3	geometric	additive QTN whose effects change across the levels of the other treatment factor (e.g. water); gxe_share of the genetic variance is genotype x treatment
+full	10	5	0.5	3	0.3	geometric	additive, dominance, epistasis and GxE together

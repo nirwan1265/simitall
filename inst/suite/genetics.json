@@ -1,0 +1,7 @@
+{
+  "_about": "Genetics layer rules. genotype_pattern finds the model term that holds the lines: a term whose analysis.terms meaning, spec factor name or layout column matches it. Systems decide whether lines are homozygous (inbred) when suite_genetics inbred = auto.",
+  "genotype_pattern": "^(genotype|genotypes|line|lines|accession|accessions|variety|varieties|cultivar|cultivars|hybrid|hybrids|inbred|inbreds|entry|entries|strain|strains|ril|rils|nil|nils|dh|dhs|family|families|clone|clones|germplasm)$",
+  "inbred_systems": ["field", "greenhouse", "growth_chamber", "drosophila", "mouse"],
+  "outbred_systems": ["livestock", "cell_culture"],
+  "_note_systems": "mouse and drosophila genotype levels are usually inbred strains (C57BL/6, DGRP lines); set suite_genetics inbred = FALSE for outbred stocks. A system in neither list is treated as inbred and listed as an assumption."
+}

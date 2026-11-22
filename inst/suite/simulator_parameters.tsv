@@ -1,0 +1,61 @@
+simulator	argument	value	type	spec_field	note
+suite_outcome	prevalence	0.2	numeric		binary outcome: share of units scored 1 (liability above the 1 - prevalence quantile)
+suite_outcome	count_distribution	negative_binomial	character		count outcome: negative_binomial or poisson
+suite_outcome	dispersion	5	numeric		count outcome: negative binomial size (smaller = more overdispersed)
+suite_outcome	min_mean	0.1	numeric		count outcome: unit means below this are floored
+suite_outcome	category_probabilities	0.25,0.25,0.25,0.25	numeric_vector		ordinal outcome: share of units in each score category (lowest first)
+suite_genetics	phenotype_model	additive	character		row of phenotype_models.tsv: additive, additive_dominance, epistatic, gxe, full
+suite_genetics	heritability	0.5	numeric		plot-level heritability: genetic variance / (genetic + residual variance)
+suite_genetics	n_add_qtn		integer		override the phenotype model's additive QTN count
+suite_genetics	n_dom_qtn		integer		override the phenotype model's dominance QTN count
+suite_genetics	degree_of_dom		numeric		override the phenotype model's degree of dominance (0 additive, 1 complete)
+suite_genetics	n_epi_pairs		integer		override the phenotype model's number of epistatic QTN pairs
+suite_genetics	gxe_share		numeric		override the share of genetic variance that is genotype x treatment
+suite_genetics	effect_distribution		character		override: geometric (a few large QTN), normal, or equal
+suite_genetics	qtn_maf_min	0.1	numeric		QTN are drawn among markers with at least this minor allele frequency
+suite_genetics	inbred	auto	character		auto (from the system, genetics.json), TRUE (homozygous lines) or FALSE (outbred, Hardy-Weinberg)
+suite_genotype_panel	n_markers	2000	integer		markers drawn before the MAF filter
+suite_genotype_panel	n_chromosomes	5	integer
+suite_genotype_panel	chromosome_length_bp	1000000	integer
+suite_genotype_panel	n_subpops	4	integer		subpopulations (population structure)
+suite_genotype_panel	fst	0.1	numeric		differentiation between subpopulations (Balding-Nichols)
+suite_genotype_panel	maf_min	0.05	numeric		markers below this minor allele frequency are dropped
+suite_genotype_cross	n_chromosomes	5	integer
+suite_genotype_cross	chromosome_length_bp	20000	integer		length of each simulated founder chromosome
+suite_genotype_cross	snp_rate	0.02	numeric		SNPs per bp between founder haplotypes
+suite_genotype_cross	cM_per_chromosome	100	numeric		genetic length of each chromosome
+suite_genotype_cross	n_founders		integer	population.parents	founders; default from mating_schemes.tsv (a list of parent names gives its length)
+suite_genotype_cross	self_generations		integer	population.generations	selfing generations; default from mating_schemes.tsv
+suite_genotype_cross	backcross_generations		integer		backcross generations (NIL); default from mating_schemes.tsv
+simulate_rnaseq_experiment	n_genes	1000	integer
+simulate_rnaseq_experiment	condition_effect_fraction	0.1	numeric		share of genes that respond to the treatment
+simulate_rnaseq_experiment	condition_effect_sd	1	numeric		SD of the true log2 fold changes
+simulate_rnaseq_experiment	batch_effect_sd	0.15	numeric		SD of block (batch) effects on log2 expression
+simulate_rnaseq_experiment	library_size_mean	5000000	numeric
+simulate_rnaseq_from_gwas	n_genes	1000	integer
+simulate_rnaseq_from_gwas	n_cis_eqtl	100	integer		genes with a cis-eQTL
+simulate_rnaseq_from_gwas	n_trans_eqtl	25	integer
+simulate_rnaseq_from_gwas	cis_window_bp	100000	integer
+simulate_rnaseq_from_gwas	condition_effect_fraction	0.1	numeric
+simulate_rnaseq_from_gwas	gxe_fraction	0.2	numeric		share of eQTL whose effect changes with the treatment
+simulate_rnaseq_from_gwas	library_size_mean	5000000	numeric
+simulate_scrnaseq_experiment	n_genes	1000	integer
+simulate_scrnaseq_experiment	cells_per_replicate	200	integer		cells per experimental unit
+simulate_scrnaseq_experiment	condition_effect_fraction	0.1	numeric
+simulate_scrnaseq_experiment	condition_effect_sd	0.6	numeric
+simulate_scrnaseq_experiment	batch_effect_sd	0.2	numeric
+suite_peak_genome	chromosome_length	300000	integer		synthetic chromosome for ChIP/ATAC reads
+suite_peak_genome	n_genes	200	integer
+simulate_chipseq	assay_type	TF	character		TF, histone or nucleosome
+simulate_chipseq	histone_mark	H3K27ac	character		used when assay_type = histone
+simulate_chipseq	n_peaks	200	integer
+simulate_chipseq	n_reads	50000	integer		reads per ChIP library
+simulate_chipseq	differential_binding_fraction	0.2	numeric
+simulate_chipseq	differential_effect_log2	1.5	numeric
+simulate_chipseq	backend	native	character
+simulate_chipseq	write_fastq	FALSE	logical
+simulate_chipseq	write_read_bed	FALSE	logical
+simulate_atacseq	n_peaks	200	integer
+simulate_atacseq	n_reads	40000	integer		reads per library
+simulate_atacseq	differential_fraction	0.2	numeric
+simulate_atacseq	differential_effect_log2	1.5	numeric
