@@ -1,0 +1,264 @@
+alias	analysis	field	value	strength	case_sensitive
+selfing	pedigree_inbreeding	parameters.mating_scheme	selfing	strong	no
+self	pedigree_inbreeding	parameters.mating_scheme	selfing	weak	no
+selfed	pedigree_inbreeding	parameters.mating_scheme	selfing	strong	no
+self-pollination	pedigree_inbreeding	parameters.mating_scheme	selfing	strong	no
+self-fertilization	pedigree_inbreeding	parameters.mating_scheme	selfing	strong	no
+sib mating	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+full-sib mating	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+full-sib	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+full sib	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+brother-sister mating	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+brother-sister	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+sibling mating	pedigree_inbreeding	parameters.mating_scheme	sib_mating	strong	no
+first-cousin	pedigree_inbreeding	parameters.mating_scheme	first_cousin	strong	no
+first cousin	pedigree_inbreeding	parameters.mating_scheme	first_cousin	strong	no
+second-cousin	pedigree_inbreeding	parameters.mating_scheme	second_cousin	strong	no
+second cousin	pedigree_inbreeding	parameters.mating_scheme	second_cousin	strong	no
+backcross	pedigree_inbreeding	parameters.mating_scheme	backcross	strong	no
+pedigree file	pedigree_inbreeding	parameters.mating_scheme	custom_pedigree	strong	no
+my pedigree	pedigree_inbreeding	parameters.mating_scheme	custom_pedigree	strong	no
+generation pedigree	pedigree_inbreeding	parameters.mating_scheme	custom_pedigree	strong	no
+bottleneck	pedigree_inbreeding	parameters.mating_scheme	bottleneck	strong	no
+F1	cross_design	design.scheme	F1	strong	yes
+F2	cross_design	design.scheme	F2	strong	yes
+intercross	cross_design	design.scheme	F2	strong	no
+RIL	cross_design	design.scheme	RIL	strong	yes
+RILs	cross_design	design.scheme	RIL	strong	yes
+recombinant inbred	cross_design	design.scheme	RIL	strong	no
+NAM	cross_design	design.scheme	NAM	strong	yes
+nested association mapping	cross_design	design.scheme	NAM	strong	no
+MAGIC	cross_design	design.scheme	MAGIC	strong	yes
+multiparent advanced generation intercross	cross_design	design.scheme	MAGIC	strong	no
+biparental	cross_design	design.scheme	biparental	strong	no
+backcross	cross_design	design.scheme	backcross	weak	no
+introgression	cross_design	design.scheme	introgression	strong	no
+normal phenotype	phenotype_outcome_model	parameters.outcome_family	gaussian	strong	no
+continuous trait	phenotype_outcome_model	parameters.outcome_family	gaussian	strong	no
+Gaussian	phenotype_outcome_model	parameters.outcome_family	gaussian	strong	no
+binomial	phenotype_outcome_model	parameters.outcome_family	binomial	strong	no
+Bernoulli	phenotype_outcome_model	parameters.outcome_family	bernoulli	strong	no
+negative binomial	phenotype_outcome_model	parameters.outcome_family	negative_binomial	strong	no
+overdispersion	phenotype_outcome_model	parameters.outcome_family	negative_binomial	strong	no
+overdispersed	phenotype_outcome_model	parameters.outcome_family	negative_binomial	strong	no
+ordinal	phenotype_outcome_model	parameters.outcome_family	ordinal	strong	no
+liability	phenotype_outcome_model	parameters.outcome_family	liability	strong	no
+disease-like	phenotype_outcome_model	parameters.outcome_family	liability	weak	no
+survival	phenotype_outcome_model	parameters.outcome_family	survival	strong	no
+time-to-event	phenotype_outcome_model	parameters.outcome_family	survival	strong	no
+mixed model	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	no
+mixed-model	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	no
+linear mixed model	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	no
+LMM	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	yes
+EMMAX	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	no
+EMMAX-style	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	no
+GEMMA	quantitative_gwas	parameters.association_model	linear_mixed_model	strong	no
+MLM	quantitative_gwas	parameters.association_model	MLM	strong	yes
+FarmCPU	quantitative_gwas	parameters.association_model	FarmCPU	strong	no
+Bayesian	quantitative_gwas	parameters.association_model	Bayesian	strong	no
+linear regression	quantitative_gwas	parameters.association_model	linear	strong	no
+PCs	quantitative_gwas	parameters.structure_adjustment	PCs	strong	no
+principal components	quantitative_gwas	parameters.structure_adjustment	PCs	strong	no
+kinship	quantitative_gwas	parameters.structure_adjustment	kinship	strong	no
+kinship-corrected	quantitative_gwas	parameters.structure_adjustment	kinship	strong	no
+kinship matrix	quantitative_gwas	parameters.structure_adjustment	kinship	strong	no
+GRM	quantitative_gwas	parameters.structure_adjustment	kinship	strong	yes
+Bonferroni	quantitative_gwas;bulk_eqtl	parameters.multiple_testing	Bonferroni	strong	no
+FDR	quantitative_gwas;bulk_eqtl	parameters.multiple_testing	FDR	strong	yes
+false discovery rate	quantitative_gwas;bulk_eqtl	parameters.multiple_testing	FDR	strong	no
+Benjamini-Hochberg	quantitative_gwas;bulk_eqtl	parameters.multiple_testing	FDR	strong	no
+permutation	quantitative_gwas;bulk_eqtl	parameters.multiple_testing	permutation	strong	no
+permutation-based	quantitative_gwas;bulk_eqtl	parameters.multiple_testing	permutation	strong	no
+logistic regression	binary_gwas	parameters.association_model	logistic	strong	no
+logistic	binary_gwas	parameters.association_model	logistic	weak	no
+logistic mixed model	binary_gwas	parameters.association_model	logistic_mixed_model	strong	no
+logistic mixed	binary_gwas	parameters.association_model	logistic_mixed_model	strong	no
+GLMM	binary_gwas	parameters.association_model	logistic_mixed_model	strong	yes
+SAIGE	binary_gwas	parameters.association_model	logistic_mixed_model	strong	no
+Firth	binary_gwas	parameters.association_model	Firth_logistic	strong	no
+Firth logistic	binary_gwas	parameters.association_model	Firth_logistic	strong	no
+multi-trait	multitrait_longitudinal_gwas	parameters.design_type	multitrait	strong	no
+jointly	multitrait_longitudinal_gwas	parameters.design_type	multitrait	weak	no
+GxE	multitrait_longitudinal_gwas	parameters.design_type	GxE	strong	no
+longitudinal	multitrait_longitudinal_gwas	parameters.design_type	longitudinal	strong	no
+repeated measures	multitrait_longitudinal_gwas	parameters.design_type	longitudinal	strong	no
+every week	multitrait_longitudinal_gwas	parameters.design_type	longitudinal	strong	no
+gene-based	rare_variant_and_gene_based_gwas	parameters.variant_set_definition	gene	strong	no
+per gene	rare_variant_and_gene_based_gwas	parameters.variant_set_definition	gene	strong	no
+SKAT-style gene-based	rare_variant_and_gene_based_gwas	parameters.variant_set_definition	gene	strong	no
+pathway	rare_variant_and_gene_based_gwas	parameters.variant_set_definition	pathway	strong	no
+sliding window	rare_variant_and_gene_based_gwas	parameters.variant_set_definition	sliding_window	strong	no
+interval mapping	linkage_qtl	parameters.mapping_method	interval_mapping	strong	no
+composite interval mapping	linkage_qtl	parameters.mapping_method	composite_interval_mapping	strong	no
+CIM	linkage_qtl	parameters.mapping_method	composite_interval_mapping	strong	yes
+multiple QTL mapping	linkage_qtl	parameters.mapping_method	multiple_qtl	strong	no
+MQM	linkage_qtl	parameters.mapping_method	multiple_qtl	strong	yes
+single-marker	linkage_qtl	parameters.mapping_method	single_qtl	strong	no
+negative binomial	bulk_counts_simulation;scrnaseq_simulation	parameters.count_model	negative_binomial	strong	no
+negative-binomial	bulk_counts_simulation;scrnaseq_simulation	parameters.count_model	negative_binomial	strong	no
+NB	bulk_counts_simulation;scrnaseq_simulation	parameters.count_model	negative_binomial	strong	yes
+zero-inflated	bulk_counts_simulation;scrnaseq_simulation	parameters.count_model	zero_inflated_negative_binomial	strong	no
+zero-inflated NB	bulk_counts_simulation;scrnaseq_simulation	parameters.count_model	zero_inflated_negative_binomial	strong	no
+ZINB	bulk_counts_simulation;scrnaseq_simulation	parameters.count_model	zero_inflated_negative_binomial	strong	yes
+gamma-Poisson	scrnaseq_simulation	parameters.count_model	gamma_poisson	strong	no
+copula	scrnaseq_simulation	parameters.count_model	copula	strong	no
+DESeq2	differential_expression	parameters.method	DESeq2	strong	no
+edgeR	differential_expression	parameters.method	edgeR	strong	no
+limma-voom	differential_expression	parameters.method	limma_voom	strong	no
+limma voom	differential_expression	parameters.method	limma_voom	strong	no
+voom	differential_expression	parameters.method	limma_voom	strong	no
+limma	differential_expression	parameters.method	limma_voom	weak	no
+spline	time_series_rnaseq	parameters.time_representation	spline	strong	no
+splines	time_series_rnaseq	parameters.time_representation	spline	strong	no
+continuous time	time_series_rnaseq	parameters.time_representation	continuous	strong	no
+same mice	time_series_rnaseq	parameters.repeated_subject	true	strong	no
+same animals	time_series_rnaseq	parameters.repeated_subject	true	strong	no
+same plants	time_series_rnaseq	parameters.repeated_subject	true	strong	no
+sampled repeatedly	time_series_rnaseq	parameters.repeated_subject	true	strong	no
+destructively	time_series_rnaseq	parameters.repeated_subject	false	strong	no
+destructive	time_series_rnaseq	parameters.repeated_subject	false	strong	no
+different plants each time	time_series_rnaseq	parameters.repeated_subject	false	strong	no
+exon usage	alternative_splicing	parameters.splicing_event	differential_exon_usage	strong	no
+differential exon usage	alternative_splicing	parameters.splicing_event	differential_exon_usage	strong	no
+junction usage	alternative_splicing	parameters.splicing_event	differential_junction_usage	strong	no
+differential junction usage	alternative_splicing	parameters.splicing_event	differential_junction_usage	strong	no
+transcript usage	alternative_splicing	parameters.splicing_event	differential_transcript_usage	strong	no
+isoform switching	alternative_splicing	parameters.splicing_event	isoform_switching	strong	no
+isoform switch	alternative_splicing	parameters.splicing_event	isoform_switching	strong	no
+switches to a shorter isoform	alternative_splicing	parameters.splicing_event	isoform_switching	weak	no
+DEXSeq	alternative_splicing	parameters.method	DEXSeq	strong	no
+LeafCutter	alternative_splicing	parameters.method	LeafCutter	strong	no
+DRIMSeq	alternative_splicing	parameters.method	DRIMSeq	strong	no
+IsoformSwitchAnalyzeR	alternative_splicing	parameters.method	IsoformSwitchAnalyzeR	strong	no
+beta-binomial	allele_specific_expression	parameters.allele_count_model	beta_binomial	strong	no
+binomial test	allele_specific_expression	parameters.allele_count_model	binomial	strong	no
+cis	bulk_eqtl;splicing_qtl	parameters.scope	cis	strong	no
+trans	bulk_eqtl;splicing_qtl	parameters.scope	trans	strong	no
+cis and trans	bulk_eqtl	parameters.scope	cis_and_trans	strong	no
+cis/trans	bulk_eqtl	parameters.scope	cis_and_trans	strong	no
+conditional	bulk_eqtl	parameters.conditional_mapping	true	strong	no
+junction ratio	splicing_qtl	parameters.phenotype_type	junction_ratio	strong	no
+junction ratios	splicing_qtl	parameters.phenotype_type	junction_ratio	strong	no
+exon usage	splicing_qtl	parameters.phenotype_type	exon_usage	strong	no
+isoform usage	splicing_qtl	parameters.phenotype_type	isoform_usage	strong	no
+isoform-usage	splicing_qtl	parameters.phenotype_type	isoform_usage	strong	no
+pseudobulk	single_cell_eqtl	parameters.unit_of_analysis	pseudobulk	strong	no
+cell-level	single_cell_eqtl	parameters.unit_of_analysis	cell_level	strong	no
+per cell type	single_cell_eqtl	parameters.cell_type_strategy	separate_models	strong	no
+each cell type	single_cell_eqtl	parameters.cell_type_strategy	separate_models	strong	no
+interaction	single_cell_eqtl	parameters.cell_type_strategy	interaction_model	strong	no
+interaction model	single_cell_eqtl	parameters.cell_type_strategy	interaction_model	strong	no
+pseudobulk	scrnaseq_analysis	parameters.analysis_unit	pseudobulk	strong	no
+integrating	scrnaseq_analysis	parameters.batch_strategy	integration	strong	no
+integration	scrnaseq_analysis	parameters.batch_strategy	integration	strong	no
+integrate	scrnaseq_analysis	parameters.batch_strategy	integration	strong	no
+Harmony	scrnaseq_analysis	parameters.batch_strategy	integration	strong	no
+batch as a covariate	scrnaseq_analysis	parameters.batch_strategy	covariate	strong	no
+GBLUP	genomic_prediction	parameters.model	GBLUP	strong	no
+rrBLUP	genomic_prediction	parameters.model	rrBLUP	strong	no
+BayesB	genomic_prediction	parameters.model	BayesB	strong	no
+Bayes B	genomic_prediction	parameters.model	BayesB	strong	no
+k-fold	genomic_prediction	parameters.validation_design	random_kfold	strong	no
+cross-validation	genomic_prediction	parameters.validation_design	random_kfold	strong	no
+5-fold	genomic_prediction	parameters.validation_design	random_kfold	strong	no
+10-fold	genomic_prediction	parameters.validation_design	random_kfold	strong	no
+forward prediction	genomic_prediction	parameters.validation_design	forward_generation	strong	no
+next cycle	genomic_prediction	parameters.validation_design	forward_generation	strong	no
+next generation	genomic_prediction	parameters.validation_design	forward_generation	strong	no
+train on cycles	genomic_prediction	parameters.validation_design	forward_generation	strong	no
+leave-one-family-out	genomic_prediction	parameters.validation_design	family_held_out	strong	no
+held-out families	genomic_prediction	parameters.validation_design	family_held_out	strong	no
+leave-one-environment-out	genomic_prediction	parameters.validation_design	environment_held_out	strong	no
+new environment	genomic_prediction	parameters.validation_design	environment_held_out	strong	no
+untested environment	genomic_prediction	parameters.validation_design	environment_held_out	strong	no
+PCA	population_structure	parameters.analysis	PCA	strong	no
+ADMIXTURE	population_structure	parameters.analysis	admixture	strong	no
+admixture	population_structure	parameters.analysis	admixture	strong	no
+STRUCTURE	population_structure	parameters.analysis	admixture	strong	yes
+FST	population_structure	parameters.analysis	FST	strong	no
+kinship	population_structure	parameters.analysis	kinship	strong	no
+how related	population_structure	parameters.analysis	kinship	strong	no
+relatedness	population_structure	parameters.analysis	kinship	strong	no
+IBD	population_structure	parameters.analysis	IBD	strong	yes
+identity by descent	population_structure	parameters.analysis	IBD	strong	no
+r2	linkage_disequilibrium	parameters.LD_metric	r2	strong	no
+r^2	linkage_disequilibrium	parameters.LD_metric	r2	strong	no
+D'	linkage_disequilibrium	parameters.LD_metric	Dprime	strong	no
+D prime	linkage_disequilibrium	parameters.LD_metric	Dprime	strong	no
+Dprime	linkage_disequilibrium	parameters.LD_metric	Dprime	strong	no
+FST	selection_scan	parameters.statistic	FST	strong	no
+iHS	selection_scan	parameters.statistic	iHS	strong	no
+XP-EHH	selection_scan	parameters.statistic	XP_EHH	strong	no
+XPEHH	selection_scan	parameters.statistic	XP_EHH	strong	no
+PBS	selection_scan	parameters.statistic	PBS	strong	yes
+SFS	selection_scan	parameters.statistic	SFS	strong	yes
+Tajima's D	selection_scan	parameters.statistic	SFS	strong	no
+nanopore	read_simulation	parameters.platform	Nanopore	strong	no
+Oxford Nanopore	read_simulation	parameters.platform	Nanopore	strong	no
+Vega	read_simulation	parameters.platform	Vega_HiFi	strong	yes
+Illumina	genome_assembly	parameters.assembly_strategy	short_read	weak	no
+short reads	genome_assembly	parameters.assembly_strategy	short_read	strong	no
+short-read	genome_assembly	parameters.assembly_strategy	short_read	strong	no
+HiFi	genome_assembly	parameters.assembly_strategy	long_read	strong	no
+PacBio	genome_assembly	parameters.assembly_strategy	long_read	strong	no
+nanopore	genome_assembly	parameters.assembly_strategy	long_read	strong	no
+long reads	genome_assembly	parameters.assembly_strategy	long_read	strong	no
+long-read	genome_assembly	parameters.assembly_strategy	long_read	strong	no
+hybrid	genome_assembly	parameters.assembly_strategy	hybrid	strong	no
+no reference	genome_assembly	parameters.QC_reference_available	false	strong	no
+no reference genome	genome_assembly	parameters.QC_reference_available	false	strong	no
+against the reference	genome_assembly	parameters.QC_reference_available	true	strong	no
+SNPs	variant_calling	parameters.variant_class	SNP	strong	no
+SNP	variant_calling	parameters.variant_class	SNP	strong	no
+SNVs	variant_calling	parameters.variant_class	SNP	strong	no
+indels	variant_calling	parameters.variant_class	indel	strong	no
+indel	variant_calling	parameters.variant_class	indel	strong	no
+SV	variant_calling	parameters.variant_class	SV	strong	yes
+structural variants	variant_calling	parameters.variant_class	SV	strong	no
+CNV	variant_calling	parameters.variant_class	CNV	strong	yes
+copy number	variant_calling	parameters.variant_class	CNV	strong	no
+joint-call	variant_calling	parameters.calling_design	cohort	strong	no
+joint calling	variant_calling	parameters.calling_design	cohort	strong	no
+joint-calling	variant_calling	parameters.calling_design	cohort	strong	no
+trio	variant_calling	parameters.calling_design	trio	strong	no
+tumour-normal	variant_calling	parameters.calling_design	tumor_normal	strong	no
+tumor-normal	variant_calling	parameters.calling_design	tumor_normal	strong	no
+somatic	variant_calling	parameters.calling_design	tumor_normal	strong	no
+single sample	variant_calling	parameters.calling_design	single_sample	strong	no
+GO terms	gene_coordinate_annotation	parameters.annotation_scope	GO_mapping	strong	no
+GO	gene_coordinate_annotation	parameters.annotation_scope	GO_mapping	weak	yes
+GAF	gene_coordinate_annotation	parameters.annotation_scope	GO_mapping	strong	yes
+GO mapping	gene_coordinate_annotation	parameters.annotation_scope	GO_mapping	strong	no
+nearest genes	gene_coordinate_annotation	parameters.annotation_scope	coordinates	strong	no
+genes are within	gene_coordinate_annotation	parameters.annotation_scope	coordinates	strong	no
+genes near	gene_coordinate_annotation	parameters.annotation_scope	coordinates	strong	no
+gene coordinates	gene_coordinate_annotation	parameters.annotation_scope	coordinates	strong	no
+variant effects	gene_coordinate_annotation	parameters.annotation_scope	variant_effect	strong	no
+variant effect	gene_coordinate_annotation	parameters.annotation_scope	variant_effect	strong	no
+missense	gene_coordinate_annotation	parameters.annotation_scope	variant_effect	strong	no
+VEP	gene_coordinate_annotation	parameters.annotation_scope	variant_effect	strong	yes
+SnpEff	gene_coordinate_annotation	parameters.annotation_scope	variant_effect	strong	no
+enriched	gene_coordinate_annotation	parameters.annotation_scope	enrichment	strong	no
+enrichment	gene_coordinate_annotation	parameters.annotation_scope	enrichment	strong	no
+mediate	gxe_multiomics	parameters.integration_goal	mediation	strong	no
+mediation	gxe_multiomics	parameters.integration_goal	mediation	strong	no
+predict	gxe_multiomics	parameters.integration_goal	prediction	strong	no
+prediction	gxe_multiomics	parameters.integration_goal	prediction	strong	no
+explain the GxE	gxe_multiomics	parameters.integration_goal	association	strong	no
+which eQTLs explain	gxe_multiomics	parameters.integration_goal	association	strong	no
+matched	gxe_multiomics	parameters.integration_goal	joint_simulation	weak	no
+16S	microbiome_analysis	parameters.assay	16S_amplicon	strong	no
+shotgun	microbiome_analysis	parameters.assay	shotgun_metagenomics	strong	no
+metagenomics	microbiome_analysis	parameters.assay	shotgun_metagenomics	weak	no
+diversity	microbiome_analysis	parameters.analysis_goal	diversity	strong	no
+alpha diversity	microbiome_analysis	parameters.analysis_goal	diversity	strong	no
+beta diversity	microbiome_analysis	parameters.analysis_goal	diversity	strong	no
+differential abundance	microbiome_analysis	parameters.analysis_goal	differential_abundance	strong	no
+differ between	microbiome_analysis	parameters.analysis_goal	differential_abundance	strong	no
+functional profiles	microbiome_analysis	parameters.analysis_goal	functional_profile	strong	no
+functional profile	microbiome_analysis	parameters.analysis_goal	functional_profile	strong	no
+taxonomy	microbiome_analysis	parameters.analysis_goal	taxonomy	strong	no
+taxonomic	microbiome_analysis	parameters.analysis_goal	taxonomy	strong	no
+MAGs	microbiome_analysis	parameters.analysis_goal	assembly	strong	yes
+ChIP	chipseq_atacseq	parameters.assay	chipseq	strong	no
+ATAC	chipseq_atacseq	parameters.assay	atacseq	strong	no

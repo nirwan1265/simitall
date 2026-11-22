@@ -1,0 +1,38 @@
+{
+  "catalog_version": "1.0.0",
+  "purpose": "External method documentation consulted to scope concepts absent from the local tutorial set. These links are method references only, not installed-tool declarations.",
+  "sources": [
+    {
+      "id": "masigpro",
+      "topic": "time_series_rnaseq",
+      "title": "maSigPro Bioconductor package",
+      "url": "https://www.bioconductor.org/packages/release/bioc/html/maSigPro.html",
+      "use": "Regression-based time-course differential expression profiles across groups.",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": "dexseq",
+      "topic": "alternative_splicing",
+      "title": "DEXSeq vignette",
+      "url": "https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html",
+      "use": "Differential exon usage using count-based generalized linear models.",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": "leafcutter",
+      "topic": "alternative_splicing",
+      "title": "LeafCutter documentation",
+      "url": "https://davidaknowles.github.io/leafcutter/",
+      "use": "Annotation-free intron clustering, differential splicing, and splicing-QTL concepts.",
+      "accessed": "2026-10-24"
+    },
+    {
+      "id": "qtltools",
+      "topic": "eqtl",
+      "title": "QTLtools documentation",
+      "url": "https://qtltools.github.io/qtltools/pages/QTLtools.1.html",
+      "use": "Molecular-QTL QC, cis/trans mapping, conditional mapping, and allele-specific expression concepts.",
+      "accessed": "2026-10-24"
+    }
+  ]
+}

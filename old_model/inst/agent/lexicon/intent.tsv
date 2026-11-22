@@ -1,0 +1,43 @@
+cue	signal	strength	notes
+\bsimulat(?:e|es|ed|ing|ion)\b	simulate	strong
+\bsim\b	simulate	strong	terse "sim ATAC maize"
+\bsynthetic\b	simulate	strong
+\bfake\b	simulate	strong
+\bmock\b	simulate	strong
+\bin silico\b	simulate	strong
+\bgenerate\b	simulate	weak
+\bderive an?\b	simulate	weak	"derive an inbred strain"
+\bmake (?:me )?(?:up )?(?:an? |some )?(?:synthetic |fake |new )?(?:[a-z0-9:-]+ ){0,2}(?:population|dataset|data|counts|reads|f1|f2|rils?|nil|nils|lines|pedigree|phenotype|trait)s?\b	simulate	strong	"make me an F2 population", "make 100 near-isogenic lines"
+\bbuild a (?:synthetic )?(?:[a-z]+ )?population\b	simulate	strong
+\bwhat (?:they|it) (?:would )?look like\b	simulate	weak
+\bbenchmark(?:s|ing)?\b	benchmark	strong	benchmarks are usually run on simulated truth
+\b(?:run|runs|running)\b	analyze	weak
+\banaly[sz]e\b	analyze	weak
+\b(?:map|call|find|test|estimate|detect|identify|cluster|annotate|assemble|quantify|measure|compare|scan|join)\b	analyze	weak
+\bwhich (?:genes|bacteria|variants|regions|loci|go terms|lines|dogs)\b	analyze	weak
+\bare any\b	analyze	weak
+\b(?:my|our)\b	provided	weak
+\b(?:i|we)(?:'ve| have| had)? (?:have|got|measured|phenotyped|genotyped|sequenced|collected|harvested|did|ran|grew|just have)\b	provided	strong
+\bhere'?s\b	provided	strong
+\buploaded\b	provided	strong
+\b(?:using|from|on|with|for|in|to) (?:my|our)\b	provided	strong
+\b(?:my|our|this|these)\s+(?:[a-z0-9-]+\s+){0,3}(?:vcf|bams?|fastqs?|fasta|gff3?|gtf|gaf|counts?|count matrix|matrix|matrices|genotypes|phenotypes|pedigree|data|reads|samples|panel|cohort|exomes|snp chip|reference(?: genome)?|genome|accessions|lines|population|herd|colony|list|pseudobulk|files?)\b	provided	strong
+\b(?:package )?demo(?: data)?\b	demo	strong
+\bexample data\b	demo	strong
+\bbuilt-in\b	demo	strong
+\btutorial data\b	demo	strong
+\bhow many (?:replicates|samples|mice|animals|plants|donors|reps|individuals)\b	plan	strong
+\bsample size\b	plan	strong
+\bpower analysis\b	plan	strong
+\bgrant\b	plan	weak
+\bdesign an? (?:experiment|study)\b	plan	strong
+\bonly (?:simulate|the|want)\b	only	strong	"only simulate the counts"
+\bjust (?:simulate|the|want)\b	only	weak
+\bi'?ll do the analysis myself\b	only	strong
+\b(?:no|not|without|don'?t|do not|skip|except|exclude|excluding|instead of|besides|other than|apart from)\s+(?:(?:run|do|map|call|any|the|an?)\s+)?$	negation	strong	matched against the text just before a technique hit
+\b(?:the )?(?:real|actual)\b	real_data	strong	real founders/genome requested: ask for the files, do not substitute synthetic data
+\bsimulate (?:the|a) [a-z]+ genome\b	real_data	strong	"simulate the wheat genome" implies the real genome
+\b(?:my|our) (?:patient|patients|child|son|daughter|baby|family)'?s?\b	clinical	strong	
+\bdecide which (?:drug|treatment|therapy)\b	clinical	strong	
+\brisk of\b	clinical	weak	
+\bactually\b|\bmake it\b|\bi mean\b	correction	strong	the user changed a number mid-sentence: ask which one

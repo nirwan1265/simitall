@@ -1,0 +1,178 @@
+{
+  "registry_version": "1.0.0",
+  "purpose": "Composable phenotype-simulation catalog. A phenotype request is resolved as outcome distribution + genetic architecture + observation design. This catalog defines compatible analysis choices; it never silently replaces one model with another.",
+  "resolution_order": ["outcome_model", "genetic_architecture", "observation_design", "downstream_analysis"],
+  "execution_policy": "Only entries marked validated may be composed into a generic runnable recipe. Partial entries may generate an explicit plan and input contract. Planned entries must remain non-runnable.",
+  "outcome_models": [
+    {
+      "id": "gaussian",
+      "label": "Continuous Gaussian trait",
+      "aliases": ["continuous", "quantitative", "normal", "gaussian", "yield", "height", "weight"],
+      "value_type": "real",
+      "required_parameters": ["residual_variance_or_heritability"],
+      "optional_parameters": ["mean", "transformation"],
+      "compatible_analyses": ["quantitative_gwas", "qtl_mapping", "genomic_prediction", "heritability", "gxe", "longitudinal"],
+      "default_figures": ["phenotype distribution", "genetic value versus phenotype", "residual Q-Q plot"],
+      "qc": ["Check finite values.", "Report scale and transformation.", "Do not use a Gaussian association model if the response is truly binary or count-valued."],
+      "implementation": {"status": "validated", "function": "simulate_phenotypes"}
+    },
+    {
+      "id": "bernoulli",
+      "label": "Binary Bernoulli trait",
+      "aliases": ["binary", "case control", "case-control", "presence absence", "affected unaffected", "bernoulli"],
+      "value_type": "0_or_1",
+      "required_parameters": ["prevalence_or_intercept"],
+      "optional_parameters": ["liability_effect_scale", "ascertainment"],
+      "compatible_analyses": ["binary_gwas", "binary_qtl", "classification_prediction", "liability"],
+      "default_figures": ["case-control count", "case fraction by group", "probability calibration"],
+      "qc": ["Require both outcome classes.", "Report prevalence and ascertainment.", "Use a binary/logistic association model rather than quantitative linear GWAS."],
+      "implementation": {"status": "partial", "function": "analyze_binary_gwas"}
+    },
+    {
+      "id": "binomial_count",
+      "label": "Binomial count or proportion",
+      "aliases": ["binomial", "successes out of", "proportion", "germination count", "survival out of", "trials"],
+      "value_type": "integer_0_to_trials",
+      "required_parameters": ["trials_or_denominator", "probability_or_logit"],
+      "optional_parameters": ["overdispersion"],
+      "compatible_analyses": ["binomial_glm", "binomial_qtl", "proportion_analysis"],
+      "default_figures": ["observed proportion by group", "trials distribution", "model calibration"],
+      "qc": ["Store numerator and denominator.", "Do not collapse to Bernoulli unless trials equal one."],
+      "implementation": {"status": "planned", "function": null}
+    },
+    {
+      "id": "poisson",
+      "label": "Poisson count trait",
+      "aliases": ["poisson", "event count", "lesion count", "count phenotype"],
+      "value_type": "nonnegative_integer",
+      "required_parameters": ["mean_or_log_link"],
+      "optional_parameters": ["exposure_offset"],
+      "compatible_analyses": ["poisson_glm", "count_qtl", "count_gwas"],
+      "default_figures": ["count histogram", "mean-variance plot", "zero-rate plot"],
+      "qc": ["Check mean-variance agreement.", "Use an offset when exposure differs."],
+      "implementation": {"status": "partial", "function": "simulate_count_trait"}
+    },
+    {
+      "id": "negative_binomial",
+      "label": "Overdispersed negative-binomial count trait",
+      "aliases": ["negative binomial", "negative-binomial", "overdispersed count", "nb count"],
+      "value_type": "nonnegative_integer",
+      "required_parameters": ["mean_or_log_link", "dispersion"],
+      "optional_parameters": ["exposure_offset"],
+      "compatible_analyses": ["negative_binomial_glm", "count_qtl", "count_gwas", "power_analysis"],
+      "default_figures": ["count histogram", "mean-variance plot", "dispersion diagnostic"],
+      "qc": ["Check overdispersion relative to Poisson.", "Negative binomial is a count model, never a binary model."],
+      "implementation": {"status": "partial", "function": "simulate_count_trait"}
+    },
+    {
+      "id": "zero_inflated_count",
+      "label": "Zero-inflated or hurdle count trait",
+      "aliases": ["zero inflated", "zero-inflated", "hurdle", "excess zeros"],
+      "value_type": "nonnegative_integer_with_structural_zeros",
+      "required_parameters": ["zero_process_probability", "count_component", "count_component_parameters"],
+      "optional_parameters": ["exposure_offset"],
+      "compatible_analyses": ["zero_inflated_glm", "hurdle_glm", "two_part_qtl"],
+      "default_figures": ["zero-rate comparison", "positive-count distribution", "component calibration"],
+      "qc": ["Distinguish structural zeros from sampling zeros.", "Report both model components."],
+      "implementation": {"status": "planned", "function": null}
+    },
+    {
+      "id": "ordinal",
+      "label": "Ordered categorical trait",
+      "aliases": ["ordinal", "ordered category", "severity class", "rating", "score class"],
+      "value_type": "ordered_categories",
+      "required_parameters": ["thresholds_or_category_probabilities"],
+      "optional_parameters": ["latent_liability_variance"],
+      "compatible_analyses": ["ordinal_regression", "ordinal_qtl", "ordinal_gwas"],
+      "default_figures": ["category frequency", "cumulative probability", "threshold diagnostic"],
+      "qc": ["Preserve category order.", "Do not treat ordinal labels as equally spaced continuous values without justification."],
+      "implementation": {"status": "partial", "function": "simulate_ordinal_trait"}
+    },
+    {
+      "id": "beta",
+      "label": "Bounded proportion trait",
+      "aliases": ["beta", "proportion phenotype", "bounded proportion", "fraction"],
+      "value_type": "continuous_0_to_1",
+      "required_parameters": ["mean", "precision"],
+      "optional_parameters": ["zero_one_inflation"],
+      "compatible_analyses": ["beta_regression", "proportion_qtl"],
+      "default_figures": ["proportion density", "boundary-rate plot", "mean-precision diagnostic"],
+      "qc": ["Keep values strictly inside (0,1) for an ordinary beta model.", "Use a zero-one-inflated model when boundaries are biologically real."],
+      "implementation": {"status": "planned", "function": null}
+    },
+    {
+      "id": "lognormal",
+      "label": "Positive right-skewed continuous trait",
+      "aliases": ["lognormal", "log-normal", "right skewed", "positive skewed"],
+      "value_type": "positive_real",
+      "required_parameters": ["log_scale_mean", "log_scale_variance"],
+      "optional_parameters": ["detection_limit"],
+      "compatible_analyses": ["transformed_linear_model", "lognormal_regression", "qtl_mapping"],
+      "default_figures": ["raw and log-scale density", "Q-Q plot", "residual diagnostic"],
+      "qc": ["Check positivity before log transformation.", "Report the analysis scale."],
+      "implementation": {"status": "planned", "function": null}
+    },
+    {
+      "id": "gamma",
+      "label": "Positive continuous trait",
+      "aliases": ["gamma", "positive continuous", "waiting time", "duration"],
+      "value_type": "positive_real",
+      "required_parameters": ["mean", "shape_or_dispersion"],
+      "optional_parameters": ["link"],
+      "compatible_analyses": ["gamma_glm", "qtl_mapping"],
+      "default_figures": ["density", "mean-variance plot", "residual diagnostic"],
+      "qc": ["Check positivity and mean-variance relationship."],
+      "implementation": {"status": "planned", "function": null}
+    },
+    {
+      "id": "survival",
+      "label": "Time-to-event trait",
+      "aliases": ["survival", "time to event", "time-to-event", "hazard", "censoring"],
+      "value_type": "time_plus_event_indicator",
+      "required_parameters": ["baseline_hazard_or_distribution", "censoring_design"],
+      "optional_parameters": ["competing_risks"],
+      "compatible_analyses": ["cox_model", "aft_model", "survival_gwas"],
+      "default_figures": ["Kaplan-Meier curve", "event-time distribution", "censoring summary"],
+      "qc": ["Store time and event indicator separately.", "Report censoring mechanism."],
+      "implementation": {"status": "planned", "function": null}
+    },
+    {
+      "id": "longitudinal",
+      "label": "Repeated-measure trait",
+      "aliases": ["longitudinal", "repeated measures", "trajectory", "growth curve", "time course phenotype"],
+      "value_type": "repeated_response",
+      "required_parameters": ["time_points", "within_subject_correlation"],
+      "optional_parameters": ["random_intercept", "random_slope", "missingness_mechanism"],
+      "compatible_analyses": ["mixed_model", "growth_curve", "functional_qtl", "time_series_gwas"],
+      "default_figures": ["individual trajectories", "mean trajectory", "visit completeness"],
+      "qc": ["Use a subject identifier.", "Do not treat repeated records as independent."],
+      "implementation": {"status": "planned", "function": null}
+    }
+  ],
+  "genetic_architectures": [
+    {"id": "additive_sparse_qtl", "aliases": ["QTL", "oligogenic", "major genes"], "parameters": ["n_qtl", "effect_size_distribution"], "compatible_outcomes": ["all"], "implementation_status": "validated"},
+    {"id": "additive_polygenic", "aliases": ["polygenic", "infinitesimal", "many small effects"], "parameters": ["n_causal_variants", "effect_size_distribution", "heritability"], "compatible_outcomes": ["all"], "implementation_status": "partial"},
+    {"id": "dominance", "aliases": ["dominance", "heterozygote effect"], "parameters": ["dominance_effect_distribution"], "compatible_outcomes": ["all"], "implementation_status": "planned"},
+    {"id": "epistasis", "aliases": ["epistasis", "interaction QTL", "gene interaction"], "parameters": ["interaction_order", "interaction_effect_distribution"], "compatible_outcomes": ["all"], "implementation_status": "planned"},
+    {"id": "pleiotropy_multitrait", "aliases": ["pleiotropy", "multi trait", "multitrait", "correlated traits"], "parameters": ["trait_count", "genetic_correlation"], "compatible_outcomes": ["gaussian", "bernoulli", "ordinal", "longitudinal"], "implementation_status": "planned"},
+    {"id": "gxe", "aliases": ["GxE", "genotype by environment", "environment interaction"], "parameters": ["environments", "interaction_effect_distribution"], "compatible_outcomes": ["all"], "implementation_status": "partial"},
+    {"id": "rare_variant_burden", "aliases": ["rare variant", "burden", "gene burden"], "parameters": ["maf_threshold", "burden_function"], "compatible_outcomes": ["all"], "implementation_status": "planned"},
+    {"id": "imprinting_parent_of_origin", "aliases": ["imprinting", "parent of origin", "maternal effect"], "parameters": ["parental_effects"], "compatible_outcomes": ["all"], "implementation_status": "planned"}
+  ],
+  "observation_designs": [
+    {"id": "independent_individuals", "aliases": ["independent", "one measure per sample"], "parameters": [], "compatible_outcomes": ["all"], "implementation_status": "validated"},
+    {"id": "replicated_block_design", "aliases": ["blocks", "replicates", "randomized block", "field trial"], "parameters": ["blocks", "replicates", "block_variance"], "compatible_outcomes": ["all"], "implementation_status": "planned"},
+    {"id": "multi_environment_trial", "aliases": ["MET", "multi environment", "multi-environment", "locations", "environments"], "parameters": ["environments", "environment_variance", "gxe_variance"], "compatible_outcomes": ["all"], "implementation_status": "partial"},
+    {"id": "spatial_field_design", "aliases": ["spatial", "row column", "field layout", "plot coordinates"], "parameters": ["rows", "columns", "spatial_correlation"], "compatible_outcomes": ["all"], "implementation_status": "planned"},
+    {"id": "repeated_measures", "aliases": ["repeated", "longitudinal", "time points"], "parameters": ["subject_id", "time_points", "correlation_structure"], "compatible_outcomes": ["longitudinal"], "implementation_status": "planned"},
+    {"id": "batch_aware", "aliases": ["batch", "plate", "lane", "technical replicate"], "parameters": ["batch_count", "batch_effect_variance"], "compatible_outcomes": ["all"], "implementation_status": "partial"}
+  ],
+  "analysis_guardrails": [
+    {"when_outcome": "bernoulli", "never_use": ["quantitative_gwas"], "use_instead": ["binary_gwas"]},
+    {"when_outcome": "binomial_count", "never_use": ["binary_gwas", "quantitative_gwas"], "use_instead": ["binomial_glm"]},
+    {"when_outcome": "poisson", "never_use": ["binary_gwas"], "use_instead": ["poisson_glm"]},
+    {"when_outcome": "negative_binomial", "never_use": ["binary_gwas"], "use_instead": ["negative_binomial_glm"]},
+    {"when_outcome": "ordinal", "never_use": ["quantitative_gwas"], "use_instead": ["ordinal_regression"]},
+    {"when_outcome": "longitudinal", "never_use": ["independent_sample_test"], "use_instead": ["mixed_model"]}
+  ]
+}

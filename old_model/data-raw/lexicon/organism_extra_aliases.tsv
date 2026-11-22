@@ -1,0 +1,301 @@
+alias	organism	alias_type	strength	case_sensitive
+GRCh38	human	genome_build	strong	no
+GRCh37	human	genome_build	strong	no
+hg19	human	genome_build	strong	no
+hg38	human	genome_build	strong	no
+T2T-CHM13	human	genome_build	strong	no
+CHM13	human	genome_build	strong	no
+1000 Genomes	human	panel	strong	no
+UK Biobank	human	panel	strong	no
+gnomAD	human	panel	strong	no
+HapMap	human	panel	strong	no
+GTEx	human	panel	strong	no
+TOPMed	human	panel	strong	no
+humans	human	informal	strong	no
+patient	human	informal	weak	no
+patients	human	informal	weak	no
+people	human	informal	weak	no
+mice	mouse	informal	strong	no
+murine	mouse	informal	strong	no
+GRCm39	mouse	genome_build	strong	no
+GRCm38	mouse	genome_build	strong	no
+mm10	mouse	genome_build	strong	no
+mm39	mouse	genome_build	strong	no
+C57BL/6	mouse	strain	strong	no
+C57BL/6J	mouse	strain	strong	no
+BALB/c	mouse	strain	strong	no
+DBA/2	mouse	strain	strong	no
+DBA/2J	mouse	strain	strong	no
+129S1	mouse	strain	strong	no
+CAST/EiJ	mouse	strain	strong	no
+B6	mouse	strain	weak	yes
+DBA	mouse	strain	weak	yes
+CAST	mouse	strain	weak	yes
+BXD	mouse	panel	strong	yes
+Collaborative Cross	mouse	panel	strong	no
+Diversity Outbred	mouse	panel	strong	no
+CC	mouse	panel	weak	yes
+DO	mouse	panel	weak	yes
+rats	rat	informal	strong	no
+mRatBN7.2	rat	genome_build	strong	no
+GRCr8	rat	genome_build	strong	no
+rn6	rat	genome_build	strong	no
+rn7	rat	genome_build	strong	no
+Sprague-Dawley	rat	strain	strong	no
+Sprague Dawley	rat	strain	strong	no
+Wistar	rat	strain	strong	no
+Fischer 344	rat	strain	strong	no
+F344	rat	strain	strong	yes
+Brown Norway	rat	strain	strong	no
+Long-Evans	rat	strain	strong	no
+HXB/BXH	rat	panel	strong	no
+heterogeneous stock	rat	panel	weak	no
+fly	drosophila	informal	weak	no
+flies	drosophila	informal	weak	no
+fruit flies	drosophila	informal	strong	no
+D. mel	drosophila	abbreviation	strong	no
+Dmel	drosophila	abbreviation	strong	yes
+dm6	drosophila	genome_build	strong	no
+DGRP	drosophila	panel	strong	yes
+Drosophila Genetic Reference Panel	drosophila	panel	strong	no
+DSPR	drosophila	panel	strong	yes
+Canton-S	drosophila	strain	strong	no
+Oregon-R	drosophila	strain	strong	no
+w1118	drosophila	strain	strong	no
+Drosophila	drosophila	genus	strong	no
+worm	c_elegans	informal	weak	no
+worms	c_elegans	informal	weak	no
+nematode	c_elegans	informal	weak	no
+nematodes	c_elegans	informal	weak	no
+N2	c_elegans	strain	weak	yes
+Bristol N2	c_elegans	strain	strong	no
+CB4856	c_elegans	strain	strong	no
+CeNDR	c_elegans	panel	strong	no
+CaeNDR	c_elegans	panel	strong	no
+WBcel235	c_elegans	genome_build	strong	no
+ce11	c_elegans	genome_build	strong	no
+zebra fish	zebrafish	informal	strong	no
+GRCz11	zebrafish	genome_build	strong	no
+danRer11	zebrafish	genome_build	strong	no
+Danio	zebrafish	genus	strong	no
+Xenopus	xenopus_laevis	genus	weak	no
+dogs	dog	informal	strong	no
+canine	dog	informal	strong	no
+puppies	dog	informal	strong	no
+CanFam3.1	dog	genome_build	strong	no
+ROS_Cfam_1.0	dog	genome_build	strong	no
+Labrador	dog	breed	strong	no
+Labradors	dog	breed	strong	no
+Labrador retriever	dog	breed	strong	no
+Golden Retriever	dog	breed	strong	no
+Golden Retrievers	dog	breed	strong	no
+German Shepherd	dog	breed	strong	no
+German Shepherds	dog	breed	strong	no
+Beagle	dog	breed	strong	no
+Beagles	dog	breed	strong	no
+Border Collie	dog	breed	strong	no
+wolves	wolf	informal	strong	no
+gray wolf	wolf	informal	strong	no
+feline	cat	informal	strong	no
+cats	cat	informal	strong	no
+cow	cattle	informal	strong	no
+cows	cattle	informal	strong	no
+bovine	cattle	informal	strong	no
+bull	cattle	informal	weak	no
+bulls	cattle	informal	weak	no
+heifer	cattle	informal	strong	no
+heifers	cattle	informal	strong	no
+dairy cattle	cattle	informal	strong	no
+beef cattle	cattle	informal	strong	no
+Holstein	cattle	breed	strong	no
+Holsteins	cattle	breed	strong	no
+Holstein-Friesian	cattle	breed	strong	no
+Angus	cattle	breed	strong	no
+Hereford	cattle	breed	strong	no
+Simmental	cattle	breed	strong	no
+Jersey cattle	cattle	breed	strong	no
+Jersey cows	cattle	breed	strong	no
+ARS-UCD1.2	cattle	genome_build	strong	no
+ARS-UCD2.0	cattle	genome_build	strong	no
+bosTau9	cattle	genome_build	strong	no
+pigs	pig	informal	strong	no
+swine	pig	informal	strong	no
+porcine	pig	informal	strong	no
+piglets	pig	informal	strong	no
+Large White	pig	breed	strong	no
+Duroc	pig	breed	strong	no
+Meishan	pig	breed	strong	no
+Pietrain	pig	breed	strong	no
+Sscrofa11.1	pig	genome_build	strong	no
+ovine	sheep	informal	strong	no
+lambs	sheep	informal	weak	no
+caprine	goat	informal	strong	no
+goats	goat	informal	strong	no
+equine	horse	informal	strong	no
+horses	horse	informal	strong	no
+Thoroughbred	horse	breed	strong	no
+Thoroughbreds	horse	breed	strong	no
+EquCab3.0	horse	genome_build	strong	no
+chickens	chicken	informal	strong	no
+broiler	chicken	breed	strong	no
+broilers	chicken	breed	strong	no
+laying hens	chicken	breed	strong	no
+layer hens	chicken	breed	strong	no
+hens	chicken	informal	weak	no
+White Leghorn	chicken	breed	strong	no
+Red Junglefowl	chicken	breed	strong	no
+poultry	chicken	informal	weak	no
+GRCg7b	chicken	genome_build	strong	no
+galGal6	chicken	genome_build	strong	no
+macaque	rhesus_macaque	informal	strong	no
+macaques	rhesus_macaque	informal	strong	no
+rhesus	rhesus_macaque	informal	strong	no
+Mmul_10	rhesus_macaque	genome_build	strong	no
+salmon	atlantic_salmon	informal	weak	no
+trout	rainbow_trout	informal	weak	no
+tilapia	nile_tilapia	informal	strong	no
+honey bee	honeybee	informal	strong	no
+honey bees	honeybee	informal	strong	no
+honeybees	honeybee	informal	strong	no
+bees	honeybee	informal	weak	no
+Anopheles	anopheles_gambiae	genus	weak	no
+Aedes	aedes_aegypti	genus	weak	no
+mosquito	anopheles_gambiae	informal	weak	no
+mosquitoes	anopheles_gambiae	informal	weak	no
+Bombyx	silkworm	genus	strong	no
+yeast	yeast	informal	strong	no
+budding yeast	yeast	informal	strong	no
+baker's yeast	yeast	informal	strong	no
+S288C	yeast	strain	strong	no
+BY4741	yeast	strain	strong	no
+W303	yeast	strain	strong	no
+sacCer3	yeast	genome_build	strong	no
+fission yeast	fission_yeast	informal	strong	no
+S. pombe	fission_yeast	abbreviation	strong	no
+Plasmodium	plasmodium_falciparum	genus	weak	no
+malaria parasite	plasmodium_falciparum	informal	strong	no
+3D7	plasmodium_falciparum	strain	strong	yes
+Chlamydomonas	chlamydomonas	genus	strong	no
+E. coli	ecoli	abbreviation	strong	no
+E.coli	ecoli	abbreviation	strong	no
+ecoli	ecoli	abbreviation	strong	no
+MG1655	ecoli	strain	strong	no
+K-12	ecoli	strain	strong	no
+BL21	ecoli	strain	strong	no
+B. subtilis	bacillus_subtilis	abbreviation	strong	no
+M. tuberculosis	m_tuberculosis	abbreviation	strong	no
+Mtb	m_tuberculosis	abbreviation	weak	yes
+H37Rv	m_tuberculosis	strain	strong	no
+tuberculosis	m_tuberculosis	informal	weak	no
+P. aeruginosa	p_aeruginosa	abbreviation	strong	no
+PAO1	p_aeruginosa	strain	strong	no
+S. aureus	s_aureus	abbreviation	strong	no
+MRSA	s_aureus	informal	strong	yes
+Salmonella	salmonella	genus	strong	no
+bacteria	bacteria	informal	strong	no
+bacterial	bacteria	informal	strong	no
+bacterium	bacteria	informal	strong	no
+Arabidopsis	arabidopsis	genus	strong	no
+Col-0	arabidopsis	strain	strong	no
+Columbia-0	arabidopsis	strain	strong	no
+Landsberg erecta	arabidopsis	strain	strong	no
+Ler	arabidopsis	strain	weak	yes
+TAIR10	arabidopsis	genome_build	strong	no
+1001 Genomes	arabidopsis	panel	strong	no
+thale cress	arabidopsis	informal	strong	no
+corn	maize	informal	strong	no
+B73	maize	strain	strong	no
+Mo17	maize	strain	strong	no
+W22	maize	strain	strong	yes
+PH207	maize	strain	strong	yes
+Zm-B73-REFERENCE-NAM-5.0	maize	genome_build	strong	no
+teosinte	maize	informal	weak	no
+maize 282	maize	panel	strong	no
+Goodman-Buckler	maize	panel	strong	no
+Ames panel	maize	panel	strong	no
+Nipponbare	rice	strain	strong	no
+IR64	rice	strain	strong	no
+93-11	rice	strain	strong	no
+Kasalath	rice	strain	strong	no
+IRGSP-1.0	rice	genome_build	strong	no
+3K RGP	rice	panel	strong	no
+3,000 Rice Genomes	rice	panel	strong	no
+3000 Rice Genomes	rice	panel	strong	no
+indica	rice	informal	weak	no
+japonica	rice	informal	weak	no
+paddy	rice	informal	weak	no
+BTx623	sorghum	strain	strong	no
+Tx430	sorghum	strain	strong	no
+RTx430	sorghum	strain	strong	no
+Sorghum Association Panel	sorghum	panel	strong	no
+SAP	sorghum	panel	weak	yes
+sweet sorghum	sorghum	informal	strong	no
+grain sorghum	sorghum	informal	strong	no
+Chinese Spring	wheat	strain	strong	no
+bread wheat	wheat	informal	strong	no
+spring wheat	wheat	informal	strong	no
+winter wheat	wheat	informal	strong	no
+IWGSC	wheat	genome_build	strong	no
+durum	durum_wheat	informal	strong	no
+durum wheat	durum_wheat	informal	strong	no
+pasta wheat	durum_wheat	informal	strong	no
+Morex	barley	strain	strong	no
+MorexV3	barley	genome_build	strong	no
+Golden Promise	barley	strain	strong	no
+oats	oat	informal	strong	no
+pearl millet	pearl_millet	informal	strong	no
+foxtail millet	foxtail_millet	informal	strong	no
+Brachypodium	brachypodium	genus	strong	no
+switchgrass	switchgrass	informal	strong	no
+sugarcane	sugarcane	informal	strong	no
+Williams 82	soybean	strain	strong	no
+Wm82	soybean	strain	strong	no
+soya	soybean	informal	strong	no
+soy	soybean	informal	weak	no
+soybeans	soybean	informal	strong	no
+common bean	common_bean	informal	strong	no
+peas	pea	informal	strong	no
+chickpeas	chickpea	informal	strong	no
+peanuts	peanut	informal	strong	no
+groundnut	peanut	informal	strong	no
+lucerne	alfalfa	informal	strong	no
+Medicago	medicago_truncatula	genus	weak	no
+A17	medicago_truncatula	strain	weak	yes
+Jemalong	medicago_truncatula	strain	strong	no
+Lotus	lotus_japonicus	genus	weak	no
+potatoes	potato	informal	strong	no
+DM 1-3	potato	strain	strong	no
+DM1-3	potato	strain	strong	no
+tomatoes	tomato	informal	strong	no
+Heinz 1706	tomato	strain	strong	no
+Micro-Tom	tomato	strain	strong	no
+M82	tomato	strain	weak	yes
+peppers	pepper	informal	weak	no
+chili pepper	pepper	informal	strong	no
+tobacco	tobacco	informal	strong	no
+benthamiana	nicotiana_benthamiana	informal	strong	no
+N. benth	nicotiana_benthamiana	abbreviation	strong	no
+cotton	cotton	informal	strong	no
+upland cotton	cotton	informal	strong	no
+TM-1	cotton	strain	strong	no
+canola	rapeseed	informal	strong	no
+oilseed rape	rapeseed	informal	strong	no
+sunflowers	sunflower	informal	strong	no
+cucumbers	cucumber	informal	strong	no
+sweet potato	sweet_potato	informal	strong	no
+sweet potatoes	sweet_potato	informal	strong	no
+grapevine	grapevine	informal	strong	no
+grapes	grapevine	informal	strong	no
+Pinot Noir	grapevine	strain	strong	no
+PN40024	grapevine	strain	strong	no
+apples	apple	informal	strong	no
+Golden Delicious	apple	strain	strong	no
+poplar	poplar	informal	strong	no
+Populus	poplar	genus	strong	no
+eucalyptus	eucalyptus	informal	strong	no
+strawberries	strawberry	informal	strong	no
+bananas	banana	informal	strong	no
+Cavendish	banana	strain	strong	no
+moss	physcomitrium	informal	weak	no
+Physcomitrella	physcomitrium	genus	strong	no
+Marchantia	marchantia	genus	strong	no

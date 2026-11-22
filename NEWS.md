@@ -10,8 +10,8 @@
 - Removed the prompt readers (`simitall_ask()`, `launch_simitall_agent()`,
   `search_simitall_knowledge()`, `simitall_agent_tools()`, the keyword spec,
   lexicon, prompt model and capability catalog): Biodes reads the user's
-  question. The last version with them is tag `v0.1-pre-biodes`; the Shiny
-  app is paused.
+  question. They and the Shiny app are kept in `old_model/` (not built or
+  loaded); see `old_model/README.md` to run them.
 
 # simitall 0.1.0
 

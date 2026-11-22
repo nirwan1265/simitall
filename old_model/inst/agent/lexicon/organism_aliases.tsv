@@ -1,0 +1,913 @@
+alias	organism	alias_type	source	strength	case_sensitive
+A. aegypti	aedes_aegypti	abbreviation	generated	strong	no
+A.aegypti	aedes_aegypti	abbreviation	generated	strong	no
+aedes aegypti	aedes_aegypti	canonical_id	curated	strong	no
+yellow fever mosquito	aedes_aegypti	common_name	NCBITaxon	strong	no
+Aedes	aedes_aegypti	genus	curated	weak	no
+yellow fever mosquitoes	aedes_aegypti	plural	generated	strong	no
+Aedes (Stegomyia) aegypti	aedes_aegypti	scientific_synonym	NCBITaxon	strong	no
+Aedes aegypti var. luciensis	aedes_aegypti	scientific_synonym	NCBITaxon	strong	no
+Culex aegypti	aedes_aegypti	scientific_synonym	NCBITaxon	strong	no
+Stegomyia aegypti	aedes_aegypti	scientific_synonym	NCBITaxon	strong	no
+Stegomyia fasciata var. luciensis	aedes_aegypti	scientific_synonym	NCBITaxon	strong	no
+M. sativa	alfalfa	abbreviation	generated	strong	no
+M.sativa	alfalfa	abbreviation	generated	strong	no
+alfalfa	alfalfa	canonical_id	curated	strong	no
+lucerne	alfalfa	informal	curated	strong	no
+Medicago sativa	alfalfa	scientific_name	NCBITaxon	strong	no
+A. gambiae	anopheles_gambiae	abbreviation	generated	strong	no
+A.gambiae	anopheles_gambiae	abbreviation	generated	strong	no
+anopheles gambiae	anopheles_gambiae	canonical_id	curated	strong	no
+African malaria mosquito	anopheles_gambiae	common_name	NCBITaxon	strong	no
+Anopheles	anopheles_gambiae	genus	curated	weak	no
+mosquito	anopheles_gambiae	informal	curated	weak	no
+mosquitoes	anopheles_gambiae	informal	curated	weak	no
+African malaria mosquitoes	anopheles_gambiae	plural	generated	strong	no
+M. domestica	apple	abbreviation	generated	strong	no
+M.domestica	apple	abbreviation	generated	strong	no
+apple	apple	canonical_id	curated	strong	no
+apple tree	apple	common_name	NCBITaxon	strong	no
+cultivated apple	apple	common_name	NCBITaxon	strong	no
+apples	apple	informal	curated	strong	no
+apple trees	apple	plural	generated	strong	no
+cultivated apples	apple	plural	generated	strong	no
+Malus domestica	apple	scientific_name	NCBITaxon	strong	no
+Malus communis	apple	scientific_synonym	NCBITaxon	strong	no
+Malus praecox	apple	scientific_synonym	NCBITaxon	strong	no
+Malus pumila auct.	apple	scientific_synonym	NCBITaxon	strong	no
+Malus pumila var. domestica	apple	scientific_synonym	NCBITaxon	strong	no
+Malus sylvestris var. domestica	apple	scientific_synonym	NCBITaxon	strong	no
+Malus x domestica	apple	scientific_synonym	NCBITaxon	strong	no
+Pyrus malus	apple	scientific_synonym	NCBITaxon	strong	no
+Pyrus malus var. domestica	apple	scientific_synonym	NCBITaxon	strong	no
+Golden Delicious	apple	strain	curated	strong	no
+A. thaliana	arabidopsis	abbreviation	generated	strong	no
+A.thaliana	arabidopsis	abbreviation	generated	strong	no
+arabidopsis	arabidopsis	canonical_id	curated	strong	no
+mouse-ear cress	arabidopsis	common_name	NCBITaxon	strong	no
+thale-cress	arabidopsis	common_name	NCBITaxon	strong	no
+TAIR10	arabidopsis	genome_build	curated	strong	no
+thale cress	arabidopsis	informal	curated	strong	no
+1001 Genomes	arabidopsis	panel	curated	strong	no
+Arabidopsis thaliana	arabidopsis	scientific_name	NCBITaxon	strong	no
+Arabis thaliana	arabidopsis	scientific_synonym	NCBITaxon	strong	no
+Col-0	arabidopsis	strain	curated	strong	no
+Columbia-0	arabidopsis	strain	curated	strong	no
+Landsberg erecta	arabidopsis	strain	curated	strong	no
+Ler	arabidopsis	strain	curated	weak	yes
+S. salar	atlantic_salmon	abbreviation	generated	strong	no
+S.salar	atlantic_salmon	abbreviation	generated	strong	no
+atlantic salmon	atlantic_salmon	canonical_id	curated	strong	no
+salmon	atlantic_salmon	informal	curated	weak	no
+Salmo salar	atlantic_salmon	scientific_name	NCBITaxon	strong	no
+B. subtilis	bacillus_subtilis	abbreviation	curated	strong	no
+B.subtilis	bacillus_subtilis	abbreviation	generated	strong	no
+bacillus subtilis	bacillus_subtilis	canonical_id	curated	strong	no
+Bacillus natto	bacillus_subtilis	scientific_synonym	NCBITaxon	strong	no
+Bacillus uniflagellatus	bacillus_subtilis	scientific_synonym	NCBITaxon	strong	no
+Vibrio subtilis	bacillus_subtilis	scientific_synonym	NCBITaxon	strong	no
+bacteria	bacteria	canonical_id	curated	strong	no
+eubacteria	bacteria	common_name	NCBITaxon	weak	no
+bacterial	bacteria	informal	curated	strong	no
+bacterium	bacteria	informal	curated	strong	no
+Bacteria (ex Cavalier-Smith 1987)	bacteria	scientific_synonym	NCBITaxon	strong	no
+Bacteria Woese et al. 2024	bacteria	scientific_synonym	NCBITaxon	strong	no
+Bacteriobiota	bacteria	scientific_synonym	NCBITaxon	strong	no
+M. acuminata	banana	abbreviation	generated	strong	no
+M.acuminata	banana	abbreviation	generated	strong	no
+banana	banana	canonical_id	curated	strong	no
+dessert bananas	banana	common_name	NCBITaxon	strong	no
+dwarf banana	banana	common_name	NCBITaxon	strong	no
+sweet banana	banana	common_name	NCBITaxon	strong	no
+bananas	banana	informal	curated	strong	no
+dwarf bananas	banana	plural	generated	strong	no
+sweet bananas	banana	plural	generated	strong	no
+Musa acuminata	banana	scientific_name	NCBITaxon	strong	no
+Musa AA Group	banana	scientific_synonym	NCBITaxon	strong	no
+Musa acuminata AA Group	banana	scientific_synonym	NCBITaxon	strong	no
+Musa nana	banana	scientific_synonym	NCBITaxon	strong	no
+Cavendish	banana	strain	curated	strong	no
+H. vulgare	barley	abbreviation	generated	strong	no
+H.vulgare	barley	abbreviation	generated	strong	no
+barley	barley	canonical_id	curated	strong	no
+MorexV3	barley	genome_build	curated	strong	no
+Hordeum vulgare	barley	scientific_name	NCBITaxon	strong	no
+Golden Promise	barley	strain	curated	strong	no
+Morex	barley	strain	curated	strong	no
+B. distachyon	brachypodium	abbreviation	generated	strong	no
+B.distachyon	brachypodium	abbreviation	generated	strong	no
+brachypodium	brachypodium	canonical_id	curated	strong	no
+annual false brome	brachypodium	common_name	NCBITaxon	strong	no
+false brome	brachypodium	common_name	NCBITaxon	strong	no
+purple false brome	brachypodium	common_name	NCBITaxon	strong	no
+stiff brome	brachypodium	common_name	NCBITaxon	strong	no
+Brachypodium distachyon	brachypodium	scientific_name	NCBITaxon	strong	no
+Bromus distachyos	brachypodium	scientific_synonym	NCBITaxon	strong	no
+B. rapa	brassica_rapa	abbreviation	generated	strong	no
+B.rapa	brassica_rapa	abbreviation	generated	strong	no
+brassica rapa	brassica_rapa	canonical_id	curated	strong	no
+field mustard	brassica_rapa	common_name	NCBITaxon	strong	no
+C. elegans	c_elegans	abbreviation	generated	strong	no
+C.elegans	c_elegans	abbreviation	generated	strong	no
+c elegans	c_elegans	canonical_id	curated	strong	no
+ce11	c_elegans	genome_build	curated	strong	no
+WBcel235	c_elegans	genome_build	curated	strong	no
+nematode	c_elegans	informal	curated	weak	no
+nematodes	c_elegans	informal	curated	weak	no
+worm	c_elegans	informal	curated	weak	no
+worms	c_elegans	informal	curated	weak	no
+CaeNDR	c_elegans	panel	curated	strong	no
+CeNDR	c_elegans	panel	curated	strong	no
+Caenorhabditis elegans	c_elegans	scientific_name	NCBITaxon	strong	no
+Rhabditis elegans	c_elegans	scientific_synonym	NCBITaxon	strong	no
+Bristol N2	c_elegans	strain	curated	strong	no
+CB4856	c_elegans	strain	curated	strong	no
+N2	c_elegans	strain	curated	weak	yes
+T. cacao	cacao	abbreviation	generated	strong	no
+T.cacao	cacao	abbreviation	generated	strong	no
+cacao	cacao	canonical_id	curated	strong	no
+Theobroma cacao	cacao	scientific_name	NCBITaxon	strong	no
+C. albicans	candida_albicans	abbreviation	generated	strong	no
+C.albicans	candida_albicans	abbreviation	generated	strong	no
+candida albicans	candida_albicans	canonical_id	curated	strong	no
+Candida albicans var. stellatoidea	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Candida stellatoidea	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Dematium albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Endomyces albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Monilia albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Monilia stellatoidea	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Myceloblastanon albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Mycotorula albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Oidium albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Parasaccharomyces albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Procandida albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Procandida stellatoidea	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+Syringospora albicans	candida_albicans	scientific_synonym	NCBITaxon	strong	no
+M. esculenta	cassava	abbreviation	generated	strong	no
+M.esculenta	cassava	abbreviation	generated	strong	no
+cassava	cassava	canonical_id	curated	strong	no
+manioc	cassava	common_name	NCBITaxon	strong	no
+yuca	cassava	common_name	NCBITaxon	strong	no
+Manihot esculenta	cassava	scientific_name	NCBITaxon	strong	no
+Manihot utilissima	cassava	scientific_synonym	NCBITaxon	strong	no
+F. catus	cat	abbreviation	generated	strong	no
+F.catus	cat	abbreviation	generated	strong	no
+cat	cat	canonical_id	curated	strong	no
+domestic cat	cat	common_name	NCBITaxon	strong	no
+cats	cat	informal	curated	strong	no
+feline	cat	informal	curated	strong	no
+domestic cats	cat	plural	generated	strong	no
+Felis catus	cat	scientific_name	NCBITaxon	strong	no
+Felis domesticus	cat	scientific_synonym	NCBITaxon	strong	no
+Felis silvestris catus	cat	scientific_synonym	NCBITaxon	strong	no
+B. taurus	cattle	abbreviation	generated	strong	no
+B.taurus	cattle	abbreviation	generated	strong	no
+Angus	cattle	breed	curated	strong	no
+Hereford	cattle	breed	curated	strong	no
+Holstein	cattle	breed	curated	strong	no
+Holstein-Friesian	cattle	breed	curated	strong	no
+Holsteins	cattle	breed	curated	strong	no
+Jersey cattle	cattle	breed	curated	strong	no
+Jersey cows	cattle	breed	curated	strong	no
+Simmental	cattle	breed	curated	strong	no
+cattle	cattle	canonical_id	curated	strong	no
+dairy cow	cattle	common_name	NCBITaxon	strong	no
+domestic cattle	cattle	common_name	NCBITaxon	strong	no
+domestic cow	cattle	common_name	NCBITaxon	strong	no
+ARS-UCD1.2	cattle	genome_build	curated	strong	no
+ARS-UCD2.0	cattle	genome_build	curated	strong	no
+bosTau9	cattle	genome_build	curated	strong	no
+beef cattle	cattle	informal	curated	strong	no
+bovine	cattle	informal	curated	strong	no
+bull	cattle	informal	curated	weak	no
+bulls	cattle	informal	curated	weak	no
+cow	cattle	informal	curated	strong	no
+cows	cattle	informal	curated	strong	no
+dairy cattle	cattle	informal	curated	strong	no
+heifer	cattle	informal	curated	strong	no
+heifers	cattle	informal	curated	strong	no
+dairy cows	cattle	plural	generated	strong	no
+domestic cows	cattle	plural	generated	strong	no
+Bos taurus	cattle	scientific_name	NCBITaxon	strong	no
+Bos bovis	cattle	scientific_synonym	NCBITaxon	strong	no
+Bos primigenius taurus	cattle	scientific_synonym	NCBITaxon	strong	no
+G. gallus	chicken	abbreviation	generated	strong	no
+G.gallus	chicken	abbreviation	generated	strong	no
+broiler	chicken	breed	curated	strong	no
+broilers	chicken	breed	curated	strong	no
+layer hens	chicken	breed	curated	strong	no
+laying hens	chicken	breed	curated	strong	no
+Red Junglefowl	chicken	breed	curated	strong	no
+White Leghorn	chicken	breed	curated	strong	no
+chicken	chicken	canonical_id	curated	strong	no
+bantam	chicken	common_name	NCBITaxon	strong	no
+galGal6	chicken	genome_build	curated	strong	no
+GRCg7b	chicken	genome_build	curated	strong	no
+chickens	chicken	informal	curated	strong	no
+hens	chicken	informal	curated	weak	no
+poultry	chicken	informal	curated	weak	no
+bantams	chicken	plural	generated	strong	no
+Gallus gallus	chicken	scientific_name	NCBITaxon	strong	no
+Gallus domesticus	chicken	scientific_synonym	NCBITaxon	strong	no
+Gallus gallus domesticus	chicken	scientific_synonym	NCBITaxon	strong	no
+Phasianus gallus	chicken	scientific_synonym	NCBITaxon	strong	no
+C. arietinum	chickpea	abbreviation	generated	strong	no
+C.arietinum	chickpea	abbreviation	generated	strong	no
+chickpea	chickpea	canonical_id	curated	strong	no
+garbanzo	chickpea	common_name	NCBITaxon	strong	no
+chickpeas	chickpea	informal	curated	strong	no
+Cicer arietinum	chickpea	scientific_name	NCBITaxon	strong	no
+C. reinhardtii	chlamydomonas	abbreviation	generated	strong	no
+C.reinhardtii	chlamydomonas	abbreviation	generated	strong	no
+chlamydomonas	chlamydomonas	canonical_id	curated	strong	no
+Chlamydomonas reinhardtii	chlamydomonas	scientific_name	NCBITaxon	strong	no
+Chlamydomonas smithii	chlamydomonas	scientific_synonym	NCBITaxon	strong	no
+C. arabica	coffee	abbreviation	generated	strong	no
+C.arabica	coffee	abbreviation	generated	strong	no
+coffee	coffee	canonical_id	curated	strong	no
+arabica coffee	coffee	common_name	NCBITaxon	strong	no
+Coffea arabica	coffee	scientific_name	NCBITaxon	strong	no
+P. vulgaris	common_bean	abbreviation	generated	strong	no
+P.vulgaris	common_bean	abbreviation	generated	strong	no
+common bean	common_bean	canonical_id	curated	strong	no
+French bean	common_bean	common_name	NCBITaxon	strong	no
+kidney bean	common_bean	common_name	NCBITaxon	strong	no
+string bean	common_bean	common_name	NCBITaxon	strong	no
+common beans	common_bean	plural	generated	strong	no
+French beans	common_bean	plural	generated	strong	no
+kidney beans	common_bean	plural	generated	strong	no
+string beans	common_bean	plural	generated	strong	no
+Phaseolus vulgaris	common_bean	scientific_name	NCBITaxon	strong	no
+G. hirsutum	cotton	abbreviation	generated	strong	no
+G.hirsutum	cotton	abbreviation	generated	strong	no
+cotton	cotton	canonical_id	curated	strong	no
+American cotton	cotton	common_name	NCBITaxon	strong	no
+American upland cotton	cotton	common_name	NCBITaxon	strong	no
+upland cotton	cotton	informal	curated	strong	no
+Gossypium hirsutum	cotton	scientific_name	NCBITaxon	strong	no
+Gossypium hirsutum subsp. mexicanum	cotton	scientific_synonym	NCBITaxon	strong	no
+Gossypium lanceolatum	cotton	scientific_synonym	NCBITaxon	strong	no
+Gossypium purpurascens	cotton	scientific_synonym	NCBITaxon	strong	no
+TM-1	cotton	strain	curated	strong	no
+C. sativus	cucumber	abbreviation	generated	strong	no
+C.sativus	cucumber	abbreviation	generated	strong	no
+cucumber	cucumber	canonical_id	curated	strong	no
+cucumbers	cucumber	informal	curated	strong	no
+Cucumis sativus	cucumber	scientific_name	NCBITaxon	strong	no
+D. discoideum	dictyostelium	abbreviation	generated	strong	no
+D.discoideum	dictyostelium	abbreviation	generated	strong	no
+dictyostelium	dictyostelium	canonical_id	curated	strong	no
+Dictyostelium discoideum	dictyostelium	scientific_name	NCBITaxon	strong	no
+C. lupus familiaris	dog	abbreviation	generated	strong	no
+C.lupus familiaris	dog	abbreviation	generated	strong	no
+Beagle	dog	breed	curated	strong	no
+Beagles	dog	breed	curated	strong	no
+Border Collie	dog	breed	curated	strong	no
+German Shepherd	dog	breed	curated	strong	no
+German Shepherds	dog	breed	curated	strong	no
+Golden Retriever	dog	breed	curated	strong	no
+Golden Retrievers	dog	breed	curated	strong	no
+Labrador	dog	breed	curated	strong	no
+Labrador retriever	dog	breed	curated	strong	no
+Labradors	dog	breed	curated	strong	no
+dog	dog	canonical_id	curated	strong	no
+CanFam3.1	dog	genome_build	curated	strong	no
+ROS_Cfam_1.0	dog	genome_build	curated	strong	no
+canine	dog	informal	curated	strong	no
+dogs	dog	informal	curated	strong	no
+puppies	dog	informal	curated	strong	no
+Canis lupus familiaris	dog	scientific_name	NCBITaxon	strong	no
+Canis borealis	dog	scientific_synonym	NCBITaxon	strong	no
+Canis canis	dog	scientific_synonym	NCBITaxon	strong	no
+Canis domesticus	dog	scientific_synonym	NCBITaxon	strong	no
+Canis familiaris	dog	scientific_synonym	NCBITaxon	strong	no
+Canis lupus borealis	dog	scientific_synonym	NCBITaxon	strong	no
+D. mel	drosophila	abbreviation	curated	strong	no
+D. melanogaster	drosophila	abbreviation	generated	strong	no
+D.melanogaster	drosophila	abbreviation	generated	strong	no
+Dmel	drosophila	abbreviation	curated	strong	yes
+drosophila	drosophila	canonical_id	curated	strong	no
+fruit fly	drosophila	common_name	NCBITaxon	strong	no
+dm6	drosophila	genome_build	curated	strong	no
+flies	drosophila	informal	curated	weak	no
+fly	drosophila	informal	curated	weak	no
+fruit flies	drosophila	informal	curated	strong	no
+DGRP	drosophila	panel	curated	strong	yes
+Drosophila Genetic Reference Panel	drosophila	panel	curated	strong	no
+DSPR	drosophila	panel	curated	strong	yes
+Drosophila melanogaster	drosophila	scientific_name	NCBITaxon	strong	no
+Sophophora melanogaster	drosophila	scientific_synonym	NCBITaxon	strong	no
+Canton-S	drosophila	strain	curated	strong	no
+Oregon-R	drosophila	strain	curated	strong	no
+w1118	drosophila	strain	curated	strong	no
+T. turgidum subsp. durum	durum_wheat	abbreviation	generated	strong	no
+T.turgidum subsp. durum	durum_wheat	abbreviation	generated	strong	no
+durum wheat	durum_wheat	canonical_id	curated	strong	no
+durum	durum_wheat	informal	curated	strong	no
+pasta wheat	durum_wheat	informal	curated	strong	no
+Triticum turgidum subsp. durum	durum_wheat	scientific_name	NCBITaxon	strong	no
+Triticum durum	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum durum ssp. durum	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum durum subsp. durum	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum rigidum conv. durum	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum rigidum ssp. durum	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum rigidum var. durum	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum turgidum Durum Group	durum_wheat	scientific_synonym	NCBITaxon	strong	no
+E. coli	ecoli	abbreviation	curated	strong	no
+E.coli	ecoli	abbreviation	curated	strong	no
+ecoli	ecoli	canonical_id	curated	strong	no
+Escherichia coli	ecoli	scientific_name	NCBITaxon	strong	no
+Bacillus coli	ecoli	scientific_synonym	NCBITaxon	strong	no
+Bacterium coli	ecoli	scientific_synonym	NCBITaxon	strong	no
+Bacterium coli commune	ecoli	scientific_synonym	NCBITaxon	strong	no
+Enterococcus coli	ecoli	scientific_synonym	NCBITaxon	strong	no
+Escherichia/Shigella coli	ecoli	scientific_synonym	NCBITaxon	strong	no
+BL21	ecoli	strain	curated	strong	no
+K-12	ecoli	strain	curated	strong	no
+MG1655	ecoli	strain	curated	strong	no
+E. grandis	eucalyptus	abbreviation	generated	strong	no
+E.grandis	eucalyptus	abbreviation	generated	strong	no
+eucalyptus	eucalyptus	canonical_id	curated	strong	no
+rose gum	eucalyptus	common_name	NCBITaxon	strong	no
+Eucalyptus grandis	eucalyptus	scientific_name	NCBITaxon	strong	no
+S. pombe	fission_yeast	abbreviation	curated	strong	no
+S.pombe	fission_yeast	abbreviation	generated	strong	no
+fission yeast	fission_yeast	canonical_id	curated	strong	no
+Schizosaccharomyces pombe	fission_yeast	scientific_name	NCBITaxon	strong	no
+Schizosaccharomyces malidevorans	fission_yeast	scientific_synonym	NCBITaxon	strong	no
+S. italica	foxtail_millet	abbreviation	generated	strong	no
+S.italica	foxtail_millet	abbreviation	generated	strong	no
+foxtail millet	foxtail_millet	canonical_id	curated	strong	no
+Setaria italica	foxtail_millet	scientific_name	NCBITaxon	strong	no
+Chaetochloa italica	foxtail_millet	scientific_synonym	NCBITaxon	strong	no
+Panicum italicum	foxtail_millet	scientific_synonym	NCBITaxon	strong	no
+Pennisetum macrochaetum	foxtail_millet	scientific_synonym	NCBITaxon	strong	no
+Setaria viridis subsp. italica	foxtail_millet	scientific_synonym	NCBITaxon	strong	no
+C. hircus	goat	abbreviation	generated	strong	no
+C.hircus	goat	abbreviation	generated	strong	no
+goat	goat	canonical_id	curated	strong	no
+domestic goat	goat	common_name	NCBITaxon	strong	no
+caprine	goat	informal	curated	strong	no
+goats	goat	informal	curated	strong	no
+domestic goats	goat	plural	generated	strong	no
+Capra hircus	goat	scientific_name	NCBITaxon	strong	no
+Capra aegagrus hircus	goat	scientific_synonym	NCBITaxon	strong	no
+V. vinifera	grapevine	abbreviation	generated	strong	no
+V.vinifera	grapevine	abbreviation	generated	strong	no
+grapevine	grapevine	canonical_id	curated	strong	no
+wine grape	grapevine	common_name	NCBITaxon	strong	no
+grapes	grapevine	informal	curated	strong	no
+wine grapes	grapevine	plural	generated	strong	no
+Vitis vinifera	grapevine	scientific_name	NCBITaxon	strong	no
+Vitis vinifera subsp. vinifera	grapevine	scientific_synonym	NCBITaxon	strong	no
+Pinot Noir	grapevine	strain	curated	strong	no
+PN40024	grapevine	strain	curated	strong	no
+A. mellifera	honeybee	abbreviation	generated	strong	no
+A.mellifera	honeybee	abbreviation	generated	strong	no
+honeybee	honeybee	canonical_id	curated	strong	no
+European honey bee	honeybee	common_name	NCBITaxon	strong	no
+Western honey bee	honeybee	common_name	NCBITaxon	strong	no
+bees	honeybee	informal	curated	weak	no
+honey bee	honeybee	informal	curated	strong	no
+honey bees	honeybee	informal	curated	strong	no
+honeybees	honeybee	informal	curated	strong	no
+European honey bees	honeybee	plural	generated	strong	no
+Western honey bees	honeybee	plural	generated	strong	no
+Apis mellifera	honeybee	scientific_name	NCBITaxon	strong	no
+Apis mellifica	honeybee	scientific_synonym	NCBITaxon	strong	no
+E. caballus	horse	abbreviation	generated	strong	no
+E.caballus	horse	abbreviation	generated	strong	no
+Thoroughbred	horse	breed	curated	strong	no
+Thoroughbreds	horse	breed	curated	strong	no
+horse	horse	canonical_id	curated	strong	no
+domestic horse	horse	common_name	NCBITaxon	strong	no
+EquCab3.0	horse	genome_build	curated	strong	no
+equine	horse	informal	curated	strong	no
+horses	horse	informal	curated	strong	no
+domestic horses	horse	plural	generated	strong	no
+Equus caballus	horse	scientific_name	NCBITaxon	strong	no
+Equus przewalskii f. caballus	horse	scientific_synonym	NCBITaxon	strong	no
+Equus przewalskii forma caballus	horse	scientific_synonym	NCBITaxon	strong	no
+H. sapiens	human	abbreviation	generated	strong	no
+H.sapiens	human	abbreviation	generated	strong	no
+human	human	canonical_id	curated	strong	no
+CHM13	human	genome_build	curated	strong	no
+GRCh37	human	genome_build	curated	strong	no
+GRCh38	human	genome_build	curated	strong	no
+hg19	human	genome_build	curated	strong	no
+hg38	human	genome_build	curated	strong	no
+T2T-CHM13	human	genome_build	curated	strong	no
+humans	human	informal	curated	strong	no
+patient	human	informal	curated	weak	no
+patients	human	informal	curated	weak	no
+people	human	informal	curated	weak	no
+1000 Genomes	human	panel	curated	strong	no
+gnomAD	human	panel	curated	strong	no
+GTEx	human	panel	curated	strong	no
+HapMap	human	panel	curated	strong	no
+TOPMed	human	panel	curated	strong	no
+UK Biobank	human	panel	curated	strong	no
+Homo sapiens	human	scientific_name	NCBITaxon	strong	no
+L. sativa	lettuce	abbreviation	generated	strong	no
+L.sativa	lettuce	abbreviation	generated	strong	no
+lettuce	lettuce	canonical_id	curated	strong	no
+cultivated lettuce	lettuce	common_name	NCBITaxon	strong	no
+garden lettuce	lettuce	common_name	NCBITaxon	strong	no
+Lactuca sativa	lettuce	scientific_name	NCBITaxon	strong	no
+L. japonicus	lotus_japonicus	abbreviation	generated	strong	no
+L.japonicus	lotus_japonicus	abbreviation	generated	strong	no
+lotus japonicus	lotus_japonicus	canonical_id	curated	strong	no
+Lotus	lotus_japonicus	genus	curated	weak	no
+Lotus corniculatus var. japonicus	lotus_japonicus	scientific_synonym	NCBITaxon	strong	no
+M. tuberculosis	m_tuberculosis	abbreviation	curated	strong	no
+M.tuberculosis	m_tuberculosis	abbreviation	generated	strong	no
+Mtb	m_tuberculosis	abbreviation	curated	weak	yes
+m tuberculosis	m_tuberculosis	canonical_id	curated	strong	no
+tuberculosis	m_tuberculosis	informal	curated	weak	no
+Mycobacterium tuberculosis	m_tuberculosis	scientific_name	NCBITaxon	strong	no
+Bacillus tuberculosis	m_tuberculosis	scientific_synonym	NCBITaxon	strong	no
+Bacterium tuberculosis	m_tuberculosis	scientific_synonym	NCBITaxon	strong	no
+Mycobacterium tuberculosis (Zopf 1883) Lehmann and Neumann 1896 (Approved Lists 1980)	m_tuberculosis	scientific_synonym	NCBITaxon	strong	no
+Mycobacterium tuberculosis typus humanus	m_tuberculosis	scientific_synonym	NCBITaxon	strong	no
+Mycobacterium tuberculosis var. hominis	m_tuberculosis	scientific_synonym	NCBITaxon	strong	no
+H37Rv	m_tuberculosis	strain	curated	strong	no
+Z. mays	maize	abbreviation	generated	strong	no
+Z.mays	maize	abbreviation	generated	strong	no
+maize	maize	canonical_id	curated	strong	no
+Zm-B73-REFERENCE-NAM-5.0	maize	genome_build	curated	strong	no
+corn	maize	informal	curated	strong	no
+teosinte	maize	informal	curated	weak	no
+Ames panel	maize	panel	curated	strong	no
+Goodman-Buckler	maize	panel	curated	strong	no
+maize 282	maize	panel	curated	strong	no
+Zea mays	maize	scientific_name	NCBITaxon	strong	no
+Zea mays var. japonica	maize	scientific_synonym	NCBITaxon	strong	no
+B73	maize	strain	curated	strong	no
+Mo17	maize	strain	curated	strong	no
+PH207	maize	strain	curated	strong	yes
+W22	maize	strain	curated	strong	yes
+M. polymorpha	marchantia	abbreviation	generated	strong	no
+M.polymorpha	marchantia	abbreviation	generated	strong	no
+marchantia	marchantia	canonical_id	curated	strong	no
+common liverwort	marchantia	common_name	NCBITaxon	strong	no
+Marchantia polymorpha	marchantia	scientific_name	NCBITaxon	strong	no
+O. latipes	medaka	abbreviation	generated	strong	no
+O.latipes	medaka	abbreviation	generated	strong	no
+medaka	medaka	canonical_id	curated	strong	no
+Japanese medaka	medaka	common_name	NCBITaxon	strong	no
+Japanese rice fish	medaka	common_name	NCBITaxon	strong	no
+Japanese medakas	medaka	plural	generated	strong	no
+medakas	medaka	plural	generated	strong	no
+Oryzias latipes	medaka	scientific_name	NCBITaxon	strong	no
+Poecilia latipes	medaka	scientific_synonym	NCBITaxon	strong	no
+M. truncatula	medicago_truncatula	abbreviation	generated	strong	no
+M.truncatula	medicago_truncatula	abbreviation	generated	strong	no
+medicago truncatula	medicago_truncatula	canonical_id	curated	strong	no
+barrel medic	medicago_truncatula	common_name	NCBITaxon	strong	no
+Medicago	medicago_truncatula	genus	curated	weak	no
+barrel medics	medicago_truncatula	plural	generated	strong	no
+A17	medicago_truncatula	strain	curated	weak	yes
+Jemalong	medicago_truncatula	strain	curated	strong	no
+M. musculus	mouse	abbreviation	generated	strong	no
+M.musculus	mouse	abbreviation	generated	strong	no
+mouse	mouse	canonical_id	curated	strong	no
+house mouse	mouse	common_name	NCBITaxon	strong	no
+GRCm38	mouse	genome_build	curated	strong	no
+GRCm39	mouse	genome_build	curated	strong	no
+mm10	mouse	genome_build	curated	strong	no
+mm39	mouse	genome_build	curated	strong	no
+mice	mouse	informal	curated	strong	no
+murine	mouse	informal	curated	strong	no
+BXD	mouse	panel	curated	strong	yes
+CC	mouse	panel	curated	weak	yes
+Collaborative Cross	mouse	panel	curated	strong	no
+Diversity Outbred	mouse	panel	curated	strong	no
+DO	mouse	panel	curated	weak	yes
+Mus musculus	mouse	scientific_name	NCBITaxon	strong	no
+129S1	mouse	strain	curated	strong	no
+B6	mouse	strain	curated	weak	yes
+BALB/c	mouse	strain	curated	strong	no
+C57BL/6	mouse	strain	curated	strong	no
+C57BL/6J	mouse	strain	curated	strong	no
+CAST	mouse	strain	curated	weak	yes
+CAST/EiJ	mouse	strain	curated	strong	no
+DBA	mouse	strain	curated	weak	yes
+DBA/2	mouse	strain	curated	strong	no
+DBA/2J	mouse	strain	curated	strong	no
+N. crassa	neurospora	abbreviation	generated	strong	no
+N.crassa	neurospora	abbreviation	generated	strong	no
+neurospora	neurospora	canonical_id	curated	strong	no
+Neurospora crassa	neurospora	scientific_name	NCBITaxon	strong	no
+Chrysonilia crassa	neurospora	scientific_synonym	NCBITaxon	strong	no
+N. benth	nicotiana_benthamiana	abbreviation	curated	strong	no
+N. benthamiana	nicotiana_benthamiana	abbreviation	generated	strong	no
+N.benthamiana	nicotiana_benthamiana	abbreviation	generated	strong	no
+nicotiana benthamiana	nicotiana_benthamiana	canonical_id	curated	strong	no
+benthamiana	nicotiana_benthamiana	informal	curated	strong	no
+O. niloticus	nile_tilapia	abbreviation	generated	strong	no
+O.niloticus	nile_tilapia	abbreviation	generated	strong	no
+nile tilapia	nile_tilapia	canonical_id	curated	strong	no
+tilapia	nile_tilapia	informal	curated	strong	no
+Oreochromis niloticus	nile_tilapia	scientific_name	NCBITaxon	strong	no
+Oreochromis nilotica	nile_tilapia	scientific_synonym	NCBITaxon	strong	no
+Perca nilotica	nile_tilapia	scientific_synonym	NCBITaxon	strong	no
+Tilapia nilotica	nile_tilapia	scientific_synonym	NCBITaxon	strong	no
+A. sativa	oat	abbreviation	generated	strong	no
+A.sativa	oat	abbreviation	generated	strong	no
+oat	oat	canonical_id	curated	strong	no
+cultivated oat	oat	common_name	NCBITaxon	strong	no
+cultivated oats	oat	common_name	NCBITaxon	strong	no
+oats	oat	informal	curated	strong	no
+Avena sativa	oat	scientific_name	NCBITaxon	strong	no
+P. aeruginosa	p_aeruginosa	abbreviation	curated	strong	no
+P.aeruginosa	p_aeruginosa	abbreviation	generated	strong	no
+p aeruginosa	p_aeruginosa	canonical_id	curated	strong	no
+Pseudomonas aeruginosa	p_aeruginosa	scientific_name	NCBITaxon	strong	no
+Bacillus aeruginosus	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Bacillus pyocyaneus	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Bacterium aeruginosum	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Bacterium pyocyaneum	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Micrococcus pyocyaneus	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+"probable synonym or variety: \""Pseudomonas polycolor\"" Clara 1930"	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Pseudomonas aeruginosa (Schroeter 1872) Migula 1900 (Approved Lists 1980)	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Pseudomonas polycolor	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+Pseudomonas pyocyanea	p_aeruginosa	scientific_synonym	NCBITaxon	strong	no
+PAO1	p_aeruginosa	strain	curated	strong	no
+L. oleraceus	pea	abbreviation	generated	strong	no
+L.oleraceus	pea	abbreviation	generated	strong	no
+pea	pea	canonical_id	curated	strong	no
+garden pea	pea	common_name	NCBITaxon	strong	no
+peas	pea	informal	curated	strong	no
+garden peas	pea	plural	generated	strong	no
+Lathyrus oleraceus	pea	scientific_name	NCBITaxon	strong	no
+Pisum sativum	pea	scientific_synonym	NCBITaxon	strong	no
+Pisum sativum var. ponderosum	pea	scientific_synonym	NCBITaxon	strong	no
+A. hypogaea	peanut	abbreviation	generated	strong	no
+A.hypogaea	peanut	abbreviation	generated	strong	no
+peanut	peanut	canonical_id	curated	strong	no
+goober	peanut	common_name	NCBITaxon	strong	no
+ground-nut	peanut	common_name	NCBITaxon	strong	no
+huasquillo	peanut	common_name	NCBITaxon	strong	no
+zaruma	peanut	common_name	NCBITaxon	strong	no
+groundnut	peanut	informal	curated	strong	no
+peanuts	peanut	informal	curated	strong	no
+Arachis hypogaea	peanut	scientific_name	NCBITaxon	strong	no
+Arachis hypogaea subsp. fastigiata var. aequatoriana	peanut	scientific_synonym	NCBITaxon	strong	no
+Arachis hypogaea var. aequatoriana	peanut	scientific_synonym	NCBITaxon	strong	no
+C. americanus	pearl_millet	abbreviation	generated	strong	no
+C.americanus	pearl_millet	abbreviation	generated	strong	no
+pearl millet	pearl_millet	canonical_id	curated	strong	no
+bulrush millet	pearl_millet	common_name	NCBITaxon	strong	no
+cattail millet	pearl_millet	common_name	NCBITaxon	strong	no
+Cenchrus americanus	pearl_millet	scientific_name	NCBITaxon	strong	no
+Pennisetum americanum	pearl_millet	scientific_synonym	NCBITaxon	strong	no
+Pennisetum glaucum	pearl_millet	scientific_synonym	NCBITaxon	strong	no
+Pennisetum typhoides	pearl_millet	scientific_synonym	NCBITaxon	strong	no
+Pennisetum typhoideum	pearl_millet	scientific_synonym	NCBITaxon	strong	no
+Setaria glauca	pearl_millet	scientific_synonym	NCBITaxon	strong	no
+C. annuum	pepper	abbreviation	generated	strong	no
+C.annuum	pepper	abbreviation	generated	strong	no
+pepper	pepper	canonical_id	curated	strong	no
+sweet pepper	pepper	common_name	NCBITaxon	strong	no
+chili pepper	pepper	informal	curated	strong	no
+peppers	pepper	informal	curated	weak	no
+sweet peppers	pepper	plural	generated	strong	no
+Capsicum annuum	pepper	scientific_name	NCBITaxon	strong	no
+P. patens	physcomitrium	abbreviation	generated	strong	no
+P.patens	physcomitrium	abbreviation	generated	strong	no
+physcomitrium	physcomitrium	canonical_id	curated	strong	no
+Physcomitrella	physcomitrium	genus	curated	strong	no
+moss	physcomitrium	informal	curated	weak	no
+Physcomitrium patens	physcomitrium	scientific_name	NCBITaxon	strong	no
+Phascum patens	physcomitrium	scientific_synonym	NCBITaxon	strong	no
+Physcomitrella patens	physcomitrium	scientific_synonym	NCBITaxon	strong	no
+Physcomitrella patens subsp. patens	physcomitrium	scientific_synonym	NCBITaxon	strong	no
+S. scrofa	pig	abbreviation	generated	strong	no
+S.scrofa	pig	abbreviation	generated	strong	no
+Duroc	pig	breed	curated	strong	no
+Large White	pig	breed	curated	strong	no
+Meishan	pig	breed	curated	strong	no
+Pietrain	pig	breed	curated	strong	no
+pig	pig	canonical_id	curated	strong	no
+wild boar	pig	common_name	NCBITaxon	weak	no
+Sscrofa11.1	pig	genome_build	curated	strong	no
+piglets	pig	informal	curated	strong	no
+pigs	pig	informal	curated	strong	no
+porcine	pig	informal	curated	strong	no
+swine	pig	informal	curated	strong	no
+wild boars	pig	plural	generated	strong	no
+Sus scrofa	pig	scientific_name	NCBITaxon	strong	no
+P. falciparum	plasmodium_falciparum	abbreviation	generated	strong	no
+P.falciparum	plasmodium_falciparum	abbreviation	generated	strong	no
+plasmodium falciparum	plasmodium_falciparum	canonical_id	curated	strong	no
+malaria parasite P. falciparum	plasmodium_falciparum	common_name	NCBITaxon	strong	no
+Plasmodium	plasmodium_falciparum	genus	curated	weak	no
+malaria parasite	plasmodium_falciparum	informal	curated	strong	no
+Plasmodium (Laverania) falciparum	plasmodium_falciparum	scientific_synonym	NCBITaxon	strong	no
+3D7	plasmodium_falciparum	strain	curated	strong	yes
+P. trichocarpa	poplar	abbreviation	generated	strong	no
+P.trichocarpa	poplar	abbreviation	generated	strong	no
+poplar	poplar	canonical_id	curated	strong	no
+black cottonwood	poplar	common_name	NCBITaxon	strong	no
+western balsam poplar	poplar	common_name	NCBITaxon	strong	no
+Populus	poplar	genus	curated	strong	no
+black cottonwoods	poplar	plural	generated	strong	no
+western balsam poplars	poplar	plural	generated	strong	no
+Populus trichocarpa	poplar	scientific_name	NCBITaxon	strong	no
+Populus balsamifera subsp. trichocarpa	poplar	scientific_synonym	NCBITaxon	strong	no
+S. tuberosum	potato	abbreviation	generated	strong	no
+S.tuberosum	potato	abbreviation	generated	strong	no
+potato	potato	canonical_id	curated	strong	no
+potatoes	potato	informal	curated	strong	no
+Solanum tuberosum	potato	scientific_name	NCBITaxon	strong	no
+Solanum aracc-papa	potato	scientific_synonym	NCBITaxon	strong	no
+DM 1-3	potato	strain	curated	strong	no
+DM1-3	potato	strain	curated	strong	no
+C. quinoa	quinoa	abbreviation	generated	strong	no
+C.quinoa	quinoa	abbreviation	generated	strong	no
+quinoa	quinoa	canonical_id	curated	strong	no
+Chenopodium quinoa	quinoa	scientific_name	NCBITaxon	strong	no
+O. mykiss	rainbow_trout	abbreviation	generated	strong	no
+O.mykiss	rainbow_trout	abbreviation	generated	strong	no
+rainbow trout	rainbow_trout	canonical_id	curated	strong	no
+trout	rainbow_trout	informal	curated	weak	no
+Oncorhynchus mykiss	rainbow_trout	scientific_name	NCBITaxon	strong	no
+Oncorhynchus nerka mykiss	rainbow_trout	scientific_synonym	NCBITaxon	strong	no
+Parasalmo mykiss	rainbow_trout	scientific_synonym	NCBITaxon	strong	no
+Salmo mykiss	rainbow_trout	scientific_synonym	NCBITaxon	strong	no
+B. napus	rapeseed	abbreviation	generated	strong	no
+B.napus	rapeseed	abbreviation	generated	strong	no
+rapeseed	rapeseed	canonical_id	curated	strong	no
+rapeseeds	rapeseed	common_name	NCBITaxon	strong	no
+canola	rapeseed	informal	curated	strong	no
+oilseed rape	rapeseed	informal	curated	strong	no
+Brassica napus	rapeseed	scientific_name	NCBITaxon	strong	no
+R. norvegicus	rat	abbreviation	generated	strong	no
+R.norvegicus	rat	abbreviation	generated	strong	no
+rat	rat	canonical_id	curated	strong	no
+brown rat	rat	common_name	NCBITaxon	strong	no
+Norway rat	rat	common_name	NCBITaxon	strong	no
+GRCr8	rat	genome_build	curated	strong	no
+mRatBN7.2	rat	genome_build	curated	strong	no
+rn6	rat	genome_build	curated	strong	no
+rn7	rat	genome_build	curated	strong	no
+rats	rat	informal	curated	strong	no
+heterogeneous stock	rat	panel	curated	weak	no
+HXB/BXH	rat	panel	curated	strong	no
+brown rats	rat	plural	generated	strong	no
+Norway rats	rat	plural	generated	strong	no
+Rattus norvegicus	rat	scientific_name	NCBITaxon	strong	no
+Mus norvegicus	rat	scientific_synonym	NCBITaxon	strong	no
+Brown Norway	rat	strain	curated	strong	no
+F344	rat	strain	curated	strong	yes
+Fischer 344	rat	strain	curated	strong	no
+Long-Evans	rat	strain	curated	strong	no
+Sprague Dawley	rat	strain	curated	strong	no
+Sprague-Dawley	rat	strain	curated	strong	no
+Wistar	rat	strain	curated	strong	no
+M. mulatta	rhesus_macaque	abbreviation	generated	strong	no
+M.mulatta	rhesus_macaque	abbreviation	generated	strong	no
+rhesus macaque	rhesus_macaque	canonical_id	curated	strong	no
+rhesus macaques	rhesus_macaque	common_name	NCBITaxon	strong	no
+Rhesus monkey	rhesus_macaque	common_name	NCBITaxon	strong	no
+rhesus monkeys	rhesus_macaque	common_name	NCBITaxon	strong	no
+Mmul_10	rhesus_macaque	genome_build	curated	strong	no
+macaque	rhesus_macaque	informal	curated	strong	no
+macaques	rhesus_macaque	informal	curated	strong	no
+rhesus	rhesus_macaque	informal	curated	strong	no
+Macaca mulatta	rhesus_macaque	scientific_name	NCBITaxon	strong	no
+Cercopithecus mulatta	rhesus_macaque	scientific_synonym	NCBITaxon	strong	no
+O. sativa	rice	abbreviation	generated	strong	no
+O.sativa	rice	abbreviation	generated	strong	no
+rice	rice	canonical_id	curated	strong	no
+Asian cultivated rice	rice	common_name	NCBITaxon	strong	no
+IRGSP-1.0	rice	genome_build	curated	strong	no
+indica	rice	informal	curated	weak	no
+japonica	rice	informal	curated	weak	no
+paddy	rice	informal	curated	weak	no
+3,000 Rice Genomes	rice	panel	curated	strong	no
+3000 Rice Genomes	rice	panel	curated	strong	no
+3K RGP	rice	panel	curated	strong	no
+Oryza sativa	rice	scientific_name	NCBITaxon	strong	no
+93-11	rice	strain	curated	strong	no
+IR64	rice	strain	curated	strong	no
+Kasalath	rice	strain	curated	strong	no
+Nipponbare	rice	strain	curated	strong	no
+S. cereale	rye	abbreviation	generated	strong	no
+S.cereale	rye	abbreviation	generated	strong	no
+rye	rye	canonical_id	curated	strong	no
+Secale cereale	rye	scientific_name	NCBITaxon	strong	no
+Secale cereale subsp. cereale	rye	scientific_synonym	NCBITaxon	strong	no
+S. aureus	s_aureus	abbreviation	curated	strong	no
+S.aureus	s_aureus	abbreviation	generated	strong	no
+s aureus	s_aureus	canonical_id	curated	strong	no
+MRSA	s_aureus	informal	curated	strong	yes
+Staphylococcus aureus	s_aureus	scientific_name	NCBITaxon	strong	no
+Micrococcus aureus	s_aureus	scientific_synonym	NCBITaxon	strong	no
+Micrococcus pyogenes	s_aureus	scientific_synonym	NCBITaxon	strong	no
+Staphylococcus aureus subsp. anaerobius	s_aureus	scientific_synonym	NCBITaxon	strong	no
+Staphylococcus pyogenes aureus	s_aureus	scientific_synonym	NCBITaxon	strong	no
+Staphylococcus pyogenes citreus	s_aureus	scientific_synonym	NCBITaxon	strong	no
+S. enterica	salmonella	abbreviation	generated	strong	no
+S.enterica	salmonella	abbreviation	generated	strong	no
+salmonella	salmonella	canonical_id	curated	strong	no
+Salmonella enterica	salmonella	scientific_name	NCBITaxon	strong	no
+Bacillus cholerae-suis	salmonella	scientific_synonym	NCBITaxon	strong	no
+Salmonella cholerae-suis	salmonella	scientific_synonym	NCBITaxon	strong	no
+Salmonella choleraesuis	salmonella	scientific_synonym	NCBITaxon	strong	no
+Salmonella enterica ser. choleraesuis	salmonella	scientific_synonym	NCBITaxon	strong	no
+S. viridis	setaria_viridis	abbreviation	generated	strong	no
+S.viridis	setaria_viridis	abbreviation	generated	strong	no
+setaria viridis	setaria_viridis	canonical_id	curated	strong	no
+Panicum viride	setaria_viridis	scientific_synonym	NCBITaxon	strong	no
+O. aries	sheep	abbreviation	generated	strong	no
+O.aries	sheep	abbreviation	generated	strong	no
+sheep	sheep	canonical_id	curated	strong	no
+domestic sheep	sheep	common_name	NCBITaxon	strong	no
+wild sheep	sheep	common_name	NCBITaxon	strong	no
+lambs	sheep	informal	curated	weak	no
+ovine	sheep	informal	curated	strong	no
+Ovis aries	sheep	scientific_name	NCBITaxon	strong	no
+Ovis ammon aries	sheep	scientific_synonym	NCBITaxon	strong	no
+Ovis orientalis aries	sheep	scientific_synonym	NCBITaxon	strong	no
+Ovis ovis	sheep	scientific_synonym	NCBITaxon	strong	no
+B. mori	silkworm	abbreviation	generated	strong	no
+B.mori	silkworm	abbreviation	generated	strong	no
+silkworm	silkworm	canonical_id	curated	strong	no
+domestic silkworm	silkworm	common_name	NCBITaxon	strong	no
+silk moth	silkworm	common_name	NCBITaxon	strong	no
+Bombyx	silkworm	genus	curated	strong	no
+domestic silkworms	silkworm	plural	generated	strong	no
+silk moths	silkworm	plural	generated	strong	no
+silkworms	silkworm	plural	generated	strong	no
+Bombyx mori	silkworm	scientific_name	NCBITaxon	strong	no
+Phalaena mori	silkworm	scientific_synonym	NCBITaxon	strong	no
+S. bicolor	sorghum	abbreviation	generated	strong	no
+S.bicolor	sorghum	abbreviation	generated	strong	no
+sorghum	sorghum	canonical_id	curated	strong	no
+broomcorn	sorghum	common_name	NCBITaxon	strong	no
+milo	sorghum	common_name	NCBITaxon	strong	no
+grain sorghum	sorghum	informal	curated	strong	no
+sweet sorghum	sorghum	informal	curated	strong	no
+SAP	sorghum	panel	curated	weak	yes
+Sorghum Association Panel	sorghum	panel	curated	strong	no
+Sorghum bicolor	sorghum	scientific_name	NCBITaxon	strong	no
+Andropogon sorghum	sorghum	scientific_synonym	NCBITaxon	strong	no
+Holcus bicolor	sorghum	scientific_synonym	NCBITaxon	strong	no
+Sorghum bicolor subsp. bicolor	sorghum	scientific_synonym	NCBITaxon	strong	no
+Sorghum nervosum	sorghum	scientific_synonym	NCBITaxon	strong	no
+Sorghum saccharatum	sorghum	scientific_synonym	NCBITaxon	strong	no
+Sorghum vulgare	sorghum	scientific_synonym	NCBITaxon	strong	no
+BTx623	sorghum	strain	curated	strong	no
+RTx430	sorghum	strain	curated	strong	no
+Tx430	sorghum	strain	curated	strong	no
+G. max	soybean	abbreviation	generated	strong	no
+G.max	soybean	abbreviation	generated	strong	no
+soybean	soybean	canonical_id	curated	strong	no
+soy	soybean	informal	curated	weak	no
+soya	soybean	informal	curated	strong	no
+soybeans	soybean	informal	curated	strong	no
+Glycine max	soybean	scientific_name	NCBITaxon	strong	no
+Phaseolus max	soybean	scientific_synonym	NCBITaxon	strong	no
+Williams 82	soybean	strain	curated	strong	no
+Wm82	soybean	strain	curated	strong	no
+G. aculeatus	stickleback	abbreviation	generated	strong	no
+G.aculeatus	stickleback	abbreviation	generated	strong	no
+stickleback	stickleback	canonical_id	curated	strong	no
+three spined stickleback	stickleback	common_name	NCBITaxon	strong	no
+three-spined stickleback	stickleback	common_name	NCBITaxon	strong	no
+three spined sticklebacks	stickleback	plural	generated	strong	no
+three-spined sticklebacks	stickleback	plural	generated	strong	no
+Gasterosteus aculeatus	stickleback	scientific_name	NCBITaxon	strong	no
+F. x ananassa	strawberry	abbreviation	generated	strong	no
+F.x ananassa	strawberry	abbreviation	generated	strong	no
+strawberry	strawberry	canonical_id	curated	strong	no
+strawberries	strawberry	informal	curated	strong	no
+Fragaria x ananassa	strawberry	scientific_name	NCBITaxon	strong	no
+Fragaria ananassa	strawberry	scientific_synonym	NCBITaxon	strong	no
+Fragaria chiloensis var. ananassa	strawberry	scientific_synonym	NCBITaxon	strong	no
+Fragaria chiloensis x Fragaria virginiana	strawberry	scientific_synonym	NCBITaxon	strong	no
+Fragaria virginiana x Fragaria chiloensis	strawberry	scientific_synonym	NCBITaxon	strong	no
+S. officinarum	sugarcane	abbreviation	generated	strong	no
+S.officinarum	sugarcane	abbreviation	generated	strong	no
+sugarcane	sugarcane	canonical_id	curated	strong	no
+Saccharum officinarum	sugarcane	scientific_name	NCBITaxon	strong	no
+H. annuus	sunflower	abbreviation	generated	strong	no
+H.annuus	sunflower	abbreviation	generated	strong	no
+sunflower	sunflower	canonical_id	curated	strong	no
+common sunflower	sunflower	common_name	NCBITaxon	strong	no
+sunflowers	sunflower	informal	curated	strong	no
+common sunflowers	sunflower	plural	generated	strong	no
+Helianthus annuus	sunflower	scientific_name	NCBITaxon	strong	no
+I. batatas	sweet_potato	abbreviation	generated	strong	no
+I.batatas	sweet_potato	abbreviation	generated	strong	no
+sweet potato	sweet_potato	canonical_id	curated	strong	no
+batate	sweet_potato	common_name	NCBITaxon	strong	no
+sweet potatoes	sweet_potato	informal	curated	strong	no
+Ipomoea batatas	sweet_potato	scientific_name	NCBITaxon	strong	no
+Convolvulus batatas	sweet_potato	scientific_synonym	NCBITaxon	strong	no
+Ipomoea batatas var. edulis	sweet_potato	scientific_synonym	NCBITaxon	strong	no
+Ipomoea tiliacea auct. non (Willd.) Choisy	sweet_potato	scientific_synonym	NCBITaxon	strong	no
+P. virgatum	switchgrass	abbreviation	generated	strong	no
+P.virgatum	switchgrass	abbreviation	generated	strong	no
+switchgrass	switchgrass	canonical_id	curated	strong	no
+Panicum virgatum	switchgrass	scientific_name	NCBITaxon	strong	no
+N. tabacum	tobacco	abbreviation	generated	strong	no
+N.tabacum	tobacco	abbreviation	generated	strong	no
+tobacco	tobacco	canonical_id	curated	strong	no
+American tobacco	tobacco	common_name	NCBITaxon	strong	no
+common tobacco	tobacco	common_name	NCBITaxon	strong	no
+Nicotiana tabacum	tobacco	scientific_name	NCBITaxon	strong	no
+S. lycopersicum	tomato	abbreviation	generated	strong	no
+S.lycopersicum	tomato	abbreviation	generated	strong	no
+tomato	tomato	canonical_id	curated	strong	no
+tomatoes	tomato	informal	curated	strong	no
+Solanum lycopersicum	tomato	scientific_name	NCBITaxon	strong	no
+Lycopersicon esculentum	tomato	scientific_synonym	NCBITaxon	strong	no
+Lycopersicon esculentum var. esculentum	tomato	scientific_synonym	NCBITaxon	strong	no
+Solanum esculentum	tomato	scientific_synonym	NCBITaxon	strong	no
+Solanum lycopersicum var. humboldtii	tomato	scientific_synonym	NCBITaxon	strong	no
+Heinz 1706	tomato	strain	curated	strong	no
+M82	tomato	strain	curated	weak	yes
+Micro-Tom	tomato	strain	curated	strong	no
+T. aestivum	wheat	abbreviation	generated	strong	no
+T.aestivum	wheat	abbreviation	generated	strong	no
+wheat	wheat	canonical_id	curated	strong	no
+Canadian hard winter wheat	wheat	common_name	NCBITaxon	strong	no
+common wheat	wheat	common_name	NCBITaxon	strong	no
+IWGSC	wheat	genome_build	curated	strong	no
+bread wheat	wheat	informal	curated	strong	no
+spring wheat	wheat	informal	curated	strong	no
+winter wheat	wheat	informal	curated	strong	no
+Triticum aestivum	wheat	scientific_name	NCBITaxon	strong	no
+Triticum aestivum subsp. aestivum	wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum sativum	wheat	scientific_synonym	NCBITaxon	strong	no
+Triticum vulgare	wheat	scientific_synonym	NCBITaxon	strong	no
+Chinese Spring	wheat	strain	curated	strong	no
+C. lupus	wolf	abbreviation	generated	strong	no
+C.lupus	wolf	abbreviation	generated	strong	no
+wolf	wolf	canonical_id	curated	strong	no
+gray wolf	wolf	informal	curated	strong	no
+wolves	wolf	informal	curated	strong	no
+Canis lupus	wolf	scientific_name	NCBITaxon	strong	no
+X. laevis	xenopus_laevis	abbreviation	generated	strong	no
+X.laevis	xenopus_laevis	abbreviation	generated	strong	no
+xenopus laevis	xenopus_laevis	canonical_id	curated	strong	no
+African clawed frog	xenopus_laevis	common_name	NCBITaxon	strong	no
+clawed frog	xenopus_laevis	common_name	NCBITaxon	strong	no
+common platanna	xenopus_laevis	common_name	NCBITaxon	strong	no
+platanna	xenopus_laevis	common_name	NCBITaxon	strong	no
+Xenopus	xenopus_laevis	genus	curated	weak	no
+African clawed frogs	xenopus_laevis	plural	generated	strong	no
+clawed frogs	xenopus_laevis	plural	generated	strong	no
+common platannas	xenopus_laevis	plural	generated	strong	no
+platannas	xenopus_laevis	plural	generated	strong	no
+Bufo laevis	xenopus_laevis	scientific_synonym	NCBITaxon	strong	no
+X. tropicalis	xenopus_tropicalis	abbreviation	generated	strong	no
+X.tropicalis	xenopus_tropicalis	abbreviation	generated	strong	no
+xenopus tropicalis	xenopus_tropicalis	canonical_id	curated	strong	no
+tropical clawed frog	xenopus_tropicalis	common_name	NCBITaxon	strong	no
+western clawed frog	xenopus_tropicalis	common_name	NCBITaxon	strong	no
+tropical clawed frogs	xenopus_tropicalis	plural	generated	strong	no
+western clawed frogs	xenopus_tropicalis	plural	generated	strong	no
+Silurana tropicalis	xenopus_tropicalis	scientific_synonym	NCBITaxon	strong	no
+Xenopus (Silurana) tropicalis	xenopus_tropicalis	scientific_synonym	NCBITaxon	strong	no
+Xenopus laevis tropicalis	xenopus_tropicalis	scientific_synonym	NCBITaxon	strong	no
+S. cerevisiae	yeast	abbreviation	generated	strong	no
+S.cerevisiae	yeast	abbreviation	generated	strong	no
+yeast	yeast	canonical_id	curated	strong	no
+brewer's yeast	yeast	common_name	NCBITaxon	weak	no
+sacCer3	yeast	genome_build	curated	strong	no
+baker's yeast	yeast	informal	curated	strong	no
+budding yeast	yeast	informal	curated	strong	no
+Saccharomyces cerevisiae	yeast	scientific_name	NCBITaxon	strong	no
+Candida robusta	yeast	scientific_synonym	NCBITaxon	strong	no
+Mycoderma cerevisiae	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces boulardii	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces boulardii (nom. inval.)	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces capensis	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces cerevisiae 'var. diastaticus'	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces cerevisiae (Desm.) Meyen ex E.C. Hansen, 1883	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces diastaticus	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces italicus	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces oviformis	yeast	scientific_synonym	NCBITaxon	strong	no
+Saccharomyces uvarum var. melibiosus	yeast	scientific_synonym	NCBITaxon	strong	no
+BY4741	yeast	strain	curated	strong	no
+S288C	yeast	strain	curated	strong	no
+W303	yeast	strain	curated	strong	no
+D. rerio	zebrafish	abbreviation	generated	strong	no
+D.rerio	zebrafish	abbreviation	generated	strong	no
+zebrafish	zebrafish	canonical_id	curated	strong	no
+leopard danio	zebrafish	common_name	NCBITaxon	strong	no
+zebra danio	zebrafish	common_name	NCBITaxon	strong	no
+danRer11	zebrafish	genome_build	curated	strong	no
+GRCz11	zebrafish	genome_build	curated	strong	no
+Danio	zebrafish	genus	curated	strong	no
+zebra fish	zebrafish	informal	curated	strong	no
+Danio rerio	zebrafish	scientific_name	NCBITaxon	strong	no
+Brachydanio rerio	zebrafish	scientific_synonym	NCBITaxon	strong	no
+Brachydanio rerio frankei	zebrafish	scientific_synonym	NCBITaxon	strong	no
+Cyprinus rerio	zebrafish	scientific_synonym	NCBITaxon	strong	no
+Danio frankei	zebrafish	scientific_synonym	NCBITaxon	strong	no
+Danio rerio frankei	zebrafish	scientific_synonym	NCBITaxon	strong	no

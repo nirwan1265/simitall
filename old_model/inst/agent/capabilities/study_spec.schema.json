@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SimItAll partial StudySpec",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "question",
+    "data_source",
+    "recognized_concepts",
+    "unresolved_questions"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "1.0"
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "goal": {
+      "enum": [
+        "simulate",
+        "analyze",
+        "simulate_and_analyze",
+        "plan"
+      ]
+    },
+    "organism": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "assembly": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "region": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "data_source": {
+      "enum": [
+        "ask",
+        "provided",
+        "synthetic",
+        "package_demo"
+      ]
+    },
+    "recognized_concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "primary_analysis": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "secondary_analyses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "object"
+    },
+    "design": {
+      "type": "object"
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "figures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "truth": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pass_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unresolved_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "execution_status": {
+      "enum": [
+        "needs_clarification",
+        "supported",
+        "knowledge_only",
+        "unsupported"
+      ]
+    },
+    "do_not_run": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,10 @@
+technique	goal	analysis	notes
+bulk_rnaseq	simulate	bulk_counts_simulation	"simulate RNA-seq" means counts unless a downstream analysis is named
+bulk_rnaseq	plan	rnaseq_power	"how many replicates for RNA-seq"
+scrnaseq	simulate	scrnaseq_simulation
+scrnaseq	analyze	scrnaseq_analysis
+wgs	simulate	read_simulation
+platform_hifi	simulate	read_simulation
+platform_nanopore	simulate	read_simulation
+platform_illumina_other	simulate	read_simulation
+exome	analyze	variant_calling

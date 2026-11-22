@@ -1,0 +1,72 @@
+{
+  "catalog_version": "1.0.0",
+  "purpose": "Recommended reversible sample-ID and metadata convention for user-supplied experimental data. It is a compatibility convention, not a requirement to rename established cohorts.",
+  "canonical_sample_id": "S001_R01_TrtControl_Ti00",
+  "segments": [
+    {
+      "prefix": "S",
+      "field": "sample_id",
+      "required": true,
+      "description": "Unique biological sample or library identifier; zero-pad numbers when practical."
+    },
+    {
+      "prefix": "R",
+      "field": "biological_replicate",
+      "required": true,
+      "description": "Biological replicate within the experimental group. Technical replicates must use a separate `Tech` field and are not independent samples."
+    },
+    {
+      "prefix": "Trt",
+      "field": "treatment",
+      "required": false,
+      "description": "Treatment, condition, genotype group, or environment; use `TrtControl`, `TrtDrought`, or similarly explicit labels."
+    },
+    {
+      "prefix": "Ti",
+      "field": "time",
+      "required": false,
+      "description": "Time point; use `Ti00`, `Ti06h`, `Ti7d`, or another unit-explicit value."
+    },
+    {
+      "prefix": "B",
+      "field": "batch",
+      "required": false,
+      "description": "Library-preparation, lane, or sequencing batch, for example `B01`."
+    },
+    {
+      "prefix": "Sub",
+      "field": "subject_id",
+      "required": false,
+      "description": "Repeated-measures subject/donor identifier, for example `Sub012`."
+    }
+  ],
+  "rules": [
+    "Use underscores only to separate labelled segments; do not use a bare `T` because it is ambiguous between treatment and time.",
+    "For new synthetic or small studies, use `S###_R##_Trt<level>_Ti<time>_B##` and omit segments that do not apply.",
+    "For established cohorts, preserve original IDs and provide a sample-metadata table mapping them to the canonical fields instead of renaming files.",
+    "Count-matrix column names, alignment sample names, and metadata `sample_id` values must match exactly.",
+    "A metadata table is authoritative; sample IDs are a convenience and must not be the only record of design variables."
+  ],
+  "metadata_columns": {
+    "required": [
+      "sample_id",
+      "biological_replicate"
+    ],
+    "conditional": [
+      "treatment",
+      "time",
+      "batch",
+      "subject_id",
+      "technical_replicate"
+    ],
+    "recommended_order": [
+      "sample_id",
+      "biological_replicate",
+      "treatment",
+      "time",
+      "batch",
+      "subject_id",
+      "technical_replicate"
+    ]
+  }
+}

@@ -1,0 +1,768 @@
+alias	technique	source	strength	case_sensitive
+16S	amplicon_16s	curated	strong	no
+16S amplicon	amplicon_16s	curated	strong	no
+16S amplicon sequencing	amplicon_16s	curated	strong	no
+16s ribosomal gene sequencing	amplicon_16s	OBI:0002763	strong	no
+16S rRNA	amplicon_16s	curated	strong	no
+16S rRNA sequencing assay	amplicon_16s	OBI:0002763	strong	no
+16S sequencing	amplicon_16s	curated	strong	no
+AMPLICON	amplicon_16s	ENA/SRA vocabulary	strong	no
+amplicon sequencing	amplicon_16s	curated	strong	no
+ITS amplicon	amplicon_16s	curated	strong	no
+annotate	annotation	curated	weak	no
+annotate variants	annotation	analysis_catalog	strong	no
+annotation	annotation	curated	weak	no
+candidate genes	annotation	curated	weak	no
+enrichment analysis	annotation	curated	strong	no
+GAF	annotation	curated	strong	yes
+gene annotation / GO	annotation	curated	strong	no
+gene coordinates	annotation	analysis_catalog	strong	no
+gene ontology	annotation	curated	strong	no
+gene set enrichment	annotation	curated	strong	no
+Gene-set enrichment analysis	annotation	EDAM:operation_2436	weak	no
+genes are within	annotation	curated	strong	no
+genes close to	annotation	curated	strong	no
+genes near	annotation	curated	strong	no
+genes overlapping	annotation	curated	strong	no
+genes within	annotation	curated	strong	no
+GFF3	annotation	curated	weak	no
+GO enrichment	annotation	curated	strong	no
+GO mapping	annotation	curated	strong	no
+GO terms	annotation	curated	strong	no
+GSEA	annotation	curated	strong	no
+GTF	annotation	curated	weak	no
+missense	annotation	curated	strong	no
+nearby genes	annotation	curated	strong	no
+nearest genes	annotation	curated	strong	no
+overlapping genes	annotation	curated	strong	no
+SnpEff	annotation	curated	strong	no
+stop gained	annotation	curated	strong	no
+variant effect	annotation	curated	strong	no
+VEP	annotation	curated	strong	yes
+allele-specific expression	ase	curated	strong	no
+allelic expression	ase	curated	strong	no
+allelic imbalance	ase	curated	strong	no
+ASE	ase	curated	strong	yes
+ASE	ase	analysis_catalog	strong	no
+imprinting	ase	curated	weak	no
+assemble	assembly	curated	strong	no
+assemblies	assembly	curated	strong	no
+assembly	assembly	curated	strong	no
+assembly QC	assembly	analysis_catalog	strong	no
+BUSCO	assembly	curated	strong	no
+Canu	assembly	curated	strong	no
+contigs	assembly	curated	weak	no
+de novo assembly	assembly	curated	strong	no
+Flye	assembly	curated	strong	no
+genome assembly	assembly	curated	strong	no
+hifiasm	assembly	curated	strong	no
+hybrid assembly	assembly	curated	strong	no
+N50	assembly	curated	weak	no
+QUAST	assembly	curated	strong	no
+scaffolds	assembly	curated	weak	no
+SPAdes	assembly	curated	strong	no
+Unicycler	assembly	curated	strong	no
+accessible chromatin	atacseq	curated	strong	no
+assay for transposase-accessible chromatin using sequencing	atacseq	OBI:0002039	strong	no
+ATAC	atacseq	curated	strong	no
+ATAC-seq	atacseq	curated	strong	no
+ATAC-seq assay	atacseq	OBI:0002039	strong	no
+ATACseq	atacseq	curated	strong	no
+bulk assay for transposase-accessible chromatin using sequencing	atacseq	OBI:0003089	strong	no
+bulk ATAC-seq	atacseq	OBI:0003089	strong	no
+chromatin accessibility	atacseq	curated	strong	no
+open chromatin	atacseq	curated	strong	no
+binary GWAS	binary_gwas	analysis_catalog	strong	no
+binary trait GWAS	binary_gwas	curated	strong	no
+case-control	binary_gwas	curated	strong	no
+case-control GWAS	binary_gwas	curated	strong	no
+cases and controls	binary_gwas	curated	strong	no
+disease GWAS	binary_gwas	curated	strong	no
+logistic GWAS	binary_gwas	analysis_catalog	strong	no
+logistic regression GWAS	binary_gwas	curated	strong	no
+count simulation	bulk_count_sim	curated	strong	no
+negative binomial counts	bulk_count_sim	curated	strong	no
+negative binomial RNA-seq	bulk_count_sim	analysis_catalog	strong	no
+RNA-seq count simulation	bulk_count_sim	curated	strong	no
+simulate counts	bulk_count_sim	curated	strong	no
+simulate expression	bulk_count_sim	curated	strong	no
+simulate RNA-seq	bulk_count_sim	curated	strong	no
+simulate RNA-seq counts	bulk_count_sim	analysis_catalog	strong	no
+simulated counts	bulk_count_sim	curated	strong	no
+bulk RNA-seq	bulk_rnaseq	curated	strong	no
+bulk RNAseq	bulk_rnaseq	curated	strong	no
+count matrix	bulk_rnaseq	curated	strong	no
+count table	bulk_rnaseq	curated	strong	no
+counts table	bulk_rnaseq	curated	strong	no
+expression data	bulk_rnaseq	curated	weak	no
+mRNA-seq	bulk_rnaseq	curated	strong	no
+read counts	bulk_rnaseq	curated	weak	no
+RNA-seq	bulk_rnaseq	curated	strong	no
+RNA-seq assay	bulk_rnaseq	OBI:0001271	strong	no
+RNA-seq of coding RNA	bulk_rnaseq	EFO:0003738	strong	no
+RNAseq	bulk_rnaseq	curated	strong	no
+transcription profiling by high throughput sequencing	bulk_rnaseq	EFO:0002770	strong	no
+transcription profiling by RNA sequencing	bulk_rnaseq	OBI:0001271	strong	no
+transcriptome	bulk_rnaseq	curated	weak	no
+transcriptome sequencing	bulk_rnaseq	curated	strong	no
+transcriptomics	bulk_rnaseq	curated	strong	no
+CAGE	cage	curated	strong	no
+CAGE-seq	cage	curated	strong	no
+cap analysis of gene expression	cage	curated	strong	no
+ChIP	chipseq	curated	strong	no
+ChIP-seq	chipseq	curated	strong	no
+ChIPseq	chipseq	curated	strong	no
+chromatin immunoprecipitation	chipseq	curated	strong	no
+chromatin immunoprecipitation sequencing assay	chipseq	OBI:0000716	strong	no
+H3K27ac	chipseq	curated	strong	no
+H3K27me3	chipseq	curated	strong	no
+H3K36me3	chipseq	curated	strong	no
+H3K4me1	chipseq	curated	strong	no
+H3K4me3	chipseq	curated	strong	no
+H3K9me3	chipseq	curated	strong	no
+histone ChIP	chipseq	curated	strong	no
+histone modification ChIP-Seq	chipseq	OBI:0002017	strong	no
+histone modification identification by ChIP-Seq	chipseq	OBI:0002017	strong	no
+TF binding	chipseq	curated	strong	no
+TF Binding ChIP-Seq	chipseq	OBI:0002019	strong	no
+transcription factor binding site identification by ChIP-Seq	chipseq	OBI:0002019	strong	no
+10x Multiome	cite_seq	curated	strong	no
+cellular indexing of transcriptomes and epitopes by sequencing	cite_seq	OBI:0003788	strong	no
+CITE-seq	cite_seq	curated	strong	no
+CITE-seq / multiome	cite_seq	curated	strong	no
+CITEseq	cite_seq	curated	strong	no
+multiome	cite_seq	curated	strong	no
+scMultiome	cite_seq	curated	strong	no
+SHARE-seq	cite_seq	curated	strong	no
+CRISPR knockout screen	crispr_screen	curated	strong	no
+CRISPR screen	crispr_screen	curated	strong	no
+CRISPR screens	crispr_screen	curated	strong	no
+CRISPRa screen	crispr_screen	curated	strong	no
+CRISPRi screen	crispr_screen	curated	strong	no
+CROP-seq	crispr_screen	curated	strong	no
+guide RNA library	crispr_screen	curated	strong	no
+in vitro CRISPR screen	crispr_screen	OBI:0003659	strong	no
+in vitro CRISPR screen using single-cell RNA-seq	crispr_screen	OBI:0003660	strong	no
+Perturb-seq	crispr_screen	curated	strong	no
+pooled screen	crispr_screen	curated	strong	no
+sgRNA library	crispr_screen	curated	strong	no
+backcross	cross_design	curated	strong	no
+backcrosses	cross_design	curated	strong	no
+BC1	cross_design	curated	strong	no
+BC2	cross_design	curated	strong	no
+biparental	cross_design	curated	strong	no
+cross / breeding population	cross_design	curated	strong	no
+DH lines	cross_design	curated	strong	no
+doubled haploid	cross_design	curated	strong	no
+doubled haploids	cross_design	curated	strong	no
+F1	cross_design	curated	strong	yes
+F1	cross_design	analysis_catalog	strong	no
+F2	cross_design	curated	strong	yes
+F2	cross_design	analysis_catalog	strong	no
+F2:3	cross_design	curated	strong	no
+founders	cross_design	curated	weak	no
+intercross	cross_design	curated	strong	no
+introgression	cross_design	curated	weak	no
+MAGIC	cross_design	curated	strong	no
+NAM	cross_design	curated	strong	yes
+NAM	cross_design	analysis_catalog	strong	no
+near-isogenic	cross_design	curated	strong	no
+nested association mapping	cross_design	curated	strong	no
+NIL	cross_design	curated	strong	no
+NILs	cross_design	curated	strong	no
+recombinant inbred	cross_design	curated	strong	no
+RIL	cross_design	curated	strong	no
+RILs	cross_design	curated	strong	no
+cleavage under targets and release using nuclease	cut_and_run	OBI:0003033	strong	no
+CUT and RUN	cut_and_run	curated	strong	no
+CUT&RUN	cut_and_run	curated	strong	no
+CUT&RUN assay	cut_and_run	OBI:0003033	strong	no
+CUTandRUN	cut_and_run	curated	strong	no
+cleavage under targets and tagmentation	cut_and_tag	OBI:0003034	strong	no
+CUT and Tag	cut_and_tag	curated	strong	no
+CUT&Tag	cut_and_tag	curated	strong	no
+CUT&Tag assay	cut_and_tag	OBI:0003034	strong	no
+CUT&Tag sequencing	cut_and_tag	EFO:0920004	strong	no
+CUTandTag	cut_and_tag	curated	strong	no
+condition comparison	differential_expression	analysis_catalog	strong	no
+DE analysis	differential_expression	curated	strong	no
+DE genes	differential_expression	curated	weak	no
+DEG	differential_expression	curated	strong	yes
+DEG	differential_expression	analysis_catalog	strong	no
+DEGs	differential_expression	curated	strong	no
+DESeq2	differential_expression	curated	strong	no
+differential expression	differential_expression	curated	strong	no
+Differential gene expression analysis	differential_expression	EDAM:operation_3742	weak	no
+Differential gene expression profiling	differential_expression	EDAM:operation_3223	weak	no
+differentially expressed	differential_expression	curated	strong	no
+edgeR	differential_expression	curated	strong	no
+fold change	differential_expression	curated	weak	no
+limma	differential_expression	curated	strong	no
+limma-voom	differential_expression	curated	strong	no
+log2 fold change	differential_expression	curated	strong	no
+voom	differential_expression	curated	strong	no
+DHS-seq	dnase_seq	curated	strong	no
+DNase I hypersensitive sites sequencing	dnase_seq	OBI:0001853	strong	no
+DNase I hypersensitivity	dnase_seq	curated	strong	no
+DNase-Hypersensitivity	dnase_seq	ENA/SRA vocabulary	strong	no
+DNase-seq	dnase_seq	curated	strong	no
+cis-eQTL	eqtl	curated	strong	no
+cis-eQTLs	eqtl	curated	strong	no
+eQTL	eqtl	curated	strong	no
+eQTL mapping	eqtl	curated	strong	no
+eQTLs	eqtl	curated	strong	no
+expression QTL	eqtl	curated	strong	no
+expression quantitative trait loci	eqtl	curated	strong	no
+FastQTL	eqtl	curated	strong	no
+Gene expression QTL analysis	eqtl	EDAM:operation_3232	weak	no
+MatrixEQTL	eqtl	curated	strong	no
+molecular QTL	eqtl	curated	strong	no
+QTLtools	eqtl	curated	strong	no
+tensorQTL	eqtl	curated	strong	no
+trans-eQTL	eqtl	curated	strong	no
+trans-eQTLs	eqtl	curated	strong	no
+exome	exome	curated	strong	no
+exome sequencing	exome	curated	strong	no
+exomes	exome	curated	strong	no
+targeted exome capture	exome	EFO:0005396	strong	no
+WES	exome	curated	strong	no
+whole exome sequencing	exome	curated	strong	no
+WXS	exome	ENA/SRA vocabulary	strong	no
+FAIRE	faire_seq	curated	strong	no
+FAIRE-seq	faire_seq	curated	strong	no
+ddRAD	gbs	curated	strong	no
+ddRADseq	gbs	curated	strong	no
+GBS	gbs	curated	strong	no
+genotyping-by-sequencing	gbs	curated	strong	no
+genotyping-by-sequencing / RAD-seq	gbs	curated	strong	no
+PE RAD-Seq	gbs	EFO:0008858	strong	no
+RAD-seq	gbs	curated	strong	no
+RADseq	gbs	curated	strong	no
+Bayes B	genomic_prediction	curated	strong	no
+BayesB	genomic_prediction	curated	strong	no
+BayesCpi	genomic_prediction	curated	strong	no
+breeding values	genomic_prediction	curated	strong	no
+cross validation	genomic_prediction	analysis_catalog	strong	no
+cross-validation accuracy	genomic_prediction	curated	strong	no
+GBLUP	genomic_prediction	curated	strong	no
+GEBV	genomic_prediction	curated	strong	no
+GEBVs	genomic_prediction	curated	strong	no
+genomic prediction	genomic_prediction	curated	strong	no
+genomic selection	genomic_prediction	curated	strong	no
+prediction accuracy	genomic_prediction	curated	strong	no
+rrBLUP	genomic_prediction	curated	strong	no
+association analysis	gwas	curated	strong	no
+association mapping	gwas	curated	strong	no
+association study	gwas	curated	strong	no
+BLINK	gwas	curated	strong	no
+EMMAX	gwas	curated	strong	no
+FarmCPU	gwas	curated	strong	no
+GAPIT	gwas	curated	strong	no
+GEMMA	gwas	curated	strong	no
+genome-wide association	gwas	curated	strong	no
+GWAS	gwas	curated	strong	no
+GWAS hits	gwas	curated	strong	no
+GWAS study	gwas	EDAM:topic_3517	weak	no
+marker-trait association	gwas	curated	strong	no
+MLM GWAS	gwas	curated	strong	no
+PLINK association	gwas	curated	strong	no
+REGENIE	gwas	curated	strong	no
+SAIGE	gwas	curated	strong	no
+3C	hic	curated	weak	yes
+4C	hic	curated	weak	yes
+5C	hic	curated	weak	yes
+bulk Hi-C	hic	OBI:0003306	strong	no
+Capture-HiC	hic	EFO:0008674	strong	no
+ChIA-PET	hic	curated	strong	no
+chromatin loops	hic	curated	strong	no
+chromosome conformation capture	hic	curated	strong	no
+contact matrix	hic	curated	strong	no
+Hi-C	hic	curated	strong	no
+HiC	hic	curated	strong	no
+HiChIP	hic	curated	strong	no
+Micro-C	hic	curated	strong	no
+TADs	hic	curated	strong	no
+Tethered Chromatin Conformation Capture	hic	ENA/SRA vocabulary	strong	no
+topologically associating domains	hic	curated	strong	no
+direct RNA sequencing	isoseq	curated	strong	no
+direct RNA-seq	isoseq	OBI:0002629	strong	no
+DRS	isoseq	OBI:0002629	strong	no
+FL-cDNA	isoseq	ENA/SRA vocabulary	strong	no
+full-length transcript sequencing	isoseq	curated	strong	no
+full-length transcripts	isoseq	curated	strong	no
+Iso-Seq	isoseq	curated	strong	no
+isoform sequencing	isoseq	curated	strong	no
+IsoSeq	isoseq	curated	strong	no
+Kinnex	isoseq	curated	weak	no
+long-read isoform sequencing	isoseq	curated	strong	no
+long-read RNA-seq	isoseq	curated	strong	no
+MAS-Seq	isoseq	curated	strong	no
+nanopore direct RNA	isoseq	curated	strong	no
+D prime	ld	curated	strong	no
+Dprime	ld	curated	strong	no
+haplotype blocks	ld	curated	strong	no
+LD	ld	analysis_catalog	strong	no
+LD decay	ld	curated	strong	no
+LD heatmap	ld	curated	strong	no
+linkage disequilibrium	ld	curated	strong	no
+Linkage disequilibrium calculation	ld	EDAM:operation_0488	weak	no
+r2 decay	ld	curated	strong	no
+GC-MS	metabolomics	curated	strong	no
+LC-MS	metabolomics	curated	strong	no
+lipidome	metabolomics	curated	weak	no
+lipidomics	metabolomics	curated	weak	no
+metabolites	metabolomics	curated	weak	no
+metabolome	metabolomics	curated	strong	no
+metabolomics	metabolomics	curated	strong	no
+metabolomics by mass spectrometry	metabolomics	OBI:0003782	strong	no
+5mC	methylation	curated	strong	no
+bisulfite	methylation	curated	strong	no
+bisulfite sequencing	methylation	curated	strong	no
+bisulfite-seq	methylation	curated	strong	no
+differentially methylated regions	methylation	curated	strong	no
+DMRs	methylation	curated	strong	no
+DNA methylation	methylation	curated	strong	no
+DNA methylation profiling by high throughput sequencing	methylation	OBI:0001266	strong	no
+DNA methylation sequencing	methylation	curated	strong	no
+EM-seq	methylation	curated	strong	no
+enzymatic methyl-seq	methylation	curated	strong	no
+MBD-Seq	methylation	ENA/SRA vocabulary	strong	no
+MeDIP	methylation	curated	strong	no
+MeDIP-Seq	methylation	ENA/SRA vocabulary	strong	no
+methylation	methylation	curated	weak	no
+methylome	methylation	curated	strong	no
+MRE-Seq	methylation	ENA/SRA vocabulary	strong	no
+NOMe-Seq	methylation	ENA/SRA vocabulary	strong	no
+reduced representation bisulfite sequencing	methylation	OBI:0001862	strong	no
+reduced representation bisulfite-seq	methylation	OBI:0001862	strong	no
+RRBS	methylation	curated	strong	no
+RRBS assay	methylation	OBI:0001862	strong	no
+Shotgun bisulfite sequencing	methylation	OBI:0001863	strong	no
+shotgun bisulfite-seq	methylation	OBI:0001863	strong	no
+TAB-seq	methylation	OBI:0002086	strong	no
+Tet-assisted bisulfite sequencing	methylation	OBI:0002086	strong	no
+WGBS	methylation	curated	strong	no
+WGSBS	methylation	OBI:0001863	strong	no
+whole genome bisulfite sequencing	methylation	OBI:0001863	strong	no
+whole-genome shotgun bisulfite sequencing	methylation	OBI:0001863	strong	no
+16S analysis	microbiome	analysis_catalog	strong	no
+alpha diversity	microbiome	curated	strong	no
+beta diversity	microbiome	curated	strong	no
+DADA2	microbiome	curated	strong	no
+differential abundance	microbiome	curated	strong	no
+HUMAnN	microbiome	curated	strong	no
+Kraken2	microbiome	curated	strong	no
+metagenome assembly	microbiome	analysis_catalog	strong	no
+MetaPhlAn	microbiome	curated	strong	no
+microbiome	microbiome	curated	strong	no
+microbiome analysis	microbiome	curated	strong	no
+microbiome differential abundance	microbiome	analysis_catalog	strong	no
+microbiota	microbiome	curated	strong	no
+QIIME	microbiome	curated	strong	no
+Taxonomic classification	microbiome	EDAM:operation_3460	weak	no
+taxonomic profiling	microbiome	curated	strong	no
+micrococcal nuclease digestion followed by high throughput sequencing	mnase_seq	OBI:0001924	strong	no
+MNase-seq	mnase_seq	curated	strong	no
+MNase-seq assay	mnase_seq	OBI:0001924	strong	no
+nucleosome positioning	mnase_seq	curated	strong	no
+massively parallel reporter	mpra	curated	strong	no
+massively parallel reporter assay	mpra	curated	strong	no
+MPRA	mpra	curated	strong	no
+STARR-seq	mpra	curated	strong	no
+drought GxE	multiomics	analysis_catalog	strong	no
+genotype by environment	multiomics	curated	strong	no
+GxE	multiomics	curated	weak	no
+GxE multi-omics	multiomics	curated	strong	no
+integrate	multiomics	curated	weak	no
+integration	multiomics	curated	weak	no
+joint simulation	multiomics	curated	strong	no
+mediate	multiomics	curated	strong	no
+mediation	multiomics	curated	strong	no
+multi-omics	multiomics	curated	strong	no
+multi-omics integration	multiomics	curated	strong	no
+multiomics	multiomics	curated	strong	no
+RNA-seq plus GWAS	multiomics	analysis_catalog	strong	no
+GxE GWAS	multitrait_gwas	curated	strong	no
+longitudinal GWAS	multitrait_gwas	curated	strong	no
+multi-trait / longitudinal GWAS	multitrait_gwas	curated	strong	no
+multi-trait GWAS	multitrait_gwas	curated	strong	no
+multitrait GWAS	multitrait_gwas	curated	strong	no
+multivariate GWAS	multitrait_gwas	curated	strong	no
+repeated measures GWAS	multitrait_gwas	curated	strong	no
+Genomic run-on sequencing	nascent_rna	EFO:0005227	strong	no
+Global run-on sequencing	nascent_rna	EFO:0005227	strong	no
+GRO-seq	nascent_rna	curated	strong	no
+nascent RNA sequencing	nascent_rna	curated	strong	no
+nascent transcription	nascent_rna	curated	strong	no
+PRO-cap	nascent_rna	curated	strong	no
+PRO-seq	nascent_rna	curated	strong	no
+run-on sequencing	nascent_rna	curated	strong	no
+call peaks	peak_analysis	curated	strong	no
+csaw	peak_analysis	curated	strong	no
+DiffBind	peak_analysis	curated	strong	no
+differential accessibility	peak_analysis	curated	strong	no
+differential binding	peak_analysis	curated	strong	no
+MACS2	peak_analysis	curated	strong	no
+MACS3	peak_analysis	curated	strong	no
+peak calling	peak_analysis	curated	strong	no
+peak calling / differential binding	peak_analysis	curated	strong	no
+peaks	peak_analysis	curated	weak	no
+THOR	peak_analysis	curated	strong	no
+brother-sister mating	pedigree_inbreeding	curated	strong	no
+consanguineous	pedigree_inbreeding	curated	strong	no
+consanguinity	pedigree_inbreeding	curated	strong	no
+first-cousin	pedigree_inbreeding	curated	strong	no
+full-sib mating	pedigree_inbreeding	curated	strong	no
+heterozygosity	pedigree_inbreeding	curated	weak	no
+homozygosity	pedigree_inbreeding	curated	weak	no
+inbreeding	pedigree_inbreeding	curated	strong	no
+inbreeding / pedigree	pedigree_inbreeding	curated	strong	no
+inbreeding coefficient	pedigree_inbreeding	curated	strong	no
+pedigree	pedigree_inbreeding	curated	weak	no
+pedigree F	pedigree_inbreeding	curated	strong	no
+ROH	pedigree_inbreeding	curated	strong	yes
+ROH	pedigree_inbreeding	analysis_catalog	strong	no
+runs of homozygosity	pedigree_inbreeding	curated	strong	no
+second-cousin	pedigree_inbreeding	curated	strong	no
+selfing generations	pedigree_inbreeding	curated	strong	no
+sib mating	pedigree_inbreeding	curated	strong	no
+binomial phenotype	phenotype_sim	analysis_catalog	strong	no
+count trait	phenotype_sim	curated	strong	no
+heritability	phenotype_sim	curated	weak	no
+liability model	phenotype_sim	curated	strong	no
+liability threshold	phenotype_sim	curated	strong	no
+liability trait	phenotype_sim	analysis_catalog	strong	no
+maternal effect	phenotype_sim	curated	strong	no
+negative binomial phenotype	phenotype_sim	analysis_catalog	strong	no
+normal phenotype	phenotype_sim	analysis_catalog	strong	no
+ordinal trait	phenotype_sim	curated	strong	no
+phenotype simulation	phenotype_sim	curated	strong	no
+simulate a phenotype	phenotype_sim	curated	strong	no
+simulate phenotypes	phenotype_sim	curated	strong	no
+simulated trait	phenotype_sim	curated	strong	no
+time-to-event	phenotype_sim	analysis_catalog	strong	no
+CCS	platform_hifi	curated	weak	yes
+circular consensus reads	platform_hifi	curated	strong	no
+circular consensus sequencing	platform_hifi	curated	strong	no
+HiFi	platform_hifi	curated	strong	no
+HiFi reads	platform_hifi	curated	strong	no
+PacBio	platform_hifi	curated	weak	no
+PacBio HiFi	platform_hifi	curated	strong	no
+PacBio HiFi (instrument unspecified)	platform_hifi	curated	strong	no
+PacBio Sequel series	platform_hifi	OBI:0003923	strong	no
+PacBio Sequel series instrument	platform_hifi	OBI:0003923	strong	no
+Sequel series	platform_hifi	OBI:0003923	strong	no
+HiSeq	platform_illumina_other	curated	strong	no
+HiSeq 2000	platform_illumina_other	OBI:0002001	strong	no
+HiSeq 2500	platform_illumina_other	OBI:0002002	strong	no
+Illumina	platform_illumina_other	curated	weak	no
+Illumina (other instruments)	platform_illumina_other	curated	strong	no
+Illumina HiSeq 2000	platform_illumina_other	OBI:0002001	strong	no
+Illumina HiSeq 2500	platform_illumina_other	OBI:0002002	strong	no
+Illumina HiSeq 4000	platform_illumina_other	ENA/SRA vocabulary	strong	no
+Illumina HiSeq X	platform_illumina_other	ENA/SRA vocabulary	strong	no
+Illumina NextSeq 500	platform_illumina_other	OBI:0002021	strong	no
+Illumina NovaSeq 6000	platform_illumina_other	OBI:0002630	strong	no
+iSeq	platform_illumina_other	curated	strong	no
+NextSeq 500	platform_illumina_other	curated	strong	no
+NextSeq 550	platform_illumina_other	curated	strong	no
+NovaSeq 6000	platform_illumina_other	curated	strong	no
+Illumina MiSeq	platform_miseq	curated	strong	no
+MiSeq	platform_miseq	curated	strong	no
+Illumina MiSeq i100	platform_miseq_i100	curated	strong	no
+MiSeq i100	platform_miseq_i100	curated	strong	no
+GridION	platform_nanopore	curated	strong	no
+MinION	platform_nanopore	curated	strong	no
+nanopore	platform_nanopore	curated	strong	no
+ONT	platform_nanopore	curated	weak	yes
+ONT MinION, MinION	platform_nanopore	OBI:0002750	strong	no
+Oxford Nanopore	platform_nanopore	curated	strong	no
+Oxford Nanopore GridION Mk1	platform_nanopore	OBI:0002751	strong	no
+Oxford Nanopore GridION X5, GridION Mk1	platform_nanopore	OBI:0002751	strong	no
+Oxford Nanopore MinION	platform_nanopore	OBI:0002750	strong	no
+Oxford Nanopore PromethION	platform_nanopore	OBI:0002752	strong	no
+PromethION	platform_nanopore	curated	strong	no
+ultra-long reads	platform_nanopore	curated	strong	no
+Illumina NextSeq 1000	platform_nextseq_2000	OBI:0003606	strong	no
+Illumina NextSeq 1000/2000	platform_nextseq_2000	curated	strong	no
+Illumina NextSeq 2000	platform_nextseq_2000	EFO:0010963	strong	no
+NextSeq 1000	platform_nextseq_2000	curated	strong	no
+NextSeq 1000/2000	platform_nextseq_2000	curated	strong	no
+NextSeq 2000	platform_nextseq_2000	curated	strong	no
+Illumina NovaSeq X	platform_novaseq_x	curated	strong	no
+Illumina NovaSeq X Plus	platform_novaseq_x	OBI:0003664	strong	no
+NovaSeq X	platform_novaseq_x	curated	strong	no
+NovaSeq X Plus	platform_novaseq_x	curated	strong	no
+NovaSeq X Series	platform_novaseq_x	OBI:0003663	strong	no
+NovaSeq X System	platform_novaseq_x	OBI:0003663	strong	no
+NovaSeqX	platform_novaseq_x	curated	strong	no
+PacBio Revio	platform_revio	EFO:0920006	strong	no
+PacBio Revio HiFi	platform_revio	curated	strong	no
+Pacific Biosciences Revio	platform_revio	EFO:0920006	strong	no
+Revio	platform_revio	curated	strong	no
+PacBio Sequel IIe	platform_sequel_iie	OBI:0003921	strong	no
+PacBio Sequel IIe HiFi	platform_sequel_iie	curated	strong	no
+Pacific Biosciences Sequel IIe	platform_sequel_iie	OBI:0003921	strong	no
+Sequel II	platform_sequel_iie	curated	strong	no
+Sequel IIe	platform_sequel_iie	curated	strong	no
+ADMIXTURE	population_structure	curated	strong	no
+FST	population_structure	curated	strong	no
+GRM	population_structure	curated	strong	yes
+IBD	population_structure	curated	strong	yes
+identity by descent	population_structure	curated	strong	no
+kinship	population_structure	curated	strong	no
+kinship matrix	population_structure	curated	strong	no
+PCA	population_structure	curated	weak	no
+PCA genetics	population_structure	analysis_catalog	strong	no
+population structure	population_structure	curated	strong	no
+principal components	population_structure	curated	weak	no
+relatedness	population_structure	curated	weak	no
+STRUCTURE	population_structure	curated	strong	no
+DIA proteomics	proteomics	curated	strong	yes
+iTRAQ	proteomics	curated	strong	no
+label-free quantification	proteomics	curated	strong	no
+LFQ	proteomics	curated	strong	yes
+mass spectrometry proteomics	proteomics	curated	strong	no
+Olink	proteomics	curated	strong	no
+phosphoproteomics	proteomics	curated	strong	no
+plasma proteomics	proteomics	OBI:0003229	strong	no
+protein abundance	proteomics	curated	weak	no
+proteome	proteomics	curated	strong	no
+proteomic profiling by array	proteomics	OBI:0001318	strong	no
+proteomics	proteomics	curated	strong	no
+proteomics by mass spectrometry	proteomics	OBI:0003781	strong	no
+SomaScan	proteomics	curated	strong	no
+TMT	proteomics	curated	strong	yes
+CIM	qtl_mapping	curated	strong	yes
+composite interval mapping	qtl_mapping	curated	strong	no
+Genetic mapping	qtl_mapping	EDAM:operation_0282	weak	no
+interval mapping	qtl_mapping	curated	strong	no
+linkage mapping	qtl_mapping	curated	strong	no
+linkage QTL mapping	qtl_mapping	curated	strong	no
+LOD score	qtl_mapping	curated	strong	no
+multiple QTL mapping	qtl_mapping	curated	strong	no
+QTL mapping	qtl_mapping	curated	strong	no
+qtl2	qtl_mapping	curated	strong	no
+R/qtl	qtl_mapping	curated	strong	no
+burden test	rare_variant	curated	strong	no
+burden tests	rare_variant	curated	strong	no
+gene-based association	rare_variant	curated	strong	no
+gene-based GWAS	rare_variant	analysis_catalog	strong	no
+gene-based test	rare_variant	curated	strong	no
+rare variant association	rare_variant	curated	strong	no
+rare variants	rare_variant	curated	strong	no
+rare-variant / gene-based tests	rare_variant	curated	strong	no
+SKAT	rare_variant	curated	strong	no
+SKAT-O	rare_variant	curated	strong	no
+ART	read_sim	curated	strong	yes
+Badread	read_sim	curated	strong	no
+InSilicoSeq	read_sim	curated	strong	no
+NanoSim	read_sim	curated	strong	no
+PBSIM	read_sim	curated	strong	no
+read simulation	read_sim	curated	strong	no
+simulate HiFi reads	read_sim	analysis_catalog	strong	no
+simulate Illumina reads	read_sim	analysis_catalog	strong	no
+simulate Nanopore reads	read_sim	analysis_catalog	strong	no
+simulate reads	read_sim	curated	strong	no
+simulate sequencing reads	read_sim	curated	strong	no
+simulated reads	read_sim	curated	strong	no
+cryptic relatedness	relatedness_calibration	curated	strong	no
+genomic inflation	relatedness_calibration	curated	strong	no
+GWAS inflation	relatedness_calibration	curated	strong	no
+inbred GWAS calibration	relatedness_calibration	analysis_catalog	strong	no
+kinship GWAS	relatedness_calibration	analysis_catalog	strong	no
+lambda GC	relatedness_calibration	curated	strong	no
+relatedness calibration	relatedness_calibration	curated	strong	no
+relatedness GWAS	relatedness_calibration	analysis_catalog	strong	no
+relatedness GWAS calibration	relatedness_calibration	curated	strong	no
+active mRNA translation sequencing	ribo_seq	EFO:0008891	strong	no
+ARTSeq	ribo_seq	EFO:0008891	strong	no
+polysome profiling	ribo_seq	curated	strong	no
+Ribo-seq	ribo_seq	curated	strong	no
+Ribo-seq (ribosome profiling)	ribo_seq	curated	strong	no
+Ribo-seq assay	ribo_seq	OBI:0002038	strong	no
+Riboseq	ribo_seq	curated	strong	no
+ribosomal profiling	ribo_seq	OBI:0002038	strong	no
+ribosomal profiling by sequencing	ribo_seq	OBI:0002038	strong	no
+ribosome footprinting	ribo_seq	curated	strong	no
+ribosome profiling	ribo_seq	curated	strong	no
+translation efficiency	ribo_seq	curated	strong	no
+translational efficiency	ribo_seq	curated	strong	no
+how many mice	rnaseq_power	curated	weak	no
+how many plants	rnaseq_power	curated	weak	no
+how many replicates	rnaseq_power	curated	weak	no
+how many samples	rnaseq_power	curated	weak	no
+power analysis	rnaseq_power	curated	weak	no
+powsimR	rnaseq_power	curated	strong	no
+PROPER	rnaseq_power	curated	strong	no
+RNA-seq power	rnaseq_power	analysis_catalog	strong	no
+RNA-seq power / sample size	rnaseq_power	curated	strong	no
+RNA-seq sample size	rnaseq_power	analysis_catalog	strong	no
+RNASeqPower	rnaseq_power	curated	strong	no
+sample size	rnaseq_power	curated	weak	no
+statistical power	rnaseq_power	curated	weak	no
+scATAC	sc_atacseq	curated	strong	no
+scATAC-seq	sc_atacseq	curated	strong	no
+single-cell ATAC	sc_atacseq	curated	strong	no
+single-cell ATAC-seq	sc_atacseq	curated	strong	no
+single-nucleus ATAC-seq	sc_atacseq	OBI:0002762	strong	no
+snATAC-seq	sc_atacseq	curated	strong	no
+cell-type eQTL	sc_eqtl	curated	strong	no
+cell-type-specific eQTL	sc_eqtl	curated	strong	no
+pseudobulk eQTL	sc_eqtl	curated	strong	no
+sc-eQTL	sc_eqtl	curated	strong	no
+single-cell / cell-type eQTL	sc_eqtl	curated	strong	no
+single-cell eQTL	sc_eqtl	curated	strong	no
+cell annotation	scrna_analysis	curated	strong	no
+cell type annotation	scrna_analysis	curated	strong	no
+cluster cells	scrna_analysis	curated	strong	no
+clustering	scrna_analysis	curated	weak	no
+find markers	scrna_analysis	curated	strong	no
+integration of batches	scrna_analysis	curated	strong	no
+marker genes	scrna_analysis	curated	strong	no
+pseudobulk	scrna_analysis	curated	strong	no
+pseudobulk DE	scrna_analysis	curated	strong	no
+Scanpy	scrna_analysis	curated	strong	no
+scRNA-seq analysis	scrna_analysis	curated	strong	no
+Seurat	scrna_analysis	curated	strong	no
+single-cell DE	scrna_analysis	analysis_catalog	strong	no
+ambient RNA	scrna_sim	curated	strong	no
+doublet rate	scrna_sim	curated	strong	no
+dropout rate	scrna_sim	curated	strong	no
+dropout simulation	scrna_sim	analysis_catalog	strong	no
+scRNA-seq simulation	scrna_sim	curated	strong	no
+simulate scRNA-seq	scrna_sim	curated	strong	no
+simulate single-cell	scrna_sim	curated	strong	no
+simulated single-cell	scrna_sim	curated	strong	no
+10x scRNA	scrnaseq	curated	strong	no
+10x single cell	scrnaseq	curated	strong	no
+cell types	scrnaseq	curated	weak	no
+cells per donor	scrnaseq	curated	strong	no
+Drop-seq	scrnaseq	OBI:0003376	strong	no
+droplet scRNA-seq	scrnaseq	curated	strong	no
+droplet-based single-cell RNA sequencing	scrnaseq	OBI:0003376	strong	no
+Dropseq	scrnaseq	OBI:0003376	strong	no
+scRNA-seq	scrnaseq	curated	strong	no
+scRNAseq	scrnaseq	curated	strong	no
+single cell	scrnaseq	curated	weak	no
+single nucleus RNA sequencing	scrnaseq	EFO:0009809	strong	no
+single nucleus RNA-seq	scrnaseq	curated	strong	no
+single-cell RNA sequencing	scrnaseq	EFO:0008913	strong	no
+single-cell RNA sequencing assay	scrnaseq	OBI:0002631	strong	no
+single-cell RNA-seq	scrnaseq	curated	strong	no
+single-cell transcription profiling by RNA sequencing	scrnaseq	OBI:0002631	strong	no
+single-cell transcriptome sequencing	scrnaseq	EFO:0008913	strong	no
+snRNA-seq	scrnaseq	curated	strong	no
+domestication sweep	selection_scan	curated	strong	no
+iHS	selection_scan	curated	strong	no
+PBS	selection_scan	curated	strong	yes
+PBS	selection_scan	analysis_catalog	strong	no
+Selection detection	selection_scan	EDAM:operation_3950	weak	no
+selection scan	selection_scan	curated	strong	no
+selective sweep	selection_scan	curated	strong	no
+selective sweeps	selection_scan	curated	strong	no
+signatures of selection	selection_scan	curated	strong	no
+Tajima's D	selection_scan	curated	strong	no
+XP-EHH	selection_scan	curated	strong	no
+XPEHH	selection_scan	curated	strong	no
+metagenome	shotgun_metagenomics	curated	strong	no
+metagenomic	shotgun_metagenomics	curated	strong	no
+metagenomics	shotgun_metagenomics	curated	strong	no
+shotgun metagenomics	shotgun_metagenomics	curated	strong	no
+whole metagenome sequencing	shotgun_metagenomics	curated	strong	no
+WMS	shotgun_metagenomics	OBI:0002623	strong	no
+microRNA sequencing	small_rnaseq	curated	strong	no
+miRNA-seq	small_rnaseq	curated	strong	no
+ncRNA-Seq	small_rnaseq	ENA/SRA vocabulary	strong	no
+short RNA-seq	small_rnaseq	OBI:0002112	strong	no
+small RNA / miRNA sequencing	small_rnaseq	curated	strong	no
+small RNA sequencing	small_rnaseq	OBI:0002112	strong	no
+small RNA-seq	small_rnaseq	curated	strong	no
+sRNA-seq	small_rnaseq	curated	strong	no
+Axiom array	snp_array	curated	strong	no
+BeadChip	snp_array	curated	strong	no
+DNA sequence variation detection by snp array	snp_array	OBI:0002031	strong	no
+genotyping array	snp_array	curated	strong	no
+genotyping by SNP array	snp_array	OBI:0002031	strong	no
+SNP array	snp_array	curated	strong	no
+SNP array genotyping	snp_array	curated	strong	no
+SNP chip	snp_array	curated	strong	no
+SNP chip data	snp_array	curated	strong	no
+10x Visium	spatial	curated	strong	no
+CosMx	spatial	curated	strong	no
+MERFISH	spatial	curated	strong	no
+multiplexed error-robust fluorescence in situ hybridization	spatial	OBI:0003604	strong	no
+Slide-seq	spatial	curated	strong	no
+spatial gene expression	spatial	curated	strong	no
+spatial omics	spatial	curated	strong	no
+spatial transcriptomics	spatial	curated	strong	no
+Stereo-seq	spatial	curated	strong	no
+Visium	spatial	curated	strong	no
+Visium HD	spatial	curated	strong	no
+Visium Spatial Gene Expression	spatial	EFO:0010961	strong	no
+Xenium	spatial	curated	strong	no
+alternative splicing	splicing	curated	strong	no
+DEXSeq	splicing	curated	strong	no
+differential exon usage	splicing	curated	strong	no
+differential splicing	splicing	curated	strong	no
+DRIMSeq	splicing	curated	strong	no
+exon usage	splicing	curated	weak	no
+isoform switch	splicing	curated	strong	no
+isoform switching	splicing	curated	strong	no
+IsoformSwitchAnalyzeR	splicing	curated	strong	no
+junction usage	splicing	curated	strong	no
+LeafCutter	splicing	curated	strong	no
+rMATS	splicing	curated	strong	no
+RNA splicing	splicing	EDAM:topic_3320	weak	no
+splicing	splicing	curated	weak	no
+Splicing analysis	splicing	EDAM:operation_2499	weak	no
+SUPPA	splicing	curated	strong	no
+isoform-usage QTL	sqtl	curated	strong	no
+junction QTL	sqtl	curated	strong	no
+splice QTL	sqtl	curated	strong	no
+splicing QTL	sqtl	curated	strong	no
+sQTL	sqtl	curated	strong	no
+sQTLs	sqtl	curated	strong	no
+ImpulseDE2	time_series	curated	strong	no
+longitudinal RNA-seq	time_series	analysis_catalog	strong	no
+maSigPro	time_series	curated	strong	no
+time course	time_series	curated	strong	no
+time course RNA-seq	time_series	analysis_catalog	strong	no
+time points	time_series	curated	weak	no
+time series	time_series	curated	strong	no
+time series RNA-seq	time_series	analysis_catalog	strong	no
+time-series expression	time_series	curated	strong	no
+timepoints	time_series	curated	weak	no
+trajectory expression	time_series	analysis_catalog	strong	no
+bcftools call	variant_calling	curated	strong	no
+call variants	variant_calling	curated	strong	no
+CNV calling	variant_calling	curated	strong	no
+de novo variants	variant_calling	curated	strong	no
+DeepVariant	variant_calling	curated	strong	no
+FreeBayes	variant_calling	curated	strong	no
+GATK	variant_calling	curated	strong	no
+HaplotypeCaller	variant_calling	curated	strong	no
+indel calling	variant_calling	curated	strong	no
+joint calling	variant_calling	curated	strong	no
+joint-call	variant_calling	curated	strong	no
+Mutect2	variant_calling	curated	strong	no
+Sniffles	variant_calling	curated	strong	no
+SNP calling	variant_calling	curated	strong	no
+SNP detection	variant_calling	EDAM:operation_0484	weak	no
+SNV calling	variant_calling	curated	strong	no
+somatic variants	variant_calling	curated	strong	no
+structural variant calling	variant_calling	analysis_catalog	strong	no
+structural variants	variant_calling	curated	strong	no
+SV calling	variant_calling	curated	strong	no
+variant calling	variant_calling	curated	strong	no
+FASTQ	wgs	curated	weak	no
+FASTQs	wgs	curated	weak	no
+long reads	wgs	curated	weak	no
+long-read	wgs	curated	weak	no
+resequencing	wgs	curated	weak	no
+sequencing reads	wgs	curated	strong	no
+short reads	wgs	curated	weak	no
+short-read	wgs	curated	weak	no
+WGS	wgs	curated	strong	no
+whole genome resequencing	wgs	curated	strong	no
+whole-genome sequencing	wgs	curated	strong	no

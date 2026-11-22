@@ -1,0 +1,70 @@
+technique	kind	label	routes_to	candidates	set_parameter	support	ontology_ids	notes
+bulk_rnaseq	assay	bulk RNA-seq		bulk_counts_simulation;differential_expression;time_series_rnaseq;alternative_splicing;allele_specific_expression;bulk_eqtl;rnaseq_power		ask_which_analysis	EFO:0008896;EFO:0002770;EFO:0003738;OBI:0001271;OBI:0003090	AGENTS.md: RNA-seq alone does not choose an analysis; ask the goal.
+small_rnaseq	assay	small RNA / miRNA sequencing				not_supported	OBI:0002112	Not a catalog workflow yet.
+scrnaseq	assay	single-cell RNA-seq		scrnaseq_simulation;scrnaseq_analysis;single_cell_eqtl		ask_which_analysis	EFO:0008913;EFO:0009809;OBI:0002631;OBI:0003376	
+atacseq	assay	ATAC-seq	chipseq_atacseq		assay=atacseq	partial	EFO:0007045;OBI:0002039;OBI:0003089	
+sc_atacseq	assay	single-cell ATAC-seq				not_supported	OBI:0002764;OBI:0002762	Bulk ATAC is supported; single-cell ATAC is not.
+chipseq	assay	ChIP-seq	chipseq_atacseq		assay=chipseq	partial	EFO:0002692;OBI:0000716;OBI:0002017;OBI:0002019	
+cut_and_run	assay	CUT&RUN				not_supported	EFO:0009973;OBI:0003033	Related to ChIP-seq but a different assay; not supported.
+cut_and_tag	assay	CUT&Tag				not_supported	EFO:0920004;OBI:0003034	Related to ChIP-seq but a different assay; not supported.
+dnase_seq	assay	DNase-seq				not_supported	OBI:0001853	
+mnase_seq	assay	MNase-seq				not_supported	OBI:0001924	
+faire_seq	assay	FAIRE-seq				not_supported		
+hic	assay	Hi-C				not_supported	EFO:0007693;OBI:0002440;OBI:0003306;EFO:0008674	
+ribo_seq	assay	Ribo-seq (ribosome profiling)				not_supported	EFO:0008891;OBI:0002038	Must not route to RNA-seq DE.
+methylation	assay	DNA methylation sequencing				not_supported	OBI:0000748;OBI:0001862;OBI:0001863;OBI:0001266;OBI:0002086	
+spatial	assay	spatial transcriptomics				not_supported	EFO:0008994;EFO:0010961;OBI:0003107;OBI:0003604	
+isoseq	assay	long-read isoform sequencing				not_supported	OBI:0002575;OBI:0002629	
+proteomics	assay	proteomics				not_supported	OBI:0003781;OBI:0003229;OBI:0001318	
+metabolomics	assay	metabolomics				not_supported	OBI:0003782	
+crispr_screen	assay	CRISPR screen				not_supported	OBI:0003659;OBI:0003660;EFO:0008860	
+cite_seq	assay	CITE-seq / multiome				not_supported	OBI:0003788	
+mpra	assay	massively parallel reporter assay				not_supported	OBI:0002675	
+nascent_rna	assay	nascent RNA sequencing				not_supported	EFO:0005227;EFO:0008869	
+cage	assay	CAGE				not_supported	OBI:0001674	
+wgs	assay	whole-genome sequencing		read_simulation;genome_assembly;variant_calling		ask_which_analysis	OBI:0002117	
+exome	assay	exome sequencing		variant_calling;rare_variant_and_gene_based_gwas		ask_which_analysis	EFO:0005396;OBI:0002118	
+snp_array	assay	SNP array genotyping		quantitative_gwas;binary_gwas;population_structure;genomic_prediction		ask_which_analysis	EFO:0002703;OBI:0002031	
+gbs	assay	genotyping-by-sequencing / RAD-seq		variant_calling;quantitative_gwas;population_structure		ask_which_analysis	EFO:0008707;EFO:0008858	
+amplicon_16s	assay	16S amplicon sequencing	microbiome_analysis		assay=16S_amplicon	planned	OBI:0002763	
+shotgun_metagenomics	assay	shotgun metagenomics	microbiome_analysis		assay=shotgun_metagenomics	planned	OBI:0002623	
+platform_novaseq_x	platform	Illumina NovaSeq X	read_simulation		platform=NovaSeq_X	partial	OBI:0003663;OBI:0003664	
+platform_nextseq_2000	platform	Illumina NextSeq 1000/2000	read_simulation		platform=NextSeq_1000_2000	partial	OBI:0003606;EFO:0010963	
+platform_miseq	platform	Illumina MiSeq	read_simulation		platform=MiSeq	partial	OBI:0002003	
+platform_miseq_i100	platform	Illumina MiSeq i100	read_simulation		platform=MiSeq_i100	partial	EFO:0920010	
+platform_sequel_iie	platform	PacBio Sequel IIe HiFi	read_simulation		platform=Sequel_IIe_HiFi	partial	OBI:0003921	
+platform_revio	platform	PacBio Revio HiFi	read_simulation		platform=Revio_HiFi	partial	EFO:0920006;OBI:0003922	
+platform_hifi	platform	PacBio HiFi (instrument unspecified)		read_simulation;genome_assembly		ask_which_analysis	OBI:0003923	Platform must be asked: Revio or Sequel IIe.
+platform_nanopore	platform	Oxford Nanopore		read_simulation;genome_assembly		ask_which_analysis	OBI:0002750;OBI:0002751;OBI:0002752	Not in the read_simulation platform enum yet; tutorial has a nanopore example.
+platform_illumina_other	platform	Illumina (other instruments)		read_simulation;variant_calling		ask_which_analysis	OBI:0002630;OBI:0002001;OBI:0002002;OBI:0002021	Not in the read_simulation platform enum; ask or map to the nearest supported instrument.
+gwas	analysis	GWAS		quantitative_gwas;binary_gwas		ask_which_analysis	EDAM:topic_3517	Trait type decides quantitative vs binary.
+binary_gwas	analysis	case-control GWAS	binary_gwas			partial		
+multitrait_gwas	analysis	multi-trait / longitudinal GWAS	multitrait_longitudinal_gwas			planned		
+rare_variant	analysis	rare-variant / gene-based tests	rare_variant_and_gene_based_gwas			planned		
+relatedness_calibration	analysis	relatedness GWAS calibration	population_relatedness_gwas_calibration			knowledge_catalog_only		
+eqtl	analysis	eQTL mapping	bulk_eqtl			planned	EDAM:operation_3232	
+sqtl	analysis	splicing QTL	splicing_qtl			planned		
+sc_eqtl	analysis	single-cell / cell-type eQTL	single_cell_eqtl			partial		
+qtl_mapping	analysis	linkage QTL mapping	linkage_qtl			planned	EDAM:operation_0282	
+differential_expression	analysis	differential expression	differential_expression			knowledge_catalog_only	EDAM:operation_3223;EDAM:operation_3742	
+time_series	analysis	time-series expression	time_series_rnaseq			planned		
+splicing	analysis	alternative splicing	alternative_splicing			knowledge_catalog_only	EDAM:operation_2499;EDAM:topic_3320	
+ase	analysis	allele-specific expression	allele_specific_expression			planned		
+rnaseq_power	analysis	RNA-seq power / sample size	rnaseq_power			knowledge_catalog_only		Power words route here only together with RNA-seq; otherwise ask.
+peak_analysis	analysis	peak calling / differential binding	chipseq_atacseq			partial	EDAM:operation_3222	
+read_sim	analysis	read simulation	read_simulation			partial		
+assembly	analysis	genome assembly	genome_assembly			partial	EDAM:operation_0525;EDAM:operation_3440	
+variant_calling	analysis	variant calling	variant_calling			planned	EDAM:operation_3227;EDAM:operation_0484	
+annotation	analysis	gene annotation / GO	gene_coordinate_annotation			partial	EDAM:operation_2436;EDAM:operation_3501	
+genomic_prediction	analysis	genomic prediction	genomic_prediction			partial		
+population_structure	analysis	population structure	population_structure			planned		
+ld	analysis	linkage disequilibrium	linkage_disequilibrium			planned	EDAM:operation_0488	
+selection_scan	analysis	selection scan	selection_scan			planned	EDAM:operation_3950	
+microbiome	analysis	microbiome analysis	microbiome_analysis			planned	EDAM:topic_3174;EDAM:operation_3460	
+pedigree_inbreeding	analysis	inbreeding / pedigree	pedigree_inbreeding			planned		
+cross_design	analysis	cross / breeding population	cross_design			partial		
+phenotype_sim	analysis	phenotype simulation	phenotype_outcome_model			partial		
+multiomics	analysis	multi-omics integration	gxe_multiomics			partial		
+scrna_sim	analysis	scRNA-seq simulation	scrnaseq_simulation			partial		
+scrna_analysis	analysis	scRNA-seq analysis	scrnaseq_analysis			partial		
+bulk_count_sim	analysis	RNA-seq count simulation	bulk_counts_simulation			partial		

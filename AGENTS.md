@@ -22,8 +22,8 @@ known truth, for an experiment that Biodes has designed.
 **Simitall does not read prompts.** Biodes reads the user's words; Simitall
 reads Biodes' StudySpec fields. The old prompt readers (keyword spec, legacy
 router, lexicon reader, BERT tagger, capability catalog) and `simitall_ask()`
-were removed on 2026-11-22; the last version with them is tag
-`v0.1-pre-biodes`. Do not add a new prompt reader here: a missing field is
+were removed on 2026-11-22 and saved in `old_model/` (not built, loaded or
+tested; `old_model/README.md` says how to run them). Do not add a new prompt reader here: a missing field is
 added in Biodes (BioDesignGPT `docs/SUITE_INTEGRATION.md`).
 
 ## Collaboration Rules
@@ -66,7 +66,7 @@ Biodes design folder (study_spec.json, field_layout.csv, sample_metadata_templat
 | From a question | `R/suite_question.R` | `simitall_from_question()` asks Biodes (`studyforge_ask`), builds the layout, simulates, fits. |
 | Fit, power, figures | `R/suite_analyze.R`, `R/suite_power.R`, `R/suite_figures.R` | Bioana, power sweep, Biopaint. |
 | Simulators | `R/*_api.R`, `R/internal_*.R`, `R/peak_studies.R`, `R/scrna_studies.R`, `R/breeding_*.R` | The package simulators the routes call. |
-| Shiny app | `inst/shiny/simitall-agent/` | **Paused.** It ran on the removed prompt readers; run it from tag `v0.1-pre-biodes`. |
+| Old reader + Shiny app | `old_model/` | **Paused.** Saved copy of the removed prompt readers and the Shiny agent; excluded from the package. |
 
 ### Adding a simulator
 
