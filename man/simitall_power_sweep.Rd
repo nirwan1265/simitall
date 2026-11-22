@@ -13,7 +13,8 @@ simitall_power_sweep(
   residual_sd = NULL,
   seed = 1,
   max_minutes = NULL,
-  interaction_effect = NULL
+  interaction_effect = NULL,
+  show = interactive()
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ simitall_power_sweep(
 
 \item{max_minutes}{Stop before running when the sweep is estimated to take
 longer (one fit is timed first).}
+
+\item{show}{Show the power figure in the plot window (default: in
+interactive sessions); \code{plot(ps)} shows it again.}
 }
 \value{
 Invisibly, a data frame (reps, n_units, term, factor, role,

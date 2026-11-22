@@ -7,7 +7,9 @@
 biopaint_biodes(
   dir,
   outdir = NULL,
-  which = c("layout", "outcome", "recovery", "power", "volcano")
+  which = c("layout", "outcome", "recovery", "power", "volcano"),
+  show = interactive(),
+  save = TRUE
 )
 }
 \arguments{
@@ -16,9 +18,14 @@ biopaint_biodes(
 \item{outdir}{Where to write the PNGs. Default \verb{<dir>/figures}.}
 
 \item{which}{Figures to draw (default: all that the folder has data for).}
+
+\item{show}{Show the figures in the plot window (default: in interactive sessions).}
+
+\item{save}{Write the PNG files.}
 }
 \value{
-Invisibly, the paths written.
+Invisibly, the paths written (named by figure), with the ggplot
+objects in \code{attr(, "plots")}.
 }
 \description{
 Draws the standard figures from whatever files are in a design folder; the
@@ -38,6 +45,11 @@ truth (\code{recovery.tsv});
 \item \code{power.png}: power against replication per model term (\code{power_sweep.tsv});
 \item \code{volcano.png}: per-gene results for count assays (\code{de_results.tsv}).
 }
+
+In an interactive session (RStudio, R console) the figures are also shown
+in the plot window, one after another; in RStudio use the arrows of the
+Plots pane to page through them. \code{plot(r)} on a \code{\link[=simitall_from_question]{simitall_from_question()}}
+result and \code{plot(ps)} on a \code{\link[=simitall_power_sweep]{simitall_power_sweep()}} result show them again.
 
 Biopaint will move to its own package; this is the version inside Simitall.
 }

@@ -30,7 +30,9 @@
 #'   that would simulate a different experiment from the one asked.
 #' @param design Catalog design to lay out instead of Biodes' first candidate.
 #' @param layout_seed Randomization seed for the layout.
-#' @param figures Draw the figures ([biopaint_biodes()]) into `<outdir>/figures`.
+#' @param figures Draw the figures ([biopaint_biodes()]) into `<outdir>/figures`
+#'   and, in interactive sessions, show them in the plot window (`plot(r)`
+#'   shows them again).
 #' @param use_suggestions Fill each item the study details leave open with its
 #'   first suggestion (Biodes' traits and units, `inst/suite/suggestions.tsv`)
 #'   and run. Every filled value is printed and kept in `$filled_from_suggestions`.

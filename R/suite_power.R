@@ -21,6 +21,8 @@
 #' @param alpha Significance level.
 #' @param effect,residual_sd,interaction_effect Override the spec's power values.
 #' @param seed First simulation seed.
+#' @param show Show the power figure in the plot window (default: in
+#'   interactive sessions); `plot(ps)` shows it again.
 #' @param max_minutes Stop before running when the sweep is estimated to take
 #'   longer (one fit is timed first).
 #' @return Invisibly, a data frame (reps, n_units, term, factor, role,
@@ -28,7 +30,7 @@
 #'   `power_sweep.json` and `figures/power.png` in the folder.
 #' @export
 simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1,
-                                 max_minutes = NULL, interaction_effect = NULL) {
+                                 max_minutes = NULL, interaction_effect = NULL, show = interactive()) {
   dir <- if (inherits(x, "simitall_suite_run")) x$dir else x
   if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
     stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
@@ -121,8 +123,8 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
                          target_power = target, smallest_reps_reaching_target = enough,
                          note = "Terms with simulated_effect = false show the false-positive rate, not power."),
                     file.path(dir, "power_sweep.json"))
-  if (requireNamespace("ggplot2", quietly = TRUE)) tryCatch(suppressMessages(biopaint_biodes(dir, which = "power")), error = function(e) NULL)
-  structure(out, class = c("simitall_power_sweep", "data.frame"), target = target, enough = enough, alpha = alpha, n_sim = n_sim)
+  if (requireNamespace("ggplot2", quietly = TRUE)) tryCatch(suppressMessages(biopaint_biodes(dir, which = "power", show = show)), error = function(e) NULL)
+  structure(out, class = c("simitall_power_sweep", "data.frame"), target = target, enough = enough, alpha = alpha, n_sim = n_sim, dir = dir)
 }
 
 #' @export

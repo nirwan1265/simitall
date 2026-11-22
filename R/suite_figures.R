@@ -15,28 +15,42 @@
 #' - `power.png`: power against replication per model term (`power_sweep.tsv`);
 #' - `volcano.png`: per-gene results for count assays (`de_results.tsv`).
 #'
+#' In an interactive session (RStudio, R console) the figures are also shown
+#' in the plot window, one after another; in RStudio use the arrows of the
+#' Plots pane to page through them. `plot(r)` on a [simitall_from_question()]
+#' result and `plot(ps)` on a [simitall_power_sweep()] result show them again.
+#'
 #' Biopaint will move to its own package; this is the version inside Simitall.
 #'
 #' @param dir Design folder (or a `simitall_suite_run`).
 #' @param outdir Where to write the PNGs. Default `<dir>/figures`.
 #' @param which Figures to draw (default: all that the folder has data for).
-#' @return Invisibly, the paths written.
+#' @param show Show the figures in the plot window (default: in interactive sessions).
+#' @param save Write the PNG files.
+#' @return Invisibly, the paths written (named by figure), with the ggplot
+#'   objects in `attr(, "plots")`.
 #' @export
-biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "recovery", "power", "volcano")) {
+biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "recovery", "power", "volcano"),
+                            show = interactive(), save = TRUE) {
   if (inherits(dir, "simitall_suite_run")) dir <- dir$dir
   if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Figures need ggplot2: install.packages('ggplot2')", call. = FALSE)
   outdir <- outdir %||% file.path(dir, "figures")
-  dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+  if (isTRUE(save)) dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
   spec <- jsonlite::read_json(file.path(dir, "study_spec.json"), simplifyVector = FALSE)
   layout <- utils::read.csv(file.path(dir, "field_layout.csv"), colClasses = "character", check.names = FALSE)
   p <- tryCatch(.suite_parse_model(spec$analysis$model, spec, layout), error = function(e) NULL)
   cols <- .suite_figure_columns(p, layout, spec)
   title <- sprintf("%s: %s", spec$design$chosen %||% "design", spec$analysis$model %||% "")
   paths <- character()
+  plots <- list()
+  write_png <- save
   save <- function(plot, name, w = 7, h = 5) {
-    f <- file.path(outdir, paste0(name, ".png"))
-    ggplot2::ggsave(f, plot, width = w, height = h, dpi = 150, bg = "white")
-    paths[name] <<- f
+    plots[[name]] <<- plot
+    if (isTRUE(write_png)) {
+      f <- file.path(outdir, paste0(name, ".png"))
+      ggplot2::ggsave(f, plot, width = w, height = h, dpi = 150, bg = "white")
+      paths[name] <<- f
+    }
   }
   if ("layout" %in% which) {
     g <- .suite_plot_layout(layout, cols, title)
@@ -62,7 +76,39 @@ biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "
     save(.suite_plot_volcano(utils::read.delim(vpath, stringsAsFactors = FALSE), truth), "volcano")
   }
   if (length(paths)) message("biopaint: wrote ", paste(basename(paths), collapse = ", "), " in ", outdir)
+  if (isTRUE(show)) .suite_show_plots(plots)
+  attr(paths, "plots") <- plots
   invisible(paths)
+}
+
+# Print each figure to the active graphics device (RStudio Plots pane, quartz, X11, ...).
+.suite_show_plots <- function(plots) {
+  for (g in plots) print(g)
+  if (length(plots) > 1) message("biopaint: ", length(plots), " figures in the plot window (", paste(names(plots), collapse = ", "),
+                                 "); in RStudio, use the Plots pane arrows to page through them.")
+  invisible(plots)
+}
+
+#' Show the figures of a suite run in the plot window
+#'
+#' @param x Result of [simitall_from_question()].
+#' @param which Figures to show (default: all that the folder has data for).
+#' @param ... Unused.
+#' @export
+plot.simitall_suite_run <- function(x, which = c("layout", "outcome", "recovery", "power", "volcano"), ...) {
+  if (is.null(x$dir)) stop("This run has no design folder (it stopped before the layout was written).", call. = FALSE)
+  invisible(biopaint_biodes(x$dir, which = which, show = TRUE, save = FALSE))
+}
+
+#' Show the power figure of a power sweep in the plot window
+#'
+#' @param x Result of [simitall_power_sweep()].
+#' @param ... Unused.
+#' @export
+plot.simitall_power_sweep <- function(x, ...) {
+  dir <- attr(x, "dir")
+  if (is.null(dir)) stop("This power sweep has no design folder attached.", call. = FALSE)
+  invisible(biopaint_biodes(dir, which = "power", show = TRUE, save = FALSE))
 }
 
 # Which layout column plays which part in the figures.

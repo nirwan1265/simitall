@@ -49,7 +49,9 @@ first suggestion (Biodes' traits and units, \code{inst/suite/suggestions.tsv})
 and run. Every filled value is printed and kept in \verb{$filled_from_suggestions}.
 Your own \code{answers} always win.}
 
-\item{figures}{Draw the figures (\code{\link[=biopaint_biodes]{biopaint_biodes()}}) into \verb{<outdir>/figures}.}
+\item{figures}{Draw the figures (\code{\link[=biopaint_biodes]{biopaint_biodes()}}) into \verb{<outdir>/figures}
+and, in interactive sessions, show them in the plot window (\code{plot(r)}
+shows them again).}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),
