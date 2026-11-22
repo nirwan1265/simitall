@@ -1,0 +1,288 @@
+ENCFF768RRM	methylation state at CpG	stomach	539756908	https://www.encodeproject.org/files/ENCFF768RRM/@@download/ENCFF768RRM.bed.gz
+ENCFF809YHK	plus strand methylation state at CpG	stomach	1873997374	https://www.encodeproject.org/files/ENCFF809YHK/@@download/ENCFF809YHK.bigWig
+ENCFF271HRL	minus strand methylation state at CpG	stomach	1883371731	https://www.encodeproject.org/files/ENCFF271HRL/@@download/ENCFF271HRL.bigWig
+ENCFF943PFQ	methylation state at CpG	stomach	981364393	https://www.encodeproject.org/files/ENCFF943PFQ/@@download/ENCFF943PFQ.bigBed
+ENCFF953QCQ	methylation state at CpG	neural tube	549284673	https://www.encodeproject.org/files/ENCFF953QCQ/@@download/ENCFF953QCQ.bed.gz
+ENCFF660CIN	plus strand methylation state at CpG	neural tube	1937758453	https://www.encodeproject.org/files/ENCFF660CIN/@@download/ENCFF660CIN.bigWig
+ENCFF090QLW	minus strand methylation state at CpG	neural tube	1949588370	https://www.encodeproject.org/files/ENCFF090QLW/@@download/ENCFF090QLW.bigWig
+ENCFF029CVF	methylation state at CpG	neural tube	993196340	https://www.encodeproject.org/files/ENCFF029CVF/@@download/ENCFF029CVF.bigBed
+ENCFF837LHS	methylation state at CpG	embryonic facial prominence	555861850	https://www.encodeproject.org/files/ENCFF837LHS/@@download/ENCFF837LHS.bed.gz
+ENCFF752HIN	plus strand methylation state at CpG	embryonic facial prominence	1934804685	https://www.encodeproject.org/files/ENCFF752HIN/@@download/ENCFF752HIN.bigWig
+ENCFF891WAJ	minus strand methylation state at CpG	embryonic facial prominence	1947513470	https://www.encodeproject.org/files/ENCFF891WAJ/@@download/ENCFF891WAJ.bigWig
+ENCFF924NGA	methylation state at CpG	embryonic facial prominence	999576428	https://www.encodeproject.org/files/ENCFF924NGA/@@download/ENCFF924NGA.bigBed
+ENCFF581VJD	methylation state at CpG	hindbrain	532381935	https://www.encodeproject.org/files/ENCFF581VJD/@@download/ENCFF581VJD.bed.gz
+ENCFF467YXY	plus strand methylation state at CpG	hindbrain	1857438414	https://www.encodeproject.org/files/ENCFF467YXY/@@download/ENCFF467YXY.bigWig
+ENCFF874UVU	minus strand methylation state at CpG	hindbrain	1867603782	https://www.encodeproject.org/files/ENCFF874UVU/@@download/ENCFF874UVU.bigWig
+ENCFF294SCQ	methylation state at CpG	hindbrain	976633065	https://www.encodeproject.org/files/ENCFF294SCQ/@@download/ENCFF294SCQ.bigBed
+ENCFF415LLK	methylation state at CpG	midbrain	527202013	https://www.encodeproject.org/files/ENCFF415LLK/@@download/ENCFF415LLK.bed.gz
+ENCFF195HRE	plus strand methylation state at CpG	midbrain	1893694121	https://www.encodeproject.org/files/ENCFF195HRE/@@download/ENCFF195HRE.bigWig
+ENCFF209FVP	minus strand methylation state at CpG	midbrain	1905100685	https://www.encodeproject.org/files/ENCFF209FVP/@@download/ENCFF209FVP.bigWig
+ENCFF842VVW	methylation state at CpG	midbrain	967306170	https://www.encodeproject.org/files/ENCFF842VVW/@@download/ENCFF842VVW.bigBed
+ENCFF898FOZ	methylation state at CpG	hindbrain	525589211	https://www.encodeproject.org/files/ENCFF898FOZ/@@download/ENCFF898FOZ.bed.gz
+ENCFF642MAZ	plus strand methylation state at CpG	hindbrain	1846683852	https://www.encodeproject.org/files/ENCFF642MAZ/@@download/ENCFF642MAZ.bigWig
+ENCFF013VWP	minus strand methylation state at CpG	hindbrain	1856646078	https://www.encodeproject.org/files/ENCFF013VWP/@@download/ENCFF013VWP.bigWig
+ENCFF875OGH	methylation state at CpG	hindbrain	965900336	https://www.encodeproject.org/files/ENCFF875OGH/@@download/ENCFF875OGH.bigBed
+ENCFF877CUO	methylation state at CpG	kidney	544769771	https://www.encodeproject.org/files/ENCFF877CUO/@@download/ENCFF877CUO.bed.gz
+ENCFF460TBW	plus strand methylation state at CpG	kidney	1879643541	https://www.encodeproject.org/files/ENCFF460TBW/@@download/ENCFF460TBW.bigWig
+ENCFF110AQL	minus strand methylation state at CpG	kidney	1890663850	https://www.encodeproject.org/files/ENCFF110AQL/@@download/ENCFF110AQL.bigWig
+ENCFF517JQP	methylation state at CpG	kidney	989731333	https://www.encodeproject.org/files/ENCFF517JQP/@@download/ENCFF517JQP.bigBed
+ENCFF483COZ	methylation state at CpG	heart	537383886	https://www.encodeproject.org/files/ENCFF483COZ/@@download/ENCFF483COZ.bed.gz
+ENCFF434MXL	minus strand methylation state at CpG	heart	1868265087	https://www.encodeproject.org/files/ENCFF434MXL/@@download/ENCFF434MXL.bigWig
+ENCFF771FKE	methylation state at CpG	heart	979416749	https://www.encodeproject.org/files/ENCFF771FKE/@@download/ENCFF771FKE.bigBed
+ENCFF983ZOW	plus strand methylation state at CpG	heart	1858192328	https://www.encodeproject.org/files/ENCFF983ZOW/@@download/ENCFF983ZOW.bigWig
+ENCFF290IJC	methylation state at CpG	kidney	525438237	https://www.encodeproject.org/files/ENCFF290IJC/@@download/ENCFF290IJC.bed.gz
+ENCFF669BEA	plus strand methylation state at CpG	kidney	1846671932	https://www.encodeproject.org/files/ENCFF669BEA/@@download/ENCFF669BEA.bigWig
+ENCFF407QXC	minus strand methylation state at CpG	kidney	1856480615	https://www.encodeproject.org/files/ENCFF407QXC/@@download/ENCFF407QXC.bigWig
+ENCFF249OTH	methylation state at CpG	kidney	965817956	https://www.encodeproject.org/files/ENCFF249OTH/@@download/ENCFF249OTH.bigBed
+ENCFF025SQZ	minus strand methylation state at CpG	liver	1881179680	https://www.encodeproject.org/files/ENCFF025SQZ/@@download/ENCFF025SQZ.bigWig
+ENCFF944QDN	plus strand methylation state at CpG	liver	1869519886	https://www.encodeproject.org/files/ENCFF944QDN/@@download/ENCFF944QDN.bigWig
+ENCFF138BGH	methylation state at CpG	liver	978819155	https://www.encodeproject.org/files/ENCFF138BGH/@@download/ENCFF138BGH.bigBed
+ENCFF157DQJ	methylation state at CpG	liver	536780334	https://www.encodeproject.org/files/ENCFF157DQJ/@@download/ENCFF157DQJ.bed.gz
+ENCFF667IZN	methylation state at CpG	forebrain	528795372	https://www.encodeproject.org/files/ENCFF667IZN/@@download/ENCFF667IZN.bed.gz
+ENCFF959MFI	plus strand methylation state at CpG	forebrain	1855273261	https://www.encodeproject.org/files/ENCFF959MFI/@@download/ENCFF959MFI.bigWig
+ENCFF841IXN	minus strand methylation state at CpG	forebrain	1865657818	https://www.encodeproject.org/files/ENCFF841IXN/@@download/ENCFF841IXN.bigWig
+ENCFF011TEM	methylation state at CpG	forebrain	968385995	https://www.encodeproject.org/files/ENCFF011TEM/@@download/ENCFF011TEM.bigBed
+ENCFF351UKS	methylation state at CpG	hindbrain	524947505	https://www.encodeproject.org/files/ENCFF351UKS/@@download/ENCFF351UKS.bed.gz
+ENCFF247ITR	plus strand methylation state at CpG	hindbrain	1808550689	https://www.encodeproject.org/files/ENCFF247ITR/@@download/ENCFF247ITR.bigWig
+ENCFF675BDZ	methylation state at CpG	hindbrain	963783687	https://www.encodeproject.org/files/ENCFF675BDZ/@@download/ENCFF675BDZ.bigBed
+ENCFF023KTR	minus strand methylation state at CpG	hindbrain	1818590869	https://www.encodeproject.org/files/ENCFF023KTR/@@download/ENCFF023KTR.bigWig
+ENCFF393DZQ	minus strand methylation state at CpG	liver	1821283336	https://www.encodeproject.org/files/ENCFF393DZQ/@@download/ENCFF393DZQ.bigWig
+ENCFF283OSI	plus strand methylation state at CpG	liver	1812188573	https://www.encodeproject.org/files/ENCFF283OSI/@@download/ENCFF283OSI.bigWig
+ENCFF567QQL	methylation state at CpG	liver	538533727	https://www.encodeproject.org/files/ENCFF567QQL/@@download/ENCFF567QQL.bed.gz
+ENCFF321UJA	methylation state at CpG	liver	980790707	https://www.encodeproject.org/files/ENCFF321UJA/@@download/ENCFF321UJA.bigBed
+ENCFF078MGL	plus strand methylation state at CpG	embryonic facial prominence	1850217956	https://www.encodeproject.org/files/ENCFF078MGL/@@download/ENCFF078MGL.bigWig
+ENCFF351AWK	minus strand methylation state at CpG	embryonic facial prominence	1861832728	https://www.encodeproject.org/files/ENCFF351AWK/@@download/ENCFF351AWK.bigWig
+ENCFF364HNA	methylation state at CpG	embryonic facial prominence	966334544	https://www.encodeproject.org/files/ENCFF364HNA/@@download/ENCFF364HNA.bigBed
+ENCFF668FLN	methylation state at CpG	embryonic facial prominence	528692487	https://www.encodeproject.org/files/ENCFF668FLN/@@download/ENCFF668FLN.bed.gz
+ENCFF425MRE	methylation state at CpG	neural tube	525940858	https://www.encodeproject.org/files/ENCFF425MRE/@@download/ENCFF425MRE.bed.gz
+ENCFF666LYD	plus strand methylation state at CpG	neural tube	1840846977	https://www.encodeproject.org/files/ENCFF666LYD/@@download/ENCFF666LYD.bigWig
+ENCFF793SXP	minus strand methylation state at CpG	neural tube	1851358835	https://www.encodeproject.org/files/ENCFF793SXP/@@download/ENCFF793SXP.bigWig
+ENCFF071FRS	methylation state at CpG	neural tube	965878850	https://www.encodeproject.org/files/ENCFF071FRS/@@download/ENCFF071FRS.bigBed
+ENCFF321RBP	minus strand methylation state at CpG	lung	1877791654	https://www.encodeproject.org/files/ENCFF321RBP/@@download/ENCFF321RBP.bigWig
+ENCFF815QZG	plus strand methylation state at CpG	lung	1866161706	https://www.encodeproject.org/files/ENCFF815QZG/@@download/ENCFF815QZG.bigWig
+ENCFF135MUE	methylation state at CpG	lung	541122766	https://www.encodeproject.org/files/ENCFF135MUE/@@download/ENCFF135MUE.bed.gz
+ENCFF270JCG	methylation state at CpG	lung	986768344	https://www.encodeproject.org/files/ENCFF270JCG/@@download/ENCFF270JCG.bigBed
+ENCFF461DFY	methylation state at CpG	embryonic facial prominence	544056150	https://www.encodeproject.org/files/ENCFF461DFY/@@download/ENCFF461DFY.bed.gz
+ENCFF345NWN	plus strand methylation state at CpG	embryonic facial prominence	1910874153	https://www.encodeproject.org/files/ENCFF345NWN/@@download/ENCFF345NWN.bigWig
+ENCFF961DFD	minus strand methylation state at CpG	embryonic facial prominence	1922742058	https://www.encodeproject.org/files/ENCFF961DFD/@@download/ENCFF961DFD.bigWig
+ENCFF520YSY	methylation state at CpG	embryonic facial prominence	988828093	https://www.encodeproject.org/files/ENCFF520YSY/@@download/ENCFF520YSY.bigBed
+ENCFF467SBC	methylation state at CpG	limb	548959180	https://www.encodeproject.org/files/ENCFF467SBC/@@download/ENCFF467SBC.bed.gz
+ENCFF208DNQ	plus strand methylation state at CpG	limb	1890587870	https://www.encodeproject.org/files/ENCFF208DNQ/@@download/ENCFF208DNQ.bigWig
+ENCFF036FHG	minus strand methylation state at CpG	limb	1903335682	https://www.encodeproject.org/files/ENCFF036FHG/@@download/ENCFF036FHG.bigWig
+ENCFF997AMR	methylation state at CpG	limb	994146641	https://www.encodeproject.org/files/ENCFF997AMR/@@download/ENCFF997AMR.bigBed
+ENCFF496WRJ	methylation state at CpG	midbrain	538542245	https://www.encodeproject.org/files/ENCFF496WRJ/@@download/ENCFF496WRJ.bed.gz
+ENCFF346JXD	plus strand methylation state at CpG	midbrain	1898977042	https://www.encodeproject.org/files/ENCFF346JXD/@@download/ENCFF346JXD.bigWig
+ENCFF821YDS	methylation state at CpG	midbrain	978423819	https://www.encodeproject.org/files/ENCFF821YDS/@@download/ENCFF821YDS.bigBed
+ENCFF284TYR	minus strand methylation state at CpG	midbrain	1913945024	https://www.encodeproject.org/files/ENCFF284TYR/@@download/ENCFF284TYR.bigWig
+ENCFF308OBC	methylation state at CpG	heart	549326911	https://www.encodeproject.org/files/ENCFF308OBC/@@download/ENCFF308OBC.bed.gz
+ENCFF431TOU	plus strand methylation state at CpG	heart	1893723391	https://www.encodeproject.org/files/ENCFF431TOU/@@download/ENCFF431TOU.bigWig
+ENCFF183BQL	minus strand methylation state at CpG	heart	1906397285	https://www.encodeproject.org/files/ENCFF183BQL/@@download/ENCFF183BQL.bigWig
+ENCFF893EKN	methylation state at CpG	heart	995193071	https://www.encodeproject.org/files/ENCFF893EKN/@@download/ENCFF893EKN.bigBed
+ENCFF330UAQ	methylation state at CpG	limb	547502507	https://www.encodeproject.org/files/ENCFF330UAQ/@@download/ENCFF330UAQ.bed.gz
+ENCFF287DFD	minus strand methylation state at CpG	limb	1893384083	https://www.encodeproject.org/files/ENCFF287DFD/@@download/ENCFF287DFD.bigWig
+ENCFF105YXX	methylation state at CpG	limb	991866230	https://www.encodeproject.org/files/ENCFF105YXX/@@download/ENCFF105YXX.bigBed
+ENCFF820ZZG	plus strand methylation state at CpG	limb	1884064806	https://www.encodeproject.org/files/ENCFF820ZZG/@@download/ENCFF820ZZG.bigWig
+ENCFF451ZEE	methylation state at CpG	midbrain	522503745	https://www.encodeproject.org/files/ENCFF451ZEE/@@download/ENCFF451ZEE.bed.gz
+ENCFF119IWH	plus strand methylation state at CpG	midbrain	1806129840	https://www.encodeproject.org/files/ENCFF119IWH/@@download/ENCFF119IWH.bigWig
+ENCFF892PYM	minus strand methylation state at CpG	midbrain	1816547499	https://www.encodeproject.org/files/ENCFF892PYM/@@download/ENCFF892PYM.bigWig
+ENCFF817JAG	methylation state at CpG	midbrain	962746785	https://www.encodeproject.org/files/ENCFF817JAG/@@download/ENCFF817JAG.bigBed
+ENCFF910CHR	methylation state at CpG	midbrain	532721959	https://www.encodeproject.org/files/ENCFF910CHR/@@download/ENCFF910CHR.bed.gz
+ENCFF058UIL	plus strand methylation state at CpG	midbrain	1852200187	https://www.encodeproject.org/files/ENCFF058UIL/@@download/ENCFF058UIL.bigWig
+ENCFF828FDT	minus strand methylation state at CpG	midbrain	1862766701	https://www.encodeproject.org/files/ENCFF828FDT/@@download/ENCFF828FDT.bigWig
+ENCFF430LBF	methylation state at CpG	midbrain	976751072	https://www.encodeproject.org/files/ENCFF430LBF/@@download/ENCFF430LBF.bigBed
+ENCFF596DJV	methylation state at CpG	lung	537808014	https://www.encodeproject.org/files/ENCFF596DJV/@@download/ENCFF596DJV.bed.gz
+ENCFF349AII	plus strand methylation state at CpG	lung	1869889390	https://www.encodeproject.org/files/ENCFF349AII/@@download/ENCFF349AII.bigWig
+ENCFF321OEN	minus strand methylation state at CpG	lung	1880605647	https://www.encodeproject.org/files/ENCFF321OEN/@@download/ENCFF321OEN.bigWig
+ENCFF871DUK	methylation state at CpG	lung	979504716	https://www.encodeproject.org/files/ENCFF871DUK/@@download/ENCFF871DUK.bigBed
+ENCFF774SHU	methylation state at CpG	heart	554944112	https://www.encodeproject.org/files/ENCFF774SHU/@@download/ENCFF774SHU.bed.gz
+ENCFF050DKW	plus strand methylation state at CpG	heart	1864535879	https://www.encodeproject.org/files/ENCFF050DKW/@@download/ENCFF050DKW.bigWig
+ENCFF688AIL	minus strand methylation state at CpG	heart	1885698591	https://www.encodeproject.org/files/ENCFF688AIL/@@download/ENCFF688AIL.bigWig
+ENCFF282VJI	methylation state at CpG	heart	1000479403	https://www.encodeproject.org/files/ENCFF282VJI/@@download/ENCFF282VJI.bigBed
+ENCFF457SPJ	methylation state at CpG	forebrain	524535037	https://www.encodeproject.org/files/ENCFF457SPJ/@@download/ENCFF457SPJ.bed.gz
+ENCFF263KCJ	plus strand methylation state at CpG	forebrain	1774574736	https://www.encodeproject.org/files/ENCFF263KCJ/@@download/ENCFF263KCJ.bigWig
+ENCFF071EXU	minus strand methylation state at CpG	forebrain	1784799404	https://www.encodeproject.org/files/ENCFF071EXU/@@download/ENCFF071EXU.bigWig
+ENCFF119QDD	methylation state at CpG	forebrain	965098796	https://www.encodeproject.org/files/ENCFF119QDD/@@download/ENCFF119QDD.bigBed
+ENCFF943IBD	methylation state at CpG	midbrain	523124598	https://www.encodeproject.org/files/ENCFF943IBD/@@download/ENCFF943IBD.bed.gz
+ENCFF682LEX	plus strand methylation state at CpG	midbrain	1819274386	https://www.encodeproject.org/files/ENCFF682LEX/@@download/ENCFF682LEX.bigWig
+ENCFF068NEG	methylation state at CpG	midbrain	964023680	https://www.encodeproject.org/files/ENCFF068NEG/@@download/ENCFF068NEG.bigBed
+ENCFF278QYE	minus strand methylation state at CpG	midbrain	1830565485	https://www.encodeproject.org/files/ENCFF278QYE/@@download/ENCFF278QYE.bigWig
+ENCFF047XNY	minus strand methylation state at CpG	heart	1911883943	https://www.encodeproject.org/files/ENCFF047XNY/@@download/ENCFF047XNY.bigWig
+ENCFF209ADF	methylation state at CpG	heart	991949994	https://www.encodeproject.org/files/ENCFF209ADF/@@download/ENCFF209ADF.bigBed
+ENCFF614MFK	plus strand methylation state at CpG	heart	1914931282	https://www.encodeproject.org/files/ENCFF614MFK/@@download/ENCFF614MFK.bigWig
+ENCFF728OJE	methylation state at CpG	heart	546526484	https://www.encodeproject.org/files/ENCFF728OJE/@@download/ENCFF728OJE.bed.gz
+ENCFF911IVZ	methylation state at CpG	liver	543429051	https://www.encodeproject.org/files/ENCFF911IVZ/@@download/ENCFF911IVZ.bed.gz
+ENCFF559MGJ	methylation state at CpG	liver	989523838	https://www.encodeproject.org/files/ENCFF559MGJ/@@download/ENCFF559MGJ.bigBed
+ENCFF168URU	plus strand methylation state at CpG	liver	1887340491	https://www.encodeproject.org/files/ENCFF168URU/@@download/ENCFF168URU.bigWig
+ENCFF275UKZ	minus strand methylation state at CpG	liver	1896628840	https://www.encodeproject.org/files/ENCFF275UKZ/@@download/ENCFF275UKZ.bigWig
+ENCFF188SWR	methylation state at CpG	neural tube	537684852	https://www.encodeproject.org/files/ENCFF188SWR/@@download/ENCFF188SWR.bed.gz
+ENCFF084TAD	plus strand methylation state at CpG	neural tube	1859813019	https://www.encodeproject.org/files/ENCFF084TAD/@@download/ENCFF084TAD.bigWig
+ENCFF066WEJ	minus strand methylation state at CpG	neural tube	1872506107	https://www.encodeproject.org/files/ENCFF066WEJ/@@download/ENCFF066WEJ.bigWig
+ENCFF048QRA	methylation state at CpG	neural tube	981423803	https://www.encodeproject.org/files/ENCFF048QRA/@@download/ENCFF048QRA.bigBed
+ENCFF080VZT	methylation state at CpG	intestine	536388267	https://www.encodeproject.org/files/ENCFF080VZT/@@download/ENCFF080VZT.bed.gz
+ENCFF303REN	plus strand methylation state at CpG	intestine	1876376179	https://www.encodeproject.org/files/ENCFF303REN/@@download/ENCFF303REN.bigWig
+ENCFF009LWS	minus strand methylation state at CpG	intestine	1886292429	https://www.encodeproject.org/files/ENCFF009LWS/@@download/ENCFF009LWS.bigWig
+ENCFF117AZB	methylation state at CpG	intestine	977333567	https://www.encodeproject.org/files/ENCFF117AZB/@@download/ENCFF117AZB.bigBed
+ENCFF655WQD	methylation state at CpG	intestine	539090893	https://www.encodeproject.org/files/ENCFF655WQD/@@download/ENCFF655WQD.bed.gz
+ENCFF848CHX	plus strand methylation state at CpG	intestine	1863476793	https://www.encodeproject.org/files/ENCFF848CHX/@@download/ENCFF848CHX.bigWig
+ENCFF778GAA	minus strand methylation state at CpG	intestine	1873448825	https://www.encodeproject.org/files/ENCFF778GAA/@@download/ENCFF778GAA.bigWig
+ENCFF711NOH	methylation state at CpG	intestine	980155231	https://www.encodeproject.org/files/ENCFF711NOH/@@download/ENCFF711NOH.bigBed
+ENCFF478VCU	methylation state at CpG	kidney	525873344	https://www.encodeproject.org/files/ENCFF478VCU/@@download/ENCFF478VCU.bed.gz
+ENCFF116VNZ	plus strand methylation state at CpG	kidney	1784613912	https://www.encodeproject.org/files/ENCFF116VNZ/@@download/ENCFF116VNZ.bigWig
+ENCFF194MUO	minus strand methylation state at CpG	kidney	1794739228	https://www.encodeproject.org/files/ENCFF194MUO/@@download/ENCFF194MUO.bigWig
+ENCFF954PWD	methylation state at CpG	kidney	966969999	https://www.encodeproject.org/files/ENCFF954PWD/@@download/ENCFF954PWD.bigBed
+ENCFF222TLC	methylation state at CpG	heart	532130041	https://www.encodeproject.org/files/ENCFF222TLC/@@download/ENCFF222TLC.bed.gz
+ENCFF870MPN	plus strand methylation state at CpG	heart	1865655233	https://www.encodeproject.org/files/ENCFF870MPN/@@download/ENCFF870MPN.bigWig
+ENCFF280ZWP	minus strand methylation state at CpG	heart	1875512833	https://www.encodeproject.org/files/ENCFF280ZWP/@@download/ENCFF280ZWP.bigWig
+ENCFF719HQS	methylation state at CpG	heart	974073781	https://www.encodeproject.org/files/ENCFF719HQS/@@download/ENCFF719HQS.bigBed
+ENCFF847ROX	methylation state at CpG	kidney	530185267	https://www.encodeproject.org/files/ENCFF847ROX/@@download/ENCFF847ROX.bed.gz
+ENCFF805PUX	plus strand methylation state at CpG	kidney	1853772522	https://www.encodeproject.org/files/ENCFF805PUX/@@download/ENCFF805PUX.bigWig
+ENCFF521TGJ	minus strand methylation state at CpG	kidney	1864212602	https://www.encodeproject.org/files/ENCFF521TGJ/@@download/ENCFF521TGJ.bigWig
+ENCFF501KPF	methylation state at CpG	kidney	970999328	https://www.encodeproject.org/files/ENCFF501KPF/@@download/ENCFF501KPF.bigBed
+ENCFF971EVZ	methylation state at CpG	stomach	528710637	https://www.encodeproject.org/files/ENCFF971EVZ/@@download/ENCFF971EVZ.bed.gz
+ENCFF572UWG	plus strand methylation state at CpG	stomach	1862961261	https://www.encodeproject.org/files/ENCFF572UWG/@@download/ENCFF572UWG.bigWig
+ENCFF671VAT	minus strand methylation state at CpG	stomach	1873314172	https://www.encodeproject.org/files/ENCFF671VAT/@@download/ENCFF671VAT.bigWig
+ENCFF577NDH	methylation state at CpG	stomach	969897215	https://www.encodeproject.org/files/ENCFF577NDH/@@download/ENCFF577NDH.bigBed
+ENCFF400ZVF	minus strand methylation state at CpG	forebrain	1961016655	https://www.encodeproject.org/files/ENCFF400ZVF/@@download/ENCFF400ZVF.bigWig
+ENCFF486VKI	methylation state at CpG	forebrain	539362762	https://www.encodeproject.org/files/ENCFF486VKI/@@download/ENCFF486VKI.bed.gz
+ENCFF205WNU	methylation state at CpG	forebrain	979280439	https://www.encodeproject.org/files/ENCFF205WNU/@@download/ENCFF205WNU.bigBed
+ENCFF228XOV	plus strand methylation state at CpG	forebrain	1949217445	https://www.encodeproject.org/files/ENCFF228XOV/@@download/ENCFF228XOV.bigWig
+ENCFF786MLJ	methylation state at CpG	lung	528470880	https://www.encodeproject.org/files/ENCFF786MLJ/@@download/ENCFF786MLJ.bed.gz
+ENCFF751BCX	methylation state at CpG	lung	969461872	https://www.encodeproject.org/files/ENCFF751BCX/@@download/ENCFF751BCX.bigBed
+ENCFF634MFR	minus strand methylation state at CpG	lung	1886484401	https://www.encodeproject.org/files/ENCFF634MFR/@@download/ENCFF634MFR.bigWig
+ENCFF134LMH	plus strand methylation state at CpG	lung	1874044432	https://www.encodeproject.org/files/ENCFF134LMH/@@download/ENCFF134LMH.bigWig
+ENCFF214WMH	methylation state at CpG	embryonic facial prominence	523197376	https://www.encodeproject.org/files/ENCFF214WMH/@@download/ENCFF214WMH.bed.gz
+ENCFF302NDO	plus strand methylation state at CpG	embryonic facial prominence	1783558110	https://www.encodeproject.org/files/ENCFF302NDO/@@download/ENCFF302NDO.bigWig
+ENCFF164KPG	minus strand methylation state at CpG	embryonic facial prominence	1793692959	https://www.encodeproject.org/files/ENCFF164KPG/@@download/ENCFF164KPG.bigWig
+ENCFF106EYL	methylation state at CpG	embryonic facial prominence	964110176	https://www.encodeproject.org/files/ENCFF106EYL/@@download/ENCFF106EYL.bigBed
+ENCFF494TDC	methylation state at CpG	heart	537058753	https://www.encodeproject.org/files/ENCFF494TDC/@@download/ENCFF494TDC.bed.gz
+ENCFF299WUH	plus strand methylation state at CpG	heart	1880814794	https://www.encodeproject.org/files/ENCFF299WUH/@@download/ENCFF299WUH.bigWig
+ENCFF406TFU	minus strand methylation state at CpG	heart	1891316934	https://www.encodeproject.org/files/ENCFF406TFU/@@download/ENCFF406TFU.bigWig
+ENCFF564FNE	methylation state at CpG	heart	978784097	https://www.encodeproject.org/files/ENCFF564FNE/@@download/ENCFF564FNE.bigBed
+ENCFF171EAN	methylation state at CpG	stomach	533295130	https://www.encodeproject.org/files/ENCFF171EAN/@@download/ENCFF171EAN.bed.gz
+ENCFF344PLG	plus strand methylation state at CpG	stomach	1879728933	https://www.encodeproject.org/files/ENCFF344PLG/@@download/ENCFF344PLG.bigWig
+ENCFF186NPY	minus strand methylation state at CpG	stomach	1891041524	https://www.encodeproject.org/files/ENCFF186NPY/@@download/ENCFF186NPY.bigWig
+ENCFF543YPM	methylation state at CpG	stomach	974429826	https://www.encodeproject.org/files/ENCFF543YPM/@@download/ENCFF543YPM.bigBed
+ENCFF105ZHG	methylation state at CpG	hindbrain	532435315	https://www.encodeproject.org/files/ENCFF105ZHG/@@download/ENCFF105ZHG.bed.gz
+ENCFF408RSA	methylation state at CpG	hindbrain	972509781	https://www.encodeproject.org/files/ENCFF408RSA/@@download/ENCFF408RSA.bigBed
+ENCFF142YLV	minus strand methylation state at CpG	hindbrain	1922833884	https://www.encodeproject.org/files/ENCFF142YLV/@@download/ENCFF142YLV.bigWig
+ENCFF719HPU	plus strand methylation state at CpG	hindbrain	1912741309	https://www.encodeproject.org/files/ENCFF719HPU/@@download/ENCFF719HPU.bigWig
+ENCFF814DQS	minus strand methylation state at CpG	liver	1859134872	https://www.encodeproject.org/files/ENCFF814DQS/@@download/ENCFF814DQS.bigWig
+ENCFF532CPT	methylation state at CpG	liver	535227815	https://www.encodeproject.org/files/ENCFF532CPT/@@download/ENCFF532CPT.bed.gz
+ENCFF215KNY	plus strand methylation state at CpG	liver	1847053514	https://www.encodeproject.org/files/ENCFF215KNY/@@download/ENCFF215KNY.bigWig
+ENCFF406HUW	methylation state at CpG	liver	977939823	https://www.encodeproject.org/files/ENCFF406HUW/@@download/ENCFF406HUW.bigBed
+ENCFF937FOZ	methylation state at CpG	hindbrain	536626244	https://www.encodeproject.org/files/ENCFF937FOZ/@@download/ENCFF937FOZ.bed.gz
+ENCFF512IPL	plus strand methylation state at CpG	hindbrain	1858075270	https://www.encodeproject.org/files/ENCFF512IPL/@@download/ENCFF512IPL.bigWig
+ENCFF718SGN	methylation state at CpG	hindbrain	980068081	https://www.encodeproject.org/files/ENCFF718SGN/@@download/ENCFF718SGN.bigBed
+ENCFF116ANQ	minus strand methylation state at CpG	hindbrain	1866968448	https://www.encodeproject.org/files/ENCFF116ANQ/@@download/ENCFF116ANQ.bigWig
+ENCFF948PCX	methylation state at CpG	heart	531940463	https://www.encodeproject.org/files/ENCFF948PCX/@@download/ENCFF948PCX.bed.gz
+ENCFF554IPE	plus strand methylation state at CpG	heart	1863528271	https://www.encodeproject.org/files/ENCFF554IPE/@@download/ENCFF554IPE.bigWig
+ENCFF512OIO	minus strand methylation state at CpG	heart	1873900342	https://www.encodeproject.org/files/ENCFF512OIO/@@download/ENCFF512OIO.bigWig
+ENCFF894PCV	methylation state at CpG	heart	973406423	https://www.encodeproject.org/files/ENCFF894PCV/@@download/ENCFF894PCV.bigBed
+ENCFF240YZX	methylation state at CpG	liver	534564660	https://www.encodeproject.org/files/ENCFF240YZX/@@download/ENCFF240YZX.bed.gz
+ENCFF965IWX	plus strand methylation state at CpG	liver	1888494583	https://www.encodeproject.org/files/ENCFF965IWX/@@download/ENCFF965IWX.bigWig
+ENCFF216CJM	minus strand methylation state at CpG	liver	1900873729	https://www.encodeproject.org/files/ENCFF216CJM/@@download/ENCFF216CJM.bigWig
+ENCFF632TMQ	methylation state at CpG	liver	976349132	https://www.encodeproject.org/files/ENCFF632TMQ/@@download/ENCFF632TMQ.bigBed
+ENCFF673PJA	methylation state at CpG	forebrain	536974682	https://www.encodeproject.org/files/ENCFF673PJA/@@download/ENCFF673PJA.bed.gz
+ENCFF338IHK	plus strand methylation state at CpG	forebrain	1866099281	https://www.encodeproject.org/files/ENCFF338IHK/@@download/ENCFF338IHK.bigWig
+ENCFF754MMT	minus strand methylation state at CpG	forebrain	1875661510	https://www.encodeproject.org/files/ENCFF754MMT/@@download/ENCFF754MMT.bigWig
+ENCFF118ZQV	methylation state at CpG	forebrain	980201476	https://www.encodeproject.org/files/ENCFF118ZQV/@@download/ENCFF118ZQV.bigBed
+ENCFF288JMC	methylation state at CpG	forebrain	542265754	https://www.encodeproject.org/files/ENCFF288JMC/@@download/ENCFF288JMC.bed.gz
+ENCFF211NRS	plus strand methylation state at CpG	forebrain	1830991438	https://www.encodeproject.org/files/ENCFF211NRS/@@download/ENCFF211NRS.bigWig
+ENCFF359DVQ	minus strand methylation state at CpG	forebrain	1851486976	https://www.encodeproject.org/files/ENCFF359DVQ/@@download/ENCFF359DVQ.bigWig
+ENCFF354NSK	methylation state at CpG	forebrain	986016625	https://www.encodeproject.org/files/ENCFF354NSK/@@download/ENCFF354NSK.bigBed
+ENCFF127XHN	plus strand methylation state at CpG	forebrain	1865556731	https://www.encodeproject.org/files/ENCFF127XHN/@@download/ENCFF127XHN.bigWig
+ENCFF966WQK	minus strand methylation state at CpG	forebrain	1897677024	https://www.encodeproject.org/files/ENCFF966WQK/@@download/ENCFF966WQK.bigWig
+ENCFF225OOJ	methylation state at CpG	forebrain	992110514	https://www.encodeproject.org/files/ENCFF225OOJ/@@download/ENCFF225OOJ.bigBed
+ENCFF331SNN	methylation state at CpG	forebrain	548290790	https://www.encodeproject.org/files/ENCFF331SNN/@@download/ENCFF331SNN.bed.gz
+ENCFF060YAB	methylation state at CpG	embryonic facial prominence	545914056	https://www.encodeproject.org/files/ENCFF060YAB/@@download/ENCFF060YAB.bed.gz
+ENCFF168NGV	plus strand methylation state at CpG	embryonic facial prominence	1877898671	https://www.encodeproject.org/files/ENCFF168NGV/@@download/ENCFF168NGV.bigWig
+ENCFF178CZU	minus strand methylation state at CpG	embryonic facial prominence	1885419199	https://www.encodeproject.org/files/ENCFF178CZU/@@download/ENCFF178CZU.bigWig
+ENCFF456HIJ	methylation state at CpG	embryonic facial prominence	991250148	https://www.encodeproject.org/files/ENCFF456HIJ/@@download/ENCFF456HIJ.bigBed
+ENCFF758WGU	methylation state at CpG	limb	542326605	https://www.encodeproject.org/files/ENCFF758WGU/@@download/ENCFF758WGU.bed.gz
+ENCFF920NEK	plus strand methylation state at CpG	limb	1848326118	https://www.encodeproject.org/files/ENCFF920NEK/@@download/ENCFF920NEK.bigWig
+ENCFF360CBE	minus strand methylation state at CpG	limb	1866799797	https://www.encodeproject.org/files/ENCFF360CBE/@@download/ENCFF360CBE.bigWig
+ENCFF213NIW	methylation state at CpG	limb	986151673	https://www.encodeproject.org/files/ENCFF213NIW/@@download/ENCFF213NIW.bigBed
+ENCFF916YWD	methylation state at CpG	hindbrain	518247928	https://www.encodeproject.org/files/ENCFF916YWD/@@download/ENCFF916YWD.bed.gz
+ENCFF051LYH	plus strand methylation state at CpG	hindbrain	1811324695	https://www.encodeproject.org/files/ENCFF051LYH/@@download/ENCFF051LYH.bigWig
+ENCFF512GSJ	minus strand methylation state at CpG	hindbrain	1821195470	https://www.encodeproject.org/files/ENCFF512GSJ/@@download/ENCFF512GSJ.bigWig
+ENCFF738XZH	methylation state at CpG	hindbrain	958634424	https://www.encodeproject.org/files/ENCFF738XZH/@@download/ENCFF738XZH.bigBed
+ENCFF354OEF	methylation state at CpG	midbrain	549574961	https://www.encodeproject.org/files/ENCFF354OEF/@@download/ENCFF354OEF.bed.gz
+ENCFF718QLV	plus strand methylation state at CpG	midbrain	1883442951	https://www.encodeproject.org/files/ENCFF718QLV/@@download/ENCFF718QLV.bigWig
+ENCFF371AJK	methylation state at CpG	midbrain	993322627	https://www.encodeproject.org/files/ENCFF371AJK/@@download/ENCFF371AJK.bigBed
+ENCFF580KPO	minus strand methylation state at CpG	midbrain	1917490233	https://www.encodeproject.org/files/ENCFF580KPO/@@download/ENCFF580KPO.bigWig
+ENCFF535JWX	methylation state at CpG	forebrain	533215849	https://www.encodeproject.org/files/ENCFF535JWX/@@download/ENCFF535JWX.bed.gz
+ENCFF414WQI	plus strand methylation state at CpG	forebrain	1845742959	https://www.encodeproject.org/files/ENCFF414WQI/@@download/ENCFF414WQI.bigWig
+ENCFF986AGL	minus strand methylation state at CpG	forebrain	1855227924	https://www.encodeproject.org/files/ENCFF986AGL/@@download/ENCFF986AGL.bigWig
+ENCFF943NIT	methylation state at CpG	forebrain	977218750	https://www.encodeproject.org/files/ENCFF943NIT/@@download/ENCFF943NIT.bigBed
+ENCFF957TPD	methylation state at CpG	liver	563749220	https://www.encodeproject.org/files/ENCFF957TPD/@@download/ENCFF957TPD.bed.gz
+ENCFF275ITE	plus strand methylation state at CpG	liver	1884984565	https://www.encodeproject.org/files/ENCFF275ITE/@@download/ENCFF275ITE.bigWig
+ENCFF705MBF	minus strand methylation state at CpG	liver	1934134785	https://www.encodeproject.org/files/ENCFF705MBF/@@download/ENCFF705MBF.bigWig
+ENCFF195UXT	methylation state at CpG	liver	1010210078	https://www.encodeproject.org/files/ENCFF195UXT/@@download/ENCFF195UXT.bigBed
+ENCFF588MKU	plus strand methylation state at CpG	hindbrain	1934706373	https://www.encodeproject.org/files/ENCFF588MKU/@@download/ENCFF588MKU.bigWig
+ENCFF598AIN	methylation state at CpG	hindbrain	556618078	https://www.encodeproject.org/files/ENCFF598AIN/@@download/ENCFF598AIN.bed.gz
+ENCFF070DAP	methylation state at CpG	hindbrain	999433304	https://www.encodeproject.org/files/ENCFF070DAP/@@download/ENCFF070DAP.bigBed
+ENCFF009FZS	minus strand methylation state at CpG	hindbrain	1954081451	https://www.encodeproject.org/files/ENCFF009FZS/@@download/ENCFF009FZS.bigWig
+ENCFF192LFV	methylation state at CpG	midbrain	541672375	https://www.encodeproject.org/files/ENCFF192LFV/@@download/ENCFF192LFV.bed.gz
+ENCFF379YYH	plus strand methylation state at CpG	midbrain	1833484707	https://www.encodeproject.org/files/ENCFF379YYH/@@download/ENCFF379YYH.bigWig
+ENCFF003ZER	minus strand methylation state at CpG	midbrain	1854148093	https://www.encodeproject.org/files/ENCFF003ZER/@@download/ENCFF003ZER.bigWig
+ENCFF748LHI	methylation state at CpG	midbrain	985607265	https://www.encodeproject.org/files/ENCFF748LHI/@@download/ENCFF748LHI.bigBed
+ENCFF421DHV	methylation state at CpG	embryonic facial prominence	563892100	https://www.encodeproject.org/files/ENCFF421DHV/@@download/ENCFF421DHV.bed.gz
+ENCFF326BAB	plus strand methylation state at CpG	embryonic facial prominence	1988973816	https://www.encodeproject.org/files/ENCFF326BAB/@@download/ENCFF326BAB.bigWig
+ENCFF532CZD	minus strand methylation state at CpG	embryonic facial prominence	2010908863	https://www.encodeproject.org/files/ENCFF532CZD/@@download/ENCFF532CZD.bigWig
+ENCFF379UED	methylation state at CpG	embryonic facial prominence	1004480526	https://www.encodeproject.org/files/ENCFF379UED/@@download/ENCFF379UED.bigBed
+ENCFF933JLK	plus strand methylation state at CpG	heart	1872192766	https://www.encodeproject.org/files/ENCFF933JLK/@@download/ENCFF933JLK.bigWig
+ENCFF286FOP	methylation state at CpG	heart	549598479	https://www.encodeproject.org/files/ENCFF286FOP/@@download/ENCFF286FOP.bed.gz
+ENCFF333WJE	minus strand methylation state at CpG	heart	1893492018	https://www.encodeproject.org/files/ENCFF333WJE/@@download/ENCFF333WJE.bigWig
+ENCFF164QSW	methylation state at CpG	heart	994827696	https://www.encodeproject.org/files/ENCFF164QSW/@@download/ENCFF164QSW.bigBed
+ENCFF519WGM	plus strand methylation state at CpG	intestine	1853584090	https://www.encodeproject.org/files/ENCFF519WGM/@@download/ENCFF519WGM.bigWig
+ENCFF503BDM	minus strand methylation state at CpG	intestine	1863218328	https://www.encodeproject.org/files/ENCFF503BDM/@@download/ENCFF503BDM.bigWig
+ENCFF983RPC	methylation state at CpG	intestine	528201858	https://www.encodeproject.org/files/ENCFF983RPC/@@download/ENCFF983RPC.bed.gz
+ENCFF768OIB	methylation state at CpG	intestine	969411873	https://www.encodeproject.org/files/ENCFF768OIB/@@download/ENCFF768OIB.bigBed
+ENCFF981QLB	methylation state at CpG	neural tube	524803270	https://www.encodeproject.org/files/ENCFF981QLB/@@download/ENCFF981QLB.bed.gz
+ENCFF753LDK	plus strand methylation state at CpG	neural tube	1791003640	https://www.encodeproject.org/files/ENCFF753LDK/@@download/ENCFF753LDK.bigWig
+ENCFF214DWJ	minus strand methylation state at CpG	neural tube	1801585538	https://www.encodeproject.org/files/ENCFF214DWJ/@@download/ENCFF214DWJ.bigWig
+ENCFF369XBQ	methylation state at CpG	neural tube	964984050	https://www.encodeproject.org/files/ENCFF369XBQ/@@download/ENCFF369XBQ.bigBed
+ENCFF890XTY	methylation state at CpG	forebrain	524811688	https://www.encodeproject.org/files/ENCFF890XTY/@@download/ENCFF890XTY.bed.gz
+ENCFF686XKJ	plus strand methylation state at CpG	forebrain	1830188315	https://www.encodeproject.org/files/ENCFF686XKJ/@@download/ENCFF686XKJ.bigWig
+ENCFF018LLC	minus strand methylation state at CpG	forebrain	1840774672	https://www.encodeproject.org/files/ENCFF018LLC/@@download/ENCFF018LLC.bigWig
+ENCFF923HUC	methylation state at CpG	forebrain	965466776	https://www.encodeproject.org/files/ENCFF923HUC/@@download/ENCFF923HUC.bigBed
+ENCFF871NQO	plus strand methylation state at CpG	midbrain	1859044846	https://www.encodeproject.org/files/ENCFF871NQO/@@download/ENCFF871NQO.bigWig
+ENCFF376OQK	methylation state at CpG	midbrain	536452991	https://www.encodeproject.org/files/ENCFF376OQK/@@download/ENCFF376OQK.bed.gz
+ENCFF714OBT	minus strand methylation state at CpG	midbrain	1869049750	https://www.encodeproject.org/files/ENCFF714OBT/@@download/ENCFF714OBT.bigWig
+ENCFF205RGW	methylation state at CpG	midbrain	979801914	https://www.encodeproject.org/files/ENCFF205RGW/@@download/ENCFF205RGW.bigBed
+ENCFF275DMA	methylation state at CpG	stomach	993531572	https://www.encodeproject.org/files/ENCFF275DMA/@@download/ENCFF275DMA.bigBed
+ENCFF084ADB	plus strand methylation state at CpG	stomach	1880435719	https://www.encodeproject.org/files/ENCFF084ADB/@@download/ENCFF084ADB.bigWig
+ENCFF858IVY	methylation state at CpG	stomach	548132342	https://www.encodeproject.org/files/ENCFF858IVY/@@download/ENCFF858IVY.bed.gz
+ENCFF874ABW	minus strand methylation state at CpG	stomach	1891287217	https://www.encodeproject.org/files/ENCFF874ABW/@@download/ENCFF874ABW.bigWig
+ENCFF048ATF	methylation state at CpG	limb	540692201	https://www.encodeproject.org/files/ENCFF048ATF/@@download/ENCFF048ATF.bed.gz
+ENCFF576PDR	plus strand methylation state at CpG	limb	1891102926	https://www.encodeproject.org/files/ENCFF576PDR/@@download/ENCFF576PDR.bigWig
+ENCFF309NKT	minus strand methylation state at CpG	limb	1902253416	https://www.encodeproject.org/files/ENCFF309NKT/@@download/ENCFF309NKT.bigWig
+ENCFF528TOR	methylation state at CpG	limb	985432494	https://www.encodeproject.org/files/ENCFF528TOR/@@download/ENCFF528TOR.bigBed
+ENCFF092LFB	methylation state at CpG	hindbrain	539843384	https://www.encodeproject.org/files/ENCFF092LFB/@@download/ENCFF092LFB.bed.gz
+ENCFF939TSO	plus strand methylation state at CpG	hindbrain	1864314070	https://www.encodeproject.org/files/ENCFF939TSO/@@download/ENCFF939TSO.bigWig
+ENCFF374UZL	minus strand methylation state at CpG	hindbrain	1876004628	https://www.encodeproject.org/files/ENCFF374UZL/@@download/ENCFF374UZL.bigWig
+ENCFF085LSJ	methylation state at CpG	hindbrain	983293227	https://www.encodeproject.org/files/ENCFF085LSJ/@@download/ENCFF085LSJ.bigBed
+ENCFF517ZHT	methylation state at CpG	lung	534366857	https://www.encodeproject.org/files/ENCFF517ZHT/@@download/ENCFF517ZHT.bed.gz
+ENCFF793ZKP	plus strand methylation state at CpG	lung	1805404822	https://www.encodeproject.org/files/ENCFF793ZKP/@@download/ENCFF793ZKP.bigWig
+ENCFF478PZY	minus strand methylation state at CpG	lung	1813689959	https://www.encodeproject.org/files/ENCFF478PZY/@@download/ENCFF478PZY.bigWig
+ENCFF393MKB	methylation state at CpG	lung	975636468	https://www.encodeproject.org/files/ENCFF393MKB/@@download/ENCFF393MKB.bigBed
+ENCFF494DRN	methylation state at CpG	limb	530621109	https://www.encodeproject.org/files/ENCFF494DRN/@@download/ENCFF494DRN.bed.gz
+ENCFF895RBO	plus strand methylation state at CpG	limb	1811459862	https://www.encodeproject.org/files/ENCFF895RBO/@@download/ENCFF895RBO.bigWig
+ENCFF818YKN	minus strand methylation state at CpG	limb	1822130472	https://www.encodeproject.org/files/ENCFF818YKN/@@download/ENCFF818YKN.bigWig
+ENCFF904CVH	methylation state at CpG	limb	971005043	https://www.encodeproject.org/files/ENCFF904CVH/@@download/ENCFF904CVH.bigBed
+ENCFF383PIW	methylation state at CpG	neural tube	538219365	https://www.encodeproject.org/files/ENCFF383PIW/@@download/ENCFF383PIW.bed.gz
+ENCFF542HFM	plus strand methylation state at CpG	neural tube	1895876180	https://www.encodeproject.org/files/ENCFF542HFM/@@download/ENCFF542HFM.bigWig
+ENCFF223UQU	minus strand methylation state at CpG	neural tube	1884837287	https://www.encodeproject.org/files/ENCFF223UQU/@@download/ENCFF223UQU.bigWig
+ENCFF170BIM	methylation state at CpG	neural tube	982191284	https://www.encodeproject.org/files/ENCFF170BIM/@@download/ENCFF170BIM.bigBed
+ENCFF932PEG	plus strand methylation state at CpG	limb	1881530658	https://www.encodeproject.org/files/ENCFF932PEG/@@download/ENCFF932PEG.bigWig
+ENCFF227XTT	minus strand methylation state at CpG	limb	1892556390	https://www.encodeproject.org/files/ENCFF227XTT/@@download/ENCFF227XTT.bigWig
+ENCFF555LCJ	methylation state at CpG	limb	968866823	https://www.encodeproject.org/files/ENCFF555LCJ/@@download/ENCFF555LCJ.bigBed
+ENCFF812VRA	methylation state at CpG	limb	530058482	https://www.encodeproject.org/files/ENCFF812VRA/@@download/ENCFF812VRA.bed.gz
+ENCFF047HHC	methylation state at CpG	intestine	545240832	https://www.encodeproject.org/files/ENCFF047HHC/@@download/ENCFF047HHC.bed.gz
+ENCFF907CTI	methylation state at CpG	intestine	990236189	https://www.encodeproject.org/files/ENCFF907CTI/@@download/ENCFF907CTI.bigBed
+ENCFF846BJT	plus strand methylation state at CpG	intestine	1869606523	https://www.encodeproject.org/files/ENCFF846BJT/@@download/ENCFF846BJT.bigWig
+ENCFF479HJA	minus strand methylation state at CpG	intestine	1881278720	https://www.encodeproject.org/files/ENCFF479HJA/@@download/ENCFF479HJA.bigWig
+ENCFF036JKB	methylation state at CpG	liver	550388385	https://www.encodeproject.org/files/ENCFF036JKB/@@download/ENCFF036JKB.bed.gz
+ENCFF676ZXL	plus strand methylation state at CpG	liver	1894526588	https://www.encodeproject.org/files/ENCFF676ZXL/@@download/ENCFF676ZXL.bigWig
+ENCFF303VYN	minus strand methylation state at CpG	liver	1906262078	https://www.encodeproject.org/files/ENCFF303VYN/@@download/ENCFF303VYN.bigWig
+ENCFF276HWM	methylation state at CpG	liver	995899749	https://www.encodeproject.org/files/ENCFF276HWM/@@download/ENCFF276HWM.bigBed
