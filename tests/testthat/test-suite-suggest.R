@@ -3,10 +3,11 @@
 test_that("missing study details get suggestions matched to the question, never tied to one prompt", {
   ans <- list(question = "single cell sequencing in mouse uterus", spec = list(system = "mouse", organism = "Mus musculus"))
   sug <- simitall:::.suite_suggestions(ans)
-  expect_setequal(unique(sug$field), c("factors", "experimental_unit", "primary_outcome", "power"))
+  # what to compare is the user's question: no factor is ever suggested (2026-11-22 coverage: invented designs)
+  expect_setequal(unique(sug$field), c("experimental_unit", "primary_outcome", "power"))
   expect_true(any(grepl("pseudobulk", sug$suggestion)))
   filled <- simitall:::.suite_suggested_answers(sug, ans$spec)
-  expect_equal(filled$factors, "genotype:2")
+  expect_null(filled$factors)
   # power is filled as a pair (difference and SD), never one without the other
   expect_true(all(c("power.minimum_detectable_difference", "power.residual_sd") %in% names(filled)))
 
@@ -16,6 +17,6 @@ test_that("missing study details get suggestions matched to the question, never 
   expect_false("factors" %in% s2$field)
   expect_false("power" %in% s2$field)
 
-  other <- simitall:::.suite_suggestions(list(question = "something new", spec = list()))
-  expect_true("treatment:2" %in% sub('factors = "(.*)"', "\\1", other$answer[other$field == "factors"]))
+  other <- simitall:::.suite_suggestions(list(question = "maize in the field", spec = list()))
+  expect_false("factors" %in% other$field)
 })

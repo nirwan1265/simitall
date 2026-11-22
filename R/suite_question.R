@@ -3,8 +3,8 @@
 #' One call across the suite: Biodes (package `studyforge`,
 #' github.com/nirwan1265/BioDesignGPT) reads the question, chooses the design
 #' and lists what it still needs to know; Simitall builds the layout from those
-#' study details ([simitall_layout_from_spec()], rules in
-#' `inst/suite/layouts.tsv`) and writes the design folder, then simulates data
+#' study details (Biodes `studyforge::layout_from_spec()`, every factor kept)
+#' and writes the design folder, then simulates data
 #' under that exact design ([simitall_from_biodes()]); Bioana fits the model the
 #' design calls for and checks it recovers the truth ([bioana_fit_biodes()]).
 #' When the study details lack something the layout needs (a factor's number of
@@ -73,29 +73,27 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   }
   outdir <- path.expand(outdir %||% file.path("~", "biodes_runs", .suite_slug(question)))
 
-  # the layout, built here from Biodes' study details for its first-choice design (inst/suite/layouts.tsv)
-  design <- design %||% ans$candidates[1]
-  if (is.null(design) || is.na(design)) stop("Biodes proposed no design for this question.", call. = FALSE)
-  book <- simitall_layout_from_spec(ans$spec, design, seed = layout_seed)
-  if (inherits(book, "simitall_layout_needs")) {
+  # the layout comes from Biodes (studyforge::layout_from_spec): every factor kept as its own column
+  spec_in <- ans$spec
+  if (!is.null(design)) spec_in$design$chosen <- design
+  book <- tryCatch(studyforge::layout_from_spec(spec_in, seed = layout_seed), error = function(e) e)
+  if (inherits(book, "error")) {
+    needs <- .suite_layout_missing(conditionMessage(book))
     .suite_show_plan(ans, NULL, design)
     .suite_show_suggestions(ans, sug)
-    print(book)
-    message("Not simulated. Give the missing details with answers = list(...) (suggestions above), or run again with use_suggestions = TRUE, ",
-            "or choose another of Biodes' candidate designs with design = (", paste(ans$candidates, collapse = ", "), ").")
-    return(invisible(structure(list(answer = ans, dir = NULL, design = design, suggestions = sug, filled_from_suggestions = suggested, layout_needs = book$needs,
-                                    open_questions = book$needs, layout_issues = character(), simulation = NULL, analysis = NULL),
+    cat("Biodes cannot lay out this study yet:\n", paste0("  - ", needs, "\n"), sep = "")
+    message("Not simulated. Give the missing details with answers = list(...) and run again.")
+    return(invisible(structure(list(answer = ans, dir = NULL, design = design, suggestions = sug, filled_from_suggestions = suggested,
+                                    layout_needs = needs, open_questions = needs, layout_issues = character(), simulation = NULL, analysis = NULL),
                                class = "simitall_suite_run")))
   }
-  spec_out <- ans$spec
-  spec_out$layout <- list(built_by = "simitall", rule = "inst/suite/layouts.tsv", design = design,
-                          factor_map = attr(book, "factor_map"), assumptions = attr(book, "assumptions"))
-  studyforge::write_design_package(book, spec_out, outdir, ans$audit)
+  design <- attr(book, "design") %||% design
+  studyforge::write_design_package(book, spec_in, outdir, ans$audit)
   open <- .suite_show_plan(ans, outdir, design)
   if (length(suggested)) cat("Filled from suggestions (assumptions, change with answers = list(...)):\n",
                              paste0("  - ", names(suggested), " = ", vapply(suggested, function(v) paste(format(v), collapse = ", "), ""), "\n"), sep = "")
   .suite_show_suggestions(ans, sug)
-  if (length(attr(book, "assumptions"))) cat("Layout assumptions:\n", paste0("  - ", attr(book, "assumptions"), "\n"), sep = "")
+  if (length(attr(book, "layout_notes"))) cat("Layout notes (Biodes):\n", paste0("  - ", attr(book, "layout_notes"), "\n"), sep = "")
   issues <- .suite_layout_issues(ans, outdir, design)
   if (length(issues)) {
     cat("Layout does NOT match Biodes' plan (simulating it would test a different experiment):\n",
@@ -177,6 +175,8 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   parsed <- tryCatch(.suite_parse_model(spec$analysis$model, spec, layout), error = function(e) NULL)
   tvars <- if (is.null(parsed)) character() else names(parsed$role)[parsed$role == "treatment"]
   tcols <- if (is.null(parsed)) names(layout) else unique(unname(parsed$col[tvars]))
+  # factors the model does not hold (a third factor, tissue within units) are still layout columns
+  tcols <- unique(c(tcols, intersect(unlist(spec$analysis$terms$uncovered_factors), names(layout))))
   counts <- vapply(layout[tcols], function(x) length(unique(x)), integer(1))
   if (length(tcols) > 1) counts <- c(counts, all = length(unique(unlist(layout[tcols]))))   # diallel parents span two columns
   f <- .suite_spec_factors(spec)
@@ -229,4 +229,34 @@ print.simitall_suite_run <- function(x, ...) {
   cat("  files:     results.tsv, recovery.tsv, fit_summary.json in the folder\n")
   if (length(x$figures)) cat("  figures:   ", paste(basename(x$figures), collapse = ", "), " in ", dirname(x$figures[[1]]), "\n", sep = "")
   invisible(x)
+}
+
+# "layout_from_spec: no level count for time (missing: factors.n_levels)." -> what the user must give
+.suite_layout_missing <- function(msg) {
+  field <- regmatches(msg, regexpr("missing: [^)]+", msg))
+  what <- sub("^layout_from_spec: ", "", sub(" \\(missing: [^)]+\\)\\.?$", "", msg))
+  if (length(field)) paste0(what, " (", field, ")") else msg
+}
+
+# Spec factors by part: treatment factors in spec order, plus time, check, env,
+# period (factor_roles.tsv) and the main-plot factor (handoff.json main_plot_applied_to).
+.suite_spec_factors <- function(spec) {
+  p <- system.file("suite", "factor_roles.tsv", package = "simitall")
+  if (!nzchar(p)) p <- file.path("inst", "suite", "factor_roles.tsv")
+  roles <- utils::read.delim(p, colClasses = "character", quote = "")
+  main_applied <- unlist(.suite_rules("handoff")$main_plot_applied_to)
+  out <- list(treatment = list())
+  for (x in spec$factors %||% list()) {
+    nm <- x$name %||% "factor"
+    n <- suppressWarnings(as.integer(x$n_levels %||% if (length(x$levels)) length(x$levels) else NA))
+    item <- list(name = nm, n = n, levels = unlist(x$levels))
+    hit <- roles$role[vapply(roles$pattern, function(pt) grepl(pt, tolower(nm), perl = TRUE), logical(1))][1]
+    if (!is.na(hit) && is.null(out[[hit]])) {
+      out[[hit]] <- item
+      next
+    }
+    if (is.null(out$main) && any(unlist(x$applied_to) %in% main_applied)) out$main <- item
+    out$treatment[[length(out$treatment) + 1]] <- item
+  }
+  out
 }

@@ -87,6 +87,10 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   meta <- h$meta
   if (nrow(meta) != nrow(h$layout)) stop("sample_metadata_template.tsv and field_layout.csv have different row counts.", call. = FALSE)
   frame <- .suite_frame(meta, p)
+  # factors in the layout that the model does not hold (Biodes analysis.terms.uncovered_factors):
+  # tissue measured within each unit, a third factor, ...
+  uncovered <- setdiff(intersect(unlist(spec$analysis$terms$uncovered_factors), names(meta)), c(names(p$role), unlist(p$col)))
+  for (v in uncovered) frame[[v]] <- factor(as.character(meta[[v]]), levels = .suite_natural_sort(unique(as.character(meta[[v]]))))
   n <- nrow(frame)
   y <- rep(mu, n)
   dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
@@ -195,6 +199,26 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     y <- y + stats::rnorm(nlevels(g), 0, s)[as.integer(g)]
     random_sd[[r$label]] <- s
   }
+  # uncovered factors: main effects spread over their levels like treatment levels
+  uncovered_effects <- list()
+  for (v in uncovered) {
+    lev <- levels(frame[[v]])
+    e <- stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
+    uncovered_effects[[v]] <- as.list(e)
+    y <- y + e[as.character(frame[[v]])]
+  }
+  # rows of one unit (one per within-unit level, e.g. leaf and root of one plant) share that unit's effect
+  unit_sd <- 0
+  unit_key <- NULL
+  if (length(uncovered)) {
+    lay_cols <- setdiff(intersect(names(h$layout), names(meta)), uncovered)
+    unit_key <- do.call(paste, c(lapply(meta[lay_cols], as.character), sep = "|"))
+    if (anyDuplicated(unit_key)) {
+      unit_sd <- d$random_sd_ratio$value * rsd
+      u <- factor(unit_key, levels = unique(unit_key))
+      y <- y + stats::rnorm(nlevels(u), 0, unit_sd)[as.integer(u)]
+    } else unit_key <- NULL
+  }
   y_mean <- y
   y <- y + stats::rnorm(n, 0, rsd)
 
@@ -240,6 +264,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     treatment_effects = treatment_effects, numeric_effects = numeric_effects,
     interaction_effects = interaction_effects,
     block_effects = block_effects, random_sd = random_sd,
+    uncovered_effects = if (length(uncovered_effects)) uncovered_effects,
+    within_unit_sd = if (!is.null(unit_key)) list(sd = unit_sd, note = "rows of one unit (one per level of the within-unit factor) share this effect; they are not independent units",
+                                                  unit_columns = setdiff(intersect(names(h$layout), names(meta)), uncovered)),
     subsamples_per_unit = n_sub, subsample_sd = if (n_sub > 1) d$subsample_sd_ratio$value * rsd else 0,
     dropped_units = dropped, assumptions = NULL,
     columns = as.list(p$col), outcome_simulated = has_outcome,
@@ -261,7 +288,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       note("RNA-seq and eQTL both requested: counts.tsv comes from the eQTL simulator (it includes the treatment effects)")
       assay_routes <- assay_routes[assay_routes$route != "assay_rnaseq", , drop = FALSE]
     }
-    ctx <- list(spec = spec, params = params, meta = meta, frame = frame, p = p, outdir = outdir, seed = seed,
+    ctx <- list(spec = spec, params = params, meta = meta, frame = frame, p = p, outdir = outdir, seed = seed, uncovered = uncovered,
                 cond_term = cond_term, geno_term = geno_term, genetics = genetics)
     truth$assays <- list()
     for (i in seq_len(nrow(assay_routes))) {
@@ -279,7 +306,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     }
     if (!is.null(truth$counts)) paths <- c(paths, counts = file.path(outdir, "counts.tsv"))
   }
-  skipped <- routes[routes$status != "ready", , drop = FALSE]
+  treat_only <- routes[routes$status == "treatment", , drop = FALSE]
+  if (nrow(treat_only)) truth$treatment_assays <- as.list(treat_only$matched)   # e.g. CRISPR lines: a treatment, not data
+  skipped <- routes[!routes$status %in% c("ready", "treatment"), , drop = FALSE]
   if (nrow(skipped)) {
     truth$not_simulated <- lapply(seq_len(nrow(skipped)), function(i) list(
       route = skipped$route[i], requested = skipped$matched[i], status = skipped$status[i], note = skipped$note[i]))

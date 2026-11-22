@@ -12,9 +12,15 @@
 }
 
 # One row per unit: sample (= sample_id), condition, batch; reference level first.
-.suite_unit_design <- function(meta, frame, p, cond_term) {
+.suite_unit_design <- function(meta, frame, p, cond_term, extra = character()) {
   blk <- names(p$role)[p$role == "block"][1]
   cond <- if (is.na(cond_term)) factor(rep("all", nrow(meta))) else frame[[cond_term]]
+  # uncovered factors (e.g. tissue) also shape the data: the assay condition is their combination
+  extra <- setdiff(extra, cond_term)
+  if (length(extra)) {
+    parts <- c(if (!is.na(cond_term)) list(frame[[cond_term]]), lapply(extra, function(v) frame[[v]]))
+    cond <- interaction(parts, sep = ".", lex.order = TRUE, drop = TRUE)
+  }
   d <- data.frame(sample = meta$sample_id, condition = as.character(cond),
                   batch = if (!is.na(blk)) paste0("batch_", frame[[blk]]) else "batch1",
                   biological_replicates = 1L, technical_replicates = 1L, stringsAsFactors = FALSE)
@@ -45,8 +51,8 @@
 
 # Bulk RNA-seq: one biological replicate per unit.
 .suite_assay_rnaseq <- function(ctx) {
-  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term)
-  if (is.na(ctx$cond_term)) stop("RNA-seq simulation needs a treatment term in analysis.model.", call. = FALSE)
+  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
+  if (is.na(ctx$cond_term) && !length(ctx$uncovered)) stop("RNA-seq simulation needs a treatment term in analysis.model.", call. = FALSE)
   a <- .suite_args("simulate_rnaseq_experiment", ctx$spec, ctx$params)
   tmp <- tempfile("simitall_counts_"); on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
   res <- .suite_call(simulate_rnaseq_experiment,
@@ -66,7 +72,7 @@
 # eQTL: each unit carries its line's genotypes; cis/trans eQTL plus treatment effects.
 .suite_assay_eqtl <- function(ctx) {
   if (is.null(ctx$genetics)) stop("eQTL simulation needs the genetics layer (a genotype factor in the design).", call. = FALSE)
-  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term)
+  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
   line_of <- as.character(ctx$frame[[ctx$geno_term]])[match(d$sample, ctx$meta$sample_id)]
   dos <- ctx$genetics$dosage[, line_of, drop = FALSE]
   colnames(dos) <- d$sample
@@ -91,7 +97,7 @@
 
 # Single-cell RNA-seq: cells per unit; counts.tsv = pseudobulk (sum over cells) per unit.
 .suite_assay_single_cell <- function(ctx) {
-  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term)
+  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
   a <- .suite_args("simulate_scrnaseq_experiment", ctx$spec, ctx$params)
   sdir <- file.path(ctx$outdir, "single_cell"); dir.create(sdir, showWarnings = FALSE)
   res <- .suite_call(simulate_scrnaseq_experiment,
@@ -122,7 +128,7 @@
 
 # ChIP-seq: one ChIP library (plus input) per unit.
 .suite_assay_chip_seq <- function(ctx) {
-  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term)
+  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
   cdir <- file.path(ctx$outdir, "chipseq"); dir.create(cdir, showWarnings = FALSE)
   g <- .suite_peak_genome(ctx, cdir)
   a <- .suite_args("simulate_chipseq", ctx$spec, ctx$params)
@@ -140,7 +146,7 @@
 
 # ATAC-seq: simulate_atacseq() takes replicates per condition; libraries are mapped to units in order.
 .suite_assay_atac_seq <- function(ctx) {
-  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term)
+  d <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
   adir <- file.path(ctx$outdir, "atacseq"); dir.create(adir, showWarnings = FALSE)
   g <- .suite_peak_genome(ctx, adir)
   a <- .suite_args("simulate_atacseq", ctx$spec, ctx$params)

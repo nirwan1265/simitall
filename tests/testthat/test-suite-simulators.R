@@ -6,6 +6,11 @@ test_that("routes come from spec fields, not words, and unsupported requests are
                population = list(mating = "RIL"))
   r <- simitall:::.suite_match_routes(spec)
   expect_equal(r$route[r$layer == "outcome"], "outcome_count")
+  # amplicon is 16S/ITS microbiome, not genotyping; CRISPR / overexpression are treatments, not data
+  r3 <- simitall:::.suite_match_routes(list(assays = list("amplicon", "crispr")))
+  expect_false(any(r3$layer == "genetics"))
+  expect_equal(r3$status[r3$route == "assay_microbiome"], "planned")
+  expect_equal(r3$status[r3$route == "treatment_only"], "treatment")
   expect_equal(r$route[r$layer == "genetics"], "genetics_cross")          # the cross wins over the panel
   expect_true("assay_rnaseq" %in% r$route)
   expect_equal(r$status[r$route == "assay_methylation"], "planned")
@@ -115,7 +120,7 @@ test_that("omics assays write one library per unit, named by sample_id", {
   sc <- read.delim(file.path(d, "single_cell", "unit_counts.tsv"), check.names = FALSE)
   expect_identical(names(sc)[-1], meta$sample_id)
   chip <- read.delim(file.path(d, "chipseq", "chip.sample_metadata.tsv"))
-  water <- stats::setNames(as.character(meta$treatment2), meta$sample_id)
+  water <- stats::setNames(as.character(meta$water), meta$sample_id)
   expect_setequal(chip$sample, meta$sample_id)
   expect_true(all(chip$condition == water[chip$sample]))
   atac <- read.delim(file.path(d, "atacseq", "library_to_unit.tsv"))
@@ -127,5 +132,28 @@ test_that("omics assays write one library per unit, named by sample_id", {
   lines <- simitall:::.simitall_read_genotypes(file.path(d, "genotypes.vcf"))$genotype
   units <- simitall:::.simitall_read_genotypes(file.path(d, "eqtl", "unit_genotypes.vcf"))$genotype
   u <- meta$sample_id[1]
-  expect_equal(unname(units[, u]), unname(lines[, as.character(meta$treatment[1])]))
+  expect_equal(unname(units[, u]), unname(lines[, as.character(meta$genotype[1])]))
+})
+
+test_that("factors the model does not hold (tissue within each plant) get effects, and a plant's rows share its effect", {
+  d <- make_design_folder("rcbd", NULL, list(design_factor("genotype", 3), design_factor("water", 2), design_factor("tissue", 2)), reps = 4,
+                          extra = list(assays = list("rnaseq", "crispr")))
+  s <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  expect_equal(unlist(s$analysis$terms$uncovered_factors), "tissue")
+  suppressMessages(simitall_from_biodes(d, params = list(simulate_rnaseq_experiment = list(n_genes = 200))))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_equal(names(t$uncovered_effects), "tissue")
+  expect_gt(t$within_unit_sd$sd, 0)
+  expect_null(t$not_simulated)                                  # CRISPR is a treatment, not a missing simulator
+  expect_equal(unlist(t$treatment_assays), "crispr")
+  meta <- read.delim(file.path(d, "sample_metadata_template.tsv"))
+  expect_equal(nrow(meta), 3 * 2 * 4 * 2)                        # one row per plant and tissue
+  # RNA-seq condition = water x tissue: true DE for every non-reference combination
+  expect_equal(length(t$counts$de_genes), 2 * 2 - 1)
+  # rows of one plant share its effect: leaf and root of a plant correlate after removing fixed effects
+  fit <- stats::lm(primary_outcome ~ genotype * water + tissue + block, data = meta)
+  r <- stats::residuals(fit)
+  pr <- split(r, meta$plot)
+  pairs <- do.call(rbind, pr[lengths(pr) == 2])
+  expect_gt(stats::cor(pairs[, 1], pairs[, 2]), 0.2)
 })

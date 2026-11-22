@@ -34,8 +34,8 @@ Calls `studyforge::studyforge_ask(question, fix = answers)` and uses only:
 - `$candidates[1]`: the design id (or `design =` to choose another candidate);
 - `$questions`, `$validation$missing`: shown as open questions.
 
-Simitall then **builds the layout itself from `$spec`**
-(`simitall_layout_from_spec(spec, design)`), writes the folder with Biodes'
+The layout comes from **Biodes `studyforge::layout_from_spec(spec)`** (every
+factor kept as its own column); Simitall writes the folder with Biodes'
 `write_design_package()` (so `analysis.model` comes from Biodes' catalog), and
 runs Simitall and Bioana. Biodes' `$recipe` (template layout code) is not used.
 
@@ -79,7 +79,10 @@ lower case, `-` read as `_`):
 | assay | `assays` | eqtl | `simulate_rnaseq_from_gwas()`, each unit carries its line's genotypes |
 | assay | `assays` | single_cell | `simulate_scrnaseq_experiment()`, pseudobulk per unit |
 | assay | `assays` | chip_seq, atac_seq | `simulate_chipseq()`, `simulate_atacseq()` on a synthetic genome |
-| - | `assays` | methylation | planned |
+| - | `assays` | methylation, medip; amplicon (16S/ITS), metagenomics | planned |
+| treatment | `assays` | crispr, overexpression, complementation, ... | a way to make the lines: a treatment, not data |
+
+Factors the model does not hold (`analysis.terms.uncovered_factors`, e.g. tissue measured within each plant) get main effects, and the rows of one unit share a unit effect (`sim_truth.json$within_unit_sd`). For assays, the condition is the combination of the first non-genotype treatment and these factors (e.g. `water_1.tissue_2`).
 
 Genetics needs a genotype term: a treatment term whose `analysis.terms` meaning
 (or factor name) matches `genotype_pattern` in `inst/suite/genetics.json`
@@ -134,7 +137,6 @@ map (`{"treatment": "main"}`) is also read.
 
 | file | what it says |
 |---|---|
-| `inst/suite/layouts.tsv` | one row per Biodes catalog design (74): treatment structure, blocking, within-unit structure, per environment, units/subjects, observations per unit, default reps, note |
 | `inst/suite/factor_roles.tsv` | which spec factor name is time, check, environment, period |
 | `inst/suite/handoff.json` | supported handoff versions, unsupported model tokens, check names, main-plot `applied_to` values |
 | `inst/suite/model_terms.json` | model term -> role and candidate columns (old names A/B, main/sub, genotype still work) |
@@ -143,12 +145,10 @@ map (`{"treatment": "main"}`) is also read.
 | `inst/suite/simulator_parameters.tsv` | each simulator's arguments, defaults, spec field |
 | `inst/suite/genetics.json`, `mating_schemes.tsv`, `phenotype_models.tsv` | genotype term, inbred systems, cross schemes, genetic architectures |
 | `inst/suite/power_defaults.json` | reps tried, simulations, alpha, target power, time limit |
-| `inst/suite/suggestions.tsv` | suggestions for missing factors, unit, outcome, effect/SD: field, context regex, suggestion, answer, source |
+| `inst/suite/suggestions.tsv` | suggestions for a missing unit, outcome, effect/SD (never factors: what to compare is the user's question) |
 
-When Biodes adds a design to `design_catalog.json`, add a row to
-`layouts.tsv` with the same id. A design without a row (or with
-`treatments = none`) is reported as having no layout rule, never replaced by
-another design.
+Layouts are Biodes' job (`layout_from_spec()`); when it stops with
+`missing: ...`, Simitall shows that as a question for the user.
 
 ## What stops a run (and what Biodes can do about it)
 
