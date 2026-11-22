@@ -35,7 +35,7 @@ for (sp in c(hsa = "human", mmu = "mouse")) {
       data.frame(sample = s$sample, group = s$group, donor = s$donor, library_size = s$library_size))
 }
 
-# plant 16S: soil / rhizosphere / root x 5 time points x 9 reps, rarefied to 14,510 reads
+# plant 16S (soybean, Mendeley doi:10.17632/7y4gbwk44k.1, CC BY 4.0): soil / rhizosphere / root x 5 time points x 9 reps, rarefied to 14,510 reads
 o <- rd("plant_16s_otu_counts.csv", row.names = 1); g <- rd("group.csv")
 o <- t(as.matrix(o)); g <- g[match(colnames(o), g[[1]]), ]
 o <- keep_detected(o, 5)
