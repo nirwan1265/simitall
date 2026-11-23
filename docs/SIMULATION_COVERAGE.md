@@ -41,9 +41,7 @@ number of genotypes or time points). The third set is `train.jsonl`, the
 questions Biodes learned from, so it reads best (95%).
 
 The "other": pq_0105 (yeast amplicon: no microbiome/amplicon template for
-yeast and no fallback) and pq_0180 (Biodes: the panel step adds a `genotype`
-factor with no level count and `studyforge_ask()` stops in `.divisors()` with
-"argument must be coercible to non-negative integer").
+yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
 
 ### History (fully simulated)
 
