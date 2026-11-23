@@ -58,8 +58,8 @@ common example.
 
 ## Analysis Match
 
-- Quantitative/normal trait: `analyze_gwas()`.
-- Binary Bernoulli trait: `analyze_binary_gwas()` for the package's simple
+- Quantitative/normal trait: `bioana::analyze_gwas()`.
+- Binary Bernoulli trait: `bioana::analyze_binary_gwas()` for the package's simple
   logistic baseline; use a validated binary mixed model for real related or
   unbalanced cohorts.
 - Poisson/negative-binomial/true binomial count trait: retain the count and

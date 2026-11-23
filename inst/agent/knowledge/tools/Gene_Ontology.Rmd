@@ -26,13 +26,13 @@ GAF records gene-product-to-term associations, evidence codes, and references.
 ## Core Functions
 
 ```r
-coordinates <- read_gene_coordinates("Arabidopsis_thaliana")
-annotations <- read_go_gaf("/path/to/ARATH-mod.gaf.gz")
-gene_go <- join_gene_go(coordinates, annotations)
-term_summary <- summarize_go_terms(gene_go, by = "go_id_aspect")
+coordinates <- bioana::read_gene_coordinates("Arabidopsis_thaliana")
+annotations <- bioana::read_go_gaf("/path/to/ARATH-mod.gaf.gz")
+gene_go <- bioana::join_gene_go(coordinates, annotations)
+term_summary <- bioana::summarize_go_terms(gene_go, by = "go_id_aspect")
 ```
 
-`join_gene_go()` uses stable IDs first and then an exact symbol only when no
+`bioana::join_gene_go()` uses stable IDs first and then an exact symbol only when no
 stable-ID annotation is available. Synonym matching requires an explicit
 reviewed mapping because symbols are not reliably unique across resources.
 

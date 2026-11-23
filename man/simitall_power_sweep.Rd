@@ -46,7 +46,7 @@ simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to
 Takes a design folder (or the result of \code{\link[=simitall_from_question]{simitall_from_question()}}) and,
 for each value of \code{design.reps}, rebuilds the layout from the study details
 (Biodes \code{studyforge::layout_from_spec()}), simulates \code{n_sim} experiments
-(\code{\link[=simitall_from_biodes]{simitall_from_biodes()}}) and fits the design's model (\code{\link[=bioana_fit_biodes]{bioana_fit_biodes()}}).
+(\code{\link[=simitall_from_biodes]{simitall_from_biodes()}}) and fits the design's model (\code{bioana::bioana_analyze()}; needs Bioana).
 Power is the share of experiments in which a model term's ANOVA test is
 significant. Nothing here depends on the question: the design, factors,
 model, effect size and residual SD all come from the folder's

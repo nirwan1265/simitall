@@ -21,9 +21,9 @@ Bayesian ridge, BayesA, BayesB, BayesC, and Bayesian Lasso marker models.
 
 ## simitall Mapping
 
-Use `fit_genomic_model(model = "bayes_ridge")`, `"bayes_a"`, `"bayes_b"`,
+Use `bioana::fit_genomic_model(model = "bayes_ridge")`, `"bayes_a"`, `"bayes_b"`,
 `"bayes_c"`, or `"bayesian_lasso"`. Assess prediction with
-`cross_validate_genomic_prediction()` before selecting parents.
+`bioana::cross_validate_genomic_prediction()` before selecting parents.
 
 ## Guardrails
 

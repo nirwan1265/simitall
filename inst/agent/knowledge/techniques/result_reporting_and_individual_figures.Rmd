@@ -36,7 +36,7 @@ fig_dir <- file.path(out_dir, "figures")
 dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 plot_trait_diagnostics(phenotype, trait = "trait", group = "environment",
                        out_dir = fig_dir)
-gwas_figure <- plot_gwas_results("results/gwas.benchmark.tsv",
+gwas_figure <- bioana::plot_gwas_results("results/gwas.benchmark.tsv",
                                  file.path(fig_dir, "gwas_overview"))
 export_simitall_plot_panels(gwas_figure, fig_dir,
                             c("gwas_manhattan", "gwas_qq"))
@@ -62,7 +62,7 @@ rna_qc <- plot_rnaseq_diagnostics(
   "results/rna.counts.tsv", "results/rna.sample_metadata.tsv",
   out_dir = file.path("results", "figures")
 )
-rna_eqtl <- plot_rnaseq_eqtl_results(
+rna_eqtl <- bioana::plot_rnaseq_eqtl_results(
   "results/rna", "results/eqtl", "results/figures/rnaseq_eqtl_overview"
 )
 export_simitall_plot_panels(
@@ -88,7 +88,7 @@ Required files:
   and differential-binding truth when simulated.
 
 ```r
-chip_figure <- plot_chipseq_results(
+chip_figure <- bioana::plot_chipseq_results(
   "results/chipseq/run", "results/chipseq/run/figures/chipseq_overview"
 )
 export_simitall_plot_panels(
@@ -108,7 +108,7 @@ Required files:
   eQTL truth/results, and metrics.
 
 ```r
-sc_figure <- plot_scrnaseq_results(
+sc_figure <- bioana::plot_scrnaseq_results(
   experiment, "results/scrnaseq/figures/scrnaseq_overview"
 )
 export_simitall_plot_panels(

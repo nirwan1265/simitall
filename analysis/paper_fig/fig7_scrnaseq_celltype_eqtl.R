@@ -120,7 +120,7 @@ sc <- simulate_scrnaseq_from_gwas(
 )
 
 cat("3. Benchmarking cell-type eQTLs with donor pseudobulk...\n")
-benchmark <- benchmark_celltype_eqtls(
+benchmark <- bioana::benchmark_celltype_eqtls(
   genotype_file = paste0(gwas_prefix, ".geno.tsv"),
   pseudobulk_expression = sc$pseudobulk_expression,
   pseudobulk_metadata = sc$pseudobulk_metadata,
@@ -134,7 +134,7 @@ benchmark <- benchmark_celltype_eqtls(
 )
 
 cat("4. Building the publication figure and source-data tables...\n")
-figure <- plot_scrnaseq_results(
+figure <- bioana::plot_scrnaseq_results(
   scrna_prefix = scrna_prefix,
   eqtl_prefix = eqtl_prefix,
   out_prefix = figure_prefix,

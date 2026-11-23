@@ -28,10 +28,10 @@ controlled biparental population.
 ## Core Decisions
 
 - Use an association model that controls relatedness and structure. In
-  `simitall`, `analyze_gwas()` uses `rrBLUP::GWAS()` with a realized kinship
+  `simitall`, `bioana::analyze_gwas()` uses `rrBLUP::GWAS()` with a realized kinship
   matrix, optional fixed effects, and optional marker-derived principal
   components.
-- For a simulated binary phenotype, `analyze_binary_gwas()` supplies a
+- For a simulated binary phenotype, `bioana::analyze_binary_gwas()` supplies a
   transparent fixed-effect logistic baseline with fixed covariates and marker
   PCs. It does **not** include a kinship random effect, so use a validated
   binary mixed-model method for real related cohorts or publication-level
@@ -57,20 +57,20 @@ cohort <- simulate_gwas_cohort(
   seed = 101
 )
 
-fit <- analyze_gwas(
+fit <- bioana::analyze_gwas(
   genotype_file = cohort$geno,
   phenotype = cohort$pheno,
   out_prefix = "results/gwas/association",
   fixed_effects = "pop",
   n_pcs = 3
 )
-benchmark_gwas(
+bioana::benchmark_gwas(
   fit$paths$results,
   cohort$causal,
   out_prefix = "results/gwas/benchmark",
   window_bp = 10000
 )
-plot_gwas_results("results/gwas/benchmark.benchmark.tsv",
+bioana::plot_gwas_results("results/gwas/benchmark.benchmark.tsv",
                   "results/figures/gwas")
 ```
 

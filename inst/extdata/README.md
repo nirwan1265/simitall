@@ -36,17 +36,10 @@ workflow demonstrations runnable without turning the package into a
 multi-gigabyte genome-data download. See `annotations/README.md` for source
 assemblies, boundaries, and the separate Gene Ontology (GO) download policy.
 
-`gene_coordinates/` contains compact, genome-wide gene-only coordinate tables
-for Arabidopsis, barley, rice, wheat, maize, and Drosophila. Each row retains
-the chromosome/contig, start, end, strand, gene ID, gene name, and biotype but
-not transcript/exon/CDS detail. These are appropriate for interval overlap and
-gene-ID joins; see `gene_coordinates/README.md` for their assembly manifest and
-GO join guidance.
-
-`go/arabidopsis_tair10_go_demo.gaf.gz` is a small Gene Ontology Annotation File
-(GAF) subset matching the Arabidopsis GFF3 excerpt. The functions
-`read_go_gaf()`, `join_gene_go()`, and `summarize_go_terms()` also accept a
-user's full local GAF download directly.
+The gene-coordinate catalogues (`gene_coordinates/`) and the Arabidopsis GO
+demo (`go/`) moved to Bioana (github.com/nirwan1265/bioana) with the GO
+functions `read_gene_coordinates()`, `read_go_gaf()`, `join_gene_go()` and
+`summarize_go_terms()`.
 
 In the Shiny agent, open **Optional input details**, choose **Use package demo
 only**, then ask for a maize NAM or human IRF6 pedigree demonstration. The

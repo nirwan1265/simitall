@@ -108,12 +108,12 @@ write.table(truth, truth_file, sep = "\t", row.names = FALSE, quote = FALSE)
 
 cat("2. Running family-aware quantitative GWAS...\n")
 gwas_prefix <- file.path(out_dir, "drought_response_gwas")
-gwas <- analyze_gwas(
+gwas <- bioana::analyze_gwas(
   vcf, phenotype, gwas_prefix, trait = "drought_response_index",
   fixed_effects = "family", n_pcs = 2L, min_maf = 0.05
 )
-benchmark <- benchmark_gwas(gwas$paths$results, truth, gwas_prefix, window_bp = 150L)
-plot_gwas_results(
+benchmark <- bioana::benchmark_gwas(gwas$paths$results, truth, gwas_prefix, window_bp = 150L)
+bioana::plot_gwas_results(
   benchmark$paths$results, file.path(figure_dir, "drought_response_gwas_overview"),
   individual_panels_dir = figure_dir
 )

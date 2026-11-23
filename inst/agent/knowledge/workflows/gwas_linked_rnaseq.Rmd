@@ -28,14 +28,14 @@ simulate_rnaseq_from_gwas(
   seed = 404
 )
 
-benchmark_eqtl(
+bioana::benchmark_eqtl(
   genotype_file = "results/gwas/cohort.geno.tsv",
   expression_file = "results/rnaseq/gwas_linked.expression.tsv",
   sample_metadata = "results/rnaseq/gwas_linked.sample_metadata.tsv",
   truth_file = "results/rnaseq/gwas_linked.eqtl_truth.tsv",
   out_prefix = "results/rnaseq/eqtl"
 )
-plot_rnaseq_eqtl_results(
+bioana::plot_rnaseq_eqtl_results(
   rnaseq_prefix = "results/rnaseq/gwas_linked",
   eqtl_prefix = "results/rnaseq/eqtl",
   out_prefix = "results/figures/gwas_rnaseq"

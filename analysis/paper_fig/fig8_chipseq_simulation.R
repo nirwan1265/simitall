@@ -105,7 +105,7 @@ chip <- simulate_chipseq(
 )
 
 cat("2. Building publication figure and source-data tables...\n")
-figure <- plot_chipseq_results(
+figure <- bioana::plot_chipseq_results(
   chip_prefix = chip_prefix,
   out_prefix = figure_prefix,
   profile_window = 750,

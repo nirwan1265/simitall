@@ -30,27 +30,31 @@ test_that("Simitall simulates an RCBD with subsamples, power and attrition from 
 })
 
 test_that("Bioana fits the spec's model, averages subsamples and refuses them as replicates", {
+  skip_if_not_installed("bioana")
   d <- copy_fixture("rcbd_subsamples")
   suppressMessages(simitall_from_biodes(d, seed = 3))
-  r <- suppressMessages(bioana_fit_biodes(d))
-  expect_equal(r$summary$method, "lm")
-  expect_equal(r$summary$n_units_fitted, 23)              # 24 units, 1 lost to attrition
-  expect_equal(r$summary$subsamples, "aggregate")
-  expect_true(file.exists(file.path(d, "results.tsv")))
-  expect_true(file.exists(file.path(d, "recovery.tsv")))
-  expect_equal(r$recovery$summary$n_terms, 5)
-  expect_error(bioana_fit_biodes(d, subsamples = "as_replicates"), "not independent replicates")
-  n <- suppressMessages(bioana_fit_biodes(d, subsamples = "nest"))
-  expect_match(n$summary$model_fitted, "unit_id_")
+  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+  a <- r$summary$analyses$outcome
+  expect_match(a$method, "^lm")
+  expect_equal(a$n_units_fitted, 23)              # 24 units, 1 lost to attrition
+  expect_equal(a$subsamples, "aggregate")
+  expect_true(file.exists(file.path(d, "bioana", "outcome", "results.tsv")))
+  expect_true(file.exists(file.path(d, "bioana", "outcome", "recovery.tsv")))
+  expect_equal(a$recovery$n_terms, 5)
+  bad <- suppressMessages(bioana::bioana_analyze(d, params = list(outcome = list(subsamples = "as_replicates")), quiet = TRUE))
+  expect_match(bad$summary$not_analysed$outcome$note, "not independent replicates")
+  n <- suppressMessages(bioana::bioana_analyze(d, params = list(outcome = list(subsamples = "nest")), quiet = TRUE))
+  expect_match(n$summary$analyses$outcome$model_fitted, "unit_id_")
 })
 
 test_that("mixed models: split plot and alpha lattice use lmer with the spec's random terms", {
+  skip_if_not_installed("bioana")
   for (nm in c("split_field", "alpha_120")) {
     d <- copy_fixture(nm)
     suppressMessages(simitall_from_biodes(d))
-    r <- suppressMessages(bioana_fit_biodes(d))
-    expect_match(r$summary$method, "lmerMod", info = nm)
-    expect_true(r$recovery$summary$n_terms > 0, info = nm)
+    r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+    expect_match(r$summary$analyses$outcome$method, "lmerMod", info = nm)
+    expect_true(r$summary$analyses$outcome$recovery$n_terms > 0, info = nm)
     truth <- jsonlite::read_json(file.path(d, "sim_truth.json"))
     expect_true(length(truth$random_sd) == 1, info = nm)
     expect_true(length(truth$assumptions) > 0, info = nm)  # spec has no power: defaults are declared
@@ -64,11 +68,12 @@ test_that("count assays get a count matrix with Biodes sample ids and a DE test"
   meta <- read.delim(file.path(d, "sample_metadata_template.tsv"))
   expect_equal(names(counts), c("gene_id", meta$sample_id))
   expect_equal(nrow(counts), 200)
-  r <- suppressMessages(bioana_fit_biodes(d))
-  expect_true(file.exists(file.path(d, "de_results.tsv")))
-  rec <- r$summary$counts$recovery$drought
-  expect_equal(rec$true_de, 20)
-  expect_gt(rec$log2fc_cor, 0.5)
+  skip_if_not_installed("bioana")
+  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+  expect_true(file.exists(file.path(d, "bioana", "rnaseq", "results.tsv")))
+  rec <- r$summary$analyses$rnaseq$recovery$treatmentdrought
+  expect_equal(rec$true_changes, 20)
+  expect_gt(rec$estimate_cor, 0.5)
 })
 
 test_that("unsupported models, wrong versions and unknown columns stop with a clear message", {
@@ -90,8 +95,9 @@ test_that("unsupported models, wrong versions and unknown columns stop with a cl
 })
 
 test_that("analysing before simulating says to run simitall_from_biodes() first", {
+  skip_if_not_installed("bioana")
   d <- copy_fixture("rcbd_greenhouse")
-  expect_error(bioana_fit_biodes(d), "Run simitall_from_biodes")
+  expect_error(bioana::bioana_analyze(d), "simitall_from_biodes")
 })
 
 test_that("layouts that do not match the plan are flagged", {

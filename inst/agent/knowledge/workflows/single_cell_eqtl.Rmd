@@ -25,14 +25,14 @@ sc <- simulate_scrnaseq_from_gwas(
   seed = 505
 )
 
-benchmark_celltype_eqtls(
+bioana::benchmark_celltype_eqtls(
   genotype_file = "results/gwas/cohort.geno.tsv",
   pseudobulk_expression = sc$pseudobulk_expression,
   pseudobulk_metadata = sc$pseudobulk_metadata,
   truth_file = sc$eqtl_truth,
   out_prefix = "results/scrna/eqtl"
 )
-plot_scrnaseq_results(
+bioana::plot_scrnaseq_results(
   scrna_prefix = "results/scrna/gwas_linked",
   eqtl_prefix = "results/scrna/eqtl",
   out_prefix = "results/figures/scrna"

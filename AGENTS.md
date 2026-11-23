@@ -16,7 +16,7 @@ known truth, for an experiment that Biodes has designed.
 | --- | --- | --- |
 | Biodes | github.com/nirwan1265/BioDesignGPT (package `studyforge`) | Reads the user's question, audits the unit, picks the design, writes `study_spec.json` + `field_layout.csv` |
 | **Simitall** | this repo | Simulates data for every unit of that layout, writes `sim_truth.json` |
-| Bioana | this repo (`bioana_fit_biodes()`) | Fits the design's model, checks recovery against the truth |
+| Bioana | github.com/nirwan1265/bioana (`bioana::bioana_analyze()`) | Analyses every data set with the design's model, checks recovery against the truth |
 | Biopaint | this repo (`biopaint_biodes()`) | Figures |
 
 **Simitall does not read prompts.** Biodes reads the user's words; Simitall
@@ -140,9 +140,9 @@ move to Biodes/BioCore.
 ### Lightweight package data
 
 - `inst/extdata/annotations/`: tiny GFF3 gene-only examples for demos.
-- `inst/extdata/gene_coordinates/`: compact full gene-coordinate catalogues for
-  Arabidopsis, barley, rice, wheat, maize, and fly.
-- `inst/extdata/go/arabidopsis_tair10_go_demo.gaf.gz`: a small matched GAF demo.
+- Gene-coordinate catalogues (Arabidopsis, barley, rice, wheat, maize, fly) and
+  the Arabidopsis GAF demo moved to Bioana (`inst/extdata/gene_coordinates/`,
+  `inst/extdata/go/` there) with the GO functions.
 - `inst/extdata/annotations/go_sources.tsv`: GO source and identifier guidance.
 
 The compact coordinate tables retain `seqname`, `start_bp`, `end_bp`, `strand`,
@@ -152,13 +152,13 @@ for interval overlap and ID joins, not transcript/exon/CDS analysis.
 ### GO API
 
 ```r
-coordinates <- read_gene_coordinates("Arabidopsis_thaliana")
-annotations <- read_go_gaf("/path/to/ARATH-mod.gaf.gz")
-gene_go <- join_gene_go(coordinates, annotations)
-term_summary <- summarize_go_terms(gene_go, by = "go_id_aspect")
+coordinates <- bioana::read_gene_coordinates("Arabidopsis_thaliana")
+annotations <- bioana::read_go_gaf("/path/to/ARATH-mod.gaf.gz")
+gene_go <- bioana::join_gene_go(coordinates, annotations)
+term_summary <- bioana::summarize_go_terms(gene_go, by = "go_id_aspect")
 ```
 
-`join_gene_go()` favors stable IDs. In `auto` mode it only falls back to an
+`bioana::join_gene_go()` favors stable IDs. In `auto` mode it only falls back to an
 exact symbol for unmapped genes; it does not use loose synonyms. Synonym joins
 need a reviewed organism-specific ID mapping. In particular, the included
 maize and wheat GAF downloads use UniProt-oriented IDs, so a compatible
@@ -187,11 +187,13 @@ as passing coverage.
 
 ## Bioana
 
-Analysis moved to its own repo, github.com/nirwan1265/bioana (R package
-`bioana`, `bioana_analyze()`). Simitall writes `data_manifest.json`
-(`R/suite_manifest.R`) so Bioana knows what to analyse; keep each simulator's
-manifest entry in step with Bioana's `inst/rules/analyses.tsv`. Simitall still
-has its own `bioana_fit_biodes()` (outcome + counts) because the power sweep
-and `simitall_from_question()` use it; switch those to `bioana::bioana_analyze()`
-and remove it once both are installed together. `R/suite_handoff.R` has a copy
+All analysis lives in github.com/nirwan1265/bioana (R package `bioana`):
+`bioana_analyze()` for Biodes folders, plus GWAS, genomic selection, peak
+calling, single-cell clustering, eQTL benchmarks, GO annotation and assembly
+evaluation, moved there on 2026-11-23. Simitall only simulates. It writes
+`data_manifest.json` (`R/suite_manifest.R`) so Bioana knows what to analyse;
+keep each simulator's manifest entry in step with Bioana's
+`inst/rules/analyses.tsv`. `simitall_power_sweep()` and
+`simitall_from_question()` call `bioana::bioana_analyze()` (Bioana is in
+Suggests; tests that need it skip without it). `R/suite_handoff.R` has a copy
 in Bioana (`R/read_design.R`): change both together.

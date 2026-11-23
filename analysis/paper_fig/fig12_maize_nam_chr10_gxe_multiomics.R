@@ -104,12 +104,12 @@ plot_trait_diagnostics(
 drought_pheno <- trait_rows[trait_rows$environment == "drought", c("sample", "family", "grain_yield_index")]
 cat("3. Running kinship-aware drought GWAS...\n")
 gwas_prefix <- file.path(out_dir, "drought_gwas")
-analyze_gwas(vcf, drought_pheno, gwas_prefix, trait = "grain_yield_index", fixed_effects = "family", n_pcs = 2L, min_maf = 0.02)
-benchmark_gwas(paste0(gwas_prefix, ".gwas.tsv"), truth, file.path(out_dir, "drought_gwas"), window_bp = 150L)
+bioana::analyze_gwas(vcf, drought_pheno, gwas_prefix, trait = "grain_yield_index", fixed_effects = "family", n_pcs = 2L, min_maf = 0.02)
+bioana::benchmark_gwas(paste0(gwas_prefix, ".gwas.tsv"), truth, file.path(out_dir, "drought_gwas"), window_bp = 150L)
 gwas <- read.delim(paste0(gwas_prefix, ".gwas.tsv"), check.names = FALSE)
 # The package plotting API writes a Manhattan and QQ diagnostic pair from the
 # saved benchmark table, including the programmed causal window highlight.
-gwas_diagnostics <- plot_gwas_results(
+gwas_diagnostics <- bioana::plot_gwas_results(
   paste0(gwas_prefix, ".benchmark.tsv"),
   file.path(figure_dir, "gwas_overview")
 )
@@ -130,7 +130,7 @@ simulate_rnaseq_from_gwas(vcf, rna_prefix, annotation_gff3 = annotation_for_rna,
 
 # Genomic selection uses drought phenotypes and preserves NAM-family limits.
 cat("5. Fitting GBLUP and selecting diverse parents...\n")
-selection <- run_genomic_selection(vcf, drought_pheno, file.path(out_dir, "drought_selection"), trait = "grain_yield_index", model = "gblup", n_parents = 12L, n_crosses = 18L, diversity_penalty = 0.25, family_data = metadata[, c("sample", "family")], seed = seed + 2L)
+selection <- bioana::run_genomic_selection(vcf, drought_pheno, file.path(out_dir, "drought_selection"), trait = "grain_yield_index", model = "gblup", n_parents = 12L, n_crosses = 18L, diversity_penalty = 0.25, family_data = metadata[, c("sample", "family")], seed = seed + 2L)
 
 # Four validation panels: GxE, GWAS evidence, expression separation, and selection gain.
 counts <- read.delim(paste0(rna_prefix, ".counts.tsv"), check.names = FALSE, row.names = 1)

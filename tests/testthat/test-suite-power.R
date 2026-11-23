@@ -1,6 +1,7 @@
 # simitall_power_sweep(): generic over designs; reads everything from the folder.
 
 test_that("power sweep runs from a design folder and power grows with replication", {
+  skip_if_not_installed("bioana")
   skip_if_not_installed("lme4")
   spec <- list(handoff_version = "0.4.0", factors = list(list(name = "genotype", n_levels = 4), list(name = "water", n_levels = 2)),
                design = list(reps = 3, chosen = "factorial", randomization_seed = 42),
@@ -25,6 +26,7 @@ test_that("power sweep runs from a design folder and power grows with replicatio
 })
 
 test_that("power sweep works for repeated-measures and crossover designs too", {
+  skip_if_not_installed("bioana")
   skip_if_not_installed("lme4")
   for (case in list(c("repeated_measures"), c("crossover_ab_ba"))) {
     spec <- list(handoff_version = "0.4.0", factors = list(list(name = "drug", n_levels = 2), list(name = "time", n_levels = 3)),
@@ -37,6 +39,7 @@ test_that("power sweep works for repeated-measures and crossover designs too", {
 })
 
 test_that("a question with no replicate count gets design.reps from the power sweep", {
+  skip_if_not_installed("bioana")
   skip_if_not_installed("studyforge")
   spec <- list(handoff_version = "0.4.0", organism = "Zea mays", system = "field",
                factors = list(list(name = "water", n_levels = 2)),
@@ -52,14 +55,9 @@ test_that("a question with no replicate count gets design.reps from the power sw
   expect_equal(ch$reps, if (any(ok)) c(2, 4, 8)[which(ok)[1]] else 8)
 })
 
-test_that("count assays get power as the share of 2-fold genes found, with moderated t-tests", {
+test_that("count assays get power as the share of 2-fold genes found", {
+  skip_if_not_installed("bioana")
   skip_if_not_installed("studyforge")
-  set.seed(1)
-  s2 <- 0.2 * stats::rchisq(500, 4) / 4
-  sq <- simitall:::.suite_squeeze_var(s2, 4)
-  expect_gt(sq$df_prior, 1)
-  expect_lt(stats::var(sq$var_post), stats::var(s2))          # shrunk toward the prior
-  expect_equal(sq$var_prior, 0.2, tolerance = 0.25)
   spec <- list(handoff_version = "0.4.0", organism = "Secale cereale", system = "growth_chamber",
                factors = list(list(name = "genotype", n_levels = 2)), assays = list("rnaseq"),
                design = list(reps = 3, chosen = "crd", randomization_seed = 42))

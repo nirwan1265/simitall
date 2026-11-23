@@ -169,12 +169,12 @@ recombination, and causal-truth files that can feed the later omics sections.
 
 ### 3.1 Run and benchmark a GWAS
 
-`analyze_gwas()` uses the mixed model implemented by `rrBLUP::GWAS()`. It can
+`bioana::analyze_gwas()` uses the mixed model implemented by `rrBLUP::GWAS()`. It can
 control relatedness with a genomic relationship matrix and population
 structure with fixed effects or marker-derived principal components:
 
 ```r
-gwas <- analyze_gwas(
+gwas <- bioana::analyze_gwas(
   genotype_file = "results/gwas/demo.geno.tsv",
   phenotype = "results/gwas/demo.pheno.tsv",
   out_prefix = "results/gwas/demo_analysis",
@@ -184,7 +184,7 @@ gwas <- analyze_gwas(
   min_maf = 0.05
 )
 
-benchmark <- benchmark_gwas(
+benchmark <- bioana::benchmark_gwas(
   gwas_results = gwas$results,
   truth = "results/gwas/demo.causal.tsv",
   out_prefix = "results/gwas/demo_benchmark",
@@ -192,7 +192,7 @@ benchmark <- benchmark_gwas(
   window_bp = 10000
 )
 
-plot_gwas_results(
+bioana::plot_gwas_results(
   benchmark$results,
   out_prefix = "results/figures/demo_gwas"
 )
@@ -208,15 +208,15 @@ forest with `ranger`. Candidate samples may have missing phenotypes as long as
 their genotypes are present:
 
 ```r
-fit <- fit_genomic_model(
+fit <- bioana::fit_genomic_model(
   genotype_file = "results/gwas/demo.geno.tsv",
   phenotype = "results/gwas/demo.pheno.tsv",
   model = "gblup"
 )
 
-predictions <- predict_genomic_values(fit)
+predictions <- bioana::predict_genomic_values(fit)
 
-cv <- cross_validate_genomic_prediction(
+cv <- bioana::cross_validate_genomic_prediction(
   genotype_file = "results/gwas/demo.geno.tsv",
   phenotype = "results/gwas/demo.pheno.tsv",
   model = "gblup",
@@ -228,7 +228,7 @@ cv <- cross_validate_genomic_prediction(
 Run one complete prediction-selection-cross-planning round:
 
 ```r
-selection <- run_genomic_selection(
+selection <- bioana::run_genomic_selection(
   genotype_file = "results/gwas/demo.geno.tsv",
   phenotype = "results/gwas/demo.pheno.tsv",
   out_prefix = "results/selection/cycle1",
@@ -857,7 +857,7 @@ run_grid_both(
   output_dir = "results/reads"
 )
 
-run_unicycler_grid(
+bioana::run_unicycler_grid(
   tag = "demo",
   reads_dir = "results/reads",
   output_dir = "results/assemblies",
@@ -865,7 +865,7 @@ run_unicycler_grid(
   pb_covs = c(10, 20)
 )
 
-run_quast_grid(
+bioana::run_quast_grid(
   tag = "demo",
   ref_fa = "results/synthetic_genome.fa",
   assemblies_dir = "results/assemblies",
@@ -874,7 +874,7 @@ run_quast_grid(
   pb_covs = c(10, 20)
 )
 
-summarize_quast(
+bioana::summarize_quast(
   quast_root = "results/evaluation/demo",
   out_csv = "results/quast_summary.csv"
 )
@@ -1017,7 +1017,7 @@ Key outputs are:
 Benchmark eQTL recovery against the known causal pairs:
 
 ```r
-eqtl <- benchmark_eqtl(
+eqtl <- bioana::benchmark_eqtl(
   genotype_file = "results/gwas/demo.geno.tsv",
   expression_file = rna$expression,
   out_prefix = "results/eqtl/demo",
@@ -1065,7 +1065,7 @@ transcript_fasta = ...)`.
 Summarize the count simulation and eQTL benchmark in one result row:
 
 ```r
-summarize_rnaseq_results(
+bioana::summarize_rnaseq_results(
   rnaseq_prefix = "results/rnaseq/demo",
   eqtl_prefix = "results/eqtl/demo",
   out_tsv = "results/figures/rnaseq_summary.tsv"
@@ -1077,7 +1077,7 @@ expression PCA, the eQTL association landscape, causal-effect recovery, ASE
 recovery, and precision/recall/FDR metrics:
 
 ```r
-plot_rnaseq_eqtl_results(
+bioana::plot_rnaseq_eqtl_results(
   rnaseq_prefix = "results/rnaseq/demo",
   eqtl_prefix = "results/eqtl/demo",
   out_prefix = "results/figures/rnaseq_eqtl"
@@ -1123,7 +1123,7 @@ sc_technical <- simulate_scrnaseq_experiment(
   seed = 4
 )
 
-plot_scrnaseq_results(
+bioana::plot_scrnaseq_results(
   scrna_prefix = "results/scrna/sample_A",
   out_prefix = "results/figures/sample_A_scrna"
 )
@@ -1230,7 +1230,7 @@ This is important: cells from one donor are technical observations, not
 independent biological replicates.
 
 ```r
-celltype_eqtl <- benchmark_celltype_eqtls(
+celltype_eqtl <- bioana::benchmark_celltype_eqtls(
   genotype_file = "results/gwas/demo.geno.tsv",
   pseudobulk_expression = sc$pseudobulk_expression,
   pseudobulk_metadata = sc$pseudobulk_metadata,
@@ -1244,7 +1244,7 @@ celltype_eqtl <- benchmark_celltype_eqtls(
 Generate the six-panel result figure and panel-level source data:
 
 ```r
-plot_scrnaseq_results(
+bioana::plot_scrnaseq_results(
   scrna_prefix = "results/scrna/demo",
   eqtl_prefix = "results/scrna/demo_celltype_eqtl",
   out_prefix = "results/figures/scrna_celltype_eqtl"
@@ -1321,7 +1321,7 @@ peak-centered enrichment, FRiP, library complexity, signal by annotation
 class, and differential-binding recovery:
 
 ```r
-plot_chipseq_results(
+bioana::plot_chipseq_results(
   chip_prefix = "results/chipseq/tf_demo",
   out_prefix = "results/figures/tf_chipseq"
 )

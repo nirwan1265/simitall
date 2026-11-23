@@ -20,7 +20,7 @@ method and recommends comparing results with other approaches.
 
 ## simitall Position
 
-`analyze_gwas()` remains the package's reproducible baseline mixed-model path.
+`bioana::analyze_gwas()` remains the package's reproducible baseline mixed-model path.
 GAPIT/FarmCPU is an optional comparative analysis backend for an already
 simulated or user-supplied genotype/phenotype cohort. The agent must preserve
 identical filtering, covariates, kinship/PC handling, and causal truth when

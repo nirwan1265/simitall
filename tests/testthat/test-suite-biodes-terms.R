@@ -37,21 +37,22 @@ test_that("analysis.terms picks the layout columns; the split plot's cell label 
 
 test_that("new Biodes packages simulate and fit end to end", {
   skip_if_not_installed("lme4")
+  skip_if_not_installed("bioana")
   for (name in c("rcbd_greenhouse", "alpha_120", "split_field")) {
     d <- copy_terms_fixture(name)
     suppressMessages(simitall_from_biodes(d, seed = 11, effect = 4, residual_sd = 1))
-    r <- suppressMessages(bioana_fit_biodes(d))
-    expect_false(is.null(r$summary$recovery), info = name)
-    tab <- r$recovery$table
+    r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+    expect_false(is.null(r$summary$analyses$outcome$recovery), info = name)
+    tab <- r$recovery$outcome
     expect_true(all(abs(tab$error) < stats::qt(0.9995, tab$df) * tab$se), info = name)
     if (name == "split_field") {
-      expect_true(all(c("treatmentwet", "treatment2H4", "treatmentwet:treatment2H4") %in% r$results$term))
+      expect_true(all(c("treatmentwet", "treatment2H4", "treatmentwet:treatment2H4") %in% r$results$outcome$term))
     }
   }
   d <- copy_terms_fixture("crd_rnaseq")
   suppressMessages(simitall_from_biodes(d, seed = 5, n_genes = 300))
-  r <- suppressMessages(bioana_fit_biodes(d))
-  expect_true(file.exists(file.path(d, "de_results.tsv")))
+  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+  expect_true(file.exists(file.path(d, "bioana", "rnaseq", "results.tsv")))
 })
 
 # Balanced synthetic layout for a generic-term model: between-unit factors
@@ -99,6 +100,7 @@ write_synthetic_package <- function(id, model, dir) {
 
 test_that("every Biodes catalog model simulates and fits from its generic terms", {
   skip_if_not_installed("lme4")
+  skip_if_not_installed("bioana")
   cat_models <- read.delim(test_path("fixtures", "biodes_terms", "catalog_models.tsv"), stringsAsFactors = FALSE)
   expect_equal(nrow(cat_models), 74)
   root <- tempfile("catalog_")
@@ -108,14 +110,15 @@ test_that("every Biodes catalog model simulates and fits from its generic terms"
     d <- write_synthetic_package(id, cat_models$model[i], file.path(root, id))
     res <- tryCatch({
       suppressMessages(suppressWarnings(simitall_from_biodes(d)))
-      suppressMessages(suppressWarnings(bioana_fit_biodes(d)))
+      suppressMessages(suppressWarnings(bioana::bioana_analyze(d, quiet = TRUE)))
     }, error = function(e) e)
+    if (!inherits(res, "error") && !is.null(res$summary$not_analysed$outcome)) res <- simpleError(res$summary$not_analysed$outcome$note)
     if (inherits(res, "error")) {
       failed <- c(failed, paste0(id, ": ", conditionMessage(res)))
       next
     }
-    expect_true(all(is.finite(res$results$estimate)), info = id)
-    tab <- res$recovery$table
+    expect_true(all(is.finite(res$results$outcome$estimate)), info = id)
+    tab <- res$recovery$outcome
     # one data set per model: no estimate outside its 99.9% t interval (coverage across seeds is checked separately)
     if (!is.null(tab)) expect_true(all(abs(tab$error) < stats::qt(0.9995, tab$df) * tab$se), info = id)
   }

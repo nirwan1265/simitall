@@ -71,14 +71,15 @@ what is available.
 
 | `SIMULATE` | `ANALYZE` |
 | --- | --- |
-| Create genomes, annotations, reads, founder panels, pedigrees, populations, phenotypes, and multi-omics truth, directly or for a Biodes design. | Run and benchmark assembly, GWAS, eQTL, and genomic-selection analyses against known simulated truth. |
+| Create genomes, annotations, reads, founder panels, pedigrees, populations, phenotypes, and multi-omics truth, directly or for a Biodes design. | Moved to [Bioana](https://github.com/nirwan1265/bioana): every analysis below (assembly, GWAS, eQTL, genomic selection, differential tests) and benchmarks against the simulated truth. |
 
 ## Simulate, Analyze, and Validate
 
-SimItAll supports the complete study loop: create data with known truth, run
-an analysis, and check the result against the truth and design requirements.
-It can also analyze compatible user-supplied inputs, but real-data conclusions
-remain the user's scientific responsibility.
+SimItAll and Bioana support the complete study loop: SimItAll creates data with
+known truth; [Bioana](https://github.com/nirwan1265/bioana) runs the analysis
+and checks the result against the truth. The "Analyses and outputs" column
+below is Bioana's (`bioana::` functions); install it with
+`remotes::install_github("nirwan1265/bioana")`.
 
 | Study area | Simulations | Analyses and outputs |
 | --- | --- | --- |
@@ -91,26 +92,13 @@ remain the user's scientific responsibility.
 
 ### Gene Coordinates and GO Annotations
 
-SimItAll includes compact genome-wide, gene-only coordinate catalogues for
-Arabidopsis, barley, rice, wheat, maize, and fly. They retain chromosome,
-start/end, strand, stable gene ID, source ID, gene name, and biotype while
-avoiding the size of full GFF3/GTF files. Small GFF3 and Arabidopsis GO examples
-ship with the package for reproducible demonstrations.
-
-For functional annotation, load a dated local Gene Ontology Annotation File
-(GAF) with `read_go_gaf()`, join it to coordinates with `join_gene_go()`, and
-retain GAF evidence codes in the result. The repository includes the supplied
-full GAF downloads under `resources/go_annotations/`, but they are deliberately
-not installed with the R package.
-
-For an organism not represented in the repository, download its current
-organism-specific GAF and matching ontology from the
-[Gene Ontology annotation downloads](https://geneontology.org/docs/download-go-annotations/downloads/), then supply a reviewed gene-ID mapping when its GFF3/GTF identifiers differ from the GAF identifiers. SimItAll does not infer GO assignments or silently guess identifier conversions.
+The gene-coordinate catalogues (Arabidopsis, barley, rice, wheat, maize, fly)
+and the GO annotation functions moved to Bioana with the rest of the analysis:
 
 ```r
-genes <- read_gene_coordinates("Arabidopsis_thaliana")
-go <- read_go_gaf("resources/go_annotations/ARATH-mod.gaf.gz")
-gene_go <- join_gene_go(genes, go)
+genes <- bioana::read_gene_coordinates("Arabidopsis_thaliana")
+go <- bioana::read_go_gaf("resources/go_annotations/ARATH-mod.gaf.gz")
+gene_go <- bioana::join_gene_go(genes, go)
 ```
 
 ### Real-Data Import Catalogue
@@ -173,9 +161,9 @@ human-readable demonstrations.
 - GWAS cohorts with LD blocks, recombination maps, subpopulations, and
   quantitative or binary phenotypes
 - Mixed-model GWAS with kinship, principal components, fixed effects,
-  Manhattan/QQ plots, and causal-variant recovery benchmarks
+  Manhattan/QQ plots, and causal-variant recovery benchmarks (in Bioana)
 - GBLUP, RR-BLUP, Bayesian, and random-forest genomic prediction with
-  leakage-aware cross-validation, parent selection, and crossing plans
+  leakage-aware cross-validation, parent selection, and crossing plans (in Bioana)
 - Advanced quantitative and binary phenotype architectures through
   `simplePHENOTYPES`
 - Ordinal and count traits plus shared breeding-family effects through
@@ -188,18 +176,18 @@ human-readable demonstrations.
 - Illumina reads with ART
 - PacBio CLR and HiFi/CCS reads with PBSIM/PBSIM3
 - Oxford Nanopore reads with Badread
-- Hybrid assembly grids with Unicycler and evaluation with QUAST
+- Hybrid read grids; assembly with Unicycler and evaluation with QUAST (in Bioana)
 - Standalone bulk RNA-seq experiments with technical, biological, or mixed
   replicates, even when no genotype data are available
 - RNA-seq from the same GWAS individuals, with cis/trans eQTLs, condition and
   batch effects, genotype-by-condition interactions, latent confounders, and
   allele-specific expression
-- eQTL association testing with causal-truth precision and recall summaries
+- eQTL association testing with causal-truth precision and recall summaries (in Bioana)
 - Standalone single-cell RNA-seq experiments with technical, biological, or
   mixed replicates
 - Single-cell RNA-seq from GWAS donors with cell types, marker programs,
   pseudotime, cell-type-specific eQTLs, dropout, ambient RNA, and doublets
-- Donor-by-cell-type pseudobulk and cell-type eQTL benchmarking without
+- Donor-by-cell-type pseudobulk (cell-type eQTL benchmarking in Bioana) without
   treating cells as independent biological replicates
 - Annotation-aware TF, histone-mark, and nucleosome ChIP-seq with matched
   inputs, differential binding, FASTQ reads, peak truth, and publication plots

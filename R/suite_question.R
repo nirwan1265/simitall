@@ -6,7 +6,7 @@
 #' study details (Biodes `studyforge::layout_from_spec()`, every factor kept)
 #' and writes the design folder, then simulates data
 #' under that exact design ([simitall_from_biodes()]); Bioana fits the model the
-#' design calls for and checks it recovers the truth ([bioana_fit_biodes()]).
+#' design calls for and checks it recovers the truth (`bioana::bioana_analyze()`, when Bioana is installed).
 #' When the study details lack something the layout needs (a factor's number of
 #' levels, the number of environments), nothing is simulated and the missing
 #' details are listed.
@@ -161,7 +161,13 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
     }
   }
   out$simulation <- simitall_from_biodes(outdir, seed = seed, params = params)
-  if (analyze) out$analysis <- bioana_fit_biodes(outdir)
+  if (analyze) {
+    if (requireNamespace("bioana", quietly = TRUE)) {
+      out$analysis <- bioana::bioana_analyze(outdir, quiet = TRUE)
+    } else {
+      message("simitall: analysis skipped; install Bioana to analyse the data: remotes::install_github('nirwan1265/bioana')")
+    }
+  }
   if (isTRUE(figures) && requireNamespace("ggplot2", quietly = TRUE)) {
     out$figures <- tryCatch(biopaint_biodes(outdir), error = function(e) {
       message("biopaint: figures skipped (", conditionMessage(e), ")")
@@ -227,11 +233,18 @@ print.simitall_suite_run <- function(x, ...) {
   cat("Biodes -> Simitall -> Bioana\n")
   cat("  question:  ", x$answer$question, "\n", sep = "")
   cat("  folder:    ", x$dir, "\n", sep = "")
-  fs <- x$analysis$summary
-  if (is.null(fs)) {
+  bs <- x$analysis$summary
+  fs <- bs$analyses$outcome
+  if (is.null(x$simulation)) {
     cat("  status:    not simulated", if (length(x$layout_needs)) " (the layout needs more study details)" else if (length(x$layout_issues)) " (layout does not match the plan)", "\n", sep = "")
+  } else if (is.null(bs)) {
+    cat("  status:    simulated; not analysed (install Bioana: remotes::install_github('nirwan1265/bioana'))\n")
   } else {
-    cat(sprintf("  design:    %s, %s; %d units fitted with %s\n", fs$design, fs$model_from_spec, fs$n_units_fitted, fs$method))
+    if (!is.null(fs)) cat(sprintf("  design:    %s, %s; %d units fitted with %s\n", bs$design, bs$model, fs$n_units_fitted, fs$method))
+    for (id in setdiff(names(bs$analyses), "outcome")) {
+      a <- bs$analyses[[id]]; sig <- unlist(a$significant)
+      cat(sprintf("  %-10s %d features tested, %s significant\n", paste0(id, ":"), a$n_features_tested %||% 0L, if (length(sig)) paste(sig, collapse = "/") else "0"))
+    }
     for (a in fs$anova %||% list()) {
       if (!is.null(a$term) && a$term != "Residuals" && !is.null(a[["Pr(>F)"]])) {
         cat(sprintf("  %-10s F = %.2f on %s df, p = %.3g\n", paste0(a$term, ":"), a[["F value"]], a$Df, a[["Pr(>F)"]]))
@@ -245,7 +258,7 @@ print.simitall_suite_run <- function(x, ...) {
   }
   if (!is.null(x$power$reason)) cat("  reps:      ", x$power$reason, "\n", sep = "")
   if (length(x$open_questions)) cat("  open questions: ", length(x$open_questions), " (see $open_questions)\n", sep = "")
-  cat("  files:     results.tsv, recovery.tsv, fit_summary.json in the folder\n")
+  if (!is.null(bs)) cat("  files:     bioana/ (results per data set, bioana_summary.json) in the folder\n")
   if (length(x$figures)) cat("  figures:   ", paste(basename(x$figures), collapse = ", "), " in ", dirname(x$figures[[1]]), "\n", sep = "")
   invisible(x)
 }

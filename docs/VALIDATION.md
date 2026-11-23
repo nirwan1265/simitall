@@ -236,7 +236,7 @@ dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 plot_trait_diagnostics(phenotype, trait = "trait", out_dir = fig_dir)
 
 # Combined GWAS report plus standalone Manhattan and QQ panels.
-g <- plot_gwas_results("results/my_run/gwas.benchmark.tsv",
+g <- bioana::plot_gwas_results("results/my_run/gwas.benchmark.tsv",
                        file.path(fig_dir, "gwas_overview"))
 export_simitall_plot_panels(g, fig_dir, c("gwas_manhattan", "gwas_qq"))
 

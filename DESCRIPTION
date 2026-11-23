@@ -13,9 +13,11 @@ Authors@R: c(
 Description: An R-first interface for coordinated genome, genome annotation,
     sequencing-read, hybrid-assembly, genome-wide association study,
     phenotype, bulk and single-cell RNA-sequencing, cell-type expression
-    quantitative trait locus, population-genetic, and breeding simulations,
-    plus mixed-model association analysis, genomic prediction, parent
-    selection, and crossing-plan design. The package produces
+    quantitative trait locus, methylation, m6A, population-genetic, and
+    breeding simulations, driven by Biodes experimental designs. The analysis
+    of the simulated data (association, genomic prediction, differential
+    tests, benchmarks against the truth) is in the companion package bioana
+    (github.com/nirwan1265/bioana). The package produces
     explicit truth sets and interoperable FASTA, FASTQ, VCF, GFF3, BED, TSV,
     and JSON outputs. External simulators and assemblers are orchestrated from
     R, while population evolution can be delegated to SimuPOP through
@@ -30,6 +32,7 @@ Imports:
     Matrix,
     reticulate
 Suggests:
+    bioana,
     BGLR,
     ChIPsim,
     data.table,
@@ -57,4 +60,4 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.0
-Remotes: nirwan1265/BioDesignGPT
+Remotes: nirwan1265/BioDesignGPT, nirwan1265/bioana

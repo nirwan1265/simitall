@@ -16,7 +16,7 @@ Evaluate genomic prediction honestly, then select a diverse parent set and write
 ```r
 library(simitall)
 
-cv <- cross_validate_genomic_prediction(
+cv <- bioana::cross_validate_genomic_prediction(
   genotype_file = "results/gwas/cohort.geno.tsv",
   phenotype = "results/gwas/cohort.pheno.tsv",
   model = "gblup",
@@ -27,7 +27,7 @@ cv <- cross_validate_genomic_prediction(
   seed = 202
 )
 
-selection <- run_genomic_selection(
+selection <- bioana::run_genomic_selection(
   genotype_file = "results/gwas/cohort.geno.tsv",
   phenotype = "results/gwas/cohort.pheno.tsv",
   out_prefix = "results/selection/cycle1",

@@ -46,9 +46,9 @@ and 95\% intervals, coloured by the second factor and split by time or
 environment when the design has them (simulated or real
 \code{sample_metadata_template.tsv});
 \item \code{recovery.png}: fitted effects with 95\% intervals against the simulated
-truth (\code{recovery.tsv});
+truth (Bioana's \code{bioana/outcome/recovery.tsv});
 \item \code{power.png}: power against replication per model term (\code{power_sweep.tsv});
-\item \code{volcano.png}: per-gene results for count assays (\code{de_results.tsv}).
+\item \code{volcano.png}: per-gene results for count assays (Bioana's \verb{bioana/<id>/results.tsv}).
 }
 
 In an interactive session (RStudio, R console) the figures are also shown

@@ -24,10 +24,10 @@ run_grid_both(
   pb_covs = c(10, 20, 30),
   seed = 303
 )
-run_unicycler_grid("repeat_stress", threads = 8, reads_dir = "reads")
-run_quast_grid("repeat_stress", ref_fa = simref, threads = 4,
+bioana::run_unicycler_grid("repeat_stress", threads = 8, reads_dir = "reads")
+bioana::run_quast_grid("repeat_stress", ref_fa = simref, threads = 4,
                assemblies_dir = "assemblies", output_dir = "evaluation")
-summarize_quast("evaluation/repeat_stress", "results/summary/repeat_stress.csv")
+bioana::summarize_quast("evaluation/repeat_stress", "results/summary/repeat_stress.csv")
 ```
 
 ## Important Constraint

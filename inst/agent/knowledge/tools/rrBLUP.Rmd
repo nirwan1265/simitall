@@ -22,8 +22,8 @@ ridge-regression backends used by `simitall`.
 
 ## simitall Mapping
 
-`analyze_gwas()` calls `GWAS()`. `calculate_genomic_kinship()` calls `A.mat()`.
-`fit_genomic_model(model = "gblup")` uses `kin.blup()`, while
+`bioana::analyze_gwas()` calls `GWAS()`. `bioana::calculate_genomic_kinship()` calls `A.mat()`.
+`bioana::fit_genomic_model(model = "gblup")` uses `kin.blup()`, while
 `model = "rrblup"` uses `mixed.solve()`.
 
 ## Guardrails

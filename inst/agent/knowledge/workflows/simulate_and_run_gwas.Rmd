@@ -31,7 +31,7 @@ simulate_gwas_cohort(
   seed = 101
 )
 
-gwas <- analyze_gwas(
+gwas <- bioana::analyze_gwas(
   genotype_file = "results/gwas/cohort.geno.tsv",
   phenotype = "results/gwas/cohort.pheno.tsv",
   out_prefix = "results/gwas/association",
@@ -41,7 +41,7 @@ gwas <- analyze_gwas(
   min_maf = 0.05
 )
 
-benchmark <- benchmark_gwas(
+benchmark <- bioana::benchmark_gwas(
   gwas$paths$results,
   "results/gwas/cohort.causal.tsv",
   out_prefix = "results/gwas/benchmark",
@@ -49,7 +49,7 @@ benchmark <- benchmark_gwas(
   window_bp = 10000
 )
 
-plot_gwas_results(benchmark$paths$results, "results/gwas/association_plot")
+bioana::plot_gwas_results(benchmark$paths$results, "results/gwas/association_plot")
 ```
 
 ## Report

@@ -21,7 +21,7 @@ better fits for different requests.
 
 | Situation | Preferred starting path | Why |
 | --- | --- | --- |
-| All-R simulated cohort, any species | `analyze_gwas()` plus `benchmark_gwas()` | Portable baseline with retained synthetic truth. |
+| All-R simulated cohort, any species | `bioana::analyze_gwas()` plus `bioana::benchmark_gwas()` | Portable baseline with retained synthetic truth. |
 | Plant/crop GWAS, HapMap/GBS/TASSEL output, LD/PCA/kinship workflow | TASSEL | Common crop-genetics ecosystem and plant-oriented data handling. |
 | Plant GWAS explicitly comparing FarmCPU, BLINK, MLM, or GAPIT models | GAPIT/FarmCPU | Model comparison with identical input QC and causal truth. |
 | Animal/human quantitative trait, PLINK/BIMBAM, LMM/mvLMM/BSLMM request | GEMMA | Efficient external mixed-model toolkit with relatedness-aware models. |

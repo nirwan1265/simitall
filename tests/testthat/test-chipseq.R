@@ -58,22 +58,6 @@ test_that("annotation-aware ChIP-seq writes truth, reads, and QC", {
   expect_gt(mean(qc$frip[qc$assay == "chip"]),
             mean(qc$frip[qc$assay == "input"]))
 
-  skip_if_not_installed("ggplot2")
-  skip_if_not_installed("patchwork")
-  figure <- plot_chipseq_results(
-    chip_prefix = prefix,
-    out_prefix = file.path(out_dir, "figure"),
-    profile_window = 400,
-    profile_bin = 25,
-    max_profile_reads = 2400,
-    width = 10,
-    height = 7,
-    dpi = 72
-  )
-  expect_true(file.exists(figure$paths$pdf))
-  expect_true(file.exists(figure$paths$png))
-  expect_true(file.exists(figure$paths$summary))
-  expect_length(list.files(figure$paths$source_data, pattern = "\\.csv$"), 6)
 })
 
 test_that("the optional ChIPsim backend samples strand-specific positions", {

@@ -11,9 +11,9 @@
 #'   environment when the design has them (simulated or real
 #'   `sample_metadata_template.tsv`);
 #' - `recovery.png`: fitted effects with 95% intervals against the simulated
-#'   truth (`recovery.tsv`);
+#'   truth (Bioana's `bioana/outcome/recovery.tsv`);
 #' - `power.png`: power against replication per model term (`power_sweep.tsv`);
-#' - `volcano.png`: per-gene results for count assays (`de_results.tsv`).
+#' - `volcano.png`: per-gene results for count assays (Bioana's `bioana/<id>/results.tsv`).
 #'
 #' In an interactive session (RStudio, R console) the figures are also shown
 #' in the plot window, all on one page; `separate = TRUE` gives one window per
@@ -66,17 +66,25 @@ biopaint_biodes <- function(dir, outdir = NULL, which = c("layout", "outcome", "
       save(.suite_plot_outcome(meta, cols, spec), "outcome")
     }
   }
-  rpath <- file.path(dir, "recovery.tsv")
+  rpath <- file.path(dir, "bioana", "outcome", "recovery.tsv")
+  if (!file.exists(rpath)) rpath <- file.path(dir, "recovery.tsv")
   if ("recovery" %in% which && file.exists(rpath)) save(.suite_plot_recovery(utils::read.delim(rpath, stringsAsFactors = FALSE)), "recovery")
   ppath <- file.path(dir, "power_sweep.tsv")
   if ("power" %in% which && file.exists(ppath)) {
     pj <- tryCatch(jsonlite::read_json(file.path(dir, "power_sweep.json")), error = function(e) list())
     save(.suite_plot_power(utils::read.delim(ppath, stringsAsFactors = FALSE), pj$target_power %||% 0.8, pj$alpha %||% 0.05), "power")
   }
-  vpath <- file.path(dir, "de_results.tsv")
+  # per-gene results: Bioana's first count data set (bioana/<id>/results.tsv)
+  mf <- file.path(dir, "data_manifest.json")
+  man <- if (file.exists(mf)) tryCatch(jsonlite::read_json(mf), error = function(e) list(data = list())) else list(data = list())
+  cnt <- Filter(function(e) identical(e$data_type, "feature_counts"), man$data)
+  vpath <- if (length(cnt)) file.path(dir, "bioana", cnt[[1]]$id, "results.tsv") else ""
   if ("volcano" %in% which && file.exists(vpath)) {
-    truth <- tryCatch(jsonlite::read_json(file.path(dir, "sim_truth.json"))$counts$de_genes, error = function(e) NULL)
-    save(.suite_plot_volcano(utils::read.delim(vpath, stringsAsFactors = FALSE), truth), "volcano")
+    de <- utils::read.delim(vpath, stringsAsFactors = FALSE)
+    de <- data.frame(gene_id = de$feature_id, contrast = de$contrast, log2fc = de$estimate, p = de$p, padj = de$padj)
+    tp <- if (!is.null(cnt[[1]]$truth$file)) file.path(dir, cnt[[1]]$truth$file) else ""
+    truth <- if (file.exists(tp)) { tt <- utils::read.delim(tp); split(stats::setNames(as.list(tt$effect), tt$feature_id), tt$condition) } else NULL
+    save(.suite_plot_volcano(de, truth), "volcano")
   }
   if (length(paths)) message("biopaint: wrote ", paste(basename(paths), collapse = ", "), " in ", outdir)
   if (isTRUE(show)) .suite_show_plots(plots, separate = separate)

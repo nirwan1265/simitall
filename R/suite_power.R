@@ -3,7 +3,7 @@
 #' Takes a design folder (or the result of [simitall_from_question()]) and,
 #' for each value of `design.reps`, rebuilds the layout from the study details
 #' (Biodes `studyforge::layout_from_spec()`), simulates `n_sim` experiments
-#' ([simitall_from_biodes()]) and fits the design's model ([bioana_fit_biodes()]).
+#' ([simitall_from_biodes()]) and fits the design's model (`bioana::bioana_analyze()`; needs Bioana).
 #' Power is the share of experiments in which a model term's ANOVA test is
 #' significant. Nothing here depends on the question: the design, factors,
 #' model, effect size and residual SD all come from the folder's
@@ -34,6 +34,9 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
   dir <- if (inherits(x, "simitall_suite_run")) x$dir else x
   if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
     stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
+  }
+  if (!requireNamespace("bioana", quietly = TRUE)) {
+    stop("simitall_power_sweep() fits each simulated experiment with Bioana: remotes::install_github('nirwan1265/bioana')", call. = FALSE)
   }
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_power_sweep() lays out each replicate count with Biodes (R package 'studyforge'); load or install it first.", call. = FALSE)
@@ -75,7 +78,7 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
         suppressMessages(suppressWarnings(simitall_from_biodes(base, outdir = sim, seed = seed + k - 1, effect = effect,
                                                                residual_sd = residual_sd, n_genes = n_genes,
                                                                interaction_effect = interaction_effect)))
-        suppressMessages(suppressWarnings(bioana_fit_biodes(sim)))
+        suppressMessages(suppressWarnings(bioana::bioana_analyze(sim, quiet = TRUE)))
       }, error = function(e) NULL)
       if (!checked) {
         # one fit timed: scale by the number of units at the largest reps value
@@ -88,11 +91,14 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
         }
       }
       if (is.null(res)) next
-      n_units <- res$summary$n_units_fitted %||% res$summary$counts$n_samples %||% n_units
-      for (cr in res$summary$counts$recovery %||% list()) {
-        if (!is.null(cr$contrast) && isTRUE(cr$true_de_2fold > 0)) found[[cr$contrast]] <- c(found[[cr$contrast]], cr$tpr_2fold)
+      an <- res$summary$analyses
+      n_units <- an$outcome$n_units_fitted %||% unlist(lapply(an, `[[`, "n_samples"))[1] %||% n_units
+      for (a in Filter(function(z) identical(z$data_type, "feature_counts"), an)) {
+        for (cr in a$recovery %||% list()) {
+          if (!is.null(cr$contrast) && !is.null(cr$tpr_large) && !is.na(cr$tpr_large)) found[[cr$contrast]] <- c(found[[cr$contrast]], cr$tpr_large)
+        }
       }
-      for (a in res$summary$anova %||% list()) {
+      for (a in an$outcome$anova %||% list()) {
         pv <- a[["Pr(>F)"]]
         if (is.null(a$term) || a$term == "Residuals" || is.null(pv) || is.na(pv)) next
         sig[[a$term]] <- c(sig[[a$term]], pv < alpha)

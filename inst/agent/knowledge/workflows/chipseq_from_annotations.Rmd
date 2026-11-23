@@ -26,7 +26,7 @@ simulate_chipseq(
   conditions = c("control", "stress"),
   seed = 606
 )
-plot_chipseq_results(
+bioana::plot_chipseq_results(
   chip_prefix = "results/chipseq/tf_demo",
   out_prefix = "results/figures/chipseq"
 )

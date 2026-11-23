@@ -94,7 +94,7 @@ rna_paths <- simulate_rnaseq_from_gwas(
 )
 
 cat("3. Testing and benchmarking eQTL associations...\n")
-eqtl_results <- benchmark_eqtl(
+eqtl_results <- bioana::benchmark_eqtl(
   genotype_file = paste0(gwas_prefix, ".geno.tsv"),
   expression_file = rna_paths$expression,
   out_prefix = eqtl_prefix,
@@ -108,7 +108,7 @@ eqtl_results <- benchmark_eqtl(
 )
 
 cat("4. Building publication figure and source-data tables...\n")
-figure_results <- plot_rnaseq_eqtl_results(
+figure_results <- bioana::plot_rnaseq_eqtl_results(
   rnaseq_prefix = rnaseq_prefix,
   eqtl_prefix = eqtl_prefix,
   out_prefix = figure_prefix,

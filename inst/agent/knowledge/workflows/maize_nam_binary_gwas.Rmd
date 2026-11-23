@@ -58,7 +58,7 @@ figures under the selected `out_dir`.
 
 ## Boundary
 
-`analyze_binary_gwas()` is a fixed-effect logistic baseline. It includes named
+`bioana::analyze_binary_gwas()` is a fixed-effect logistic baseline. It includes named
 family covariates and marker PCs, but not a kinship random effect. Use a
 validated binary mixed-model association method for a real related cohort,
 unbalanced case/control study, or a publication-level inference.

@@ -23,7 +23,7 @@ HapMap, VCF, PLINK, FASTA, and HDF5, plus GLM and MLM association workflows.
 TASSEL is the preferred external association-analysis suggestion for plant
 studies when the user requests plant-standard TASSEL output, HapMap/GBS-oriented
 processing, LD/kinship/PCA inspection, or an explicit TASSEL comparison. The
-R-native `analyze_gwas()` path remains the portable default when an all-R
+R-native `bioana::analyze_gwas()` path remains the portable default when an all-R
 workflow is requested.
 
 ## Inputs

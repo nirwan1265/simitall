@@ -115,11 +115,11 @@ write.table(truth, truth_file, sep = "\t", row.names = FALSE, quote = FALSE)
 
 cat("2. Fitting a simple logistic GWAS...\n")
 gwas_prefix <- file.path(out_dir, "binary_gwas")
-gwas <- analyze_binary_gwas(
+gwas <- bioana::analyze_binary_gwas(
   vcf, phenotype, gwas_prefix, trait = "case", min_maf = 0.05
 )
-benchmark <- benchmark_gwas(gwas$paths$results, truth, gwas_prefix, window_bp = 150L)
-plot_gwas_results(
+benchmark <- bioana::benchmark_gwas(gwas$paths$results, truth, gwas_prefix, window_bp = 150L)
+bioana::plot_gwas_results(
   benchmark$paths$results, file.path(figure_dir, "binary_gwas_overview"),
   individual_panels_dir = figure_dir
 )

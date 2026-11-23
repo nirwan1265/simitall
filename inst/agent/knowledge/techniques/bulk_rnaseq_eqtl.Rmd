@@ -29,7 +29,7 @@ confounders, residual noise, and optional allele-specific expression.
 
 The RNA-seq simulators write count matrices, sample and gene metadata, eQTL
 truth, expression truth, optional FASTQs, benchmark tables, and figures. Use
-`benchmark_eqtl()` only when a simulation truth set exists.
+`bioana::benchmark_eqtl()` only when a simulation truth set exists.
 
 ## QC
 

@@ -1,5 +1,12 @@
 # simitall (development)
 
+- All analysis moved to Bioana (github.com/nirwan1265/bioana): GWAS, genomic
+  prediction and selection, peak calling and differential peaks, single-cell
+  clustering and tests, eQTL benchmarks, RNA-seq results summary, GO
+  annotation (with the gene-coordinate catalogues), assembly evaluation and
+  `bioana_fit_biodes()`. Simitall only simulates; `simitall_power_sweep()`
+  and `simitall_from_question()` call `bioana::bioana_analyze()`, and
+  `biopaint_biodes()` reads Bioana's output.
 - `data_manifest.json`: every run lists its data sets (data type, files, truth
   in Bioana's format under `truth/`) for Bioana (github.com/nirwan1265/bioana).
 - Biodes 0.5.1: routing reads `assay_kinds` (DNase/FAIRE -> ATAC, DAP-seq/SELEX

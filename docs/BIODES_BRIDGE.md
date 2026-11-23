@@ -18,12 +18,14 @@ Biodes writes a folder with `write_design_package(book, spec, dir)`:
 
 Simitall simulates the outcome from `analysis.model` and writes
 `sample_metadata_template.tsv` (filled), `sim_truth.json` and, for RNA-seq,
-`counts.tsv`. `bioana_fit_biodes(dir)` then fits the same model and writes
-`results.tsv`, `fit_summary.json`, `recovery.tsv` (`de_results.tsv` for counts).
+`counts.tsv` and the other data, and lists them in `data_manifest.json`.
+`bioana::bioana_analyze(dir)` (github.com/nirwan1265/bioana) then analyses
+every data set with the same model and writes `bioana/<id>/results.tsv`,
+`bioana/outcome/recovery.tsv` and `bioana/bioana_summary.json`.
 
 ```r
 simitall_from_biodes("~/biodes_runs/my_design")
-bioana_fit_biodes("~/biodes_runs/my_design")
+bioana::bioana_analyze("~/biodes_runs/my_design")
 ```
 
 ### 2. From a question: `simitall_from_question(question, answers = list(...))`

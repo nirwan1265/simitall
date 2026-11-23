@@ -64,6 +64,7 @@ test_that("binary, count and ordinal outcomes follow simulator_parameters.tsv", 
 
 test_that("GWAS designs get line genotypes whose planted QTN a GWAS recovers", {
   skip_if_not_installed("rrBLUP")
+  skip_if_not_installed("bioana")
   d <- make_design_folder("rcbd", "y ~ treatment + block", list(design_factor("accession", 150)), reps = 2,
                           extra = list(assays = list("gwas")))
   suppressMessages(simitall_from_biodes(d, params = list(suite_genetics = list(heritability = 0.8, n_add_qtn = 4))))
@@ -75,7 +76,7 @@ test_that("GWAS designs get line genotypes whose planted QTN a GWAS recovers", {
   expect_equal(stats::var(gv$genetic_value), 0.8 / 0.2 * 10^2, tolerance = 1e-6)   # h2 / (1 - h2) * residual SD^2
   m <- read.delim(file.path(d, "sample_metadata_template.tsv"))
   ph <- stats::aggregate(primary_outcome ~ treatment, m, mean); names(ph) <- c("sample", "yield")
-  g <- suppressMessages(utils::capture.output(res <- analyze_gwas(file.path(d, "genotypes.vcf"), ph, file.path(d, "gwas"), trait = "yield", n_pcs = 3L, min_maf = 0.05)))
+  g <- suppressMessages(utils::capture.output(res <- bioana::analyze_gwas(file.path(d, "genotypes.vcf"), ph, file.path(d, "gwas"), trait = "yield", n_pcs = 3L, min_maf = 0.05)))
   out <- read.delim(res$paths$results)
   q <- read.delim(file.path(d, "genetic_truth", "qtn_truth.tsv"))
   top <- out$marker_id[order(out$p_value)][1:10]
