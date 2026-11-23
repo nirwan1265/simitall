@@ -384,3 +384,14 @@ test_that("simitall writes data_manifest.json for Bioana, with each data set's t
   meth <- read.delim(file.path(d, m$data[[which(types == "bisulfite_counts")]]$truth$file))
   expect_named(meth, c("region_id", "chr", "start", "end", "condition", "effect"))
 })
+
+test_that("the genotypes manifest entry names the genotype term and points at existing files", {
+  d <- make_design_folder("crd", "y ~ treatment", list(design_factor("genotype", 30)), reps = 2,
+                          extra = list(assays = list("gwas")))
+  suppressMessages(simitall_from_biodes(d, params = list(suite_genotype_panel = list(n_markers = 300))))
+  m <- jsonlite::read_json(file.path(d, "data_manifest.json"))
+  g <- Filter(function(e) identical(e$data_type, "genotypes"), m$data)[[1]]
+  expect_equal(g$genotype_term, jsonlite::read_json(file.path(d, "sim_truth.json"))$genetics$genotype_term)
+  expect_true(file.exists(file.path(d, g$files$vcf)))
+  expect_true(file.exists(file.path(d, g$truth$file)))
+})

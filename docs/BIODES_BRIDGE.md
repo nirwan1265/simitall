@@ -196,6 +196,6 @@ matching analysis for each and scores it against the truth
 | assay_atac_seq | read_positions | atacseq/atac.read_positions.tsv + library_to_unit.tsv |
 | assay_methylation (sequencing / array) | bisulfite_counts / methylation_beta | methylation/*.tsv.gz |
 | assay_m6a | ip_input_counts | m6a/m6a.ip.tsv.gz, m6a.input.tsv.gz |
-| genetics | genotypes (Bioana: planned) | genotypes.vcf |
+| genetics | genotypes | genotypes.vcf (+ `genotype_term`, the layout column of the lines) |
 
 A new simulator adds its manifest entry there; Bioana adds the analysis.

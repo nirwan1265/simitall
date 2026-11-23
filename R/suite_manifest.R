@@ -88,6 +88,7 @@
   }
   if (!is.null(truth$genetics)) {
     add(list(id = "genetics", data_type = "genotypes", assay = "genotypes", files = list(vcf = truth$genetics$genotypes),
+             genotype_term = truth$genetics$genotype_term,
              truth = list(kind = "qtn", file = truth$genetics$qtn_truth)))
   }
   m <- list(manifest_version = "0.1", written_by = paste("simitall", as.character(utils::packageVersion("simitall"))),
