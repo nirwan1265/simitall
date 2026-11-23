@@ -39,6 +39,10 @@
 #'   first suggestion (Biodes' traits and units, `inst/suite/suggestions.tsv`)
 #'   and run. Every filled value is printed and kept in `$filled_from_suggestions`.
 #'   Your own `answers` always win.
+#' @param layout_defaults When a factor has no level count (or an augmented
+#'   design has no checks), fill it with Biodes' stated default
+#'   (`studyforge::fill_layout_defaults()`) and list each as an assumption.
+#'   Default: the same as `use_suggestions`.
 #' @param reps_range,power_n_sim For a "how many per group?" question (no
 #'   `design.reps`, or `power.solve_for = "reps"`): the replicate counts to try
 #'   (default: the spec's `power.reps_range`, else `power_defaults.json`) and the
@@ -62,7 +66,8 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    engine = c("rules", "hybrid", "llm", "auto"),
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
                                    force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE,
-                                   figures = TRUE, params = NULL, reps_range = NULL, power_n_sim = NULL) {
+                                   figures = TRUE, params = NULL, reps_range = NULL, power_n_sim = NULL,
+                                   layout_defaults = use_suggestions) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
@@ -83,6 +88,22 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   # the layout comes from Biodes (studyforge::layout_from_spec): every factor kept as its own column
   spec_in <- ans$spec
   if (!is.null(design)) spec_in$design$chosen <- design
+  # a factor with no level count (or augmented checks) the user left open: Biodes' stated defaults, each an assumption
+  defaults_filled <- character()
+  if (isTRUE(layout_defaults) && "fill_layout_defaults" %in% getNamespaceExports("studyforge")) {
+    filled <- studyforge::fill_layout_defaults(spec_in)
+    defaults_filled <- setdiff(names(filled$assumptions), names(spec_in$assumptions))
+    if (length(defaults_filled)) {
+      spec_in <- filled; ans$spec <- filled
+      val <- function(k) {
+        if (!startsWith(k, "factors.")) return(paste(format(unlist(.suite_get(spec_in, k))), collapse = ","))
+        nm <- strsplit(k, ".", fixed = TRUE)[[1]][2]
+        format(Filter(function(f) identical(f$name, nm), spec_in$factors)[[1]]$n_levels)
+      }
+      cat("Layout defaults (assumed, Biodes rules.tsv layout_default; change with answers = list(...)):\n",
+          paste0("  - ", defaults_filled, " = ", vapply(defaults_filled, val, ""), "\n"), sep = "")
+    }
+  }
   # "how many per group?": no design.reps (or power.solve_for = reps) -> choose it with a power sweep
   power <- NULL
   if (.suite_reps_open(spec_in) && isTRUE(simulate)) {
@@ -118,7 +139,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   }
 
   out <- structure(list(answer = ans, dir = outdir, design = design, suggestions = sug, filled_from_suggestions = suggested, open_questions = open, layout_issues = issues, simulation = NULL,
-                        analysis = NULL, power = power), class = "simitall_suite_run")
+                        analysis = NULL, power = power, layout_defaults = defaults_filled), class = "simitall_suite_run")
   if (!is.null(power$sweep)) {
     # keep the sweep with the design it chose
     utils::write.table(as.data.frame(unclass(power$sweep)), file.path(outdir, "power_sweep.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
@@ -270,7 +291,7 @@ print.simitall_suite_run <- function(x, ...) {
 # smallest count where every treatment main effect (and the DE genes of a count assay) reaches the target.
 .suite_choose_reps <- function(spec, outdir, layout_seed, reps_range = NULL, n_sim = NULL) {
   d <- .suite_rules("power_defaults")
-  reps <- as.integer(unlist(reps_range %||% spec$power$reps_range %||% d$reps$value))
+  reps <- .suite_reps_grid(reps_range %||% spec$power$reps_range %||% d$reps$value)
   n_sim <- n_sim %||% d$n_sim_question$value %||% 50
   target <- d$target_power$value
   s <- spec; s$design$reps <- min(reps)
@@ -301,4 +322,12 @@ print.simitall_suite_run <- function(x, ...) {
   print(ps)
   cat(reason, "\n")
   list(reps = as.integer(pick), reason = reason, target_power = target, n_sim = n_sim, reps_tried = reps, sweep = ps)
+}
+
+# Replicate counts to try. Biodes writes power.reps_range as [min, max] (e.g. 3-12): spread six counts over it
+# (geometric, as power changes fastest at small counts). A longer vector is used as given.
+.suite_reps_grid <- function(x) {
+  x <- as.integer(unlist(x))
+  if (length(x) != 2L || x[2] - x[1] < 2L) return(sort(unique(x)))
+  sort(unique(as.integer(round(exp(seq(log(x[1]), log(x[2]), length.out = 6))))))
 }

@@ -5,6 +5,9 @@ SIMITALL <- Sys.getenv("SIMITALL_DIR", "~/Documents/Github/simitall")
 .split <- function(f) lapply(readLines(file.path(BIODES, "training/paper_questions/splits", f)), jsonlite::fromJSON, simplifyVector = FALSE)
 # "how many per group?" questions have no design.reps; REPS_IF_MISSING (default 3, "" = none) stands in
 REPS_IF_MISSING <- Sys.getenv("REPS_IF_MISSING", "3")
+# FILL_DEFAULTS=1 (default): level counts left open get Biodes' stated defaults (fill_layout_defaults), as when the
+# user does not answer; the filled fields are in the defaults_filled column. 0 = stop at the layout instead.
+FILL_DEFAULTS <- Sys.getenv("FILL_DEFAULTS", "1") == "1"
 # QUESTION_SET=second: the next 1000 (rest of dev, dev2, test_draw4/5, test_heldout, test_newkinds, then train)
 QUESTIONS <- function() {
   all <- c(.split("test.jsonl"), .split("dev.jsonl"))
@@ -31,11 +34,20 @@ for (i in i0:i1) {
   q <- qs[[i]]
   d <- file.path(tempdir(), q$id)
   r <- list(reps_assumed = FALSE, id = q$id, species = q$species %||% "", technique = q$technique %||% "", prompt = clean(q$prompt))
-  GOLD$spec <- q$expected_spec; if (is.null(GOLD$spec$design$reps) && nzchar(REPS_IF_MISSING)) { GOLD$spec$design$reps <- as.integer(REPS_IF_MISSING); r$reps_assumed <- TRUE }
+  GOLD$spec <- q$expected_spec
+  # the steps Biodes' reader runs after extraction (panel genotype factor, genetics unit, power.solve_for);
+  # the reviewed spec stands in for the extraction itself
+  sf <- asNamespace("studyforge")
+  if (exists(".sf_panel_genotype", sf)) GOLD$spec <- sf$.sf_panel_genotype(GOLD$spec)
+  if (exists(".sf_genetics", sf)) GOLD$spec <- sf$.sf_genetics(GOLD$spec, sf$.sf_words_to_digits(tolower(q$prompt)))
+  if (exists("mark_asked", sf)) GOLD$spec <- studyforge::mark_asked(GOLD$spec, q$prompt)
+  r$solve_for <- GOLD$spec$power$solve_for %||% ""
+  if (is.null(GOLD$spec$design$reps) && nzchar(REPS_IF_MISSING)) { GOLD$spec$design$reps <- as.integer(REPS_IF_MISSING); r$reps_assumed <- TRUE }
   t0 <- Sys.time()
   run <- tryCatch({
     utils::capture.output(x <- suppressMessages(simitall_from_question(q$prompt, outdir = d, simulate = FALSE, use_suggestions = FALSE,
-                                                                       confirm = FALSE, figures = FALSE, analyze = FALSE)))
+                                                                       confirm = FALSE, figures = FALSE, analyze = FALSE,
+                                                                       layout_defaults = FILL_DEFAULTS)))
     x
   }, error = function(e) e)
   if (inherits(run, "error")) {
@@ -46,6 +58,7 @@ for (i in i0:i1) {
     r$b_mating <- clean(unlist(s$population$mating)); r$b_study_type <- clean(s$study_type %||% "")
     r$b_design <- clean(run$design %||% s$design$chosen %||% ""); r$b_factors <- clean(vapply(s$factors %||% list(), function(f) paste0(f$name %||% "?", "(", f$n_levels %||% "?", ")"), ""))
     r$layout_issues <- clean(run$layout_issues); r$open_n <- length(run$open_questions)
+    r$defaults_filled <- clean(run$layout_defaults); r$genetic_unit <- clean(s$genetics$unit %||% "")
     if (!file.exists(file.path(d, "study_spec.json")) || !file.exists(file.path(d, "field_layout.csv"))) {
       r$stage <- "no_design_folder"; r$error <- clean(c(run$open_questions))
     } else {
@@ -66,6 +79,6 @@ for (i in i0:i1) {
   unlink(d, recursive = TRUE)
   rows[[length(rows) + 1]] <- r
 }
-cols <- c("reps_assumed","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
+cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
 df <- do.call(rbind, lapply(rows, function(r) as.data.frame(setNames(lapply(cols, function(k) if (is.null(r[[k]])) "" else as.character(r[[k]])), cols))))
 utils::write.table(df, out, sep = "\t", row.names = FALSE, quote = FALSE)

@@ -259,27 +259,36 @@ Planned, roughly in order (gains are from the 2000-question check in
 - Rice, potato and soybean miRNA libraries with sample labels (PmiREN) to add
   to the plant small RNA-seq templates.
 
-**New simulators**
+**New simulators** (questions fully covered once added, over both 1000-question sets)
 
-- Ribo-seq (+33 over both 1000s): RNA and footprint counts per gene with translational-efficiency truth.
-- scATAC-seq (+25), Hi-C (+26), Degradome (+22), MeDIP (+23), MNase-seq (+12),
-  spatial (+11), metabolomics/lipidomics (+17), RIP/CLIP (+10, like `simulate_merip()`).
-- m6A: learn peak methylation levels and IP enrichment from a real MeRIP-seq
-  dataset (now: Beta-distributed levels, 20x enrichment).
-- A microbiome or amplicon fallback for organisms with no template (yeast amplicon question pq_0105).
-- Genetics with no lines (24 of the second 1000 questions): BSA / pool-seq
-  bulks (allele frequencies by phenotype bulk) and population resequencing
-  (populations with drift and selection, evolve-and-resequence). Today the rest
-  of such a design is simulated and genetics is listed as `needs_genotype_factor`.
-- Survival and compositional outcomes.
+1. Ribo-seq (+33): RNA and ribosome-footprint counts per gene with
+   translational-efficiency truth.
+2. Hi-C (+26): contact matrices with planted loop and TAD changes.
+3. scATAC-seq (+25): ATAC peaks x cells (combine the ATAC and scRNA code).
+4. MeDIP (+23): enrichment counts per window. Quick: reuse `simulate_merip()`
+   (IP over input) with methylated DNA in place of m6A.
+5. Degradome (+22): cleavage-site counts (mostly asked with small RNA).
+6. Genetics with no lines (BSA / pool-seq bulks, population resequencing): Biodes
+   0.5 now writes `spec$genetics` (`unit` = line / bulk / population,
+   `individuals_per_bulk`, `bulk_fraction`, `generations`). Bulks: allele
+   frequencies in the top and bottom phenotype tails; populations: drift and
+   selection over generations. Today the rest of such a design is simulated and
+   genetics is listed as `needs_genotype_factor`.
+7. MNase-seq (+12), spatial (+11), metabolomics/lipidomics (+17), RIP/CLIP (+10,
+   like `simulate_merip()`), survival and compositional outcomes.
+8. m6A: learn peak methylation levels and IP enrichment from a real MeRIP-seq
+   dataset (now: Beta-distributed levels, 20x enrichment).
+9. A microbiome or amplicon fallback for organisms with no template (yeast
+   amplicon question pq_0105).
 
 **Design questions**
 
 - Power for more assays: the reps sweep reports power for the primary outcome
   and for count assays (share of 2-fold genes found); methylation (DMRs), m6A
   (changed peaks), ChIP/ATAC (differential peaks) need their own power measure.
-- Questions whose reviewed spec has no factors or no level count stop before
-  simulation; Biodes should ask the user for these.
+- Specs with no factor at all still stop before simulation (Biodes asks "what
+  do you compare or map?"). Missing level counts use Biodes' flagged defaults
+  (`layout_defaults` in `simitall_from_question()`).
 
 **Read level**
 

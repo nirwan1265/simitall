@@ -69,3 +69,9 @@ test_that("count assays get power as the share of 2-fold genes found, with moder
   expect_equal(nrow(de), 2)
   expect_gt(de$power[de$reps == 8], de$power[de$reps == 2])
 })
+
+test_that("Biodes' [min, max] replicate range becomes a grid of counts to try", {
+  expect_equal(simitall:::.suite_reps_grid(list(3, 12)), c(3L, 4L, 5L, 7L, 9L, 12L))
+  expect_equal(simitall:::.suite_reps_grid(c(2, 3, 4, 6)), c(2L, 3L, 4L, 6L))
+  expect_equal(simitall:::.suite_reps_grid(c(3, 4)), c(3L, 4L))
+})

@@ -20,7 +20,8 @@ simitall_from_question(
   figures = TRUE,
   params = NULL,
   reps_range = NULL,
-  power_n_sim = NULL
+  power_n_sim = NULL,
+  layout_defaults = use_suggestions
 )
 }
 \arguments{
@@ -66,6 +67,11 @@ simulated experiments per count (default \code{n_sim_question}). The smallest
 count giving every treatment main effect (and, for count assays, the true
 genes with a 2-fold change) the target power is used; the sweep is kept in
 \code{power_sweep.tsv} and the choice in \code{power_choice.json}.}
+
+\item{layout_defaults}{When a factor has no level count (or an augmented
+design has no checks), fill it with Biodes' stated default
+(\code{studyforge::fill_layout_defaults()}) and list each as an assumption.
+Default: the same as \code{use_suggestions}.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),
