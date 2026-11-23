@@ -28,19 +28,19 @@ does not answer; each is an assumption) -> Biodes design choice ->
 
 | verdict | first 1000 | second 1000 | third 2695 | all 4695 |
 |---|---|---|---|---|
-| simulated_all: every data type it needs | 768 | 895 | 2520 | 4183 |
+| simulated_all: every data type it needs | 769 | 895 | 2520 | 4184 |
 | simulated_outcome_question: needs only a measured trait | 52 | 17 | 35 | 104 |
 | simulated_part: some data types not simulated | 65 | 21 | 62 | 148 |
 | no_simulator_for_data_type | 85 | 47 | 56 | 188 |
 | not_run: spec has no factors | 28 | 20 | 22 | 70 |
-| not_run: other | 2 | 0 | 0 | 2 |
+| not_run: other | 1 | 0 | 0 | 1 |
 
-**4,287 / 4,695 (91%) get everything they need** (820, 912, 2,555); 148 more get
+**4,288 / 4,695 (91%) get everything they need** (821, 912, 2,555); 148 more get
 part of it. 816 of those use at least one flagged layout default (mostly the
 number of genotypes or time points). The third set is `train.jsonl`, the
 questions Biodes learned from, so it reads best (95%).
 
-The two "other": pq_0105 (yeast amplicon: no microbiome/amplicon template for
+The "other": pq_0105 (yeast amplicon: no microbiome/amplicon template for
 yeast and no fallback) and pq_0180 (Biodes: the panel step adds a `genotype`
 factor with no level count and `studyforge_ask()` stops in `.divisors()` with
 "argument must be coercible to non-negative integer").
@@ -55,6 +55,7 @@ factor with no level count and `studyforge_ask()` stops in `.divisors()` with
 | + methylation | 711 | 741 |
 | + m6A | 751 | 751 |
 | + Biodes 0.5 (panel genotype, defaults, genetics unit) | 820 | 912 |
+| + Biodes b78d893 (pq_0180 fixed) | 821 | 912 |
 | third set (train), same code | - | - | 2555 / 2695 |
 
 ## What we can simulate (by data type, both sets)
@@ -122,8 +123,7 @@ These run, but the data type is not what was asked:
 4. Breeding notation (BC3F2, F2:3, BC1F3:5; 61 prompts) is not read into the
    number of backcross and selfing generations (pq_2667, BC1F3:5, got the NIL
    default of 3 backcrosses).
-5. pq_0180: panel genotype factor with no level count crashes `.sf_recipe()`;
-   `practice.R:148` warns when `organism` has more than one value.
+5. `practice.R:148` warns when `organism` has more than one value.
 
 **Simitall**
 
