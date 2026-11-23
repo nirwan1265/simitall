@@ -24,21 +24,23 @@ does not answer; each is an assumption) -> Biodes design choice ->
 "reps"`, 996 of 2000) run with 3 reps here to keep the run fast;
 `simitall_from_question()` chooses their count with a power sweep.
 
-## Current result (Biodes 3675658 schema 0.5, Simitall main, 2026-11-22)
+## Current result (Biodes 5523171 schema 0.5.1, Simitall main, 2026-11-23)
 
 | verdict | first 1000 | second 1000 | third 2695 | all 4695 |
 |---|---|---|---|---|
-| simulated_all: every data type it needs | 769 | 895 | 2520 | 4184 |
-| simulated_outcome_question: needs only a measured trait | 52 | 17 | 35 | 104 |
-| simulated_part: some data types not simulated | 65 | 21 | 62 | 148 |
-| no_simulator_for_data_type | 85 | 47 | 56 | 188 |
-| not_run: spec has no factors | 28 | 20 | 22 | 70 |
+| simulated_all: every data type it needs | 776 | 896 | 2519 | 4191 |
+| simulated_outcome_question: needs only a measured trait | 46 | 16 | 34 | 96 |
+| simulated_part: some data types not simulated | 71 | 31 | 66 | 168 |
+| no_simulator_for_data_type | 84 | 41 | 57 | 182 |
+| not_run: spec has no factors | 22 | 16 | 19 | 57 |
 | not_run: other | 1 | 0 | 0 | 1 |
 
-**4,288 / 4,695 (91%) get everything they need** (821, 912, 2,555); 148 more get
-part of it. 816 of those use at least one flagged layout default (mostly the
-number of genotypes or time points). The third set is `train.jsonl`, the
-questions Biodes learned from, so it reads best (95%).
+**4,287 / 4,695 (91%) get everything they need** (822, 912, 2,553); 168 more
+get part of it. 793 of those use at least one flagged layout default. With
+Biodes 0.5.1, finer assay kinds are routed (`assay_kinds`: DNase/FAIRE as
+ATAC, DAP-seq/SELEX as ChIP); amplicon genotyping, TCR/BCR repertoires, CRISPR
+screens, proteomics and STARR-seq are now counted as not simulated instead of
+being simulated as the wrong data, and survival outcomes (12) simulate.
 
 The "other": pq_0105 (yeast amplicon: no microbiome/amplicon template for
 yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
@@ -55,6 +57,7 @@ yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
 | + Biodes 0.5 (panel genotype, defaults, genetics unit) | 820 | 912 |
 | + Biodes b78d893 (pq_0180 fixed) | 821 | 912 |
 | third set (train), same code | - | - | 2555 / 2695 |
+| + Biodes 0.5.1 (assay kinds, generations, survival) | 822 | 912 | 2553 |
 
 ## What we can simulate (by data type, both sets)
 
