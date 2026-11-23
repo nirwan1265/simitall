@@ -1,0 +1,24 @@
+{
+  "_about": "Native methylation simulator presets (simulate_methylation(engine = 'native')). Cytosines sit in regions (blocks) of one chromatin state; each state has a methylation level per sequence context. Values are typical genome-wide levels, used when no template of the species exists. Plant levels follow Arabidopsis/maize methylomes (high CG/CHG/CHH in transposons and heterochromatin, CG-only gene-body methylation, unmethylated euchromatin); mammal levels follow somatic tissues (most CpGs methylated, CpG islands unmethylated).",
+  "plant": {
+    "context_share": {"CG": 0.25, "CHG": 0.25, "CHH": 0.5},
+    "state_share": {"transposon": 0.2, "gene_body": 0.3, "unmethylated": 0.5},
+    "level": {
+      "transposon":   {"CG": 0.90, "CHG": 0.70, "CHH": 0.15},
+      "gene_body":    {"CG": 0.70, "CHG": 0.05, "CHH": 0.02},
+      "unmethylated": {"CG": 0.03, "CHG": 0.02, "CHH": 0.01}
+    }
+  },
+  "animal": {
+    "context_share": {"CG": 1.0},
+    "state_share": {"methylated": 0.75, "cpg_island": 0.15, "intermediate": 0.10},
+    "level": {
+      "methylated":   {"CG": 0.85},
+      "cpg_island":   {"CG": 0.05},
+      "intermediate": {"CG": 0.50}
+    }
+  },
+  "site_sd_logit": 0.5,
+  "site_spacing_bp": {"CG": 60, "CHG": 60, "CHH": 30},
+  "coverage_size": 5
+}

@@ -12,6 +12,8 @@ suppressMessages({devtools::load_all(BIODES, quiet = TRUE); devtools::load_all(S
 GOLD <- new.env()
 assignInNamespace("extract_spec_local", function(question, ...) GOLD$spec, "studyforge")
 qs <- QUESTIONS()
+# IDS=<file with one question id per line> reruns only those (start/end then index that subset)
+if (nzchar(Sys.getenv("IDS"))) qs <- Filter(function(q) q$id %in% readLines(Sys.getenv("IDS")), qs)
 small <- list(simulate_rnaseq_experiment = list(n_genes = 200), simulate_rnaseq_from_gwas = list(n_genes = 200, n_cis_eqtl = 20, n_trans_eqtl = 5),
               simulate_scrnaseq_experiment = list(n_genes = 150, cells_per_replicate = 20),
               simulate_chipseq = list(n_peaks = 30, n_reads = 3000), simulate_atacseq = list(n_peaks = 30, n_reads = 3000),

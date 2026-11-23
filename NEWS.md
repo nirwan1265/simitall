@@ -1,5 +1,13 @@
 # simitall (development)
 
+- `simulate_methylation()`: bisulfite-sequencing methylation (WGBS, RRBS,
+  EM-seq) as methylated and covering read counts per cytosine, with known DMRs
+  (`dmr_truth.tsv`) and per-site truth. Three engines: a real template of the
+  same kingdom (mouse ENCODE WGBS), a native engine with CG/CHG/CHH chromatin
+  states for plants (`inst/suite/methylation_presets.json`), and beta values
+  for 450k/EPIC arrays (TCGA template). Biodes designs with methylation assays
+  now simulate it; `simulator_parameters.tsv` has an `ask` column whose
+  questions `simitall_routes()` prints.
 - Real-data templates for count simulation: `simitall_templates()`,
   `simitall_template()`, `simulate_counts_from_template()` (binomial thinning
   of real samples, or NB learned from them). Small RNA-seq (human and mouse

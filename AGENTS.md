@@ -79,7 +79,7 @@ Biodes design folder (study_spec.json, field_layout.csv, sample_metadata_templat
 4. Add a test in `tests/testthat/test-suite-simulators.R` that builds a design
    with `make_design_folder()` and checks unit alignment and truth.
 
-Known gaps: methylation (`planned`), survival and compositional
+Known gaps: MeDIP, m6A, Ribo-seq, Hi-C (`planned` / `not_supported`), survival and compositional
 outcomes (`planned`); see `docs/SIMULATION_COVERAGE.md`; genotype-factor level order follows natural sort, so the
 reference level is the alphabetically first one.
 

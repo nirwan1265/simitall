@@ -13,7 +13,8 @@ test_that("routes come from spec fields, not words, and unsupported requests are
   expect_equal(r3$status[r3$route == "treatment_only"], "treatment")
   expect_equal(r$route[r$layer == "genetics"], "genetics_cross")          # the cross wins over the panel
   expect_true("assay_rnaseq" %in% r$route)
-  expect_equal(r$status[r$route == "assay_methylation"], "planned")
+  expect_equal(r$status[r$route == "assay_methylation"], "ready")
+  expect_equal(simitall:::.suite_match_routes(list(assays = list("medip")))$status[2], "planned")
   expect_equal(r$status[r$route == "assay_other"], "not_supported")
   # no outcome type: continuous; eQTL alone turns on the panel
   r2 <- simitall:::.suite_match_routes(list(assays = list("eqtl")))
@@ -110,7 +111,7 @@ test_that("a RIL cross gives inbred lines with founder ancestry", {
 test_that("omics assays write one library per unit, named by sample_id", {
   d <- make_design_folder("factorial", "y ~ treatment * treatment2 + block",
                           list(design_factor("genotype", 4), design_factor("water", 2, c("wet", "dry"))), reps = 2,
-                          extra = list(assays = list("eqtl", "single_cell", "chip_seq", "atac_seq", "methylation")))
+                          extra = list(assays = list("eqtl", "single_cell", "chip_seq", "atac_seq", "medip")))
   suppressMessages(simitall_from_biodes(d, params = list(
     simulate_rnaseq_from_gwas = list(n_genes = 200), simulate_scrnaseq_experiment = list(n_genes = 200, cells_per_replicate = 40),
     simulate_chipseq = list(n_peaks = 40, n_reads = 8000), simulate_atacseq = list(n_peaks = 40, n_reads = 8000),
@@ -128,7 +129,7 @@ test_that("omics assays write one library per unit, named by sample_id", {
   expect_setequal(stats::na.omit(atac$sample_id), meta$sample_id)
   t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
   expect_setequal(names(t$assays), c("assay_eqtl", "assay_single_cell", "assay_chip_seq", "assay_atac_seq"))
-  expect_equal(t$not_simulated[[1]]$route, "assay_methylation")
+  expect_equal(t$not_simulated[[1]]$route, "assay_medip")
   # each unit's eQTL genotypes are its line's genotypes
   lines <- simitall:::.simitall_read_genotypes(file.path(d, "genotypes.vcf"))$genotype
   units <- simitall:::.simitall_read_genotypes(file.path(d, "eqtl", "unit_genotypes.vcf"))$genotype
@@ -226,4 +227,54 @@ test_that("small RNA-seq and microbiome designs pick the template by organism", 
   g <- run("Mus musculus", "mouse", "16s")
   expect_equal(g$t$assays$assay_microbiome$template_choice$template, "microbiome_human_gut_hmp_16s")
   expect_gt(length(g$t$counts$de_genes[[1]]), 0)
+})
+
+test_that("methylation engines plant DMRs that the data show", {
+  d <- data.frame(sample = paste0("u", 1:8), condition = rep(c("ctrl", "trt"), each = 4), batch = "b1")
+  check <- function(r) {
+    M <- as.matrix(read.delim(r$methylated, row.names = 1, check.names = FALSE)); N <- as.matrix(read.delim(r$coverage, row.names = 1, check.names = FALSE))
+    expect_true(all(M <= N)); expect_identical(colnames(M), d$sample)
+    st <- read.delim(r$site_truth); dt <- read.delim(r$dmr_truth)
+    lvl <- function(i, s) colSums(M[i, s, drop = FALSE]) / pmax(colSums(N[i, s, drop = FALSE]), 1)
+    obs <- vapply(dt$dmr_id, function(id) { i <- which(st$dmr_id == id); mean(lvl(i, 5:8)) - mean(lvl(i, 1:4)) }, 0)
+    expect_lt(stats::median(abs(obs - dt$delta)), 0.06)                 # measured change matches the planted one
+    expect_gt(mean(sign(obs) == sign(dt$delta)), 0.9)
+    expect_true(all(sign(dt$delta) == ifelse(dt$base < 0.5, 1, -1)))     # gain in unmethylated regions, loss otherwise
+    dt
+  }
+  p <- simulate_methylation(d, file.path(tempfile(), "p"), engine = "native", kingdom = "plant", n_sites = 6000, n_dmrs = 20)
+  expect_setequal(p$truth$contexts, c("CG", "CHG", "CHH"))
+  check(p)
+  a <- simulate_methylation(d, file.path(tempfile(), "a"), engine = "native", kingdom = "animal", n_sites = 6000, n_dmrs = 20)
+  expect_equal(a$truth$contexts, "CG")
+  t <- simulate_methylation(d, file.path(tempfile(), "t"), engine = "template", template = "methylation_mouse_encode_wgbs", n_dmrs = 20)
+  expect_equal(t$truth$mode, "parametric")                               # 8 units, 3 template samples
+  check(t)
+  r <- simulate_methylation(d[1:3, ], file.path(tempfile(), "r"), engine = "template", template = "methylation_mouse_encode_wgbs", n_dmrs = 20)
+  expect_equal(r$truth$mode, "resample")
+  ar <- simulate_methylation(d, file.path(tempfile(), "ar"), template = "methylation_array_human_tcga_tgct", n_dmrs = 50)
+  B <- as.matrix(read.delim(ar$beta, row.names = 1, check.names = FALSE)); tr <- read.delim(ar$dmr_truth)
+  expect_true(all(B >= 0 & B <= 1))
+  expect_gt(stats::cor(rowMeans(B[tr$feature_id, 5:8]) - rowMeans(B[tr$feature_id, 1:4]), tr$delta), 0.8)
+})
+
+test_that("methylation designs: plants get the native CG/CHG/CHH engine, animals the WGBS template, and the questions are listed", {
+  run <- function(organism, system, assays = list("methylation")) {
+    d <- make_design_folder("crd", NULL, list(design_factor("treatment", 2)), reps = 3,
+                            extra = list(organism = organism, system = system, assays = assays))
+    r <- utils::capture.output(rt <- simitall_routes(d))
+    suppressMessages(simitall_from_biodes(d, params = list(simulate_methylation = list(n_sites = 4000, n_dmrs = 10))))
+    list(t = jsonlite::read_json(file.path(d, "sim_truth.json"))$assays$assay_methylation, q = rt$questions, d = d)
+  }
+  m <- run("Zea mays", "field")
+  expect_equal(m$t$engine, "native"); expect_equal(m$t$kingdom, "plant")
+  expect_true("dmr_delta" %in% m$q$argument)
+  expect_false("prevalence" %in% m$q$argument)                          # continuous outcome: no prevalence question
+  h <- run("Homo sapiens", "clinical")
+  expect_equal(h$t$template, "methylation_mouse_encode_wgbs")
+  meta <- read.delim(file.path(h$d, "sample_metadata_template.tsv"))
+  cov <- read.delim(file.path(h$d, "methylation", "methylation.coverage.tsv.gz"), check.names = FALSE)
+  expect_identical(names(cov)[-1], meta$sample_id)
+  arr <- run("Homo sapiens", "clinical", list("methylation_array"))
+  expect_equal(arr$t$engine, "array")
 })

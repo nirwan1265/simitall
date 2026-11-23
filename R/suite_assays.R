@@ -181,9 +181,19 @@
          simulate_scrnaseq_experiment = .suite_assay_single_cell,
          simulate_chipseq = .suite_assay_chip_seq,
          simulate_atacseq = .suite_assay_atac_seq,
+         methylation_simulator = .suite_assay_methylation,
          small_rnaseq_template = function(ctx) .suite_assay_template(ctx, "small_rnaseq", c("small_rnaseq", "mirna_seq", "srna_seq")),
          microbiome_template = function(ctx) .suite_assay_template(ctx, "microbiome", c("amplicon", "16s", "its", "amplicon_16s", "metagenomics", "microbiome")),
          stop("No runner for simulator ", simulator, call. = FALSE))
+}
+
+# Kingdom of the study organism (inst/suite/templates.json): from the genus, else from the system; character(0) if unknown.
+.suite_kingdom <- function(spec) {
+  rules <- .suite_rules("templates")
+  genus <- sub(" .*", "", tolower(trimws(paste(unlist(spec$organism), collapse = " "))))
+  k <- names(Filter(function(g) genus %in% g, rules$kingdom_by_genus))
+  if (!length(k)) k <- names(Filter(function(s) any(.suite_norm(spec$system) %in% s), rules$kingdom_by_system))
+  k
 }
 
 # Template for a count assay: same species, else same kingdom (inst/suite/templates.json), else NULL.
@@ -196,13 +206,10 @@
   ok <- tab$kind == kind & vapply(strsplit(tab$assays, "|", fixed = TRUE), function(a) any(assay_values %in% a), logical(1))
   tab <- tab[ok, , drop = FALSE]
   if (!nrow(tab)) return(NULL)
-  rules <- .suite_rules("templates")
   org <- tolower(trimws(paste(unlist(spec$organism), collapse = " ")))
   same <- tab[nzchar(org) & tolower(tab$organism) == org, , drop = FALSE]
   if (nrow(same)) return(list(id = same$id[1], why = sprintf("same species (%s)", spec$organism)))
-  genus <- sub(" .*", "", org)
-  kingdom <- names(Filter(function(g) genus %in% g, rules$kingdom_by_genus))
-  if (!length(kingdom)) kingdom <- names(Filter(function(s) any(.suite_norm(spec$system) %in% s), rules$kingdom_by_system))
+  kingdom <- .suite_kingdom(spec)
   if (length(kingdom)) {
     k <- tab[tab$kingdom == kingdom[1], , drop = FALSE]
     if (nrow(k)) return(list(id = k$id[1], why = sprintf("nearest template: same kingdom (%s); no %s template", kingdom[1], if (nzchar(org)) spec$organism else "species-specific")))
@@ -245,4 +252,36 @@
        counts_truth = list(n_genes = nrow(counts), condition_term = ctx$cond_term, batch_term = attr(d, "batch_term"),
                            reference = attr(d, "levels")[1], feature_type = kind, de_genes = .suite_de_truth(ct)),
        truth = c(list(template_choice = tinfo), list(condition_truth = sub(paste0("^", ctx$outdir, "/"), "", ct))))
+}
+
+# DNA methylation: real template of the same species / kingdom (methylation_counts), else native CG/CHG/CHH
+# regions for the organism's kingdom; beta values when the platform is an array.
+.suite_assay_methylation <- function(ctx) {
+  d0 <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
+  d <- d0[match(ctx$meta$sample_id, d0$sample), , drop = FALSE]          # files in layout order
+  attr(d, "levels") <- attr(d0, "levels"); attr(d, "batch_term") <- attr(d0, "batch_term")
+  a <- .suite_args("simulate_methylation", ctx$spec, ctx$params)
+  if ("methylation_array" %in% .suite_norm(ctx$spec$assays) && !identical(unname(a$source["platform"]), "params")) a$args$platform <- "array"
+  array <- identical(a$args$platform, "array")
+  pick <- .suite_pick_template(if (array) "methylation_array" else c("methylation", "wgbs", "rrbs", "bisulfite_seq"),
+                               ctx$spec, a$args$template, kind = if (array) "beta" else "methylation_counts")
+  kingdom <- .suite_kingdom(ctx$spec)
+  if (array && is.null(pick)) stop("No methylation-array template fits this organism.", call. = FALSE)
+  odir <- file.path(ctx$outdir, "methylation"); dir.create(odir, showWarnings = FALSE)
+  args <- a$args[setdiff(names(a$args), c("platform", "template"))]
+  if (!is.null(args$dmr_contexts) && is.character(args$dmr_contexts)) args$dmr_contexts <- strsplit(args$dmr_contexts, "[, ]+")[[1]]
+  fixed <- list(design = d, out_prefix = file.path(odir, "methylation"), seed = ctx$seed)
+  if (!is.null(pick)) {
+    fixed$template <- pick$id; fixed$engine <- if (array) "array" else "template"
+    why <- pick$why
+  } else {
+    fixed$engine <- "native"; fixed$kingdom <- if (length(kingdom)) kingdom[1] else "animal"
+    why <- sprintf("no %s methylation template for '%s': native %s preset%s", if (array) "array" else "sequencing", ctx$spec$organism %||% "?",
+                   fixed$kingdom, if (!length(kingdom)) " (kingdom unknown, animal assumed)" else "")
+  }
+  res <- .suite_call(simulate_methylation, fixed, args)
+  rel <- function(x) sub(paste0("^", ctx$outdir, "/"), "", x)
+  list(paths = unlist(res[setdiff(names(res), "truth")]), args = a,
+       truth = c(res$truth, list(why = why, dmr_truth = rel(res$dmr_truth),
+                                 files = lapply(res[setdiff(names(res), c("truth", "dmr_truth"))], rel))))
 }

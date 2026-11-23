@@ -79,9 +79,11 @@ lower case, `-` read as `_`):
 | assay | `assays` | eqtl | `simulate_rnaseq_from_gwas()`, each unit carries its line's genotypes |
 | assay | `assays` | single_cell | `simulate_scrnaseq_experiment()`, pseudobulk per unit |
 | assay | `assays` | chip_seq, atac_seq | `simulate_chipseq()`, `simulate_atacseq()` on a synthetic genome |
-| assay | `assays` | small_rnaseq | `simulate_counts_from_template()` with a same-species miRNA template (human, mouse), else native NB |
+| assay | `assays` | small_rnaseq | `simulate_counts_from_template()` with a same-species miRNA template (human, mouse; Arabidopsis, maize, sorghum, barley, tomato from PmiREN), else native NB |
 | assay | `assays` | amplicon (16S/ITS), metagenomics | `simulate_counts_from_template()` with a host-kingdom 16S template (plant root, human HMP) |
-| - | `assays` | methylation, medip | planned |
+| assay | `assays` | methylation, wgbs, rrbs, bisulfite_seq, em_seq | `simulate_methylation()`: methylated + covering reads per cytosine with known DMRs; same-kingdom WGBS template (mouse ENCODE for animals), else native CG/CHG/CHH regions (plants) |
+| assay | `assays` | methylation_array | `simulate_methylation(engine = "array")`: beta values learned from TCGA 450k, known differentially methylated positions |
+| - | `assays` | medip | planned |
 | treatment | `assays` | crispr, overexpression, complementation, ... | a way to make the lines: a treatment, not data |
 
 Factors the model does not hold (`analysis.terms.uncovered_factors`, e.g. tissue measured within each plant) get main effects, and the rows of one unit share a unit effect (`sim_truth.json$within_unit_sd`). For assays, the condition is the combination of the first non-genotype treatment and these factors (e.g. `water_1.tissue_2`).

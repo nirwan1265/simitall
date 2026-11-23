@@ -123,6 +123,7 @@ simitall_routes <- function(biodes_dir, params = NULL) {
   sims <- setdiff(sims, "-")
   # template-based count assays share simulate_counts_from_template()'s parameters
   if (any(grepl("_template$", sims))) sims <- unique(c(sims[!grepl("_template$", sims)], "simulate_counts_from_template"))
+  sims[sims == "methylation_simulator"] <- "simulate_methylation"
   args <- stats::setNames(lapply(sims, function(s) .suite_args(s, h$spec, params)), sims)
   # outcome settings: only those of the matched outcome type
   keep <- switch(routes$route[routes$layer == "outcome"][1],
@@ -143,7 +144,18 @@ simitall_routes <- function(biodes_dir, params = NULL) {
     cat("  ", s, ":\n", sep = "")
     for (n in names(a$args)) cat(sprintf("    %-30s %-22s %s\n", n, paste(format(a$args[[n]]), collapse = ","), a$source[[n]]))
   }
-  invisible(list(routes = routes, args = args))
+  # questions worth answering (simulator_parameters.tsv ask column) whose answer is still a default
+  tab <- .suite_tsv("simulator_parameters")
+  q <- tab[tab$simulator %in% names(args) & nzchar(tab$ask), , drop = FALSE]
+  src_of <- function(i) { v <- unname(args[[q$simulator[i]]]$source[q$argument[i]]); if (is.na(v)) "" else v }
+  q <- q[!vapply(seq_len(nrow(q)), function(i) src_of(i) == "params" || startsWith(src_of(i), "spec"), logical(1)), , drop = FALSE]
+  # only arguments this design uses (e.g. prevalence only for a binary outcome); no-default ones always apply
+  q <- q[!nzchar(q$value) | vapply(seq_len(nrow(q)), function(i) q$argument[i] %in% names(args[[q$simulator[i]]]$args), logical(1)), , drop = FALSE]
+  if (nrow(q)) {
+    cat("Questions (answer with params = list(<simulator> = list(<argument> = ...)); otherwise the default is used):\n")
+    for (i in seq_len(nrow(q))) cat(sprintf("  - %s [%s$%s, default %s]\n", q$ask[i], q$simulator[i], q$argument[i], if (nzchar(q$value[i])) q$value[i] else "from the data"))
+  }
+  invisible(list(routes = routes, args = args, questions = q[, c("simulator", "argument", "ask", "value")]))
 }
 
 #' Every parameter a simulator takes
