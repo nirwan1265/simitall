@@ -263,18 +263,18 @@ Planned, roughly in order (gains are from the 2000-question check in
 
 1. Ribo-seq (+33): RNA and ribosome-footprint counts per gene with
    translational-efficiency truth.
-2. Hi-C (+26): contact matrices with planted loop and TAD changes.
-3. scATAC-seq (+25): ATAC peaks x cells (combine the ATAC and scRNA code).
+2. scATAC-seq (+29): ATAC peaks x cells (combine the ATAC and scRNA code).
+3. Hi-C (+28): contact matrices with planted loop and TAD changes.
 4. MeDIP (+23): enrichment counts per window. Quick: reuse `simulate_merip()`
    (IP over input) with methylated DNA in place of m6A.
 5. Degradome (+22): cleavage-site counts (mostly asked with small RNA).
-6. Genetics with no lines (BSA / pool-seq bulks, population resequencing): Biodes
+6. Genetics with no lines (+23; BSA / pool-seq bulks, population resequencing): Biodes
    0.5 now writes `spec$genetics` (`unit` = line / bulk / population,
    `individuals_per_bulk`, `bulk_fraction`, `generations`). Bulks: allele
    frequencies in the top and bottom phenotype tails; populations: drift and
    selection over generations. Today the rest of such a design is simulated and
    genetics is listed as `needs_genotype_factor`.
-7. MNase-seq (+12), spatial (+11), metabolomics/lipidomics (+17), RIP/CLIP (+10,
+7. Metabolomics/lipidomics (+19), MNase-seq (+12), spatial (+12), RIP/CLIP (+11,
    like `simulate_merip()`), survival and compositional outcomes.
 8. m6A: learn peak methylation levels and IP enrichment from a real MeRIP-seq
    dataset (now: Beta-distributed levels, 20x enrichment).
