@@ -30,8 +30,9 @@
   tab <- .suite_tsv("simulators")
   hit <- logical(nrow(tab))
   matched_value <- character(nrow(tab))
+  assay_vals <- .suite_assay_values(spec)
   for (i in seq_len(nrow(tab))) {
-    vals <- .suite_norm(.suite_get(spec, tab$field[i]))
+    vals <- if (tab$field[i] == "assays") assay_vals else .suite_norm(.suite_get(spec, tab$field[i]))
     want <- strsplit(tab$values[i], "|", fixed = TRUE)[[1]]
     m <- intersect(vals, want)
     if (length(m)) { hit[i] <- TRUE; matched_value[i] <- paste(m, collapse = ",") }
@@ -63,6 +64,19 @@
   out[order(match(out$layer, c("outcome", "genetics", "assay"))), , drop = FALSE]
 }
 
+# The assay values routing sees: spec$assays (coarse) plus spec$assay_kinds (finer, Biodes >= 0.5.1). A coarse
+# label is dropped when a finer kind replaces it and none keeps it (inst/suite/assay_kinds.tsv: amplicon with only
+# amplicon_genotyping is not a microbiome).
+.suite_assay_values <- function(spec) {
+  coarse <- .suite_norm(spec$assays)
+  kinds <- .suite_norm(spec$assay_kinds)
+  if (!length(kinds)) return(coarse)
+  k <- .suite_tsv("assay_kinds")
+  k <- k[k$kind %in% kinds, , drop = FALSE]
+  drop <- setdiff(k$coarse[k$action == "replace"], k$coarse[k$action == "keep"])
+  unique(c(setdiff(coarse, drop), kinds))
+}
+
 # Parse one simulator_parameters.tsv value by its type.
 .suite_parse_value <- function(value, type) {
   if (!nzchar(value)) return(NULL)
@@ -82,9 +96,14 @@
   args <- list(); src <- character()
   for (i in seq_len(nrow(tab))) {
     a <- tab$argument[i]
-    sv <- if (nzchar(tab$spec_field[i])) .suite_get(spec, tab$spec_field[i]) else NULL
+    # spec_field may list alternatives ("population.self_generations|population.generations"): the first given wins
+    sv <- NULL; sf <- ""
+    for (f in if (nzchar(tab$spec_field[i])) strsplit(tab$spec_field[i], "|", fixed = TRUE)[[1]] else character()) {
+      sv <- .suite_get(spec, f); sf <- f
+      if (!is.null(sv) && length(sv)) break
+    }
     if (!is.null(sv) && length(sv)) {
-      args[a] <- list(sv); src[a] <- paste0("spec ", tab$spec_field[i])
+      args[a] <- list(sv); src[a] <- paste0("spec ", sf)
     } else {
       v <- .suite_parse_value(tab$value[i], tab$type[i])
       if (!is.null(v)) { args[a] <- list(v); src[a] <- "default (simulator_parameters.tsv)" }
@@ -128,6 +147,7 @@ simitall_routes <- function(biodes_dir, params = NULL) {
   # outcome settings: only those of the matched outcome type
   keep <- switch(routes$route[routes$layer == "outcome"][1],
                  outcome_binary = "prevalence", outcome_count = c("count_distribution", "dispersion", "min_mean"),
+                 outcome_survival = c("median_time", "time_sd", "censored_fraction"),
                  outcome_ordinal = "category_probabilities", character())
   if (!is.null(args$suite_outcome)) {
     args$suite_outcome$args <- args$suite_outcome$args[intersect(names(args$suite_outcome$args), keep)]

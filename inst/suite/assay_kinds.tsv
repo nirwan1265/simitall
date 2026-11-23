@@ -1,0 +1,10 @@
+kind	coarse	action	note
+amplicon_16s	amplicon	keep	16S amplicon is the microbiome reading of amplicon
+amplicon_its	amplicon	keep	ITS amplicon is the microbiome reading of amplicon
+amplicon_genotyping	amplicon	replace	amplicon of a locus (alleles, edits): not a microbiome
+tcr_seq	amplicon	replace	TCR repertoire: not a microbiome
+bcr_seq	amplicon	replace	BCR repertoire: not a microbiome
+dnase_seq	atac_seq	keep	accessibility, simulated like ATAC
+faire_seq	atac_seq	keep	accessibility, simulated like ATAC
+dap_seq	chip_seq	keep	in vitro binding, simulated like ChIP
+selex	chip_seq	keep	in vitro binding, simulated like ChIP

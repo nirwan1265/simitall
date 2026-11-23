@@ -57,7 +57,7 @@ test_that("binary, count and ordinal outcomes follow simulator_parameters.tsv", 
     if (ty == "ordinal") expect_setequal(unique(y), 1:4)
   }
   d <- make_design_folder("rcbd", "y ~ treatment + block", list(design_factor("genotype", 4)))
-  s <- jsonlite::read_json(file.path(d, "study_spec.json")); s$primary_outcome$type <- "survival"
+  s <- jsonlite::read_json(file.path(d, "study_spec.json")); s$primary_outcome$type <- "compositional"
   jsonlite::write_json(s, file.path(d, "study_spec.json"), auto_unbox = TRUE)
   expect_error(simitall_from_biodes(d), "no simulator yet")
 })
@@ -329,4 +329,39 @@ test_that("backcross (NIL) lines with a rare donor allele still get QTN", {
   t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
   expect_false(is.null(t$genetics))
   expect_gt(nrow(read.delim(file.path(d, "genetic_truth", "qtn_truth.tsv"))), 0)
+})
+
+test_that("assay_kinds refine the coarse assays (Biodes 0.5.1)", {
+  r <- simitall:::.suite_match_routes(list(assays = list("amplicon"), assay_kinds = list("amplicon_genotyping")))
+  expect_false("assay_microbiome" %in% r$route)
+  expect_equal(r$status[r$route == "assay_amplicon_genotyping"], "planned")
+  r <- simitall:::.suite_match_routes(list(assays = list("amplicon"), assay_kinds = list("amplicon_16s", "amplicon_genotyping")))
+  expect_true("assay_microbiome" %in% r$route)
+  expect_true("assay_atac_seq" %in% simitall:::.suite_match_routes(list(assay_kinds = list("dnase_seq")))$route)
+  expect_true("assay_chip_seq" %in% simitall:::.suite_match_routes(list(assays = list("chip_seq"), assay_kinds = list("dap_seq")))$route)
+  expect_equal(sum(simitall:::.suite_match_routes(list(assays = list("chip_seq"), assay_kinds = list("dap_seq")))$route == "assay_chip_seq"), 1)
+})
+
+test_that("breeding notation fields reach the cross; the first given alternative spec field wins", {
+  a <- simitall:::.suite_args("suite_genotype_cross", list(population = list(backcross_generations = 1, self_generations = 4, generations = 9)))
+  expect_equal(a$args$backcross_generations, 1)
+  expect_equal(a$args$self_generations, 4)
+  expect_equal(unname(a$source["self_generations"]), "spec population.self_generations")
+  a <- simitall:::.suite_args("suite_genotype_cross", list(population = list(generations = 6)))
+  expect_equal(a$args$self_generations, 6)
+})
+
+test_that("survival outcome: time with censoring, longer for higher outcome", {
+  d <- make_design_folder("crd", "y ~ treatment", list(design_factor("treatment", 2)), reps = 40,
+                          extra = list(primary_outcome = list(name = "lifespan", type = "survival")))
+  suppressMessages(simitall_from_biodes(d, effect = 2, residual_sd = 1))
+  m <- read.delim(file.path(d, "sample_metadata_template.tsv"))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_equal(t$outcome_type, "survival")
+  expect_true(all(m$event %in% c(0, 1)))
+  expect_equal(mean(m$event == 0), 0.2, tolerance = 0.05)
+  expect_lte(max(m$primary_outcome), t$outcome_model$follow_up + 1e-6)
+  lev <- names(t$treatment_effects$treatment)
+  hi <- lev[which.max(unlist(t$treatment_effects$treatment))]
+  expect_gt(stats::median(m$primary_outcome[m$treatment == hi]), stats::median(m$primary_outcome[m$treatment != hi]))
 })

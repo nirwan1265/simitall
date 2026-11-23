@@ -32,7 +32,8 @@ small <- list(simulate_rnaseq_experiment = list(n_genes = 200), simulate_rnaseq_
               suite_genotype_panel = list(n_markers = 600), suite_genotype_cross = list(chromosome_length_bp = 3000L, n_chromosomes = 2L, snp_rate = 0.05))
 clean <- function(x) gsub("[\t\r\n]+", " ", substr(paste(x, collapse = " | "), 1, 400))
 rows <- list()
-for (i in i0:i1) {
+i1 <- min(i1, length(qs))
+for (i in seq(i0, length.out = max(0, i1 - i0 + 1))) {
   q <- qs[[i]]
   d <- file.path(tempdir(), q$id)
   r <- list(reps_assumed = FALSE, id = q$id, species = q$species %||% "", technique = q$technique %||% "", prompt = clean(q$prompt))
@@ -40,8 +41,23 @@ for (i in i0:i1) {
   # the steps Biodes' reader runs after extraction (panel genotype factor, genetics unit, power.solve_for);
   # the reviewed spec stands in for the extraction itself
   sf <- asNamespace("studyforge")
+  txt <- sf$.sf_words_to_digits(tolower(q$prompt))
   if (exists(".sf_panel_genotype", sf)) GOLD$spec <- sf$.sf_panel_genotype(GOLD$spec)
-  if (exists(".sf_genetics", sf)) GOLD$spec <- sf$.sf_genetics(GOLD$spec, sf$.sf_words_to_digits(tolower(q$prompt)))
+  if (exists(".sf_genetics", sf)) GOLD$spec <- sf$.sf_genetics(GOLD$spec, txt)
+  # fields the reader writes (0.5.1) that reviewed specs do not carry: kept when the reviewed spec gives them
+  if (exists(".sf_outcome_type", sf) && is.null(GOLD$spec$primary_outcome$type)) {
+    ot <- sf$.sf_outcome_type(txt, GOLD$spec$primary_outcome$name)
+    if (!is.null(ot)) GOLD$spec$primary_outcome$type <- ot
+  }
+  if (exists(".sf_assay_kinds", sf) && is.null(GOLD$spec$assay_kinds)) {
+    k <- sf$.sf_assay_kinds(txt); if (length(k)) GOLD$spec$assay_kinds <- as.list(k)
+  }
+  if (exists(".sf_generation_notation", sf)) {
+    g <- sf$.sf_generation_notation(txt)
+    for (nm in names(g)) if (is.null(GOLD$spec$population[[nm]])) GOLD$spec$population[[nm]] <- g[[nm]]
+  }
+  r$outcome_type <- GOLD$spec$primary_outcome$type %||% ""
+  r$assay_kinds <- paste(unlist(GOLD$spec$assay_kinds), collapse = ",")
   if (exists("mark_asked", sf)) GOLD$spec <- studyforge::mark_asked(GOLD$spec, q$prompt)
   r$solve_for <- GOLD$spec$power$solve_for %||% ""
   if (is.null(GOLD$spec$design$reps) && nzchar(REPS_IF_MISSING)) { GOLD$spec$design$reps <- as.integer(REPS_IF_MISSING); r$reps_assumed <- TRUE }
@@ -81,6 +97,6 @@ for (i in i0:i1) {
   unlink(d, recursive = TRUE)
   rows[[length(rows) + 1]] <- r
 }
-cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
+cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","outcome_type","assay_kinds","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
 df <- do.call(rbind, lapply(rows, function(r) as.data.frame(setNames(lapply(cols, function(k) if (is.null(r[[k]])) "" else as.character(r[[k]])), cols))))
 utils::write.table(df, out, sep = "\t", row.names = FALSE, quote = FALSE)

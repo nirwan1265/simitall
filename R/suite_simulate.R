@@ -255,6 +255,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   assay_routes <- routes[routes$layer == "assay" & routes$status == "ready", , drop = FALSE]
   has_outcome <- !is.null(spec$primary_outcome) || !nrow(assay_routes)
   out$primary_outcome <- if (has_outcome) fam$y else NA
+  if (!is.null(fam$event)) out$event <- if (has_outcome) fam$event else NA
 
   mpath <- file.path(outdir, "sample_metadata_template.tsv")
   utils::write.table(out, mpath, sep = "\t", row.names = FALSE, quote = FALSE, na = "")
@@ -355,6 +356,18 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       list(type = "ordinal", y = ifelse(ok, findInterval(y_obs, cuts) + 1L, NA_integer_),
            model = list(family = "ordinal_threshold", category_probabilities = pr, thresholds = cuts,
                         note = "score 1..k; treatment_effects are on the latent (Gaussian) scale"))
+    },
+    outcome_survival = {
+      # log-normal accelerated failure time: log T = log(median) + time_sd * z, z the standardised Gaussian outcome
+      z <- (y_obs - mean(y_obs[ok])) / stats::sd(y_obs[ok])
+      t <- a$median_time * exp(a$time_sd * z)
+      follow <- stats::quantile(t[ok], 1 - a$censored_fraction, names = FALSE)
+      ev <- as.integer(t <= follow)
+      list(type = "survival", y = ifelse(ok, round(pmin(t, follow), 3), NA_real_), event = ifelse(ok, ev, NA_integer_),
+           model = list(family = "lognormal_aft", median_time = a$median_time, time_sd = a$time_sd,
+                        follow_up = follow, censored_fraction = a$censored_fraction,
+                        scale = list(sd_outcome = stats::sd(y_obs[ok])),
+                        note = "primary_outcome = time to event or end of follow-up; event 1 = event, 0 = censored. treatment_effects are on the Gaussian scale: an effect e multiplies time by exp(time_sd * e / scale$sd_outcome)"))
     },
     stop("No outcome model for route ", route, call. = FALSE))
 }

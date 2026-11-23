@@ -4,6 +4,9 @@ suite_outcome	count_distribution	negative_binomial	character		count outcome: neg
 suite_outcome	dispersion	5	numeric		count outcome: negative binomial size (smaller = more overdispersed)	
 suite_outcome	min_mean	0.1	numeric		count outcome: unit means below this are floored	
 suite_outcome	category_probabilities	0.25,0.25,0.25,0.25	numeric_vector		ordinal outcome: share of units in each score category (lowest first)	
+suite_outcome	median_time	30	numeric		survival outcome: median time to event of a unit at the overall mean	What is the typical (median) time to the event, in your time unit?
+suite_outcome	time_sd	0.5	numeric		survival outcome: SD of log time to event (log-normal)	
+suite_outcome	censored_fraction	0.2	numeric		survival outcome: share of units still without the event at the end of follow-up (censored)	What share of units do you expect to still be event-free at the end?
 suite_genetics	phenotype_model	additive	character		row of phenotype_models.tsv: additive, additive_dominance, epistatic, gxe, full	Genetic architecture: additive, dominance, epistasis, or genotype x treatment?
 suite_genetics	heritability	0.5	numeric		plot-level heritability: genetic variance / (genetic + residual variance)	How heritable is the trait (0-1)?
 suite_genetics	n_add_qtn		integer		override the phenotype model's additive QTN count	
@@ -25,8 +28,8 @@ suite_genotype_cross	chromosome_length_bp	20000	integer		length of each simulate
 suite_genotype_cross	snp_rate	0.02	numeric		SNPs per bp between founder haplotypes	
 suite_genotype_cross	cM_per_chromosome	100	numeric		genetic length of each chromosome	
 suite_genotype_cross	n_founders		integer	population.parents	founders; default from mating_schemes.tsv (a list of parent names gives its length)	
-suite_genotype_cross	self_generations		integer	population.generations	selfing generations; default from mating_schemes.tsv	
-suite_genotype_cross	backcross_generations		integer		backcross generations (NIL); default from mating_schemes.tsv	
+suite_genotype_cross	self_generations		integer	population.self_generations|population.generations	selfing generations (BC1F5 -> 4); default from mating_schemes.tsv	
+suite_genotype_cross	backcross_generations		integer	population.backcross_generations	backcross generations (BC3F2 -> 3); default from mating_schemes.tsv	
 simulate_rnaseq_experiment	n_genes	1000	integer			
 simulate_rnaseq_experiment	condition_effect_fraction	0.1	numeric		share of genes that respond to the treatment	What share of genes do you expect to respond to the treatment?
 simulate_rnaseq_experiment	condition_effect_sd	1	numeric		SD of the true log2 fold changes	
