@@ -1,5 +1,14 @@
 # simitall (development)
 
+- `simulate_merip()`: m6A MeRIP-seq as IP and input counts per window (peaks
+  and background), with known peaks, changed peaks and expression changes that
+  move IP and input together. Biodes designs with `m6a_seq` / `merip` simulate it.
+- "How many per group?": when a question has no replicate count,
+  `simitall_from_question()` chooses `design.reps` with `simitall_power_sweep()`
+  (reads `power.reps_range` and `power.solve_for`). The sweep now also reports,
+  for count assays, the share of genes with a true 2-fold change that are found.
+- Bioana's count test uses empirical-Bayes moderated t-tests (as limma eBayes),
+  so designs with few replicates are tested fairly.
 - A design whose genetics assay has no genotype factor (BSA bulks, populations)
   no longer stops: the rest is simulated and genetics is listed as
   `needs_genotype_factor` in `sim_truth.json$not_simulated`.

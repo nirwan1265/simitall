@@ -83,6 +83,7 @@ lower case, `-` read as `_`):
 | assay | `assays` | amplicon (16S/ITS), metagenomics | `simulate_counts_from_template()` with a host-kingdom 16S template (plant root, human HMP) |
 | assay | `assays` | methylation, wgbs, rrbs, bisulfite_seq, em_seq | `simulate_methylation()`: methylated + covering reads per cytosine with known DMRs; same-kingdom WGBS template (mouse ENCODE for animals), else native CG/CHG/CHH regions (plants) |
 | assay | `assays` | methylation_array | `simulate_methylation(engine = "array")`: beta values learned from TCGA 450k, known differentially methylated positions |
+| assay | `assays` | m6a_seq, merip_seq, merip | `simulate_merip()`: IP and input counts per window (m6A peaks + background) with changed peaks and expression changes; expression from a same-species RNA-seq template (human airway) else native |
 | - | `assays` | medip | planned |
 | treatment | `assays` | crispr, overexpression, complementation, ... | a way to make the lines: a treatment, not data |
 
@@ -165,3 +166,12 @@ Layouts are Biodes' job (`layout_from_spec()`); when it stops with
   every study factor, or say why one is left out.
 - **No layout rule**: `mapping_population` (needs lines per family, families)
   and `split_split_plot` (catalog model has two treatment terms; needs three).
+
+## "How many per group?"
+
+When the spec has no `design.reps` (or `power.solve_for` is `"reps"`),
+`simitall_from_question()` runs `simitall_power_sweep()` over `power.reps_range`
+(default `power_defaults.json`: 2, 3, 4, 5, 6, 8) and lays the design out with
+the smallest count where every treatment main effect (and, for count assays, the
+genes with a true 2-fold change) reaches power 0.8. The sweep is kept in
+`power_sweep.tsv`, the choice in `power_choice.json`.

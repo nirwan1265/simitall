@@ -182,6 +182,7 @@
          simulate_chipseq = .suite_assay_chip_seq,
          simulate_atacseq = .suite_assay_atac_seq,
          methylation_simulator = .suite_assay_methylation,
+         simulate_merip = .suite_assay_m6a,
          small_rnaseq_template = function(ctx) .suite_assay_template(ctx, "small_rnaseq", c("small_rnaseq", "mirna_seq", "srna_seq")),
          microbiome_template = function(ctx) .suite_assay_template(ctx, "microbiome", c("amplicon", "16s", "its", "amplicon_16s", "metagenomics", "microbiome")),
          stop("No runner for simulator ", simulator, call. = FALSE))
@@ -284,4 +285,23 @@
   list(paths = unlist(res[setdiff(names(res), "truth")]), args = a,
        truth = c(res$truth, list(why = why, dmr_truth = rel(res$dmr_truth),
                                  files = lapply(res[setdiff(names(res), c("truth", "dmr_truth"))], rel))))
+}
+
+# m6A MeRIP-seq: IP and input counts per window for each unit (simulate_merip()).
+# Expression levels come from an RNA-seq template of the same species only (gene ids must fit the organism).
+.suite_assay_m6a <- function(ctx) {
+  d0 <- .suite_unit_design(ctx$meta, ctx$frame, ctx$p, ctx$cond_term, ctx$uncovered)
+  d <- d0[match(ctx$meta$sample_id, d0$sample), , drop = FALSE]
+  attr(d, "levels") <- attr(d0, "levels"); attr(d, "batch_term") <- attr(d0, "batch_term")
+  a <- .suite_args("simulate_merip", ctx$spec, ctx$params)
+  pick <- .suite_pick_template(c("rnaseq", "rna_seq"), ctx$spec, a$args$template, kind = "counts")
+  if (!is.null(pick) && !grepl("^(same species|chosen)", pick$why)) pick <- NULL
+  odir <- file.path(ctx$outdir, "m6a"); dir.create(odir, showWarnings = FALSE)
+  fixed <- list(design = d, out_prefix = file.path(odir, "m6a"), seed = ctx$seed, template = pick$id)
+  why <- if (!is.null(pick)) paste("expression from template", pick$id, "-", pick$why) else
+    sprintf("no RNA-seq template for '%s': native log-normal expression", ctx$spec$organism %||% "?")
+  res <- .suite_call(simulate_merip, fixed, a$args[setdiff(names(a$args), "template")])
+  rel <- function(x) sub(paste0("^", ctx$outdir, "/"), "", x)
+  list(paths = unlist(res[setdiff(names(res), "truth")]), args = a,
+       truth = c(res$truth, list(why = why, files = lapply(res[setdiff(names(res), "truth")], rel))))
 }

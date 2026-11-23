@@ -13,7 +13,7 @@
   },
   "n_sim": {
     "value": 200,
-    "note": "simulated experiments per reps value"
+    "note": "simulated experiments per reps value (simitall_from_question() uses n_sim_question when it chooses design.reps)"
   },
   "alpha": {
     "value": 0.05,
@@ -30,5 +30,17 @@
   "max_minutes": {
     "value": 15,
     "note": "stop before running when one simulated fit, times n_sim and the reps values (scaled by size), is estimated to take longer than this"
+  },
+  "n_genes_counts": {
+    "value": 300,
+    "note": "genes per count simulation when the study has a count assay: its power is the share of truly changed genes found"
+  },
+  "n_sim_question": {
+    "value": 50,
+    "note": "simulated experiments per reps value when simitall_from_question() chooses design.reps for a 'how many per group?' question"
+  },
+  "reps_if_sweep_fails": {
+    "value": 3,
+    "note": "design.reps used when simitall_from_question() cannot run the power sweep (stated as an assumption)"
   }
 }

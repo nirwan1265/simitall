@@ -290,3 +290,34 @@ test_that("genetics with no genotype factor (BSA pools) simulates the rest and l
   expect_true("needs_genotype_factor" %in% ns)
   expect_false(file.exists(file.path(d, "genotypes.vcf")))
 })
+
+test_that("m6A MeRIP-seq: IP over input marks the peaks, and planted changes are measurable", {
+  d <- data.frame(sample = paste0("s", 1:8), condition = rep(c("ctrl", "ko"), each = 4), batch = "b1")
+  r <- simulate_merip(d, file.path(tempfile(), "m6a"), n_genes = 400, n_peaks = 400, n_background = 400, seed = 2)
+  w <- read.delim(r$windows); pt <- read.delim(r$peak_truth)
+  ip <- as.matrix(read.delim(gzfile(r$ip))[, -1]); inp <- as.matrix(read.delim(gzfile(r$input))[, -1])
+  expect_identical(colnames(ip), d$sample)
+  bg <- w$type == "background"
+  sf_in <- colSums(inp) / mean(colSums(inp))
+  sf_ip <- apply(ip[bg, ] / sweep(inp[bg, ], 2, sf_in, "/"), 2, function(z) stats::median(z[is.finite(z) & z > 0]))
+  lr <- log2((sweep(ip, 2, sf_ip, "/") + 1) / (sweep(inp, 2, sf_in, "/") + 1))
+  expect_gt(stats::median(lr[!bg, ]) - stats::median(lr[bg, ]), 2)       # peaks are enriched
+  g <- d$condition == "ko"; pk <- which(!bg); dm <- pt$dm[pk]
+  expect_equal(sum(pt$dm), r$truth$n_dm_peaks)
+  est <- rowMeans(lr[pk, g]) - rowMeans(lr[pk, !g])
+  expect_gt(stats::cor(est[dm], pt$log2_ratio_change_ko[pk][dm]), 0.6)
+  expect_gt(stats::median(abs(est[dm])), 1.5 * stats::median(abs(est[!dm])))   # changed peaks move more than unchanged ones
+})
+
+test_that("m6A designs route to simulate_merip and write one IP and input library per unit", {
+  d <- make_design_folder("rcbd", "y ~ treatment + block", list(design_factor("genotype", 2)), reps = 3,
+                          extra = list(organism = "Homo sapiens", system = "cell_culture", assays = list("m6a_seq")))
+  expect_true("assay_m6a" %in% simitall_routes(d)$routes$route) |> utils::capture.output() |> invisible()
+  suppressMessages(simitall_from_biodes(d, params = list(simulate_merip = list(n_genes = 200, n_peaks = 150, n_background = 150))))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_true("assay_m6a" %in% names(t$assays))
+  expect_match(t$assays$assay_m6a$why, "rnaseq_human_airway")
+  meta <- read.delim(file.path(d, "sample_metadata_template.tsv"))
+  ip <- read.delim(file.path(d, "m6a", "m6a.ip.tsv.gz"), check.names = FALSE)
+  expect_identical(names(ip)[-1], meta$sample_id)
+})

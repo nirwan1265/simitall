@@ -261,12 +261,12 @@ Planned, roughly in order (gains are from the 2000-question check in
 
 **New simulators**
 
-- MeDIP (18 questions): enrichment counts per window, like ChIP IP/input.
-- m6A / MeRIP-seq (+40): IP and input counts per peak.
-- Ribo-seq (+26): RNA and footprint counts per gene with translational-efficiency truth.
-- Hi-C (+21): contact matrices with planted loop and TAD changes.
-- Degradome (+20), scATAC-seq (+16), MNase-seq (+10), spatial (+9),
-  metabolomics/lipidomics (+10), RIP/CLIP (+5).
+- Ribo-seq (+33 over both 1000s): RNA and footprint counts per gene with translational-efficiency truth.
+- scATAC-seq (+25), Hi-C (+26), Degradome (+22), MeDIP (+23), MNase-seq (+12),
+  spatial (+11), metabolomics/lipidomics (+17), RIP/CLIP (+10, like `simulate_merip()`).
+- m6A: learn peak methylation levels and IP enrichment from a real MeRIP-seq
+  dataset (now: Beta-distributed levels, 20x enrichment).
+- A microbiome or amplicon fallback for organisms with no template (yeast amplicon question pq_0105).
 - Genetics with no lines (24 of the second 1000 questions): BSA / pool-seq
   bulks (allele frequencies by phenotype bulk) and population resequencing
   (populations with drift and selection, evolve-and-resequence). Today the rest
@@ -275,8 +275,9 @@ Planned, roughly in order (gains are from the 2000-question check in
 
 **Design questions**
 
-- "How many per group?" questions have no replicate count; send them to
-  `simitall_power_sweep()` over a range of replicates instead of assuming 3.
+- Power for more assays: the reps sweep reports power for the primary outcome
+  and for count assays (share of 2-fold genes found); methylation (DMRs), m6A
+  (changed peaks), ChIP/ATAC (differential peaks) need their own power measure.
 - Questions whose reviewed spec has no factors or no level count stop before
   simulation; Biodes should ask the user for these.
 

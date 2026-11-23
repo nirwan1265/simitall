@@ -230,17 +230,20 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
                 warnings = "counts not tested per gene: the model has no fixed treatment term (treatment is random here)",
                 summary = list(method = "not run: no fixed treatment term", design = paste(deparse(rhs), collapse = ""))))
   }
+  # empirical Bayes: shrink each gene's variance toward a common prior (as limma eBayes), so few replicates still test well
+  sq <- .suite_squeeze_var(s2, df)
   tabs <- lapply(rows, function(j) {
-    se <- sqrt(s2 * xtxi[j, j])
+    se <- sqrt(sq$var_post * xtxi[j, j])
     tt <- beta[j, ] / se
     data.frame(gene_id = colnames(Y), contrast = colnames(X)[j], log2fc = beta[j, ], se = se,
-               p = 2 * stats::pt(-abs(tt), df), stringsAsFactors = FALSE, row.names = NULL)
+               p = 2 * stats::pt(-abs(tt), df + sq$df_prior), stringsAsFactors = FALSE, row.names = NULL)
   })
   tab <- do.call(rbind, tabs)
   tab$padj <- stats::ave(tab$p, tab$contrast, FUN = function(x) stats::p.adjust(x, "BH"))
   warnings <- if (any(!keep)) sprintf("%d low-count genes not tested (CPM < %g in most samples)", sum(!keep), min_cpm) else character()
   list(table = tab, warnings = warnings, summary = list(
-    method = "per-gene linear model on log2-CPM with t-tests (limma-voom core, no precision weights)",
+    method = "per-gene linear model on log2-CPM with empirical-Bayes moderated t-tests (limma-trend style, constant prior)",
+    prior_df = sq$df_prior,
     design = paste(deparse(rhs), collapse = ""), residual_df = df,
     random_terms_dropped = vapply(p$random, `[[`, "", "label"),
     n_genes_tested = sum(keep), n_samples = length(ids),
@@ -260,8 +263,45 @@ bioana_fit_biodes <- function(biodes_dir, outdir = biodes_dir,
       contrast = contrast, true_de = length(true_de), called = length(called),
       true_positives = length(intersect(called, true_de)),
       tpr = round(length(intersect(called, true_de)) / max(length(true_de), 1), 3),
+      # genes with at least a 2-fold true change: the share found is the usual "power to detect a 2-fold change"
+      true_de_2fold = sum(abs(tru) >= 1),
+      tpr_2fold = if (any(abs(tru) >= 1)) round(mean(true_de[abs(tru) >= 1] %in% called), 3) else NA,
       fdr = round(length(setdiff(called, true_de)) / max(length(called), 1), 3),
       log2fc_cor = if (sum(!is.na(est)) > 2) round(stats::cor(est, tru, use = "complete.obs"), 3) else NA)
   }
   out
+}
+
+# Empirical Bayes variance moderation (Smyth 2004, limma squeezeVar/fitFDist): a scaled
+# F prior on the gene variances, fitted by moments of log(s2); posterior = weighted mean.
+.suite_squeeze_var <- function(s2, df) {
+  ok <- is.finite(s2) & s2 > 0
+  if (df <= 0 || sum(ok) < 3) return(list(var_post = s2, df_prior = 0, var_prior = NA))
+  z <- log(s2[ok])
+  e <- z - digamma(df / 2) + log(df / 2)
+  emean <- mean(e)
+  evar <- stats::var(e) - trigamma(df / 2)
+  if (evar > 0) {
+    d0 <- 2 * .suite_trigamma_inverse(evar)
+    s0 <- exp(emean + digamma(d0 / 2) - log(d0 / 2))
+  } else {
+    d0 <- Inf; s0 <- exp(emean)
+  }
+  post <- if (is.finite(d0)) (d0 * s0 + df * s2) / (d0 + df) else rep(s0, length(s2))
+  post[!is.finite(post)] <- s0
+  list(var_post = post, df_prior = if (is.finite(d0)) d0 else 1e6, var_prior = s0)
+}
+
+# Inverse of trigamma by Newton's method (as limma::trigammaInverse).
+.suite_trigamma_inverse <- function(x) {
+  if (x > 1e7) return(1 / sqrt(x))
+  if (x < 1e-6) return(1 / x)
+  y <- 0.5 + 1 / x
+  for (i in 1:50) {
+    tri <- trigamma(y)
+    dif <- tri * (1 - tri / x) / psigamma(y, 2)
+    y <- y + dif
+    if (-dif / y < 1e-8) break
+  }
+  y
 }

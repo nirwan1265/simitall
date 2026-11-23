@@ -78,3 +78,16 @@ simulate_methylation	dmr_delta	0.25	numeric		methylation difference in a DMR (pr
 simulate_methylation	dmr_contexts		character		contexts a DMR changes (CG, CHG, CHH); default: all simulated	
 simulate_methylation	biological_sd		numeric		between-unit SD of regional methylation (logit); default: estimated from the template, else 0.3	
 simulate_methylation	batch_sd	0.1	numeric		batch SD of methylation (logit)	
+simulate_merip	template		character		RNA-seq template for expression levels; default: same species, else native log-normal	
+simulate_merip	n_genes	2000	integer		genes carrying windows	
+simulate_merip	n_peaks	1500	integer		m6A peaks	Roughly how many m6A peaks do you expect (transcriptome-wide)?
+simulate_merip	n_background	1500	integer		background windows (no m6A) on the same genes	
+simulate_merip	mean_input_count	50	numeric		mean input reads per window (sequencing depth)	
+simulate_merip	enrichment	20	numeric		IP/input ratio of a fully methylated site	
+simulate_merip	dm_fraction	0.1	numeric		share of peaks whose methylation changes per non-reference condition	What share of m6A peaks do you expect to change?
+simulate_merip	dm_delta	0.25	numeric		change in the methylated share at a changed peak (0-1)	Smallest change in methylated share that matters (e.g. 0.2)?
+simulate_merip	expression_effect_fraction	0.1	numeric		share of genes whose expression changes (moves IP and input together)	
+simulate_merip	expression_effect_sd	1	numeric		SD of the expression log2 fold changes	
+simulate_merip	biological_sd	0.3	numeric		between-unit SD of peak methylation (logit)	
+simulate_merip	ip_efficiency_sd	0.3	numeric		SD of IP efficiency between units (log2)	
+simulate_merip	dispersion	0.05	numeric		negative binomial dispersion of both libraries	

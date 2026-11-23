@@ -18,7 +18,9 @@ simitall_from_question(
   layout_seed = 42,
   use_suggestions = FALSE,
   figures = TRUE,
-  params = NULL
+  params = NULL,
+  reps_range = NULL,
+  power_n_sim = NULL
 )
 }
 \arguments{
@@ -56,6 +58,14 @@ shows them again).}
 
 \item{params}{Simulator parameter overrides passed to \code{\link[=simitall_from_biodes]{simitall_from_biodes()}},
 e.g. \code{list(suite_genetics = list(heritability = 0.7))}.}
+
+\item{reps_range, power_n_sim}{For a "how many per group?" question (no
+\code{design.reps}, or \code{power.solve_for = "reps"}): the replicate counts to try
+(default: the spec's \code{power.reps_range}, else \code{power_defaults.json}) and the
+simulated experiments per count (default \code{n_sim_question}). The smallest
+count giving every treatment main effect (and, for count assays, the true
+genes with a 2-fold change) the target power is used; the sweep is kept in
+\code{power_sweep.tsv} and the choice in \code{power_choice.json}.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),

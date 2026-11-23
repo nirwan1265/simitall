@@ -35,3 +35,37 @@ test_that("power sweep works for repeated-measures and crossover designs too", {
     expect_true("treatment" %in% y$term, info = case[1])
   }
 })
+
+test_that("a question with no replicate count gets design.reps from the power sweep", {
+  skip_if_not_installed("studyforge")
+  spec <- list(handoff_version = "0.4.0", organism = "Zea mays", system = "field",
+               factors = list(list(name = "water", n_levels = 2)),
+               design = list(chosen = "rcbd", randomization_seed = 42),
+               power = list(minimum_detectable_difference = 6, residual_sd = 3), primary_outcome = list(name = "yield"))
+  expect_true(simitall:::.suite_reps_open(spec))
+  expect_true(simitall:::.suite_reps_open(utils::modifyList(spec, list(design = list(reps = 4), power = list(solve_for = "reps")))))
+  ch <- NULL
+  utils::capture.output(ch <- suppressMessages(simitall:::.suite_choose_reps(spec, tempdir(), 42, reps_range = c(2, 4, 8), n_sim = 30)))
+  expect_true(ch$reps %in% c(2, 4, 8))
+  y <- as.data.frame(unclass(ch$sweep))
+  ok <- y$power[y$term == "treatment"] >= 0.8
+  expect_equal(ch$reps, if (any(ok)) c(2, 4, 8)[which(ok)[1]] else 8)
+})
+
+test_that("count assays get power as the share of 2-fold genes found, with moderated t-tests", {
+  skip_if_not_installed("studyforge")
+  set.seed(1)
+  s2 <- 0.2 * stats::rchisq(500, 4) / 4
+  sq <- simitall:::.suite_squeeze_var(s2, 4)
+  expect_gt(sq$df_prior, 1)
+  expect_lt(stats::var(sq$var_post), stats::var(s2))          # shrunk toward the prior
+  expect_equal(sq$var_prior, 0.2, tolerance = 0.25)
+  spec <- list(handoff_version = "0.4.0", organism = "Secale cereale", system = "growth_chamber",
+               factors = list(list(name = "genotype", n_levels = 2)), assays = list("rnaseq"),
+               design = list(reps = 3, chosen = "crd", randomization_seed = 42))
+  d <- biodes_folder(spec, "rna")
+  y <- as.data.frame(unclass(suppressMessages(simitall_power_sweep(d, reps = c(2, 8), n_sim = 8, show = FALSE))))
+  de <- y[startsWith(y$term, "DE genes"), ]
+  expect_equal(nrow(de), 2)
+  expect_gt(de$power[de$reps == 8], de$power[de$reps == 2])
+})

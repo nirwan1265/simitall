@@ -39,6 +39,13 @@
 #'   first suggestion (Biodes' traits and units, `inst/suite/suggestions.tsv`)
 #'   and run. Every filled value is printed and kept in `$filled_from_suggestions`.
 #'   Your own `answers` always win.
+#' @param reps_range,power_n_sim For a "how many per group?" question (no
+#'   `design.reps`, or `power.solve_for = "reps"`): the replicate counts to try
+#'   (default: the spec's `power.reps_range`, else `power_defaults.json`) and the
+#'   simulated experiments per count (default `n_sim_question`). The smallest
+#'   count giving every treatment main effect (and, for count assays, the true
+#'   genes with a 2-fold change) the target power is used; the sweep is kept in
+#'   `power_sweep.tsv` and the choice in `power_choice.json`.
 #' @return Invisibly, a `simitall_suite_run`: the Biodes answer (`$answer`),
 #'   the design folder (`$dir`), open questions, and the simulation and
 #'   analysis results (`$analysis$results`, `$analysis$recovery`). Printing it
@@ -55,7 +62,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    engine = c("rules", "hybrid", "llm", "auto"),
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
                                    force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE,
-                                   figures = TRUE, params = NULL) {
+                                   figures = TRUE, params = NULL, reps_range = NULL, power_n_sim = NULL) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
@@ -76,6 +83,15 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   # the layout comes from Biodes (studyforge::layout_from_spec): every factor kept as its own column
   spec_in <- ans$spec
   if (!is.null(design)) spec_in$design$chosen <- design
+  # "how many per group?": no design.reps (or power.solve_for = reps) -> choose it with a power sweep
+  power <- NULL
+  if (.suite_reps_open(spec_in) && isTRUE(simulate)) {
+    power <- .suite_choose_reps(spec_in, outdir, layout_seed, reps_range, power_n_sim)
+    if (!is.null(power$reps)) {
+      spec_in$design$reps <- power$reps
+      ans$spec$design$reps <- power$reps
+    }
+  }
   book <- tryCatch(studyforge::layout_from_spec(spec_in, seed = layout_seed), error = function(e) e)
   if (inherits(book, "error")) {
     needs <- .suite_layout_missing(conditionMessage(book))
@@ -102,7 +118,12 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   }
 
   out <- structure(list(answer = ans, dir = outdir, design = design, suggestions = sug, filled_from_suggestions = suggested, open_questions = open, layout_issues = issues, simulation = NULL,
-                        analysis = NULL), class = "simitall_suite_run")
+                        analysis = NULL, power = power), class = "simitall_suite_run")
+  if (!is.null(power$sweep)) {
+    # keep the sweep with the design it chose
+    utils::write.table(as.data.frame(unclass(power$sweep)), file.path(outdir, "power_sweep.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+    .suite_write_json(power[c("reps", "reason", "target_power", "n_sim", "reps_tried")], file.path(outdir, "power_choice.json"))
+  }
   if (!simulate) return(invisible(out))
   if (length(issues) && !isTRUE(force)) {
     message("Not simulated: the layout does not match Biodes' plan (see above). This needs a fix in Biodes ",
@@ -201,6 +222,7 @@ print.simitall_suite_run <- function(x, ...) {
     }
     if (length(fs$warnings)) cat("  warnings:  ", paste(fs$warnings, collapse = "; "), "\n", sep = "")
   }
+  if (!is.null(x$power$reason)) cat("  reps:      ", x$power$reason, "\n", sep = "")
   if (length(x$open_questions)) cat("  open questions: ", length(x$open_questions), " (see $open_questions)\n", sep = "")
   cat("  files:     results.tsv, recovery.tsv, fit_summary.json in the folder\n")
   if (length(x$figures)) cat("  figures:   ", paste(basename(x$figures), collapse = ", "), " in ", dirname(x$figures[[1]]), "\n", sep = "")
@@ -211,7 +233,9 @@ print.simitall_suite_run <- function(x, ...) {
 .suite_layout_missing <- function(msg) {
   field <- regmatches(msg, regexpr("missing: [^)]+", msg))
   what <- sub("^layout_from_spec: ", "", sub(" \\(missing: [^)]+\\)\\.?$", "", msg))
-  if (length(field)) paste0(what, " (", field, ")") else msg
+  out <- if (length(field)) paste0(what, " (", field, ")") else msg
+  if (grepl("design.reps", msg, fixed = TRUE)) out <- paste0(out, "; or run with simulate = TRUE to choose it by a power sweep")
+  out
 }
 
 # Spec factors by part: treatment factors in spec order, plus time, check, env,
@@ -235,4 +259,46 @@ print.simitall_suite_run <- function(x, ...) {
     out$treatment[[length(out$treatment) + 1]] <- item
   }
   out
+}
+
+# design.reps still to be chosen: not given, or Biodes marks the question as solving for it
+.suite_reps_open <- function(spec) {
+  is.null(spec$design$reps) || identical(tolower(as.character(spec$power$solve_for %||% "")), "reps")
+}
+
+# Lay the design out at the smallest count, run simitall_power_sweep() over the range and pick the
+# smallest count where every treatment main effect (and the DE genes of a count assay) reaches the target.
+.suite_choose_reps <- function(spec, outdir, layout_seed, reps_range = NULL, n_sim = NULL) {
+  d <- .suite_rules("power_defaults")
+  reps <- as.integer(unlist(reps_range %||% spec$power$reps_range %||% d$reps$value))
+  n_sim <- n_sim %||% d$n_sim_question$value %||% 50
+  target <- d$target_power$value
+  s <- spec; s$design$reps <- min(reps)
+  book <- tryCatch(studyforge::layout_from_spec(s, seed = layout_seed), error = function(e) e)
+  if (inherits(book, "error")) return(NULL)   # the layout needs something else first; reported by the caller
+  tmp <- file.path(tempfile("simitall_reps_"), "design")
+  on.exit(unlink(dirname(tmp), recursive = TRUE), add = TRUE)
+  suppressMessages(studyforge::write_design_package(book, s, tmp))
+  cat(sprintf("No replicate count given: choosing it by power (reps %s, %d simulated experiments each)...\n", paste(reps, collapse = ", "), n_sim))
+  ps <- tryCatch(suppressWarnings(simitall_power_sweep(tmp, reps = reps, n_sim = n_sim, show = FALSE)), error = function(e) e)
+  if (inherits(ps, "error") && grepl("would take about", conditionMessage(ps))) {
+    n_sim <- max(10L, floor(n_sim / 5))
+    ps <- tryCatch(suppressWarnings(simitall_power_sweep(tmp, reps = reps, n_sim = n_sim, show = FALSE)), error = function(e) e)
+  }
+  if (inherits(ps, "error")) {
+    r <- d$reps_if_sweep_fails$value %||% 3L
+    msg <- sprintf("design.reps = %d assumed: the power sweep failed (%s)", r, conditionMessage(ps))
+    message("simitall: ", msg)
+    return(list(reps = as.integer(r), reason = msg, target_power = target, n_sim = n_sim, reps_tried = reps, sweep = NULL))
+  }
+  y <- as.data.frame(unclass(ps))
+  main <- y[y$simulated_effect %in% TRUE & !grepl(":", y$term), , drop = FALSE]
+  if (!nrow(main)) main <- y[y$simulated_effect %in% TRUE, , drop = FALSE]
+  ok <- vapply(reps, function(r) { z <- main[main$reps == r, , drop = FALSE]; nrow(z) > 0 && all(z$power >= target) }, logical(1))
+  pick <- if (any(ok)) reps[which(ok)[1]] else max(reps)
+  reason <- if (any(ok)) sprintf("design.reps = %d: smallest count tried where %s reach power %s", pick, paste(unique(main$term), collapse = ", "), target) else
+    sprintf("design.reps = %d: power %s not reached for %s within reps %s; the largest count tried is used", pick, target, paste(unique(main$term), collapse = ", "), paste(reps, collapse = ", "))
+  print(ps)
+  cat(reason, "\n")
+  list(reps = as.integer(pick), reason = reason, target_power = target, n_sim = n_sim, reps_tried = reps, sweep = ps)
 }

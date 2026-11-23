@@ -47,9 +47,9 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
   spec <- jsonlite::read_json(file.path(dir, "study_spec.json"), simplifyVector = FALSE)
   design <- spec$design$chosen %||% stop("study_spec.json has no design.chosen.", call. = FALSE)
   model <- spec$analysis$model %||% stop("study_spec.json has no analysis.model.", call. = FALSE)
-  if (is.null(spec$primary_outcome) && .suite_is_count_assay(spec)) {
-    stop("This study has no primary outcome (count assay only); the power sweep is for the primary outcome.", call. = FALSE)
-  }
+  # count assays (counts.tsv): power is also the share of genes with a true >= 2-fold change found (Bioana DE, padj < alpha)
+  counts <- .suite_is_count_assay(spec)
+  n_genes <- if (counts) d$n_genes_counts$value %||% 300 else d$n_genes$value
   meaning <- spec$layout$factor_map %||% spec$analysis$terms %||% list()
   root <- tempfile("simitall_power_")
   on.exit(unlink(root, recursive = TRUE), add = TRUE)
@@ -67,13 +67,13 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     sim <- file.path(base, "sim")
     dir.create(sim)
     file.copy(file.path(base, c("study_spec.json", "field_layout.csv")), sim)
-    sig <- list()
+    sig <- list(); found <- list()
     n_units <- NA
     for (k in seq_len(n_sim)) {
       t0 <- Sys.time()
       res <- tryCatch({
         suppressMessages(suppressWarnings(simitall_from_biodes(base, outdir = sim, seed = seed + k - 1, effect = effect,
-                                                               residual_sd = residual_sd, n_genes = d$n_genes$value,
+                                                               residual_sd = residual_sd, n_genes = n_genes,
                                                                interaction_effect = interaction_effect)))
         suppressMessages(suppressWarnings(bioana_fit_biodes(sim)))
       }, error = function(e) NULL)
@@ -88,7 +88,10 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
         }
       }
       if (is.null(res)) next
-      n_units <- res$summary$n_units_fitted
+      n_units <- res$summary$n_units_fitted %||% res$summary$counts$n_samples %||% n_units
+      for (cr in res$summary$counts$recovery %||% list()) {
+        if (!is.null(cr$contrast) && isTRUE(cr$true_de_2fold > 0)) found[[cr$contrast]] <- c(found[[cr$contrast]], cr$tpr_2fold)
+      }
       for (a in res$summary$anova %||% list()) {
         pv <- a[["Pr(>F)"]]
         if (is.null(a$term) || a$term == "Residuals" || is.null(pv) || is.na(pv)) next
@@ -108,6 +111,13 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
         role = role, simulated_effect = eff, power = mean(sig[[term]]),
         mc_se = sqrt(mean(sig[[term]]) * (1 - mean(sig[[term]])) / length(sig[[term]])), n_fits = length(sig[[term]]),
         stringsAsFactors = FALSE)
+    }
+    for (ct in names(found)) {
+      f <- found[[ct]]
+      rows[[length(rows) + 1]] <- data.frame(
+        reps = r, n_units = n_units, term = paste0("DE genes: ", ct), factor = "share of genes with a true 2-fold change found (counts.tsv)",
+        role = "treatment", simulated_effect = TRUE, power = mean(f),
+        mc_se = if (length(f) > 1) stats::sd(f) / sqrt(length(f)) else NA_real_, n_fits = length(f), stringsAsFactors = FALSE)
     }
   }
   if (!length(rows)) stop("No reps value could be laid out and fitted; see the warnings.", call. = FALSE)
