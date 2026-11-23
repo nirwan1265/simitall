@@ -8,11 +8,13 @@ REPS_IF_MISSING <- Sys.getenv("REPS_IF_MISSING", "3")
 # FILL_DEFAULTS=1 (default): level counts left open get Biodes' stated defaults (fill_layout_defaults), as when the
 # user does not answer; the filled fields are in the defaults_filled column. 0 = stop at the layout instead.
 FILL_DEFAULTS <- Sys.getenv("FILL_DEFAULTS", "1") == "1"
-# QUESTION_SET=second: the next 1000 (rest of dev, dev2, test_draw4/5, test_heldout, test_newkinds, then train)
+# QUESTION_SET=second: the next 1000 (rest of dev, dev2, test_draw4/5, test_heldout, test_newkinds, then train);
+# QUESTION_SET=third: everything after those (the rest of train.jsonl)
 QUESTIONS <- function() {
   all <- c(.split("test.jsonl"), .split("dev.jsonl"))
-  if (Sys.getenv("QUESTION_SET") != "second") return(utils::head(all, 1000))
+  if (!Sys.getenv("QUESTION_SET") %in% c("second", "third")) return(utils::head(all, 1000))
   more <- c(all[-(1:1000)], unlist(lapply(c("dev2.jsonl", "test_draw4.jsonl", "test_draw5.jsonl", "test_heldout.jsonl", "test_newkinds.jsonl", "train.jsonl"), .split), recursive = FALSE))
+  if (Sys.getenv("QUESTION_SET") == "third") return(more[-(1:1000)])   # the rest of train.jsonl (2,695)
   utils::head(more, 1000)
 }
 # usage: Rscript <this file> <start> <end> <out.tsv>

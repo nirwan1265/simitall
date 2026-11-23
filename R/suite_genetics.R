@@ -179,7 +179,14 @@
   maf <- pmin(freq, 1 - freq)
   elig <- which(maf >= (ga$qtn_maf_min %||% 0.1))
   need <- n_add + n_dom + 2L * n_epi
-  if (length(elig) < max(1L, n_add)) stop(sprintf("Only %d markers have MAF >= %s for %d QTN.", length(elig), ga$qtn_maf_min, n_add), call. = FALSE)
+  if (length(elig) < max(1L, n_add)) {
+    # backcross / NIL lines: the donor allele is rare everywhere; take the commonest polymorphic markers instead
+    poly <- which(maf > 0)
+    if (length(poly) < max(1L, n_add)) stop(sprintf("Only %d polymorphic markers for %d QTN.", length(poly), n_add), call. = FALSE)
+    elig <- poly[order(-maf[poly])][seq_len(min(length(poly), max(need, 5L * n_add)))]
+    note(sprintf("only %d markers have MAF >= %s (backcross or NIL lines?); QTN drawn among the %d commonest polymorphic markers (MAF %.3f-%.3f)",
+                 sum(maf >= (ga$qtn_maf_min %||% 0.1)), ga$qtn_maf_min %||% 0.1, length(elig), min(maf[elig]), max(maf[elig])))
+  }
   draw <- function(k) {
     if (k < 1) return(numeric())
     e <- switch(dist, geometric = 0.9^(seq_len(k) - 1), equal = rep(1, k), normal = abs(stats::rnorm(k)),

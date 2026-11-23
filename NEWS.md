@@ -1,5 +1,7 @@
 # simitall (development)
 
+- Backcross / NIL lines (rare donor allele) no longer stop the genetics layer:
+  QTN are drawn among the commonest polymorphic markers, with a note.
 - `simulate_merip()`: m6A MeRIP-seq as IP and input counts per window (peaks
   and background), with known peaks, changed peaks and expression changes that
   move IP and input together. Biodes designs with `m6a_seq` / `merip` simulate it.

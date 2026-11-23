@@ -321,3 +321,12 @@ test_that("m6A designs route to simulate_merip and write one IP and input librar
   ip <- read.delim(file.path(d, "m6a", "m6a.ip.tsv.gz"), check.names = FALSE)
   expect_identical(names(ip)[-1], meta$sample_id)
 })
+
+test_that("backcross (NIL) lines with a rare donor allele still get QTN", {
+  d <- make_design_folder("crd", "y ~ treatment", list(design_factor("genotype", 40)), reps = 2,
+                          extra = list(assays = list("gbs"), population = list(mating = "backcross")))
+  out <- utils::capture.output(suppressMessages(simitall_from_biodes(d, params = list(suite_genotype_cross = list(chromosome_length_bp = 3000L, n_chromosomes = 2L, snp_rate = 0.05)))))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_false(is.null(t$genetics))
+  expect_gt(nrow(read.delim(file.path(d, "genetic_truth", "qtn_truth.tsv"))), 0)
+})

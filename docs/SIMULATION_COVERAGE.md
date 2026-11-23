@@ -1,13 +1,16 @@
-# Can Simitall simulate Biodes' questions? (2,000 paper questions)
+# Can Simitall simulate Biodes' questions? (all 4,695 paper questions)
 
 **First 1000:** Biodes `training/paper_questions/splits/test.jsonl` (764) + the
 first 236 of `dev.jsonl`, one question per paper, stratified by species x
 technique. **Second 1000** (`QUESTION_SET=second`): the rest of `dev.jsonl` (92),
 `dev2` (155), `test_draw4` (206), `test_draw5` (159), `test_heldout` (87),
-`test_newkinds` (100) and the first 201 of `train.jsonl`.
+`test_newkinds` (100) and the first 201 of `train.jsonl`. **Third set**
+(`QUESTION_SET=third`): the rest of `train.jsonl` (2,695), so every question
+Biodes has.
 
 Per-question results: [`coverage_1000.tsv`](../data-raw/coverage/coverage_1000.tsv),
-[`coverage_second_1000.tsv`](../data-raw/coverage/coverage_second_1000.tsv)
+[`coverage_second_1000.tsv`](../data-raw/coverage/coverage_second_1000.tsv),
+[`coverage_third_2695.tsv`](../data-raw/coverage/coverage_third_2695.tsv)
 (`verdict`, `needs_status`, `blocker`, `defaults_filled`, `solve_for`,
 `genetic_unit`, what was simulated).
 
@@ -23,18 +26,19 @@ does not answer; each is an assumption) -> Biodes design choice ->
 
 ## Current result (Biodes 3675658 schema 0.5, Simitall main, 2026-11-22)
 
-| verdict | first 1000 | second 1000 | both |
-|---|---|---|---|
-| simulated_all: every data type it needs | 768 | 895 | 1663 |
-| simulated_outcome_question: needs only a measured trait | 52 | 17 | 69 |
-| simulated_part: some data types not simulated | 65 | 21 | 86 |
-| no_simulator_for_data_type | 85 | 47 | 132 |
-| not_run: spec has no factors | 28 | 20 | 48 |
-| not_run: other | 2 | 0 | 2 |
+| verdict | first 1000 | second 1000 | third 2695 | all 4695 |
+|---|---|---|---|---|
+| simulated_all: every data type it needs | 768 | 895 | 2520 | 4183 |
+| simulated_outcome_question: needs only a measured trait | 52 | 17 | 35 | 104 |
+| simulated_part: some data types not simulated | 65 | 21 | 62 | 148 |
+| no_simulator_for_data_type | 85 | 47 | 56 | 188 |
+| not_run: spec has no factors | 28 | 20 | 22 | 70 |
+| not_run: other | 2 | 0 | 0 | 2 |
 
-**1,732 / 2,000 (87%) get everything they need** (820 and 912); 86 more get
-part of it. 233 of those use at least one flagged layout default (genotype count
-125, time 75, stage 12, tissue 9, ...). Without the defaults: 747 and 752.
+**4,287 / 4,695 (91%) get everything they need** (820, 912, 2,555); 148 more get
+part of it. 816 of those use at least one flagged layout default (mostly the
+number of genotypes or time points). The third set is `train.jsonl`, the
+questions Biodes learned from, so it reads best (95%).
 
 The two "other": pq_0105 (yeast amplicon: no microbiome/amplicon template for
 yeast and no fallback) and pq_0180 (Biodes: the panel step adds a `genotype`
@@ -51,6 +55,7 @@ factor with no level count and `studyforge_ask()` stops in `.divisors()` with
 | + methylation | 711 | 741 |
 | + m6A | 751 | 751 |
 | + Biodes 0.5 (panel genotype, defaults, genetics unit) | 820 | 912 |
+| third set (train), same code | - | - | 2555 / 2695 |
 
 ## What we can simulate (by data type, both sets)
 
@@ -73,36 +78,57 @@ Panels and mapping fall short where the genetic unit is a bulk or a population
 resequencing. Biodes 0.5 writes `spec$genetics` (`unit`, `individuals_per_bulk`,
 `bulk_fraction`, `generations`) for the simulators that will cover them.
 
-## What we cannot simulate yet
+## What we cannot simulate yet (all 4,695)
 
 Gain = questions fully covered once this data type is added (it is their only gap).
 
-| data type | first | second | gain (both) | nearest existing machinery |
-|---|---|---|---|---|
-| ribo_seq | 28 | 6 | +33 | RNA + footprint counts per gene, translational-efficiency truth |
-| scatac_seq | 18 | 11 | +29 | ATAC peaks x cells (combine ATAC and scRNA code) |
-| hic | 23 | 5 | +28 | contact matrices with planted loops/TAD changes (new) |
-| medip | 18 | 5 | +23 | enrichment per window, like `simulate_merip()` IP/input |
-| degradome | 20 | 2 | +22 | cleavage-site counts (mostly asked with small RNA) |
-| genetics with no lines (wgs, bsa_seq, pool_seq, gwas, ...) | 5 | 29 | +23 | bulks by phenotype tail; populations with drift/selection |
-| metabolomics, lipidomics | 12 | 7 | +19 | log-normal feature matrix (easy) |
-| mnase_seq | 11 | 2 | +12 | nucleosome positions, like ATAC |
-| spatial | 10 | 2 | +12 | scRNA counts on a grid |
-| rip_clip | 6 | 5 | +11 | IP + input counts, like `simulate_merip()` |
+| data type | questions | gain | nearest existing machinery |
+|---|---|---|---|
+| metabolomics, lipidomics | 55 | +55 | log-normal feature matrix (easy) |
+| genetics with no lines (wgs, bsa_seq, pool_seq, gwas, ...) | 70 | +45 | bulks by phenotype tail; populations with drift/selection (`spec$genetics`) |
+| ribo_seq | 43 | +42 | RNA + footprint counts per gene, translational-efficiency truth |
+| scatac_seq | 41 | +41 | ATAC peaks x cells (combine ATAC and scRNA code) |
+| hic | 38 | +38 | contact matrices with planted loops/TAD changes (new) |
+| medip | 31 | +31 | enrichment per window, like `simulate_merip()` IP/input |
+| degradome | 22 | +22 | cleavage-site counts (mostly asked with small RNA) |
+| spatial | 19 | +19 | scRNA counts on a grid |
+| mnase_seq | 17 | +16 | nucleosome positions, like ATAC |
+| rip_clip | 14 | +14 | IP + input counts, like `simulate_merip()` |
+
+## Simulated, but not the right data (Simitall)
+
+These run, but the data type is not what was asked:
+
+- Amplicon that is not a microbial community (10): amplicon genotyping
+  (CRISPR alleles, mitochondrial haplotypes), DSB-repair amplicons, immune
+  repertoires. They route to the 16S template today.
+- CRISPR / Tn-seq screens (6): guide or insertion counts are the data; `crispr`
+  routes to "treatment" (a way to make lines) and nothing is simulated for it.
+- Long-read RNA (13 isoform questions): gene counts only, no isoform truth.
+- Proteomics (10), TCR/BCR repertoires (8), STARR-seq/MPRA (2): no simulator
+  and no assay value from Biodes.
+- Outcome types: binary, count, ordinal and survival simulators exist, but only
+  2 of 4,695 specs set `primary_outcome.type`, so every outcome is continuous.
 
 ## Blockers left, by owner
 
-**Biodes**
+**Biodes** (reading; details in the list sent to Biodes, 2026-11-22)
 
-1. 48 specs have no factor at all (Biodes now asks "what do you compare or
-   map?").
-2. pq_0180: panel genotype factor with no level count crashes `.sf_recipe()`.
-3. `practice.R:148` warns when `organism` has more than one value.
+1. 70 specs have no factor at all.
+2. Assays not read: 18 prompts name an assay the spec leaves out; DNase-seq,
+   FAIRE-seq, DAP-seq, SELEX (7) have no assay value; amplicon kinds, CRISPR
+   screens, proteomics, repertoires, reporter assays have none either.
+3. `primary_outcome.type` is set in 2 of 4,695 specs.
+4. Breeding notation (BC3F2, F2:3, BC1F3:5; 61 prompts) is not read into the
+   number of backcross and selfing generations (pq_2667, BC1F3:5, got the NIL
+   default of 3 backcrosses).
+5. pq_0180: panel genotype factor with no level count crashes `.sf_recipe()`;
+   `practice.R:148` warns when `organism` has more than one value.
 
 **Simitall**
 
-4. The simulators in the table above; a fallback for amplicon data in
-   organisms with no template.
+6. The simulators in the two tables above; a fallback for amplicon data in
+   organisms with no template (pq_0105).
 
 ## Fixed since the first run
 
@@ -120,6 +146,7 @@ Gain = questions fully covered once this data type is added (it is their only ga
 export BIODES_DIR=~/Documents/Github/BioDesignGPT SIMITALL_DIR=~/Documents/Github/simitall
 Rscript data-raw/coverage/run_gold_specs.R 1 1000 first.tsv                      # first 1000
 QUESTION_SET=second Rscript data-raw/coverage/run_gold_specs.R 1 1000 second.tsv  # second 1000
+QUESTION_SET=third Rscript data-raw/coverage/run_gold_specs.R 1 2695 third.tsv    # the rest (train)
 Rscript data-raw/coverage/summarize_coverage.R coverage_1000.tsv first.tsv       # verdict per question
 IDS=ids.txt Rscript data-raw/coverage/run_gold_specs.R 1 89 some.tsv              # only these question ids
 FILL_DEFAULTS=0 ...                                                               # stop at missing level counts instead
