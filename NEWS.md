@@ -1,5 +1,8 @@
 # simitall (development)
 
+- A design whose genetics assay has no genotype factor (BSA bulks, populations)
+  no longer stops: the rest is simulated and genetics is listed as
+  `needs_genotype_factor` in `sim_truth.json$not_simulated`.
 - `simulate_methylation()`: bisulfite-sequencing methylation (WGBS, RRBS,
   EM-seq) as methylated and covering read counts per cytosine, with known DMRs
   (`dmr_truth.tsv`) and per-site truth. Three engines: a real template of the

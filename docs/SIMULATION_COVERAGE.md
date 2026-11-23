@@ -29,7 +29,41 @@ Methylation (WGBS, RRBS, EM-seq, bisulfite, 450k/EPIC arrays) now simulates with
 wait for an enrichment simulator. Small RNA-seq and 16S/ITS microbiome simulate
 from real templates (`simitall_templates()`).
 
-## What we can simulate (by data type)
+## Second 1000 questions (2026-11-22)
+
+Questions: the rest of `dev.jsonl` (92), `dev2` (155), `test_draw4` (206),
+`test_draw5` (159), `test_heldout` (87), `test_newkinds` (100) and the first 201
+of `train.jsonl` (`QUESTION_SET=second`). Per-question results:
+[`data-raw/coverage/coverage_second_1000.tsv`](../data-raw/coverage/coverage_second_1000.tsv)
+(from `summarize_coverage.R`). 466 had no replicate count and were run with 3.
+
+| verdict | n |
+|---|---|
+| simulated_all: every data type it needs | 728 |
+| simulated_outcome_question: needs only a measured trait | 13 |
+| simulated_part: some data types not simulated | 26 |
+| no_simulator_for_data_type | 51 |
+| not_run: no level count for a factor (time 56, genotype 55, stage 9, ...) | 148 |
+| not_run: spec has no factors | 31 |
+| not_run: other (Biodes "non-character argument" 2, augmented design without checks 1) | 3 |
+
+**741 / 1000 (74%) get everything they need; 26 more get part of it.** The 100
+`test_newkinds` questions do worse (59 / 100): they hold most of the new gaps below.
+
+New gap: **genetics with no lines** (24 questions). BSA / pool-seq bulks,
+population resequencing (WGS of populations, evolve-and-resequence) and GWAS or
+eQTL whose design factor is a phenotype group or a population, not the lines.
+These used to stop Simitall; now the rest of the design is simulated and
+genetics is listed in `sim_truth.json$not_simulated` as `needs_genotype_factor`.
+They need their own simulators: bulks of individuals with allele frequencies by
+phenotype (BSA), and populations with drift and selection (pool-seq, WGS).
+
+Missing data types here (gain = only gap): m6a_seq +10, scatac_seq +9,
+genetics with no lines +13 (wgs 7, gwas 4, eqtl 2) and +5 more for BSA/pool-seq, ribo_seq +6, hic +5,
+medip +5, metabolomics +5, rip_clip +5, degradome, lipidomics, mnase_seq,
+spatial +2 each.
+
+## What we can simulate (by data type) (first 1000)
 
 | data type | questions | simulated | blocked |
 |---|---|---|---|
@@ -104,5 +138,7 @@ export BIODES_DIR=~/Documents/Github/BioDesignGPT SIMITALL_DIR=~/Documents/Githu
 Rscript data-raw/coverage/run_gold_specs.R 1 1000 gold_run.tsv      # reviewed specs
 Rscript data-raw/coverage/run_rules_reader.R 1 1000 rules_run.tsv     # rules reader
 Rscript data-raw/coverage/route_gold_specs.R                          # routes only
+QUESTION_SET=second Rscript data-raw/coverage/run_gold_specs.R 1 1000 second.tsv   # the next 1000
+Rscript data-raw/coverage/summarize_coverage.R coverage.tsv second.tsv   # verdict per question
 IDS=ids.txt Rscript data-raw/coverage/run_gold_specs.R 1 89 some.tsv  # only the question ids in ids.txt
 ```

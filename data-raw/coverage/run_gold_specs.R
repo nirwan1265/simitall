@@ -5,7 +5,13 @@ SIMITALL <- Sys.getenv("SIMITALL_DIR", "~/Documents/Github/simitall")
 .split <- function(f) lapply(readLines(file.path(BIODES, "training/paper_questions/splits", f)), jsonlite::fromJSON, simplifyVector = FALSE)
 # "how many per group?" questions have no design.reps; REPS_IF_MISSING (default 3, "" = none) stands in
 REPS_IF_MISSING <- Sys.getenv("REPS_IF_MISSING", "3")
-QUESTIONS <- function() utils::head(c(.split("test.jsonl"), .split("dev.jsonl")), 1000)
+# QUESTION_SET=second: the next 1000 (rest of dev, dev2, test_draw4/5, test_heldout, test_newkinds, then train)
+QUESTIONS <- function() {
+  all <- c(.split("test.jsonl"), .split("dev.jsonl"))
+  if (Sys.getenv("QUESTION_SET") != "second") return(utils::head(all, 1000))
+  more <- c(all[-(1:1000)], unlist(lapply(c("dev2.jsonl", "test_draw4.jsonl", "test_draw5.jsonl", "test_heldout.jsonl", "test_newkinds.jsonl", "train.jsonl"), .split), recursive = FALSE))
+  utils::head(more, 1000)
+}
 # usage: Rscript <this file> <start> <end> <out.tsv>
 args <- commandArgs(TRUE); i0 <- as.integer(args[1]); i1 <- as.integer(args[2]); out <- args[3]
 suppressMessages({devtools::load_all(BIODES, quiet = TRUE); devtools::load_all(SIMITALL, quiet = TRUE)})

@@ -101,11 +101,17 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   geno_term <- .suite_genotype_term(spec, p)
   cond_term <- .suite_condition_term(p, geno_term)
   genetics <- NULL
+  if (nrow(gen_route) && is.na(geno_term)) {
+    # e.g. BSA pools, populations, evolve-and-resequence: no lines to give genotypes to.
+    # Simulate the rest and list genetics (and eQTL, which needs it) as not simulated.
+    note(sprintf("genetics (%s = %s) not simulated: analysis.model has no genotype term (a treatment term whose analysis.terms meaning matches genetics.json genotype_pattern)",
+                 gen_route$field[1], gen_route$matched[1]))
+    no_geno <- routes$layer == "genetics" | routes$route == "assay_eqtl"
+    routes$status[no_geno] <- "needs_genotype_factor"
+    routes$note[no_geno] <- "No genotype factor in the design (lines as a treatment factor), so there are no lines to give genotypes to."
+    gen_route <- gen_route[0, , drop = FALSE]
+  }
   if (nrow(gen_route)) {
-    if (is.na(geno_term)) {
-      stop(sprintf("The spec asks for genetics (%s = %s) but analysis.model has no genotype term (a treatment term whose analysis.terms meaning matches genetics.json genotype_pattern). Biodes: put the lines in the design as the treatment factor.",
-                   gen_route$field[1], gen_route$matched[1]), call. = FALSE)
-    }
     lines <- levels(frame[[geno_term]])
     env_levels <- if (!is.na(cond_term) && cond_term != geno_term) levels(frame[[cond_term]]) else character()
     geno <- .suite_simulate_genotypes(gen_route[1, ], lines, spec, params, outdir, seed, note)

@@ -278,3 +278,15 @@ test_that("methylation designs: plants get the native CG/CHG/CHH engine, animals
   arr <- run("Homo sapiens", "clinical", list("methylation_array"))
   expect_equal(arr$t$engine, "array")
 })
+
+test_that("genetics with no genotype factor (BSA pools) simulates the rest and lists genetics as not simulated", {
+  d <- make_design_folder("crd", "y ~ treatment", list(design_factor("phenotype_group", 2)), reps = 3,
+                          extra = list(assays = list("bsa_seq", "rnaseq")))
+  suppressMessages(simitall_from_biodes(d, params = list(simulate_rnaseq_experiment = list(n_genes = 100))))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_null(t$genetics)
+  expect_true("assay_rnaseq" %in% names(t$assays))
+  ns <- vapply(t$not_simulated, function(z) z$status, "")
+  expect_true("needs_genotype_factor" %in% ns)
+  expect_false(file.exists(file.path(d, "genotypes.vcf")))
+})

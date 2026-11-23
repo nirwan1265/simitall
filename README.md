@@ -244,6 +244,47 @@ applicable. Analyses that generate RNA-seq FASTQ files should also cite
 should cite Splatter in addition to `simitall`. ChIP-seq analyses using
 `backend = "chipsim"` should cite ChIPsim.
 
+## Future work
+
+Planned, roughly in order (gains are from the 2000-question check in
+`docs/SIMULATION_COVERAGE.md`):
+
+**Better templates (real data to learn from)**
+
+- Plant WGBS template: plants now use the native CG/CHG/CHH engine. Two to four
+  Arabidopsis WGBS samples with all three contexts (e.g. GEO GSE43857, per-site
+  methylated/total read counts) would let plant methylation learn from real
+  data, as mouse does. A maize or sorghum methylome would be better still.
+- Human WGBS template: human questions now borrow the mouse ENCODE template.
+- Rice, potato and soybean miRNA libraries with sample labels (PmiREN) to add
+  to the plant small RNA-seq templates.
+
+**New simulators**
+
+- MeDIP (18 questions): enrichment counts per window, like ChIP IP/input.
+- m6A / MeRIP-seq (+40): IP and input counts per peak.
+- Ribo-seq (+26): RNA and footprint counts per gene with translational-efficiency truth.
+- Hi-C (+21): contact matrices with planted loop and TAD changes.
+- Degradome (+20), scATAC-seq (+16), MNase-seq (+10), spatial (+9),
+  metabolomics/lipidomics (+10), RIP/CLIP (+5).
+- Genetics with no lines (24 of the second 1000 questions): BSA / pool-seq
+  bulks (allele frequencies by phenotype bulk) and population resequencing
+  (populations with drift and selection, evolve-and-resequence). Today the rest
+  of such a design is simulated and genetics is listed as `needs_genotype_factor`.
+- Survival and compositional outcomes.
+
+**Design questions**
+
+- "How many per group?" questions have no replicate count; send them to
+  `simitall_power_sweep()` over a range of replicates instead of assuming 3.
+- Questions whose reviewed spec has no factors or no level count stop before
+  simulation; Biodes should ask the user for these.
+
+**Read level**
+
+- Read-level engines (FASTQ/BAM) for the count-level simulators that do not
+  have one yet (methylation, small RNA, microbiome).
+
 ## Status
 
 `simitall` is under active development. Simulated annotations and regulatory
