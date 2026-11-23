@@ -187,13 +187,13 @@
 }
 
 # Template for a count assay: same species, else same kingdom (inst/suite/templates.json), else NULL.
-.suite_pick_template <- function(assay_values, spec, user = NULL) {
+.suite_pick_template <- function(assay_values, spec, user = NULL, kind = "counts") {
   tab <- simitall_templates()
   if (!is.null(user) && nzchar(user)) {
     if (!user %in% tab$id) stop("Unknown template '", user, "'. See simitall_templates().", call. = FALSE)
     return(list(id = user, why = "chosen in params"))
   }
-  ok <- vapply(strsplit(tab$assays, "|", fixed = TRUE), function(a) any(assay_values %in% a), logical(1))
+  ok <- tab$kind == kind & vapply(strsplit(tab$assays, "|", fixed = TRUE), function(a) any(assay_values %in% a), logical(1))
   tab <- tab[ok, , drop = FALSE]
   if (!nrow(tab)) return(NULL)
   rules <- .suite_rules("templates")

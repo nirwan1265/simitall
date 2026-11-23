@@ -178,10 +178,14 @@ test_that("templates: each is real integer counts with a sample sheet and proven
   expect_true(all(nzchar(tab$source) & nzchar(tab$license)))
   for (id in tab$id) {
     t <- simitall_template(id)
-    expect_identical(colnames(t$counts), t$samples$sample)
+    m <- t$counts %||% t$beta
+    expect_identical(colnames(m), t$samples$sample)
     expect_true(t$info$default_group %in% t$samples$group)
-    expect_true(is.integer(t$counts) && min(t$counts) >= 0)
+    if (t$info$kind %in% c("counts", "methylation_counts")) expect_true(is.integer(t$counts) && min(t$counts) >= 0)
+    if (t$info$kind == "methylation_counts") expect_true(all(t$methylated <= t$counts))
+    if (t$info$kind == "beta") expect_true(all(t$beta >= 0 & t$beta <= 1))
   }
+  expect_true(all(c("small_rnaseq_zea_mays_pmiren", "small_rnaseq_sorghum_bicolor_pmiren", "methylation_mouse_encode_wgbs") %in% tab$id))
 })
 
 test_that("template engine recovers the planted fold changes in both modes", {
@@ -210,8 +214,12 @@ test_that("small RNA-seq and microbiome designs pick the template by organism", 
   expect_equal(h$t$assays$assay_small_rnaseq$template_choice$template, "small_rnaseq_human_mirna_atlas")
   expect_identical(names(h$counts)[-1], h$meta$sample_id)
   expect_true(any(grepl("^hsa-", h$counts$gene_id)))
-  p <- run("Sorghum bicolor", "greenhouse", "small_rnaseq")            # no plant miRNA template yet: native fallback
-  expect_equal(p$t$assays$assay_small_rnaseq$template_choice$mode, "native_negative_binomial")
+  p <- run("Sorghum bicolor", "greenhouse", "small_rnaseq")
+  expect_equal(p$t$assays$assay_small_rnaseq$template_choice$template, "small_rnaseq_sorghum_bicolor_pmiren")
+  q <- run("Oryza sativa", "field", "small_rnaseq")                    # no rice template: nearest plant one
+  expect_match(q$t$assays$assay_small_rnaseq$template_choice$why, "same kingdom")
+  y <- run("Saccharomyces cerevisiae", "cell_culture", "small_rnaseq") # no kingdom match: native negative binomial
+  expect_equal(y$t$assays$assay_small_rnaseq$template_choice$mode, "native_negative_binomial")
   m <- run("Zea mays", "field", "amplicon")
   expect_equal(m$t$assays$assay_microbiome$template_choice$template, "microbiome_plant_root_16s")
   expect_match(m$t$assays$assay_microbiome$template_choice$why, "same kingdom")

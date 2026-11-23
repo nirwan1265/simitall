@@ -10,7 +10,9 @@ simitall_template(id)
 \item{id}{Template id from \code{\link[=simitall_templates]{simitall_templates()}}.}
 }
 \value{
-A list with \code{counts} (integer matrix, features x samples),
+A list with \code{counts} (integer matrix, features x samples; for
+methylation templates the reads covering each site), \code{methylated}
+(methylated reads, methylation templates), \code{beta} (array templates),
 \code{samples} (data frame with at least \code{sample} and \code{group}), \code{features}
 (annotation or \code{NULL}) and \code{info} (its row of \code{templates.tsv}).
 }

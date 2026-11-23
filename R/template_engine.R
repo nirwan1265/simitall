@@ -39,7 +39,9 @@ simitall_templates <- function() {
 #' Load one reference template
 #'
 #' @param id Template id from [simitall_templates()].
-#' @return A list with `counts` (integer matrix, features x samples),
+#' @return A list with `counts` (integer matrix, features x samples; for
+#'   methylation templates the reads covering each site), `methylated`
+#'   (methylated reads, methylation templates), `beta` (array templates),
 #'   `samples` (data frame with at least `sample` and `group`), `features`
 #'   (annotation or `NULL`) and `info` (its row of `templates.tsv`).
 #' @export
@@ -48,12 +50,18 @@ simitall_template <- function(id) {
   info <- info[info$id == id, , drop = FALSE]
   if (!nrow(info)) stop("Unknown template '", id, "'. See simitall_templates().", call. = FALSE)
   d <- file.path(.template_dir(), id)
-  x <- utils::read.delim(file.path(d, "counts.tsv.gz"), check.names = FALSE, stringsAsFactors = FALSE)
-  counts <- as.matrix(x[, -1, drop = FALSE]); rownames(counts) <- x[[1]]; storage.mode(counts) <- "integer"
+  rd <- function(f, int = TRUE) {
+    if (!file.exists(file.path(d, f))) return(NULL)
+    x <- utils::read.delim(file.path(d, f), check.names = FALSE, stringsAsFactors = FALSE)
+    m <- as.matrix(x[, -1, drop = FALSE]); rownames(m) <- x[[1]]; if (int) storage.mode(m) <- "integer"; m
+  }
+  counts <- rd("counts.tsv.gz")            # kind counts: reads; kind methylation_counts: reads covering each site
+  methylated <- rd("methylated.tsv.gz")    # kind methylation_counts: methylated reads
+  beta <- rd("beta.tsv.gz", int = FALSE)   # kind beta: array beta values
   samples <- utils::read.delim(file.path(d, "samples.tsv"), stringsAsFactors = FALSE, colClasses = "character")
   fp <- file.path(d, "features.tsv.gz")
   features <- if (file.exists(fp)) utils::read.delim(fp, stringsAsFactors = FALSE) else NULL
-  list(counts = counts, samples = samples, features = features, info = as.list(info))
+  list(counts = counts, methylated = methylated, beta = beta, samples = samples, features = features, info = as.list(info))
 }
 
 #' Simulate counts for a design from a real reference template
