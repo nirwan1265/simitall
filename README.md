@@ -20,7 +20,12 @@ library(simitall)
 simitall_routes("~/biodes_runs/my_design")        # what will be simulated, with which values
 simitall_from_biodes("~/biodes_runs/my_design",   # outcome + genetics + omics, with sim_truth.json
   params = list(suite_genetics = list(heritability = 0.6, phenotype_model = "gxe")))
+bioana::bioana_analyze("~/biodes_runs/my_design")  # analyse every data set, scored against the truth
 ```
+
+Each run also writes `data_manifest.json`, the list of data sets in the folder
+that [Bioana](https://github.com/nirwan1265/bioana) reads to pick the analysis
+for each one (`docs/BIODES_BRIDGE.md`).
 
 What runs is looked up from the spec's fields in
 [`inst/suite/simulators.tsv`](inst/suite/simulators.tsv) (outcome type,

@@ -365,3 +365,21 @@ test_that("survival outcome: time with censoring, longer for higher outcome", {
   hi <- lev[which.max(unlist(t$treatment_effects$treatment))]
   expect_gt(stats::median(m$primary_outcome[m$treatment == hi]), stats::median(m$primary_outcome[m$treatment != hi]))
 })
+
+test_that("simitall writes data_manifest.json for Bioana, with each data set's truth in the standard format", {
+  d <- make_design_folder("rcbd", "y ~ treatment + block", list(design_factor("treatment", 2)), reps = 3,
+                          extra = list(organism = "Homo sapiens", system = "cell_culture", assays = list("rnaseq", "methylation", "m6a_seq")))
+  suppressMessages(simitall_from_biodes(d, params = list(simulate_rnaseq_experiment = list(n_genes = 100), simulate_methylation = list(n_sites = 2000),
+                                                         simulate_merip = list(n_genes = 100, n_peaks = 60, n_background = 60))))
+  m <- jsonlite::read_json(file.path(d, "data_manifest.json"))
+  types <- vapply(m$data, `[[`, "", "data_type")
+  expect_setequal(types, c("outcome", "feature_counts", "bisulfite_counts", "ip_input_counts"))
+  for (e in m$data) {
+    for (f in e$files) expect_true(file.exists(file.path(d, f)), info = f)
+    expect_true(file.exists(file.path(d, e$truth$file)), info = e$id)
+  }
+  rna <- read.delim(file.path(d, m$data[[which(types == "feature_counts")]]$truth$file))
+  expect_named(rna, c("feature_id", "condition", "effect"))
+  meth <- read.delim(file.path(d, m$data[[which(types == "bisulfite_counts")]]$truth$file))
+  expect_named(meth, c("region_id", "chr", "start", "end", "condition", "effect"))
+})

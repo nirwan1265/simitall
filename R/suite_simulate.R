@@ -323,6 +323,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   }
   truth$assumptions <- assumptions
   paths <- c(paths, truth = .suite_write_json(truth, file.path(outdir, "sim_truth.json")))
+  paths <- c(paths, manifest = .suite_write_manifest(outdir, truth, has_outcome, fam$type, cond_term))
   message(sprintf("simitall: simulated %d units%s (%s outcome)%s%s for design '%s' (%s).", n,
                   if (n_sub > 1) sprintf(" x %d subsamples", n_sub) else "", fam$type,
                   if (!is.null(genetics)) sprintf(", %d lines x %d markers (%s)", length(lines), nrow(genetics$dosage), genetics$source$source) else "",

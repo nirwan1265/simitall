@@ -175,3 +175,25 @@ When the spec has no `design.reps` (or `power.solve_for` is `"reps"`),
 the smallest count where every treatment main effect (and, for count assays, the
 genes with a true 2-fold change) reaches power 0.8. The sweep is kept in
 `power_sweep.tsv`, the choice in `power_choice.json`.
+
+## Hand-off to Bioana: `data_manifest.json`
+
+After simulating, `simitall_from_biodes()` writes `data_manifest.json`: one
+entry per data set with its `data_type` (a row of Bioana's
+`inst/rules/analyses.tsv`), its files and its truth in Bioana's format under
+`truth/` (features: `feature_id, condition, effect`; regions: `region_id, chr,
+start, end, condition, effect`). `bioana::bioana_analyze(dir)` then runs the
+matching analysis for each and scores it against the truth
+(github.com/nirwan1265/bioana). Code: `R/suite_manifest.R`.
+
+| Simitall route | data_type | files |
+|---|---|---|
+| outcome (any type) | outcome | sample_metadata_template.tsv (`primary_outcome`, `event` for survival) |
+| assay_rnaseq, assay_eqtl, assay_single_cell, assay_small_rnaseq, assay_microbiome | feature_counts | counts.tsv or `<assay>/unit_counts.tsv` |
+| assay_chip_seq | peak_counts_long | chipseq/chip.peak_counts.tsv + chip.sample_metadata.tsv |
+| assay_atac_seq | read_positions | atacseq/atac.read_positions.tsv + library_to_unit.tsv |
+| assay_methylation (sequencing / array) | bisulfite_counts / methylation_beta | methylation/*.tsv.gz |
+| assay_m6a | ip_input_counts | m6a/m6a.ip.tsv.gz, m6a.input.tsv.gz |
+| genetics | genotypes (Bioana: planned) | genotypes.vcf |
+
+A new simulator adds its manifest entry there; Bioana adds the analysis.

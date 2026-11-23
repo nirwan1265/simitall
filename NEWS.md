@@ -1,5 +1,11 @@
 # simitall (development)
 
+- `data_manifest.json`: every run lists its data sets (data type, files, truth
+  in Bioana's format under `truth/`) for Bioana (github.com/nirwan1265/bioana).
+- Biodes 0.5.1: routing reads `assay_kinds` (DNase/FAIRE -> ATAC, DAP-seq/SELEX
+  -> ChIP; amplicon genotyping, repertoires, CRISPR screens, reporter assays
+  planned), breeding notation sets backcross and selfing generations, and
+  survival outcomes simulate (log-normal time with censoring, `event` column).
 - Backcross / NIL lines (rare donor allele) no longer stop the genetics layer:
   QTN are drawn among the commonest polymorphic markers, with a note.
 - `simulate_merip()`: m6A MeRIP-seq as IP and input counts per window (peaks

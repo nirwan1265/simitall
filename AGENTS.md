@@ -184,3 +184,14 @@ devtools::test(reporter = "summary")          # everything, before a release
 Optional packages such as `simstudy`, `pedtricks`, `rrBLUP` and `edgeR` may
 cause optional tests to skip. State this plainly; do not report skipped tests
 as passing coverage.
+
+## Bioana
+
+Analysis moved to its own repo, github.com/nirwan1265/bioana (R package
+`bioana`, `bioana_analyze()`). Simitall writes `data_manifest.json`
+(`R/suite_manifest.R`) so Bioana knows what to analyse; keep each simulator's
+manifest entry in step with Bioana's `inst/rules/analyses.tsv`. Simitall still
+has its own `bioana_fit_biodes()` (outcome + counts) because the power sweep
+and `simitall_from_question()` use it; switch those to `bioana::bioana_analyze()`
+and remove it once both are installed together. `R/suite_handoff.R` has a copy
+in Bioana (`R/read_design.R`): change both together.
