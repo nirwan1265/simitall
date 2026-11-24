@@ -125,8 +125,25 @@
     stop(sprintf("Model '%s': terms %s all map to layout column '%s'. Biodes should write one column per model term (or give analysis.terms.columns).",
                  model, paste(fixed_vars[col[fixed_vars] %in% dup], collapse = ", "), dup[1]), call. = FALSE)
   }
+  # level order declared by the spec (reference first): the factor whose name is the term's
+  # column, or the spec factor the term rule points to (same as Bioana's .ba_parse_model)
+  levels <- list()
+  for (v in vars) {
+    r <- term_rules$terms[[v]]
+    k <- match(col[[v]], factor_names)
+    if (is.na(k) && !is.null(r$from_spec_factor) && length(factor_names) >= r$from_spec_factor) k <- r$from_spec_factor
+    lv <- if (!is.na(k)) unlist(spec$factors[[k]]$levels) else NULL
+    if (length(lv)) levels[[v]] <- as.character(lv)
+  }
   list(formula = f, response = all.vars(f[[2]]), fixed_labels = fixed_labels, random = random,
-       vars = vars, col = col, role = role, numeric = numeric_vars)
+       vars = vars, col = col, role = role, numeric = numeric_vars, levels = levels)
+}
+
+# Levels of a column: the spec's order first (reference first), then natural order for levels it does not list.
+.suite_level_order <- function(x, spec_levels = NULL) {
+  lev <- .suite_natural_sort(unique(x[!is.na(x)]))
+  if (length(spec_levels)) lev <- c(intersect(spec_levels, lev), setdiff(lev, spec_levels))
+  lev
 }
 
 # Variables that appear inside I(...) in a formula.
@@ -152,8 +169,7 @@
       out[[v]] <- num
       next
     }
-    lev <- .suite_natural_sort(unique(x))
-    out[[v]] <- factor(x, levels = lev)
+    out[[v]] <- factor(x, levels = .suite_level_order(x, parsed$levels[[v]]))
   }
   out
 }

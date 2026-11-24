@@ -14,7 +14,8 @@ simitall_power_sweep(
   seed = 1,
   max_minutes = NULL,
   interaction_effect = NULL,
-  show = interactive()
+  show = interactive(),
+  allow_fallback = FALSE
 )
 }
 \arguments{
@@ -36,6 +37,11 @@ longer (one fit is timed first).}
 
 \item{show}{Show the power figure in the plot window (default: in
 interactive sessions); \code{plot(ps)} shows it again.}
+
+\item{allow_fallback}{Passed to \code{bioana::bioana_analyze()}: \code{FALSE} (Bioana's
+default) fits each data type only with its citable package (DESeq2, ...),
+the same one the real data will get; \code{TRUE} lets Bioana use its own
+method when that package is not installed.}
 }
 \value{
 Invisibly, a data frame (reps, n_units, term, factor, role,

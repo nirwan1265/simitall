@@ -1,5 +1,13 @@
 # simitall (development)
 
+- Factor levels follow the spec's `factors.levels` (reference first), then
+  natural order for levels it does not list, as in Bioana. Before, levels were
+  always in natural order, so `trt` became the reference before `untrt` and the
+  planted effects had the opposite sign of what the spec meant. The outcome,
+  genetics, assays, truth files and the outcome figure all use the new order.
+- `simitall_power_sweep()` and `simitall_from_question()` take
+  `allow_fallback` (default `FALSE`, as in Bioana) and warn when Bioana
+  refuses an analysis because its citable package is not installed.
 - All analysis moved to Bioana (github.com/nirwan1265/bioana): GWAS, genomic
   prediction and selection, peak calling and differential peaks, single-cell
   clustering and tests, eQTL benchmarks, RNA-seq results summary, GO

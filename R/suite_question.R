@@ -39,6 +39,9 @@
 #'   first suggestion (Biodes' traits and units, `inst/suite/suggestions.tsv`)
 #'   and run. Every filled value is printed and kept in `$filled_from_suggestions`.
 #'   Your own `answers` always win.
+#' @param allow_fallback Passed to `bioana::bioana_analyze()` and the power
+#'   sweep: `FALSE` (default) analyses each data type only with its citable
+#'   package; `TRUE` allows Bioana's own method when that package is missing.
 #' @param layout_defaults When a factor has no level count (or an augmented
 #'   design has no checks), fill it with Biodes' stated default
 #'   (`studyforge::fill_layout_defaults()`) and list each as an assumption.
@@ -67,7 +70,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
                                    simulate = TRUE, analyze = TRUE, confirm = interactive(), seed = NULL,
                                    force = FALSE, design = NULL, layout_seed = 42, use_suggestions = FALSE,
                                    figures = TRUE, params = NULL, reps_range = NULL, power_n_sim = NULL,
-                                   layout_defaults = use_suggestions) {
+                                   layout_defaults = use_suggestions, allow_fallback = FALSE) {
   engine <- match.arg(engine)
   if (!requireNamespace("studyforge", quietly = TRUE)) {
     stop("simitall_from_question() needs Biodes (R package 'studyforge'). Load it with devtools::load_all(\"~/Documents/Github/BioDesignGPT\") or install it with remotes::install_github(\"nirwan1265/BioDesignGPT\").",
@@ -107,7 +110,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   # "how many per group?": no design.reps (or power.solve_for = reps) -> choose it with a power sweep
   power <- NULL
   if (.suite_reps_open(spec_in) && isTRUE(simulate)) {
-    power <- .suite_choose_reps(spec_in, outdir, layout_seed, reps_range, power_n_sim)
+    power <- .suite_choose_reps(spec_in, outdir, layout_seed, reps_range, power_n_sim, allow_fallback)
     if (!is.null(power$reps)) {
       spec_in$design$reps <- power$reps
       ans$spec$design$reps <- power$reps
@@ -163,7 +166,7 @@ simitall_from_question <- function(question, answers = NULL, outdir = NULL,
   out$simulation <- simitall_from_biodes(outdir, seed = seed, params = params)
   if (analyze) {
     if (requireNamespace("bioana", quietly = TRUE)) {
-      out$analysis <- bioana::bioana_analyze(outdir, quiet = TRUE)
+      out$analysis <- bioana::bioana_analyze(outdir, quiet = TRUE, allow_fallback = allow_fallback)
     } else {
       message("simitall: analysis skipped; install Bioana to analyse the data: remotes::install_github('nirwan1265/bioana')")
     }
@@ -302,7 +305,7 @@ print.simitall_suite_run <- function(x, ...) {
 
 # Lay the design out at the smallest count, run simitall_power_sweep() over the range and pick the
 # smallest count where every treatment main effect (and the DE genes of a count assay) reaches the target.
-.suite_choose_reps <- function(spec, outdir, layout_seed, reps_range = NULL, n_sim = NULL) {
+.suite_choose_reps <- function(spec, outdir, layout_seed, reps_range = NULL, n_sim = NULL, allow_fallback = FALSE) {
   d <- .suite_rules("power_defaults")
   reps <- .suite_reps_grid(reps_range %||% spec$power$reps_range %||% d$reps$value)
   n_sim <- n_sim %||% d$n_sim_question$value %||% 50
@@ -314,10 +317,10 @@ print.simitall_suite_run <- function(x, ...) {
   on.exit(unlink(dirname(tmp), recursive = TRUE), add = TRUE)
   suppressMessages(studyforge::write_design_package(book, s, tmp))
   cat(sprintf("No replicate count given: choosing it by power (reps %s, %d simulated experiments each)...\n", paste(reps, collapse = ", "), n_sim))
-  ps <- tryCatch(suppressWarnings(simitall_power_sweep(tmp, reps = reps, n_sim = n_sim, show = FALSE)), error = function(e) e)
+  ps <- tryCatch(suppressWarnings(simitall_power_sweep(tmp, reps = reps, n_sim = n_sim, show = FALSE, allow_fallback = allow_fallback)), error = function(e) e)
   if (inherits(ps, "error") && grepl("would take about", conditionMessage(ps))) {
     n_sim <- max(10L, floor(n_sim / 5))
-    ps <- tryCatch(suppressWarnings(simitall_power_sweep(tmp, reps = reps, n_sim = n_sim, show = FALSE)), error = function(e) e)
+    ps <- tryCatch(suppressWarnings(simitall_power_sweep(tmp, reps = reps, n_sim = n_sim, show = FALSE, allow_fallback = allow_fallback)), error = function(e) e)
   }
   if (inherits(ps, "error")) {
     r <- d$reps_if_sweep_fails$value %||% 3L

@@ -395,3 +395,18 @@ test_that("the genotypes manifest entry names the genotype term and points at ex
   expect_true(file.exists(file.path(d, g$files$vcf)))
   expect_true(file.exists(file.path(d, g$truth$file)))
 })
+
+test_that("factor levels follow the spec's order, reference first, in the outcome and the assays", {
+  d <- make_design_folder("rcbd", "y ~ treatment + block", list(design_factor("treatment", 2, levels = c("untrt", "trt"))), reps = 4,
+                          extra = list(assays = list("rnaseq")))
+  suppressMessages(simitall_from_biodes(d, effect = 2, params = list(simulate_rnaseq_experiment = list(n_genes = 60))))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  te <- unlist(t$treatment_effects$treatment)
+  expect_equal(names(te)[1], "untrt")                  # the spec's first level is the reference
+  expect_equal(unname(te[["untrt"]]), 0)
+  expect_equal(names(t$counts$de_genes), "trt")        # changes are planted in the non-reference level
+  expect_equal(t$counts$reference_level %||% "untrt", "untrt")
+  m <- jsonlite::read_json(file.path(d, "data_manifest.json"))
+  tr <- read.delim(file.path(d, Filter(function(e) e$data_type == "feature_counts", m$data)[[1]]$truth$file))
+  expect_true(all(tr$condition == "trt"))
+})

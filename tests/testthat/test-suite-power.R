@@ -62,7 +62,7 @@ test_that("count assays get power as the share of 2-fold genes found", {
                factors = list(list(name = "genotype", n_levels = 2)), assays = list("rnaseq"),
                design = list(reps = 3, chosen = "crd", randomization_seed = 42))
   d <- biodes_folder(spec, "rna")
-  y <- as.data.frame(unclass(suppressMessages(simitall_power_sweep(d, reps = c(2, 8), n_sim = 8, show = FALSE))))
+  y <- as.data.frame(unclass(suppressMessages(simitall_power_sweep(d, reps = c(2, 8), n_sim = 8, show = FALSE, allow_fallback = TRUE))))
   de <- y[startsWith(y$term, "DE genes"), ]
   expect_equal(nrow(de), 2)
   expect_gt(de$power[de$reps == 8], de$power[de$reps == 2])

@@ -41,7 +41,7 @@ test_that("new Biodes packages simulate and fit end to end", {
   for (name in c("rcbd_greenhouse", "alpha_120", "split_field")) {
     d <- copy_terms_fixture(name)
     suppressMessages(simitall_from_biodes(d, seed = 11, effect = 4, residual_sd = 1))
-    r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+    r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE))
     expect_false(is.null(r$summary$analyses$outcome$recovery), info = name)
     tab <- r$recovery$outcome
     expect_true(all(abs(tab$error) < stats::qt(0.9995, tab$df) * tab$se), info = name)
@@ -51,7 +51,7 @@ test_that("new Biodes packages simulate and fit end to end", {
   }
   d <- copy_terms_fixture("crd_rnaseq")
   suppressMessages(simitall_from_biodes(d, seed = 5, n_genes = 300))
-  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE))
   expect_true(file.exists(file.path(d, "bioana", "rnaseq", "results.tsv")))
 })
 
@@ -110,7 +110,7 @@ test_that("every Biodes catalog model simulates and fits from its generic terms"
     d <- write_synthetic_package(id, cat_models$model[i], file.path(root, id))
     res <- tryCatch({
       suppressMessages(suppressWarnings(simitall_from_biodes(d)))
-      suppressMessages(suppressWarnings(bioana::bioana_analyze(d, quiet = TRUE)))
+      suppressMessages(suppressWarnings(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE)))
     }, error = function(e) e)
     if (!inherits(res, "error") && !is.null(res$summary$not_analysed$outcome)) res <- simpleError(res$summary$not_analysed$outcome$note)
     if (inherits(res, "error")) {

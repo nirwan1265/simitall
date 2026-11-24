@@ -12,7 +12,7 @@ test_that("figures are drawn from whatever the folder holds, for different desig
                  design = list(reps = 3, chosen = case, randomization_seed = 1), power = list(minimum_detectable_difference = 4, residual_sd = 2), primary_outcome = list(name = "y"))
     d <- biodes_folder(spec, case)
     suppressMessages(simitall_from_biodes(d))
-    suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+    suppressMessages(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE))
     f <- suppressMessages(biopaint_biodes(d))
     expect_true(all(c("layout", "outcome", "recovery") %in% names(f)), info = case)
     expect_true(all(file.exists(f)), info = case)

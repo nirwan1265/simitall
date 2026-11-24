@@ -202,7 +202,8 @@ plot.simitall_power_sweep <- function(x, ...) {
     meta <- stats::aggregate(meta["y"], meta[keys], mean)
   }
   x <- cols$treatment
-  meta$x <- factor(meta[[x]], levels = .suite_natural_sort(unique(meta[[x]])))
+  sl <- Filter(function(z) identical(z$name, x), spec$factors %||% list())
+  meta$x <- factor(meta[[x]], levels = .suite_level_order(as.character(meta[[x]]), if (length(sl)) as.character(unlist(sl[[1]]$levels))))
   many <- nlevels(meta$x) > 30
   if (many) meta$x <- stats::reorder(meta$x, meta$y, mean)
   aes_col <- if (!is.na(cols$treatment2)) ggplot2::aes(colour = .data[[cols$treatment2]]) else NULL

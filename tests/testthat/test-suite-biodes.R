@@ -33,7 +33,7 @@ test_that("Bioana fits the spec's model, averages subsamples and refuses them as
   skip_if_not_installed("bioana")
   d <- copy_fixture("rcbd_subsamples")
   suppressMessages(simitall_from_biodes(d, seed = 3))
-  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE))
   a <- r$summary$analyses$outcome
   expect_match(a$method, "^lm")
   expect_equal(a$n_units_fitted, 23)              # 24 units, 1 lost to attrition
@@ -41,9 +41,9 @@ test_that("Bioana fits the spec's model, averages subsamples and refuses them as
   expect_true(file.exists(file.path(d, "bioana", "outcome", "results.tsv")))
   expect_true(file.exists(file.path(d, "bioana", "outcome", "recovery.tsv")))
   expect_equal(a$recovery$n_terms, 5)
-  bad <- suppressMessages(bioana::bioana_analyze(d, params = list(outcome = list(subsamples = "as_replicates")), quiet = TRUE))
+  bad <- suppressMessages(bioana::bioana_analyze(d, params = list(outcome = list(subsamples = "as_replicates")), quiet = TRUE, allow_fallback = TRUE))
   expect_match(bad$summary$not_analysed$outcome$note, "not independent replicates")
-  n <- suppressMessages(bioana::bioana_analyze(d, params = list(outcome = list(subsamples = "nest")), quiet = TRUE))
+  n <- suppressMessages(bioana::bioana_analyze(d, params = list(outcome = list(subsamples = "nest")), quiet = TRUE, allow_fallback = TRUE))
   expect_match(n$summary$analyses$outcome$model_fitted, "unit_id_")
 })
 
@@ -52,7 +52,7 @@ test_that("mixed models: split plot and alpha lattice use lmer with the spec's r
   for (nm in c("split_field", "alpha_120")) {
     d <- copy_fixture(nm)
     suppressMessages(simitall_from_biodes(d))
-    r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+    r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE))
     expect_match(r$summary$analyses$outcome$method, "lmerMod", info = nm)
     expect_true(r$summary$analyses$outcome$recovery$n_terms > 0, info = nm)
     truth <- jsonlite::read_json(file.path(d, "sim_truth.json"))
@@ -69,7 +69,7 @@ test_that("count assays get a count matrix with Biodes sample ids and a DE test"
   expect_equal(names(counts), c("gene_id", meta$sample_id))
   expect_equal(nrow(counts), 200)
   skip_if_not_installed("bioana")
-  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE))
+  r <- suppressMessages(bioana::bioana_analyze(d, quiet = TRUE, allow_fallback = TRUE))
   expect_true(file.exists(file.path(d, "bioana", "rnaseq", "results.tsv")))
   rec <- r$summary$analyses$rnaseq$recovery$treatmentdrought
   expect_equal(rec$true_changes, 20)

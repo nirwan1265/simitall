@@ -21,7 +21,8 @@ simitall_from_question(
   params = NULL,
   reps_range = NULL,
   power_n_sim = NULL,
-  layout_defaults = use_suggestions
+  layout_defaults = use_suggestions,
+  allow_fallback = FALSE
 )
 }
 \arguments{
@@ -72,6 +73,10 @@ genes with a 2-fold change) the target power is used; the sweep is kept in
 design has no checks), fill it with Biodes' stated default
 (\code{studyforge::fill_layout_defaults()}) and list each as an assumption.
 Default: the same as \code{use_suggestions}.}
+
+\item{allow_fallback}{Passed to \code{bioana::bioana_analyze()} and the power
+sweep: \code{FALSE} (default) analyses each data type only with its citable
+package; \code{TRUE} allows Bioana's own method when that package is missing.}
 }
 \value{
 Invisibly, a \code{simitall_suite_run}: the Biodes answer (\verb{$answer}),

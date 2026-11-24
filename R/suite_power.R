@@ -25,12 +25,16 @@
 #'   interactive sessions); `plot(ps)` shows it again.
 #' @param max_minutes Stop before running when the sweep is estimated to take
 #'   longer (one fit is timed first).
+#' @param allow_fallback Passed to `bioana::bioana_analyze()`: `FALSE` (Bioana's
+#'   default) fits each data type only with its citable package (DESeq2, ...),
+#'   the same one the real data will get; `TRUE` lets Bioana use its own
+#'   method when that package is not installed.
 #' @return Invisibly, a data frame (reps, n_units, term, factor, role,
 #'   simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to `power_sweep.tsv`,
 #'   `power_sweep.json` and `figures/power.png` in the folder.
 #' @export
 simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1,
-                                 max_minutes = NULL, interaction_effect = NULL, show = interactive()) {
+                                 max_minutes = NULL, interaction_effect = NULL, show = interactive(), allow_fallback = FALSE) {
   dir <- if (inherits(x, "simitall_suite_run")) x$dir else x
   if (is.null(dir) || !file.exists(file.path(dir, "study_spec.json"))) {
     stop("simitall_power_sweep() needs a design folder with study_spec.json (from simitall_from_question() or Biodes write_design_package()).", call. = FALSE)
@@ -72,14 +76,21 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     file.copy(file.path(base, c("study_spec.json", "field_layout.csv")), sim)
     sig <- list(); found <- list()
     n_units <- NA
+    if (!exists("refused", inherits = FALSE)) refused <- character()
     for (k in seq_len(n_sim)) {
       t0 <- Sys.time()
       res <- tryCatch({
         suppressMessages(suppressWarnings(simitall_from_biodes(base, outdir = sim, seed = seed + k - 1, effect = effect,
                                                                residual_sd = residual_sd, n_genes = n_genes,
                                                                interaction_effect = interaction_effect)))
-        suppressMessages(suppressWarnings(bioana::bioana_analyze(sim, quiet = TRUE)))
+        suppressMessages(suppressWarnings(bioana::bioana_analyze(sim, quiet = TRUE, allow_fallback = allow_fallback)))
       }, error = function(e) NULL)
+      # an analysis Bioana refused (e.g. no citable engine installed): say why once, the sweep goes on without it
+      for (id in names(res$summary$not_analysed)) {
+        why <- res$summary$not_analysed[[id]]
+        key <- paste(id, why$note)
+        if (!key %in% refused) { refused <- c(refused, key); warning(sprintf("Bioana did not analyse '%s' (%s): %s", id, why$status, why$note), call. = FALSE) }
+      }
       if (!checked) {
         # one fit timed: scale by the number of units at the largest reps value
         checked <- TRUE

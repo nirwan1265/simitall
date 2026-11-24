@@ -195,5 +195,10 @@ evaluation, moved there on 2026-11-23. Simitall only simulates. It writes
 keep each simulator's manifest entry in step with Bioana's
 `inst/rules/analyses.tsv`. `simitall_power_sweep()` and
 `simitall_from_question()` call `bioana::bioana_analyze()` (Bioana is in
-Suggests; tests that need it skip without it). `R/suite_handoff.R` has a copy
+Suggests; tests that need it skip without it). Bioana runs each data type only
+with its citable package (DESeq2, ...) unless `allow_fallback = TRUE`; the
+sweep and `simitall_from_question()` pass `allow_fallback` through (tests use
+`TRUE`, since Bioconductor is not reachable in every sandbox). Factor levels
+follow the spec's `factors.levels`, reference first (`.suite_level_order()`),
+the same as Bioana. `R/suite_handoff.R` has a copy
 in Bioana (`R/read_design.R`): change both together.

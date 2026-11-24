@@ -90,7 +90,8 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   # factors in the layout that the model does not hold (Biodes analysis.terms.uncovered_factors):
   # tissue measured within each unit, a third factor, ...
   uncovered <- setdiff(intersect(unlist(spec$analysis$terms$uncovered_factors), names(meta)), c(names(p$role), unlist(p$col)))
-  for (v in uncovered) frame[[v]] <- factor(as.character(meta[[v]]), levels = .suite_natural_sort(unique(as.character(meta[[v]]))))
+  spec_levels <- function(v) { f <- Filter(function(z) identical(z$name, v), spec$factors); if (length(f)) as.character(unlist(f[[1]]$levels)) }
+  for (v in uncovered) frame[[v]] <- factor(as.character(meta[[v]]), levels = .suite_level_order(as.character(meta[[v]]), spec_levels(v)))
   n <- nrow(frame)
   y <- rep(mu, n)
   dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
