@@ -58,6 +58,26 @@ yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
 | + Biodes b78d893 (pq_0180 fixed) | 821 | 912 |
 | third set (train), same code | - | - | 2555 / 2695 |
 | + Biodes 0.5.1 (assay kinds, generations, survival) | 822 | 912 | 2553 |
+| Biodes d39936b (cell_type / fraction within units) | 822 | 912 | 2553 |
+
+## Biodes d39936b (2026-11-24)
+
+Same 4,287 / 4,695 on the reviewed specs: no verdict and no factor count
+changed (the new count reading is in Biodes' reader, which this check skips).
+`cell_type` and `fraction` are now within-unit factors: 43 reviewed specs have
+one, 19 of them changed from a factorial layout to an RCBD of the treatment
+with each unit repeated across the cell types or fractions; all 43 run
+(41 fully, 2 with a missing data type). No layout errors.
+
+Biodes' reader alone on all 4,695 prompts, 1cbf2f4 vs d39936b
+(`read_all_prompts.R`, `score_reader_counts.R`;
+`biodes_reader_1cbf2f4_vs_d39936b.tsv` lists the 258 prompts whose factors
+changed), scored against the reviewed specs' 5,982 factor counts:
+
+| reader | count right | count wrong | count left open | factor not found | specs with every count right |
+|---|---|---|---|---|---|
+| 1cbf2f4 | 2,906 | 472 | 454 | 2,150 | 1,666 / 4,302 |
+| d39936b | 3,037 | 426 | 446 | 2,073 | 1,758 / 4,302 |
 
 ## What we can simulate (by data type, both sets)
 
