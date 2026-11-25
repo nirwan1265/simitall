@@ -228,7 +228,10 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   unit_key <- NULL
   # a repeated factor the model holds still needs the unit effect when the model has no random term for the unit
   unit_random <- any(vapply(p$random, function(r) any(p$role[r$vars] %in% "unit", na.rm = TRUE), logical(1)))
-  rep_in_model <- length(intersect(repeated, unlist(p$col))) > 0 && !unit_random
+  # paired design (Biodes analysis.terms.paired: the repeated occasion is the only factor, each block is one
+  # animal): the block term already is the animal effect, no extra unit effect
+  paired <- isTRUE(spec$analysis$terms$paired)
+  rep_in_model <- length(intersect(repeated, unlist(p$col))) > 0 && !unit_random && !paired
   if (length(uncovered) || rep_in_model) {
     lay_cols <- setdiff(intersect(names(h$layout), names(meta)), c(uncovered, repeated))
     unit_key <- do.call(paste, c(lapply(meta[lay_cols], as.character), sep = "|"))

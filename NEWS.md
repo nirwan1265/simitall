@@ -1,5 +1,8 @@
 # simitall (development)
 
+- Paired designs (Biodes `analysis.terms.paired`: the repeated occasion is the
+  only factor and each block is one animal) get no extra unit effect; the
+  block already is the animal.
 - Biodes 0.5.2 `repeated_factors` (the same units at every time / stage /
   age): a repeated factor the model does not hold is simulated like tissue
   (an effect per level, time spaced by sampling time) and the rows of one unit

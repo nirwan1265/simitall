@@ -465,3 +465,15 @@ test_that("Biodes time values (levels + values + unit) space the effects by real
   te <- unlist(jsonlite::read_json(file.path(d, "sim_truth.json"))$treatment_effects$treatment2)
   expect_equal(unname(te), c(0, 1.25, 5, 10))
 })
+
+test_that("paired designs (the occasion is the only factor, block = animal) get no extra unit effect", {
+  d <- make_design_folder("rcbd", "y ~ treatment + block", list(design_factor("time", 2, levels = c("15 d", "30 d"))), reps = 4,
+                          extra = list(repeated_factors = list("time")))
+  s <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  s$analysis$terms$paired <- TRUE; s$analysis$terms$unit_column <- "block"
+  jsonlite::write_json(s, file.path(d, "study_spec.json"), auto_unbox = TRUE)
+  suppressMessages(simitall_from_biodes(d))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_null(t$within_unit_sd)
+  expect_false("unit" %in% names(t$random_sd))
+})
