@@ -10,7 +10,10 @@ test_that("power sweep runs from a design folder and power grows with replicatio
   ps <- simitall_power_sweep(d, reps = c(2, 6), n_sim = 40)
   y <- as.data.frame(unclass(ps))
   expect_true(file.exists(file.path(d, "power_sweep.tsv")))
-  expect_setequal(unique(y$term), c("treatment", "treatment2", "block", "treatment:treatment2"))
+  expect_true(all(c("treatment", "treatment2", "block", "treatment:treatment2") %in% y$term))
+  # Bioana's own test of the primary goal (treatment_effect when the spec has none) is the goal row
+  goal_rows <- unique(y$term[y$goal_term])
+  expect_true(all(grepl("^goal: treatment_effect \\(outcome", goal_rows) | goal_rows %in% c("treatment", "treatment2")))
   expect_true(is.na(y$simulated_effect[y$term == "block"][1]))
   # interaction simulated by default (simulation_defaults.json interaction_effect_ratio)
   expect_true(y$simulated_effect[y$term == "treatment:treatment2"][1])

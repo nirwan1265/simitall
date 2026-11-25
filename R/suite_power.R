@@ -105,8 +105,13 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
       if (is.null(res)) next
       an <- res$summary$analyses
       n_units <- an$outcome$n_units_fitted %||% unlist(lapply(an, `[[`, "n_samples"))[1] %||% n_units
+      # Bioana's goal test on the outcome (goal_recovery$detected), scored against sim_truth.json goal_truth
+      for (a in Filter(function(z) identical(z$data_type, "outcome") && isTRUE(z$goal_recovery$scored) && !is.null(z$goal_recovery$detected), an)) {
+        k <- paste0("goal: ", a$goal_recovery$goal %||% "goal", " (outcome, ", a$goal_recovery$test %||% "test", ")")
+        found_goal[[k]] <- c(found_goal[[k]], isTRUE(a$goal_recovery$detected))
+      }
       # Bioana's recovery of the goal's features (manifest truth.goal; summary goal_recovery$tpr), when it reports it
-      for (a in Filter(function(z) !is.null(z$goal_recovery$tpr), an)) {
+      for (a in Filter(function(z) !is.null(z$goal_recovery$tpr) && !is.na(z$goal_recovery$tpr), an)) {
         k <- paste0("goal features: ", a$goal_recovery$goal %||% "goal", " (", a$data_type, ")")
         found_goal[[k]] <- c(found_goal[[k]], as.numeric(a$goal_recovery$tpr))
       }
@@ -124,7 +129,9 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     truth <- tryCatch(jsonlite::read_json(file.path(sim, "sim_truth.json")), error = function(e) list())
     # the primary goal's model terms (sim_truth.json goal_truth.model_terms): the replicate choice is made for these
     goal_sets <- lapply(unlist(truth$goal_truth$model_terms), function(z) sort(all.vars(str2lang(z))))
-    is_goal <- function(term) any(vapply(goal_sets, function(z) identical(z, sort(all.vars(str2lang(term)))), logical(1)))
+    # Bioana's own goal test, when it ran on the outcome, stands for the goal; the ANOVA rows are then context
+    goal_tested <- any(grepl("(outcome,", names(found_goal), fixed = TRUE))
+    is_goal <- function(term) !goal_tested && any(vapply(goal_sets, function(z) identical(z, sort(all.vars(str2lang(term)))), logical(1)))
     p <- .suite_parse_model(model, s, book)
     for (term in names(sig)) {
       vars <- all.vars(str2lang(term))
@@ -141,7 +148,8 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     for (k in names(found_goal)) {
       f <- found_goal[[k]]
       rows[[length(rows) + 1]] <- data.frame(
-        reps = r, n_units = n_units, term = k, factor = "share of the goal's features found (truth.goal in data_manifest.json)",
+        reps = r, n_units = n_units, term = k,
+        factor = if (grepl("(outcome,", k, fixed = TRUE)) "share of experiments where Bioana's goal test detects the planted goal" else "share of the goal's features found (truth.goal in data_manifest.json)",
         role = "treatment", simulated_effect = TRUE, goal = truth$goal_truth$goal %||% NA_character_, goal_term = TRUE, power = mean(f),
         mc_se = if (length(f) > 1) stats::sd(f) / sqrt(length(f)) else NA_real_, n_fits = length(f), stringsAsFactors = FALSE)
     }

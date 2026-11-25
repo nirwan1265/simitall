@@ -1,5 +1,10 @@
 # simitall (development)
 
+- Biodes 0.6.3: `goal_effect.trend.per_unit` (e.g. "kg N/ha", "log10 uM")
+  is written to `goal_truth.per_unit` and its effect scale; a within-group
+  time course changes only the `group` level Biodes names. The power sweep
+  reads Bioana's goal test on the outcome (`goal_recovery$detected`) as the
+  goal row, and `goal_recovery$tpr` for count features.
 - Biodes 0.6.2: trend on log-scaled factors uses log_base(x + log_offset),
   the predictor Bioana fits (0/1/10/100 uM -> log10 of 1/2/11/101);
   `goal_effect.scale` decides what the size sizes (identity: the outcome;

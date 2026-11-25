@@ -45,7 +45,8 @@
   list(goal = goal, test = row$test, planted = row$planted, truth_in = row$truth, note = row$note,
        definition = ge$definition, size = size, size_stated = stated, scale = gscale, feature_size = feature_size,
        terms = unname(terms), vars = unname(vars),
-       shape = shape, peak = ge$peak, half_time = ge$half_time, scope = ge$scope, group = ge$group, group_factor = ge$group_factor)
+       shape = shape, peak = ge$peak, half_time = ge$half_time, scope = ge$scope, group = ge$group, group_factor = ge$group_factor,
+       per_unit = ge$per_unit)
 }
 
 # hours in a time unit (Biodes .sf_unit_name names); NA when unknown
@@ -181,6 +182,9 @@
       sprintf("outcome per %s", tr$unit %||% "unit")
     ex$values <- as.list(tr$raw); ex$x <- as.list(tr$x); ex$factor_scale <- tr$scale
     ex$log_base <- tr$log_base; ex$log_offset <- tr$log_offset
+    # Biodes 0.6.3 per_unit: what a stated size is per ("kg N/ha", "log10 uM")
+    if (!is.null(g$per_unit)) { ex$per_unit <- g$per_unit; ex$effect_scale <- sprintf("outcome per %s%s", g$per_unit,
+      if (identical(tr$scale, "log")) sprintf(" (log%s of value + %s)", format(tr$log_base), format(tr$log_offset)) else "") }
     ex$change_over_range <- tr$slope * diff(range(tr$x))
     ex$model_terms <- list(x$tr_var)
   } else if (g$goal == "survival") {
