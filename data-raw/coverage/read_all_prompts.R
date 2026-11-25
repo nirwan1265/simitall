@@ -2,7 +2,7 @@
 a <- commandArgs(TRUE); if (nzchar(a[1])) .libPaths(c(a[1], .libPaths()))
 suppressMessages(library(studyforge))
 sp <- "/home/claude/BioDesignGPT/training/paper_questions/splits"
-qs <- unlist(lapply(c("test","dev","dev2","test_draw4","test_draw5","test_heldout","test_newkinds","train"), function(f)
+qs <- unlist(lapply(c("test","dev","dev2","test_draw4","test_heldout","test_newkinds","train")   # test_draw5 is locked: never read, function(f)
   lapply(readLines(file.path(sp, paste0(f, ".jsonl"))), jsonlite::fromJSON, simplifyVector = FALSE)), recursive = FALSE)
 qs <- qs[!duplicated(vapply(qs, `[[`, "", "id"))]
 fmt <- function(s) paste(vapply(s$factors %||% list(), function(f) sprintf("%s(%s)", f$name %||% "?", if (is.null(f$n_levels)) "?" else f$n_levels), ""), collapse = " | ")

@@ -1,6 +1,6 @@
 `%||%` <- function(x, y) if (is.null(x)) y else x
 sp <- "/home/claude/BioDesignGPT/training/paper_questions/splits"
-qs <- unlist(lapply(c("test","dev","dev2","test_draw4","test_draw5","test_heldout","test_newkinds","train"), function(f)
+qs <- unlist(lapply(c("test","dev","dev2","test_draw4","test_heldout","test_newkinds","train")   # test_draw5 is locked: never read, function(f)
   lapply(readLines(file.path(sp, paste0(f, ".jsonl"))), jsonlite::fromJSON, simplifyVector = FALSE)), recursive = FALSE)
 qs <- qs[!duplicated(vapply(qs, `[[`, "", "id"))]
 gold <- setNames(lapply(qs, function(q) { f <- q$expected_spec$factors; if (!length(f)) return(setNames(integer(), character()))
