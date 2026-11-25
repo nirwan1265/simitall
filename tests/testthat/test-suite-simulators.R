@@ -410,3 +410,19 @@ test_that("factor levels follow the spec's order, reference first, in the outcom
   tr <- read.delim(file.path(d, Filter(function(e) e$data_type == "feature_counts", m$data)[[1]]$truth$file))
   expect_true(all(tr$condition == "trt"))
 })
+
+test_that("time effects follow the real sampling times; generic time labels stay evenly spaced", {
+  d <- make_design_folder("factorial", "y ~ treatment * treatment2 + block",
+                          list(design_factor("diet", 2, levels = c("chow", "hfd")), design_factor("time", 4, levels = c("0 h", "6 h", "24 h", "48 h"))), reps = 2)
+  suppressMessages(simitall_from_biodes(d, effect = 4, interaction_effect = 2))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  te <- unlist(t$treatment_effects[["treatment2"]] %||% t$treatment_effects$time)
+  expect_equal(unname(te), c(0, 0.5, 2, 4))                         # 4 * c(0, 6, 24, 48) / 48
+  cells <- unlist(t$interaction_effects[[1]]$cells)
+  expect_equal(unname(cells["hfd:24 h"]), 1)                         # 2 * (24 / 48) * 1
+  d2 <- make_design_folder("factorial", "y ~ treatment * treatment2 + block",
+                           list(design_factor("diet", 2), design_factor("time", 3)), reps = 2)
+  suppressMessages(simitall_from_biodes(d2, effect = 4))
+  t2 <- jsonlite::read_json(file.path(d2, "sim_truth.json"))
+  expect_equal(unname(unlist(t2$treatment_effects[["treatment2"]] %||% t2$treatment_effects$time)), c(0, 2, 4))
+})

@@ -1,5 +1,10 @@
 # simitall (development)
 
+- Time factors follow the real sampling times: when the levels carry numbers
+  (`0 h`, `24 h`, `day 10`) or the spec gives `factors[].values`, the time
+  effect and its interactions grow with time (0, 6, 24, 48 h are not evenly
+  spaced). Generic labels (`time_1`, ...) stay evenly spaced. `stage` and
+  other named states are categorical.
 - Factor levels follow the spec's `factors.levels` (reference first), then
   natural order for levels it does not list, as in Bioana. Before, levels were
   always in natural order, so `trt` became the reference before `untrt` and the

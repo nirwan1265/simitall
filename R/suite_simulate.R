@@ -149,7 +149,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       next
     }
     lev <- levels(frame[[v]])
+    tpos <- .suite_time_positions(v, frame, p, spec)
     e <- if (!is.null(genetics) && identical(v, geno_term)) genetics$g[lev]
+         else if (!is.null(tpos)) eff * (tpos - min(tpos)) / diff(range(tpos))   # sampling times: effect grows with real time
          else stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
     treatment_effects[[v]] <- as.list(e)
     y <- y + e[as.character(frame[[v]])]
@@ -182,6 +184,8 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     size <- if (term %in% treat_inter) inter else 0
     score <- lapply(vars, function(v) {
       x <- frame[[v]]
+      tpos <- .suite_time_positions(v, frame, p, spec)
+      if (!is.null(tpos)) return(unname(((tpos - min(tpos)) / diff(range(tpos)))[as.character(x)]))
       if (is.numeric(x)) { r <- range(x, na.rm = TRUE); if (diff(r) > 0) (x - r[1]) / diff(r) else 0 * x }
       else if (nlevels(x) > 1) (as.integer(x) - 1) / (nlevels(x) - 1) else 0 * as.integer(x)
     })
@@ -378,4 +382,23 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
 .suite_is_count_assay <- function(spec, rules = NULL) {
   r <- .suite_match_routes(spec)
   any(r$route %in% c("assay_rnaseq", "assay_eqtl", "assay_single_cell"))
+}
+
+# Sampling times of a time factor's levels, so effects follow real time (0, 6, 24, 48 h are not evenly spaced).
+# From the spec factor's `values` (same order as its `levels`) when given, else the number in each level label
+# ("24 h", "day_10", "T48"). NULL when the variable is not a time column or the levels carry no numbers.
+.suite_time_positions <- function(v, frame, p, spec) {
+  col <- p$col[[v]] %||% v
+  time_cols <- c(.suite_rules("model_terms")$terms$time$columns, "hour", "hours", "week", "weeks", "month", "sampling_time")
+  if (!tolower(col) %in% time_cols) return(NULL)
+  x <- frame[[v]]
+  if (!is.factor(x) || nlevels(x) < 2) return(NULL)
+  lev <- levels(x)
+  f <- Filter(function(z) identical(z$name, col), spec$factors %||% list())
+  vals <- if (length(f)) suppressWarnings(as.numeric(unlist(f[[1]]$values))) else numeric()
+  sl <- if (length(f)) as.character(unlist(f[[1]]$levels)) else character()
+  num <- if (length(vals) && length(vals) == length(sl) && all(lev %in% sl)) vals[match(lev, sl)] else
+    suppressWarnings(as.numeric(sub("^[^0-9]*([0-9]+(\\.[0-9]+)?).*$", "\\1", lev)))
+  if (anyNA(num) || length(unique(num)) < 2) return(NULL)
+  stats::setNames(num, lev)
 }
