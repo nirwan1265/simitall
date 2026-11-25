@@ -1,5 +1,16 @@
 # simitall (development)
 
+- Biodes 0.6.2: trend on log-scaled factors uses log_base(x + log_offset),
+  the predictor Bioana fits (0/1/10/100 uM -> log10 of 1/2/11/101);
+  `goal_effect.scale` decides what the size sizes (identity: the outcome;
+  log2: every goal feature in the count assays, a trend size per log10 unit);
+  no stated size = the treatment effect over the factor's range. Time course
+  `within_group` changes only `group` (a level of `group_factor`); a stated
+  peak with no shape is transient, a half-time alone saturating. Assay-only
+  designs report the goal per feature and keep the outcome-scale values under
+  `goal_truth.outcome_truth`. The design reader reads factor `values`,
+  `log_base` and `log_offset` and turns level labels into values for numeric
+  model terms (same as Bioana's `read_design.R`).
 - Analysis goals (Biodes schema 0.6.0, `analysis.primary_goal`): the truth
   planted follows the primary goal and is written to `sim_truth.json` ->
   `goal_truth` (`goal`, `terms`, `columns`, `test`, `definition`, `size`,
