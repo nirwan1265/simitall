@@ -128,3 +128,23 @@ test_that("specs without goals (schema 0.5) keep treatment_effect; registry goal
   gt <- sim_goal(dir)$truth$goal_truth
   expect_equal(gt$status, "not_simulated")
 })
+
+test_that("an outcome with a unit but no SD is simulated standardized and says so; a CV gives the SD", {
+  dir <- goal_folder("rcbd", list(list(name = "variety", n_levels = 2)), "treatment_effect", mdd = 5)
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json"))
+  s$primary_outcome$unit <- "cm"; s$power$residual_sd <- NULL
+  s$assumptions[["power.residual_sd"]] <- "not stated: asked (the effect is in cm)"
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  t <- sim_goal(dir)$truth
+  expect_true(t$outcome_scale$standardized)
+  expect_false(t$outcome_scale$residual_sd_known)
+  expect_equal(t$outcome_scale$stated_effect, "5 cm")
+  expect_equal(c(t$residual_sd, t$intercept, t$effect), c(1, 0, 1))
+  expect_match(t$goal_truth$size_source, "standardized")
+  s$power$cv <- 8; s$primary_outcome$baseline_mean <- 50; s$assumptions[["power.residual_sd"]] <- NULL
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  t <- sim_goal(dir)$truth
+  expect_false(t$outcome_scale$standardized)
+  expect_equal(c(t$residual_sd, t$intercept, t$effect), c(4, 50, 5))
+  expect_equal(t$outcome_scale$residual_sd_source, "power.cv x primary_outcome.baseline_mean")
+})

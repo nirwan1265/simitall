@@ -76,10 +76,34 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   }
   seed <- seed %||% spec$design$randomization_seed %||% d$seed
   set.seed(seed)
-  rsd <- as.numeric(pick(residual_sd, spec$power$residual_sd, d$residual_sd, "residual SD"))
-  eff_default <- list(value = d$effect_in_residual_sd$value * rsd, note = d$effect_in_residual_sd$note)
-  eff <- as.numeric(pick(effect, spec$power$minimum_detectable_difference, eff_default, "treatment effect"))
-  mu <- as.numeric(pick(NULL, spec$primary_outcome$baseline_mean, d$intercept, "intercept"))
+  # the outcome's scale (Biodes 0.6.4: primary_outcome.unit, baseline_mean, power.residual_sd, power.cv in %)
+  po <- spec$primary_outcome %||% list()
+  sd_spec <- spec$power$residual_sd %||% if (!is.null(spec$power$cv) && !is.null(po$baseline_mean)) as.numeric(spec$power$cv) / 100 * as.numeric(po$baseline_mean)
+  if (is.null(spec$power$residual_sd) && !is.null(sd_spec)) note(sprintf("residual SD = %s (power.cv %s%% x baseline mean %s)", format(sd_spec), format(spec$power$cv), format(po$baseline_mean)))
+  sd_asked <- grepl("^not stated", spec$assumptions[["power.residual_sd"]] %||% "")
+  # an outcome with a unit (or an SD Biodes asked for) but no spread: SD 10 / mean 100 would be read as that unit,
+  # so the outcome is simulated on a standardized scale (residual SD 1, mean 0, effects in SDs) and says so.
+  # Count outcomes draw counts around the mean and keep their defaults.
+  standardized <- is.null(residual_sd) && is.null(sd_spec) && (!is.null(po$unit) || sd_asked) && out_route$route != "outcome_count"
+  outcome_scale <- list(unit = po$unit %||% "none stated (arbitrary units)", standardized = standardized)
+  if (standardized) {
+    rsd <- 1; mu <- 0
+    stated <- spec$power$minimum_detectable_difference
+    eff <- as.numeric(effect %||% d$effect_in_residual_sd$value)
+    outcome_scale <- c(outcome_scale, list(residual_sd_known = FALSE, residual_sd = 1, intercept = 0,
+      stated_effect = if (!is.null(stated)) sprintf("%s %s", format(stated), po$unit %||% ""),
+      note = sprintf("the residual SD%s was not stated%s: the outcome is standardized (residual SD 1, mean 0) and every effect is in residual SDs; the treatment effect is %s SD. Power depends on the real SD.",
+                     if (!is.null(po$unit)) paste0(" in ", po$unit) else "", if (sd_asked) " (Biodes asked for it)" else "", format(eff))))
+    outcome_scale <- outcome_scale[!vapply(outcome_scale, is.null, logical(1))]
+    note(outcome_scale$note)
+  } else {
+    rsd <- as.numeric(pick(residual_sd, sd_spec, d$residual_sd, "residual SD"))
+    eff_default <- list(value = d$effect_in_residual_sd$value * rsd, note = d$effect_in_residual_sd$note)
+    eff <- as.numeric(pick(effect, spec$power$minimum_detectable_difference, eff_default, "treatment effect"))
+    mu <- as.numeric(pick(NULL, po$baseline_mean, d$intercept, "intercept"))
+    outcome_scale <- c(outcome_scale, list(residual_sd_known = !is.null(residual_sd) || !is.null(sd_spec), residual_sd = rsd, intercept = mu,
+      residual_sd_source = if (!is.null(residual_sd)) "argument" else if (!is.null(spec$power$residual_sd)) "power.residual_sd" else if (!is.null(sd_spec)) "power.cv x primary_outcome.baseline_mean" else "default"))
+  }
   att <- as.numeric(pick(NULL, spec$power$attrition, d$attrition, "attrition"))
   n_sub <- as.integer(spec$subsamples_per_unit %||% 1L)
   if (is.na(n_sub) || n_sub < 1L) n_sub <- 1L
@@ -96,7 +120,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   spec_levels <- function(v) { f <- Filter(function(z) identical(z$name, v), spec$factors); if (length(f)) as.character(unlist(f[[1]]$levels)) }
   for (v in uncovered) frame[[v]] <- factor(as.character(meta[[v]]), levels = .suite_level_order(as.character(meta[[v]]), spec_levels(v)))
   # the analysis goal (Biodes schema 0.6 analysis.primary_goal) decides which truth is planted; see suite_goals.R
-  gl <- .suite_goal_setup(spec, p, frame, eff, note)
+  gl <- .suite_goal_setup(spec, p, frame, eff, note, standardized)
   n <- nrow(frame)
   y <- rep(mu, n)
   dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
@@ -350,7 +374,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     handoff_version = spec$handoff_version, design = spec$design$chosen, model = h$model,
     outcome = spec$primary_outcome$name %||% "primary_outcome", seed = seed,
     outcome_type = fam$type, outcome_model = fam$model,
-    intercept = mu, residual_sd = rsd, effect = eff,
+    intercept = mu, residual_sd = rsd, effect = eff, outcome_scale = outcome_scale,
     level_effect_pattern = d$level_effect_pattern$value,
     treatment_effects = treatment_effects, numeric_effects = numeric_effects,
     interaction_effects = interaction_effects,

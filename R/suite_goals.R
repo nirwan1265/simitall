@@ -5,7 +5,7 @@
 
 # The primary goal and what it needs: the frame variables of its terms, its effect size and, for a time
 # course, the shape. `eff` is the effect Simitall already uses (power.minimum_detectable_difference or default).
-.suite_goal_setup <- function(spec, p, frame, eff, note) {
+.suite_goal_setup <- function(spec, p, frame, eff, note, standardized = FALSE) {
   tab <- .suite_tsv("goals")
   goal <- spec$analysis$primary_goal %||% unlist(spec$analysis$goals)[1] %||% "treatment_effect"
   row <- tab[tab$goal == goal, , drop = FALSE]
@@ -18,7 +18,10 @@
   # (the engine's scale). A size on log2 sizes the goal's features; the outcome then uses the treatment effect.
   gscale <- ge$scale %||% "outcome"
   on_outcome <- gscale %in% c("outcome", "identity")
-  stated <- !is.null(ge$size) && on_outcome
+  stated <- !is.null(ge$size) && on_outcome && !standardized
+  if (!is.null(ge$size) && on_outcome && standardized)
+    note(sprintf("goal effect size %s%s not used: the residual SD is unknown, so the outcome is standardized and the goal uses the treatment effect in SDs",
+                 format(ge$size), if (!is.null(spec$primary_outcome$unit)) paste0(" ", spec$primary_outcome$unit) else ""))
   size <- if (stated) as.numeric(ge$size) else eff
   feature_size <- if (!is.null(ge$size) && identical(gscale, "log2")) as.numeric(ge$size)
   if (!is.null(ge$size) && !on_outcome && is.null(feature_size))
@@ -46,7 +49,7 @@
        definition = ge$definition, size = size, size_stated = stated, scale = gscale, feature_size = feature_size,
        terms = unname(terms), vars = unname(vars),
        shape = shape, peak = ge$peak, half_time = ge$half_time, scope = ge$scope, group = ge$group, group_factor = ge$group_factor,
-       per_unit = ge$per_unit)
+       per_unit = ge$per_unit, standardized = standardized)
 }
 
 # hours in a time unit (Biodes .sf_unit_name names); NA when unknown
@@ -119,7 +122,8 @@
   lev_diff <- function(e) { e <- unlist(e); as.list(e - e[1]) }
   out <- list(goal = g$goal, terms = as.list(g$terms), variables = as.list(g$vars), test = g$test,
               definition = g$definition %||% NULL, scale = g$scale, size = g$size,
-              size_source = if (g$size_stated) "analysis.goal_effect" else "treatment effect (power.minimum_detectable_difference or default)",
+              size_source = if (g$size_stated) "analysis.goal_effect" else if (isTRUE(g$standardized)) "treatment effect in residual SDs (outcome standardized: residual SD unknown)"
+                            else "treatment effect (power.minimum_detectable_difference or default)",
               feature_size = g$feature_size)
   out <- c(out, extra)
   out$planted <- g$planted

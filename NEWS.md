@@ -1,5 +1,12 @@
 # simitall (development)
 
+- Biodes 0.6.4 outcome scale: `primary_outcome.unit`, `baseline_mean`,
+  `power.residual_sd` and `power.cv` (%, times the baseline mean when no SD)
+  set the outcome's scale. An outcome with a unit but no SD (or one Biodes
+  asked for) is simulated standardized (residual SD 1, mean 0, effects in
+  SDs) instead of SD 10 / mean 100; `sim_truth.json` `outcome_scale` says
+  which, with the stated effect kept as text. Count outcomes keep their
+  defaults.
 - Biodes 0.6.3: `goal_effect.trend.per_unit` (e.g. "kg N/ha", "log10 uM")
   is written to `goal_truth.per_unit` and its effect scale; a within-group
   time course changes only the `group` level Biodes names. The power sweep
