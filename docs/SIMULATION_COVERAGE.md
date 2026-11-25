@@ -60,6 +60,18 @@ yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
 | + Biodes 0.5.1 (assay kinds, generations, survival) | 822 | 912 | 2553 |
 | Biodes d39936b (cell_type / fraction within units) | 822 | 912 | 2553 |
 | Biodes 7d98031 (occasion factors, repeated_factors) | 822 | 912 | 2553 |
+| Biodes ab01def (repeated designs, time values) | 822 | 912 | 2553 |
+
+## Biodes ab01def, schema 0.5.3 (2026-11-25)
+
+Same 4,287 / 4,695. `repeated_factors` set on 40 reviewed specs (read from
+the text): `[time]` 12, `[age]` 4, `[stage]` 2, `[age,time]` 1, `[]` 21.
+Of the 19 repeated, 8 get `randomized_complete_block_repeated`; 11 have no
+randomized factor (only the occasion, e.g. "the same 3 cows at 15 and 30
+days") and stay `rcbd` with each animal a block (a paired design). Time
+factors: 787, of which 199 carry `values` (107 evenly spaced, 92 not, e.g.
+6/12/24/48/72 h). Simitall spaces time effects by those values: pq_0178 gives
+0, 0.91, 2.73, 6.36, 10 for 6/12/24/48/72 h.
 
 ## Biodes 7d98031, schema 0.5.2 (2026-11-24)
 
