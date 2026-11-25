@@ -52,6 +52,9 @@ for (i in seq(i0, length.out = max(0, i1 - i0 + 1))) {
   if (exists(".sf_assay_kinds", sf) && is.null(GOLD$spec$assay_kinds)) {
     k <- sf$.sf_assay_kinds(txt); if (length(k)) GOLD$spec$assay_kinds <- as.list(k)
   }
+  # same units at every time / stage / age (Biodes 0.5.2): read from the text when the reviewed spec does not say
+  if (exists(".sf_repeated_on_unit", sf) && is.null(GOLD$spec$repeated_factors)) GOLD$spec <- sf$.sf_repeated_on_unit(GOLD$spec, txt)
+  r$repeated_factors <- if (is.null(GOLD$spec$repeated_factors)) "(absent)" else paste0("[", paste(unlist(GOLD$spec$repeated_factors), collapse = ","), "]")
   if (exists(".sf_generation_notation", sf)) {
     g <- sf$.sf_generation_notation(txt)
     for (nm in names(g)) if (is.null(GOLD$spec$population[[nm]])) GOLD$spec$population[[nm]] <- g[[nm]]
@@ -97,6 +100,6 @@ for (i in seq(i0, length.out = max(0, i1 - i0 + 1))) {
   unlink(d, recursive = TRUE)
   rows[[length(rows) + 1]] <- r
 }
-cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","outcome_type","assay_kinds","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
+cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","outcome_type","assay_kinds","repeated_factors","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
 df <- do.call(rbind, lapply(rows, function(r) as.data.frame(setNames(lapply(cols, function(k) if (is.null(r[[k]])) "" else as.character(r[[k]])), cols))))
 utils::write.table(df, out, sep = "\t", row.names = FALSE, quote = FALSE)

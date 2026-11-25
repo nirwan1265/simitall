@@ -426,3 +426,21 @@ test_that("time effects follow the real sampling times; generic time labels stay
   t2 <- jsonlite::read_json(file.path(d2, "sim_truth.json"))
   expect_equal(unname(unlist(t2$treatment_effects[["treatment2"]] %||% t2$treatment_effects$time)), c(0, 2, 4))
 })
+
+test_that("repeated occasion factors (same units at every time) get an effect and a shared unit effect", {
+  d <- make_design_folder("rcbd", "y ~ treatment + block",
+                          list(design_factor("diet", 2), design_factor("time", 3, levels = c("24 h", "48 h", "72 h"))), reps = 4,
+                          extra = list(repeated_factors = list("time")))
+  lay <- read.csv(file.path(d, "field_layout.csv"))
+  expect_equal(nrow(lay), 3 * length(unique(lay$plot)))          # each unit repeated across the 3 times
+  suppressMessages(simitall_from_biodes(d, effect = 4))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_equal(unname(unlist(t$uncovered_effects$time)), c(0, 2, 4))   # 24, 48, 72 h: evenly spaced here
+  expect_false(is.null(t$within_unit_sd))
+  expect_false("time" %in% unlist(t$within_unit_sd$unit_columns))
+  # destructive sampling (repeated_factors = []): time is randomized to units, no shared unit effect
+  d2 <- make_design_folder("factorial", "y ~ treatment * treatment2 + block",
+                           list(design_factor("diet", 2), design_factor("time", 3)), reps = 2, extra = list(repeated_factors = list()))
+  suppressMessages(simitall_from_biodes(d2))
+  expect_null(jsonlite::read_json(file.path(d2, "sim_truth.json"))$within_unit_sd)
+})

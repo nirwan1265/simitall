@@ -89,7 +89,10 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   frame <- .suite_frame(meta, p)
   # factors in the layout that the model does not hold (Biodes analysis.terms.uncovered_factors):
   # tissue measured within each unit, a third factor, ...
-  uncovered <- setdiff(intersect(unlist(spec$analysis$terms$uncovered_factors), names(meta)), c(names(p$role), unlist(p$col)))
+  # occasion factors measured on the same units (Biodes repeated_factors, e.g. the same mice at 24/48/72 h) count as
+  # within-unit too when the model does not hold them
+  repeated <- intersect(unlist(spec$analysis$terms$repeated_factors %||% spec$repeated_factors), names(meta))
+  uncovered <- setdiff(intersect(unique(c(unlist(spec$analysis$terms$uncovered_factors), repeated)), names(meta)), c(names(p$role), unlist(p$col)))
   spec_levels <- function(v) { f <- Filter(function(z) identical(z$name, v), spec$factors); if (length(f)) as.character(unlist(f[[1]]$levels)) }
   for (v in uncovered) frame[[v]] <- factor(as.character(meta[[v]]), levels = .suite_level_order(as.character(meta[[v]]), spec_levels(v)))
   n <- nrow(frame)
@@ -214,15 +217,20 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   uncovered_effects <- list()
   for (v in uncovered) {
     lev <- levels(frame[[v]])
-    e <- stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
+    tpos <- .suite_time_positions(v, frame, p, spec)
+    e <- if (!is.null(tpos)) eff * (tpos - min(tpos)) / diff(range(tpos)) else
+      stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
     uncovered_effects[[v]] <- as.list(e)
     y <- y + e[as.character(frame[[v]])]
   }
   # rows of one unit (one per within-unit level, e.g. leaf and root of one plant) share that unit's effect
   unit_sd <- 0
   unit_key <- NULL
-  if (length(uncovered)) {
-    lay_cols <- setdiff(intersect(names(h$layout), names(meta)), uncovered)
+  # a repeated factor the model holds still needs the unit effect when the model has no random term for the unit
+  unit_random <- any(vapply(p$random, function(r) any(p$role[r$vars] %in% "unit", na.rm = TRUE), logical(1)))
+  rep_in_model <- length(intersect(repeated, unlist(p$col))) > 0 && !unit_random
+  if (length(uncovered) || rep_in_model) {
+    lay_cols <- setdiff(intersect(names(h$layout), names(meta)), c(uncovered, repeated))
     unit_key <- do.call(paste, c(lapply(meta[lay_cols], as.character), sep = "|"))
     if (anyDuplicated(unit_key)) {
       unit_sd <- d$random_sd_ratio$value * rsd
@@ -278,7 +286,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     block_effects = block_effects, random_sd = random_sd,
     uncovered_effects = if (length(uncovered_effects)) uncovered_effects,
     within_unit_sd = if (!is.null(unit_key)) list(sd = unit_sd, note = "rows of one unit (one per level of the within-unit factor) share this effect; they are not independent units",
-                                                  unit_columns = setdiff(intersect(names(h$layout), names(meta)), uncovered)),
+                                                  unit_columns = setdiff(intersect(names(h$layout), names(meta)), c(uncovered, repeated))),
     subsamples_per_unit = n_sub, subsample_sd = if (n_sub > 1) d$subsample_sd_ratio$value * rsd else 0,
     dropped_units = dropped, assumptions = NULL,
     columns = as.list(p$col), outcome_simulated = has_outcome,
@@ -388,7 +396,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
 # From the spec factor's `values` (same order as its `levels`) when given, else the number in each level label
 # ("24 h", "day_10", "T48"). NULL when the variable is not a time column or the levels carry no numbers.
 .suite_time_positions <- function(v, frame, p, spec) {
-  col <- p$col[[v]] %||% v
+  col <- if (v %in% names(p$col)) p$col[[v]] else v
   time_cols <- c(.suite_rules("model_terms")$terms$time$columns, "hour", "hours", "week", "weeks", "month", "sampling_time")
   if (!tolower(col) %in% time_cols) return(NULL)
   x <- frame[[v]]

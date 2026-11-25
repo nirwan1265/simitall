@@ -1,5 +1,11 @@
 # simitall (development)
 
+- Biodes 0.5.2 `repeated_factors` (the same units at every time / stage /
+  age): a repeated factor the model does not hold is simulated like tissue
+  (an effect per level, time spaced by sampling time) and the rows of one unit
+  share a unit effect; a repeated factor the model holds also gets the shared
+  unit effect when the model has no random term for the unit. `[]`
+  (destructive sampling) keeps the occasion factor randomized to units.
 - Time factors follow the real sampling times: when the levels carry numbers
   (`0 h`, `24 h`, `day 10`) or the spec gives `factors[].values`, the time
   effect and its interactions grow with time (0, 6, 24, 48 h are not evenly
