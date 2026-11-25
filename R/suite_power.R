@@ -30,7 +30,8 @@
 #'   the same one the real data will get; `TRUE` lets Bioana use its own
 #'   method when that package is not installed.
 #' @return Invisibly, a data frame (reps, n_units, term, factor, role,
-#'   simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to `power_sweep.tsv`,
+#'   simulated_effect (NA for blocking terms), goal (the spec's primary analysis goal),
+#'   goal_term (TRUE for the terms that test it), power, mc_se, n_fits); also written to `power_sweep.tsv`,
 #'   `power_sweep.json` and `figures/power.png` in the folder.
 #' @export
 simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, effect = NULL, residual_sd = NULL, seed = 1,
@@ -74,7 +75,7 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     sim <- file.path(base, "sim")
     dir.create(sim)
     file.copy(file.path(base, c("study_spec.json", "field_layout.csv")), sim)
-    sig <- list(); found <- list()
+    sig <- list(); found <- list(); found_goal <- list()
     n_units <- NA
     if (!exists("refused", inherits = FALSE)) refused <- character()
     for (k in seq_len(n_sim)) {
@@ -104,6 +105,11 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
       if (is.null(res)) next
       an <- res$summary$analyses
       n_units <- an$outcome$n_units_fitted %||% unlist(lapply(an, `[[`, "n_samples"))[1] %||% n_units
+      # Bioana's recovery of the goal's features (manifest truth.goal; summary goal_recovery$tpr), when it reports it
+      for (a in Filter(function(z) !is.null(z$goal_recovery$tpr), an)) {
+        k <- paste0("goal features: ", a$goal_recovery$goal %||% "goal", " (", a$data_type, ")")
+        found_goal[[k]] <- c(found_goal[[k]], as.numeric(a$goal_recovery$tpr))
+      }
       for (a in Filter(function(z) identical(z$data_type, "feature_counts"), an)) {
         for (cr in a$recovery %||% list()) {
           if (!is.null(cr$contrast) && !is.null(cr$tpr_large) && !is.na(cr$tpr_large)) found[[cr$contrast]] <- c(found[[cr$contrast]], cr$tpr_large)
@@ -116,6 +122,9 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
       }
     }
     truth <- tryCatch(jsonlite::read_json(file.path(sim, "sim_truth.json")), error = function(e) list())
+    # the primary goal's model terms (sim_truth.json goal_truth.model_terms): the replicate choice is made for these
+    goal_sets <- lapply(unlist(truth$goal_truth$model_terms), function(z) sort(all.vars(str2lang(z))))
+    is_goal <- function(term) any(vapply(goal_sets, function(z) identical(z, sort(all.vars(str2lang(term)))), logical(1)))
     p <- .suite_parse_model(model, s, book)
     for (term in names(sig)) {
       vars <- all.vars(str2lang(term))
@@ -125,15 +134,23 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
       rows[[length(rows) + 1]] <- data.frame(
         reps = r, n_units = n_units, term = term,
         factor = paste(vapply(vars, function(v) as.character(unlist(meaning[[v]])[1] %||% v), ""), collapse = " x "),
-        role = role, simulated_effect = eff, power = mean(sig[[term]]),
+        role = role, simulated_effect = eff, goal = truth$goal_truth$goal %||% NA_character_, goal_term = is_goal(term), power = mean(sig[[term]]),
         mc_se = sqrt(mean(sig[[term]]) * (1 - mean(sig[[term]])) / length(sig[[term]])), n_fits = length(sig[[term]]),
         stringsAsFactors = FALSE)
+    }
+    for (k in names(found_goal)) {
+      f <- found_goal[[k]]
+      rows[[length(rows) + 1]] <- data.frame(
+        reps = r, n_units = n_units, term = k, factor = "share of the goal's features found (truth.goal in data_manifest.json)",
+        role = "treatment", simulated_effect = TRUE, goal = truth$goal_truth$goal %||% NA_character_, goal_term = TRUE, power = mean(f),
+        mc_se = if (length(f) > 1) stats::sd(f) / sqrt(length(f)) else NA_real_, n_fits = length(f), stringsAsFactors = FALSE)
     }
     for (ct in names(found)) {
       f <- found[[ct]]
       rows[[length(rows) + 1]] <- data.frame(
         reps = r, n_units = n_units, term = paste0("DE genes: ", ct), factor = "share of genes with a true 2-fold change found (counts.tsv)",
-        role = "treatment", simulated_effect = TRUE, power = mean(f),
+        role = "treatment", simulated_effect = TRUE, goal = truth$goal_truth$goal %||% NA_character_,
+        goal_term = is.null(truth$goal_truth$features) && (truth$goal_truth$goal %||% "treatment_effect") == "treatment_effect", power = mean(f),
         mc_se = if (length(f) > 1) stats::sd(f) / sqrt(length(f)) else NA_real_, n_fits = length(f), stringsAsFactors = FALSE)
     }
   }

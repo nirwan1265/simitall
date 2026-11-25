@@ -94,3 +94,6 @@ simulate_merip	expression_effect_sd	1	numeric		SD of the expression log2 fold ch
 simulate_merip	biological_sd	0.3	numeric		between-unit SD of peak methylation (logit)	
 simulate_merip	ip_efficiency_sd	0.3	numeric		SD of IP efficiency between units (log2)	
 simulate_merip	dispersion	0.05	numeric		negative binomial dispersion of both libraries	
+suite_goal_features	fraction	0.1	numeric		analysis goal (interaction, time_course, trend) on count assays: share of features (genes, taxa, miRNAs) that follow the goal's pattern	
+suite_goal_features	log2fc	1	numeric		goal features: mean absolute log2 fold change of the goal's effect (difference of differences, largest change over time, or change over the numeric factor's range)	What fold change do you expect for the genes that follow this pattern?
+suite_goal_features	log2fc_sd	0.5	numeric		goal features: SD of the absolute log2 fold change (half-normal added to log2fc)	

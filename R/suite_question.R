@@ -329,7 +329,10 @@ print.simitall_suite_run <- function(x, ...) {
     return(list(reps = as.integer(r), reason = msg, target_power = target, n_sim = n_sim, reps_tried = reps, sweep = NULL))
   }
   y <- as.data.frame(unclass(ps))
-  main <- y[y$simulated_effect %in% TRUE & !grepl(":", y$term), , drop = FALSE]
+  # the primary analysis goal's terms (Biodes analysis.primary_goal; e.g. treatment:time for an interaction),
+  # else every main effect with a simulated effect (treatment_effect)
+  main <- y[y$simulated_effect %in% TRUE & y$goal_term %in% TRUE, , drop = FALSE]
+  if (!nrow(main)) main <- y[y$simulated_effect %in% TRUE & !grepl(":", y$term), , drop = FALSE]
   if (!nrow(main)) main <- y[y$simulated_effect %in% TRUE, , drop = FALSE]
   ok <- vapply(reps, function(r) { z <- main[main$reps == r, , drop = FALSE]; nrow(z) > 0 && all(z$power >= target) }, logical(1))
   pick <- if (any(ok)) reps[which(ok)[1]] else max(reps)

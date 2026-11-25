@@ -1,5 +1,26 @@
 # simitall (development)
 
+- Analysis goals (Biodes schema 0.6.0, `analysis.primary_goal`): the truth
+  planted follows the primary goal and is written to `sim_truth.json` ->
+  `goal_truth` (`goal`, `terms`, `columns`, `test`, `definition`, `size`,
+  `true_effect`, `effect_scale`, `model_terms`, `status`). Interaction: the
+  difference of differences of the extreme levels = the goal size.
+  Time course: shape (monotone, saturating, transient, delayed; peak and
+  half-time converted to the time factor's unit) on the real sampling times,
+  largest change = the goal size; `within_group` changes only the
+  non-reference groups. Trend: linear in the factor's values (log10 for
+  `scale = log`, a zero dose one decade below the lowest). Count assays
+  (RNA-seq, small RNA, microbiome, single-cell pseudobulk, eQTL) get the
+  same pattern in 10% of features by binomial thinning, truth in
+  `truth/<assay>_goal.tsv` and the manifest's `truth.goal`. Genetics,
+  survival, ranking, variance components and microbiome goals point to the
+  truth already written; registry goals with `simulated: false` say
+  `not_simulated`. No goals = `treatment_effect`, as before. What each goal
+  plants: `inst/suite/goals.tsv`.
+- The power sweep marks the goal's terms (`goal`, `goal_term` columns) and
+  the replicate choice in `simitall_from_question()` uses them; it also reads
+  Bioana's `goal_recovery$tpr` for goal features when Bioana reports it.
+- Reads `handoff_version` 0.6.
 - Paired designs (Biodes `analysis.terms.paired`: the repeated occasion is the
   only factor and each block is one animal) get no extra unit effect; the
   block already is the animal.

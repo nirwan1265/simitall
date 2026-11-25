@@ -133,6 +133,18 @@ and `sim_truth.json` with `routes`, `genetics`, `assays`, `not_simulated`.
 | `primary_outcome.name`, `.baseline_mean` | outcome name and intercept | intercept 100 |
 | `subsamples_per_unit` | leaves per plant etc. (not replicates) | 1 |
 | `assays` | routes in `inst/suite/simulators.tsv` (see above) | outcome only |
+| `analysis.primary_goal`, `goal_terms`, `goal_effect[goal]` (`size`, `shape`, `peak`, `half_time`, `scope`) | which truth to plant (`inst/suite/goals.tsv`), written to `sim_truth.json` `goal_truth` | `treatment_effect`; size = the treatment effect |
+| `factors[].values`, `.unit`, `.scale` | sampling times, dose values (trend; log10 for `scale = log`) | numbers in the level labels |
+
+`goal_truth.true_effect` is on the outcome scale and follows Biodes' registry
+definition: interaction = difference of differences between the last and
+reference levels of both goal terms; time_course = largest change between
+time points (`time_pattern` per level); trend = change per unit of the factor
+(per log10 unit on a log scale; with no stated size, the treatment effect over
+the factor's range). `model_terms` are the model terms that test the goal; the
+power sweep chooses replicates for them. Count assays carry the goal in 10% of
+features (`goal_truth.features`, `truth/<assay>_goal.tsv`: `feature_id, term,
+effect, change`, log2).
 
 `analysis.model` must use Biodes' generic terms (`treatment treatment2 block
 rep row col unit subject time env period sequence check`). Simitall's layouts

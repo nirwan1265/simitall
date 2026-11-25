@@ -1,0 +1,18 @@
+goal	test	planted	truth	note
+treatment_effect	wald	outcome	treatment_effects	Each treatment factor's levels differ from its reference level by an even spread up to the effect size (today's default when the spec has no goals).
+interaction	wald_or_lrt	outcome	interaction_effects	Linear-by-linear interaction of the two goal terms; the difference of differences between the reference and last levels of both factors equals the goal effect size.
+time_course	lrt	outcome	goal_truth.time_pattern	The time factor's levels follow the stated shape (monotone, saturating, transient, delayed; default monotone) on the real sampling times; the largest change between time points equals the goal effect size. scope within_group: only the non-reference groups change over time.
+trend	wald	outcome	goal_truth.slope	Linear in the numeric factor's values (log10 values when the factor's scale is log); the slope is the goal effect size per unit, or the effect size over the factor's range when no size is stated.
+transcript_usage	lrt	none		Registry simulated: false (no isoform simulator).
+differential_abundance	wald	assay	assays.assay_microbiome	Planted by the microbiome template: taxa shifted between condition levels (truth/microbiome.tsv).
+community_composition	other	assay	assays.assay_microbiome	Planted by the microbiome template: the share of taxa shifted between condition levels.
+alpha_diversity	wald	assay	assays.assay_microbiome	Planted by the microbiome template through the shifted taxa; no diversity index is planted directly.
+cell_composition	other	none		Registry simulated: false (cell-type proportions are not planted).
+association	wald	genetics	genetics.qtn_truth	QTN effects from the phenotype model (genetic_truth/qtn_truth.tsv).
+qtl_mapping	other	genetics	genetics.qtn_truth	QTN effects from the phenotype model (genetic_truth/qtn_truth.tsv).
+genomic_prediction	other	genetics	genetics.genetic_values	True genetic values of the lines (genetic_truth/genetic_values.tsv); accuracy is the correlation of predictions with them.
+variance_components	other	outcome	random_sd	Residual SD, random-term SDs, within-unit SD and (genetics) heritability.
+ranking	other	outcome	treatment_effects	True values of the entries (genetic values when the design has lines, else the treatment levels); the effect is the top entries' mean minus the mean of all entries.
+survival	wald	outcome	treatment_effects	Log-normal accelerated failure time; each treatment effect e multiplies survival time by exp(time_sd * e / sd_outcome). Hazards are not proportional, so no single hazard ratio is planted.
+biomarker_classification	other	none		Registry simulated: false.
+coexpression_network	other	none		Registry simulated: false.

@@ -95,6 +95,8 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   uncovered <- setdiff(intersect(unique(c(unlist(spec$analysis$terms$uncovered_factors), repeated)), names(meta)), c(names(p$role), unlist(p$col)))
   spec_levels <- function(v) { f <- Filter(function(z) identical(z$name, v), spec$factors); if (length(f)) as.character(unlist(f[[1]]$levels)) }
   for (v in uncovered) frame[[v]] <- factor(as.character(meta[[v]]), levels = .suite_level_order(as.character(meta[[v]]), spec_levels(v)))
+  # the analysis goal (Biodes schema 0.6 analysis.primary_goal) decides which truth is planted; see suite_goals.R
+  gl <- .suite_goal_setup(spec, p, frame, eff, note)
   n <- nrow(frame)
   y <- rep(mu, n)
   dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
@@ -142,7 +144,41 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   treat_vars <- intersect(names(p$role)[p$role == "treatment"], p$fixed_labels)
   if (!is.null(genetics) && !geno_term %in% treat_vars) treat_vars <- c(treat_vars, geno_term)
   treatment_effects <- numeric_effects <- list()
+  # time_course: the time factor follows the goal's shape; within_group: only the non-reference groups change
+  tc_var <- tc_group <- tc_pattern <- tr_var <- trend <- goal_pair <- NULL
+  if (gl$goal == "time_course" && is.factor(frame[[gl$vars[1]]])) {
+    tc_var <- gl$vars[1]
+    tpos <- .suite_time_positions(tc_var, frame, p, spec)
+    if (is.null(tpos)) {
+      tpos <- stats::setNames(seq_len(nlevels(frame[[tc_var]])) - 1, levels(frame[[tc_var]]))
+      note(sprintf("time_course: levels of %s carry no sampling times; the shape follows level order", tc_var))
+    }
+    tcol <- if (tc_var %in% names(p$col)) p$col[[tc_var]] else tc_var
+    funit <- unlist(Filter(function(z) identical(z$name, tcol), spec$factors %||% list())[[1]]$unit %||% NULL)
+    if (is.null(gl$shape)) note("time_course shape not stated: monotone (change grows with time)")
+    tc_pattern <- gl$size * .suite_time_shape(tpos, gl$shape, gl$peak, gl$half_time, funit, note)
+    if (identical(gl$scope, "within_group")) {
+      tc_group <- setdiff(treat_vars, c(tc_var, if (!is.null(genetics)) geno_term))[1]
+      if (is.na(tc_group)) { tc_group <- NULL; note("time_course scope within_group: no group factor besides time; every unit follows the pattern") }
+      else note(sprintf("time_course within_group: %s levels are equal at the first time point; only the non-reference levels change over time", tc_group))
+    }
+  } else if (gl$goal == "trend") {
+    tr_var <- gl$vars[1]
+    trend <- .suite_trend_x(tr_var, frame, p, spec, note)
+    if (is.null(trend)) { note(sprintf("trend: %s has no numeric values; planted as treatment_effect", tr_var)); tr_var <- NULL }
+    else {
+      trend$slope <- if (gl$size_stated) gl$size else if (diff(range(trend$x)) > 0) gl$size / diff(range(trend$x)) else 0
+      if (!gl$size_stated) note(sprintf("trend slope = effect %s over the range of %s%s", format(gl$size), tr_var, if (identical(trend$scale, "log")) " (log10 values)" else ""))
+    }
+  } else if (gl$goal == "interaction") goal_pair <- gl$vars
   for (v in treat_vars) {
+    if (identical(v, tr_var)) {
+      e <- trend$slope * (trend$x - min(trend$x))
+      if (is.numeric(frame[[v]])) { numeric_effects[[v]] <- trend$slope; y <- y + e; next }
+      treatment_effects[[v]] <- as.list(e)
+      y <- y + e[as.character(frame[[v]])]
+      next
+    }
     if (v %in% p$numeric) {
       # numeric factor (response surface): linear over its range, no curvature
       rng <- range(frame[[v]], na.rm = TRUE)
@@ -154,6 +190,8 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     lev <- levels(frame[[v]])
     tpos <- .suite_time_positions(v, frame, p, spec)
     e <- if (!is.null(genetics) && identical(v, geno_term)) genetics$g[lev]
+         else if (identical(v, tc_var)) (if (is.null(tc_group)) tc_pattern else 0 * tc_pattern)
+         else if (identical(v, tc_group)) stats::setNames(rep(0, length(lev)), lev)
          else if (!is.null(tpos)) eff * (tpos - min(tpos)) / diff(range(tpos))   # sampling times: effect grows with real time
          else stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
     treatment_effects[[v]] <- as.list(e)
@@ -169,11 +207,27 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   inter_default <- list(value = d$interaction_effect_ratio$value * eff, note = d$interaction_effect_ratio$note)
   is_gxe <- function(term) !is.null(genetics) && geno_term %in% all.vars(str2lang(term))
   treat_inter <- Filter(function(l) !is_gxe(l) && all(all.vars(str2lang(l)) %in% names(p$role)[p$role == "treatment"]), interactions)
-  inter <- if (length(treat_inter)) as.numeric(pick(interaction_effect, spec$power$interaction_effect, inter_default, "interaction effect")) else 0
+  goal_inter <- if (!is.null(goal_pair)) goal_pair else if (!is.null(tc_group)) c(tc_group, tc_var)
+  other_inter <- Filter(function(l) is.null(goal_inter) || !setequal(all.vars(str2lang(l)), goal_inter), treat_inter)
+  inter <- if (length(other_inter)) as.numeric(pick(interaction_effect, spec$power$interaction_effect, inter_default, "interaction effect")) else 0
   interaction_effects <- list()
+  same <- function(a, b) length(a) == length(b) && setequal(a, b)
+  goal_label <- NULL
+  if (!is.null(goal_inter) && !any(vapply(interactions, function(l) same(all.vars(str2lang(l)), goal_inter), logical(1)))) {
+    interactions <- c(interactions, paste(goal_inter, collapse = ":"))
+    note(sprintf("goal %s: %s is not in analysis.model; planted anyway", gl$goal, paste(goal_inter, collapse = ":")))
+  }
   for (term in interactions) {
     vars <- all.vars(str2lang(term))
+    if (!is.null(goal_inter) && same(vars, goal_inter)) goal_label <- term
     key <- do.call(paste, c(lapply(vars, function(v) as.character(frame[[v]])), sep = ":"))
+    if (!is.null(tc_group) && same(vars, goal_inter)) {
+      ch <- frame[[tc_group]] != levels(frame[[tc_group]])[1]
+      add <- unname(tc_pattern[as.character(frame[[tc_var]])]) * ch
+      y <- y + add
+      interaction_effects[[term]] <- list(size = gl$size, pattern = "time_course_within_group", cells = as.list(tapply(add, key, `[`, 1)))
+      next
+    }
     if (is_gxe(term)) {
       # cells hold the genotype x treatment values already added above (0 without GxE)
       add <- if (!is.null(genetics$gxe) && identical(sort(vars), sort(c(geno_term, cond_term)))) {
@@ -184,7 +238,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
                                           pattern = "phenotype_model_gxe", cells = as.list(cells))
       next
     }
-    size <- if (term %in% treat_inter) inter else 0
+    size <- if (!is.null(goal_pair) && same(vars, goal_pair)) gl$size else if (term %in% treat_inter) inter else 0
     score <- lapply(vars, function(v) {
       x <- frame[[v]]
       tpos <- .suite_time_positions(v, frame, p, spec)
@@ -218,7 +272,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   for (v in uncovered) {
     lev <- levels(frame[[v]])
     tpos <- .suite_time_positions(v, frame, p, spec)
-    e <- if (!is.null(tpos)) eff * (tpos - min(tpos)) / diff(range(tpos)) else
+    e <- if (identical(v, tc_var)) (if (is.null(tc_group)) tc_pattern else 0 * tc_pattern)
+      else if (identical(v, tr_var)) trend$slope * (trend$x - min(trend$x))
+      else if (!is.null(tpos)) eff * (tpos - min(tpos)) / diff(range(tpos)) else
       stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
     uncovered_effects[[v]] <- as.list(e)
     y <- y + e[as.character(frame[[v]])]
@@ -337,6 +393,32 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       route = skipped$route[i], requested = skipped$matched[i], status = skipped$status[i], note = skipped$note[i]))
     message("simitall: not simulated (", paste(sprintf("%s: %s", skipped$matched, skipped$status), collapse = "; "), ")")
   }
+  # the goal in count assays: a share of features follows the goal's pattern (interaction, time course, trend)
+  gpat <- .suite_goal_pattern(gl, frame, p, spec, tc_var, tc_group, tc_pattern, tr_var, trend)
+  goal_features <- list()
+  if (!is.null(gpat) && length(truth$assays)) {
+    fa <- .suite_args("suite_goal_features", spec, params)
+    gterm <- goal_label %||% tc_var %||% tr_var
+    per_unit <- if (!is.null(tr_var)) diff(range(trend$x))
+    for (route in intersect(c("assay_eqtl", "assay_rnaseq", "assay_single_cell", "assay_small_rnaseq", "assay_microbiome"), names(truth$assays))) {
+      ct <- truth$assays[[route]]$counts %||% if (!is.null(truth$counts) && is.null(truth$assays[[route]]$counts)) c(list(file = "counts.tsv"), truth$counts)
+      if (is.null(ct$file) || !file.exists(file.path(outdir, ct$file))) next
+      gt <- .suite_goal_features(file.path(outdir, ct$file), gpat, meta$sample_id, names(unlist(unname(ct$de_genes))), fa$args, gterm, per_unit, seed)
+      if (is.null(gt)) next
+      id <- sub("^assay_", "", route)
+      dir.create(file.path(outdir, "truth"), showWarnings = FALSE)
+      f <- file.path("truth", paste0(id, "_goal.tsv"))
+      utils::write.table(gt, file.path(outdir, f), sep = "\t", row.names = FALSE, quote = FALSE)
+      goal_features[[id]] <- list(file = f, counts = ct$file, n_features = nrow(gt), term = gterm,
+        effect_scale = if (!is.null(per_unit)) sprintf("log2 fold change per %s%s (column change: over the factor's range)", if (identical(trend$scale, "log")) "log10 " else "", trend$unit %||% "unit")
+                       else if (gl$goal == "interaction") "log2 difference of differences, last levels vs references" else "log2 largest change between time points",
+        parameters = fa$args, parameter_source = as.list(fa$source))
+    }
+  }
+  truth$goal_truth <- .suite_goal_extra(gl, truth, frame, p, list(
+    treat_vars = setdiff(treat_vars, if (!is.null(genetics)) geno_term), tc_var = tc_var, tc_group = tc_group,
+    tc_pattern = tc_pattern, trend = trend, tr_var = tr_var, goal_label = goal_label, fam = fam, genetics = genetics,
+    has_outcome = has_outcome, assay_routes = assay_routes$route, features = goal_features))
   truth$assumptions <- assumptions
   paths <- c(paths, truth = .suite_write_json(truth, file.path(outdir, "sim_truth.json")))
   paths <- c(paths, manifest = .suite_write_manifest(outdir, truth, has_outcome, fam$type, cond_term))

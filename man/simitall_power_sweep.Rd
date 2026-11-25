@@ -45,7 +45,8 @@ method when that package is not installed.}
 }
 \value{
 Invisibly, a data frame (reps, n_units, term, factor, role,
-simulated_effect (NA for blocking terms), power, mc_se, n_fits); also written to \code{power_sweep.tsv},
+simulated_effect (NA for blocking terms), goal (the spec's primary analysis goal),
+goal_term (TRUE for the terms that test it), power, mc_se, n_fits); also written to \code{power_sweep.tsv},
 \code{power_sweep.json} and \code{figures/power.png} in the folder.
 }
 \description{

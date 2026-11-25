@@ -2,7 +2,8 @@
   "_about": "Biodes hand-off contract as read by Simitall and Bioana. Source of truth: github.com/nirwan1265/BioDesignGPT docs/SUITE_INTEGRATION.md and inst/registry/study_spec.schema.json. Add versions here when Biodes bumps handoff_version; never remove one.",
   "supported_handoff_versions": [
     "0.4",
-    "0.5"
+    "0.5",
+    "0.6"
   ],
   "required_files": [
     "study_spec.json",
