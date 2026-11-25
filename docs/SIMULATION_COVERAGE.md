@@ -59,6 +59,16 @@ yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
 | third set (train), same code | - | - | 2555 / 2695 |
 | + Biodes 0.5.1 (assay kinds, generations, survival) | 822 | 912 | 2553 |
 | Biodes d39936b (cell_type / fraction within units) | 822 | 912 | 2553 |
+| Biodes 7d98031 (occasion factors, repeated_factors) | 822 | 912 | 2553 |
+
+## Biodes 7d98031, schema 0.5.2 (2026-11-24)
+
+Occasion factors in the reviewed specs: time 787, stage 230, age 126. None of
+the reviewed specs carry `repeated_factors`; read from the text it is set on
+17: `[time]` 10, `[age]` 4, `[stage]` 2, `[]` 1 (pq_0476); absent (asked) on
+the rest, which simulate as randomized to units. All 17 simulate fully.
+pq_0527 is a false `[stage]`: "a mix of 5 embryos from the same sow" at
+E16/E18/E21/E28 is destructive (the sow is shared, not the embryos).
 
 ## Biodes d39936b (2026-11-24)
 
