@@ -54,6 +54,20 @@ for (i in seq(i0, length.out = max(0, i1 - i0 + 1))) {
   }
   # same units at every time / stage / age (Biodes 0.5.2): read from the text when the reviewed spec does not say
   if (exists(".sf_repeated_on_unit", sf) && is.null(GOLD$spec$repeated_factors)) GOLD$spec <- sf$.sf_repeated_on_unit(GOLD$spec, txt)
+  # numeric levels read with their unit (Biodes 0.5.3: "at 24, 48 and 72 h" -> values 24/48/72, unit h,
+  # labels "24 h"...), added to a reviewed factor with the same count that has no levels
+  if (exists(".sf_level_factors", sf)) {
+    vals <- attr(sf$.sf_level_factors(txt), "values")
+    for (k in seq_along(GOLD$spec$factors)) {
+      fk <- GOLD$spec$factors[[k]]; vv <- vals[[fk$name %||% ""]]
+      if (!is.null(vv) && is.null(fk$levels) && identical(as.numeric(fk$n_levels), as.numeric(length(vv$values)))) {
+        GOLD$spec$factors[[k]]$values <- vv$values
+        if (!is.null(vv$unit)) GOLD$spec$factors[[k]]$unit <- vv$unit
+        GOLD$spec$factors[[k]]$levels <- trimws(paste(format(vv$values, trim = TRUE, drop0trailing = TRUE), vv$unit %||% ""))
+      }
+    }
+  }
+  r$time_values <- paste(unlist(Filter(function(f) identical(f$name, "time"), GOLD$spec$factors %||% list())[1][[1]]$values), collapse = "/")
   r$repeated_factors <- if (is.null(GOLD$spec$repeated_factors)) "(absent)" else paste0("[", paste(unlist(GOLD$spec$repeated_factors), collapse = ","), "]")
   if (exists(".sf_generation_notation", sf)) {
     g <- sf$.sf_generation_notation(txt)
@@ -100,6 +114,6 @@ for (i in seq(i0, length.out = max(0, i1 - i0 + 1))) {
   unlink(d, recursive = TRUE)
   rows[[length(rows) + 1]] <- r
 }
-cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","outcome_type","assay_kinds","repeated_factors","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
+cols <- c("reps_assumed","solve_for","defaults_filled","genetic_unit","outcome_type","assay_kinds","repeated_factors","time_values","id","species","technique","prompt","stage","error","b_assays","b_outcome_type","b_mating","b_study_type","b_design","b_factors","layout_issues","open_n","routes","simulated","not_simulated","outcome_simulated","seconds")
 df <- do.call(rbind, lapply(rows, function(r) as.data.frame(setNames(lapply(cols, function(k) if (is.null(r[[k]])) "" else as.character(r[[k]])), cols))))
 utils::write.table(df, out, sep = "\t", row.names = FALSE, quote = FALSE)

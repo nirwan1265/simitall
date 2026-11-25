@@ -433,9 +433,19 @@ test_that("repeated occasion factors (same units at every time) get an effect an
                           extra = list(repeated_factors = list("time")))
   lay <- read.csv(file.path(d, "field_layout.csv"))
   expect_equal(nrow(lay), 3 * length(unique(lay$plot)))          # each unit repeated across the 3 times
+  # Biodes >= 0.5.3 writes the repeated form: time in the model and (1 | unit) on the layout's unit column
+  s <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  expect_match(s$analysis$model, "(1 | unit)", fixed = TRUE)
   suppressMessages(simitall_from_biodes(d, effect = 4))
   t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
-  expect_equal(unname(unlist(t$uncovered_effects$time)), c(0, 2, 4))   # 24, 48, 72 h: evenly spaced here
+  expect_equal(unname(unlist(t$treatment_effects$time)), c(0, 2, 4))   # 24, 48, 72 h: evenly spaced here
+  expect_true("unit" %in% names(t$random_sd))
+  # an older spec whose model leaves the repeated factor out: simulated like tissue, with a shared unit effect
+  s$analysis$model <- "y ~ treatment + block"; s$analysis$terms$time <- NULL; s$analysis$terms$unit_column <- NULL
+  jsonlite::write_json(s, file.path(d, "study_spec.json"), auto_unbox = TRUE)
+  suppressMessages(simitall_from_biodes(d, effect = 4))
+  t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
+  expect_equal(unname(unlist(t$uncovered_effects$time)), c(0, 2, 4))
   expect_false(is.null(t$within_unit_sd))
   expect_false("time" %in% unlist(t$within_unit_sd$unit_columns))
   # destructive sampling (repeated_factors = []): time is randomized to units, no shared unit effect
@@ -443,4 +453,15 @@ test_that("repeated occasion factors (same units at every time) get an effect an
                            list(design_factor("diet", 2), design_factor("time", 3)), reps = 2, extra = list(repeated_factors = list()))
   suppressMessages(simitall_from_biodes(d2))
   expect_null(jsonlite::read_json(file.path(d2, "sim_truth.json"))$within_unit_sd)
+})
+
+test_that("Biodes time values (levels + values + unit) space the effects by real time", {
+  d <- make_design_folder("factorial", "y ~ treatment * treatment2 + block",
+                          list(design_factor("diet", 2), design_factor("time", 4, levels = c("0 h", "6 h", "24 h", "48 h"))), reps = 2)
+  s <- jsonlite::read_json(file.path(d, "study_spec.json"))
+  s$factors[[2]]$values <- list(0, 6, 24, 48); s$factors[[2]]$unit <- "h"
+  jsonlite::write_json(s, file.path(d, "study_spec.json"), auto_unbox = TRUE)
+  suppressMessages(simitall_from_biodes(d, effect = 10))
+  te <- unlist(jsonlite::read_json(file.path(d, "sim_truth.json"))$treatment_effects$treatment2)
+  expect_equal(unname(te), c(0, 1.25, 5, 10))
 })

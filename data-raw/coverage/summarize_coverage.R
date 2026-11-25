@@ -35,7 +35,7 @@ x$verdict <- ifelse(x$stage == "simitall", "not_run_simitall_error",
 x$blocker <- ifelse(x$verdict %in% c("not_run_design", "not_run_simitall_error"), x$error,
              ifelse(x$verdict %in% c("simulated_part", "no_simulator_for_data_type"),
                     vapply(st_list, function(s) paste0("not simulated: ", paste(paste0(names(s)[s != "ready"], " (", s[s != "ready"], ")"), collapse = ", ")), ""), ""))
-cols <- c("id", "species", "technique", "prompt", "needs", "needs_status", "reps_assumed", "solve_for", "defaults_filled", "genetic_unit", "outcome_type", "assay_kinds", "repeated_factors", "verdict", "b_design", "b_factors", "blocker", "simulated", "not_simulated")
+cols <- c("id", "species", "technique", "prompt", "needs", "needs_status", "reps_assumed", "solve_for", "defaults_filled", "genetic_unit", "outcome_type", "assay_kinds", "repeated_factors", "time_values", "verdict", "b_design", "b_factors", "blocker", "simulated", "not_simulated")
 utils::write.table(x[, cols], out, sep = "\t", row.names = FALSE, quote = FALSE)
 print(table(x$verdict))
 cat("with layout defaults:", sum(nzchar(x$defaults_filled) & x$verdict %in% c("simulated_all", "simulated_outcome_question")), "of the fully simulated\n")
