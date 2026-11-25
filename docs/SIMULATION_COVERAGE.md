@@ -1,5 +1,10 @@
 # Can Simitall simulate Biodes' questions? (all 4,695 paper questions)
 
+> Biodes' test splits (test, test_draw4, test_heldout, test_newkinds) are
+> reported as counts only, with no ids or prompts in this repo; the locked
+> split test_draw5 is not read at all from 2026-11-25. The per-question files
+> keep train, dev and dev2 rows only. Earlier totals below include test_draw5.
+
 **First 1000:** Biodes `training/paper_questions/splits/test.jsonl` (764) + the
 first 236 of `dev.jsonl`, one question per paper, stratified by species x
 technique. **Second 1000** (`QUESTION_SET=second`): the rest of `dev.jsonl` (92),
@@ -55,7 +60,7 @@ yeast and no fallback; Biodes has no yeast amplicon study to learn from either).
 | + methylation | 711 | 741 |
 | + m6A | 751 | 751 |
 | + Biodes 0.5 (panel genotype, defaults, genetics unit) | 820 | 912 |
-| + Biodes b78d893 (pq_0180 fixed) | 821 | 912 |
+| + Biodes b78d893 (panel-count crash fixed) | 821 | 912 |
 | third set (train), same code | - | - | 2555 / 2695 |
 | + Biodes 0.5.1 (assay kinds, generations, survival) | 822 | 912 | 2553 |
 | Biodes d39936b (cell_type / fraction within units) | 822 | 912 | 2553 |
@@ -70,17 +75,17 @@ Of the 19 repeated, 8 get `randomized_complete_block_repeated`; 11 have no
 randomized factor (only the occasion, e.g. "the same 3 cows at 15 and 30
 days") and stay `rcbd` with each animal a block (a paired design). Time
 factors: 787, of which 199 carry `values` (107 evenly spaced, 92 not, e.g.
-6/12/24/48/72 h). Simitall spaces time effects by those values: pq_0178 gives
-0, 0.91, 2.73, 6.36, 10 for 6/12/24/48/72 h.
+6/12/24/48/72 h). Simitall spaces time effects by those values: 6/12/24/48/72 h
+gives 0, 0.91, 2.73, 6.36, 10.
 
 ## Biodes 7d98031, schema 0.5.2 (2026-11-24)
 
 Occasion factors in the reviewed specs: time 787, stage 230, age 126. None of
 the reviewed specs carry `repeated_factors`; read from the text it is set on
-17: `[time]` 10, `[age]` 4, `[stage]` 2, `[]` 1 (pq_0476); absent (asked) on
+17: `[time]` 10, `[age]` 4, `[stage]` 2, `[]` 1; absent (asked) on
 the rest, which simulate as randomized to units. All 17 simulate fully.
-pq_0527 is a false `[stage]`: "a mix of 5 embryos from the same sow" at
-E16/E18/E21/E28 is destructive (the sow is shared, not the embryos).
+One was a false `[stage]` (embryos "from the same sow": the sow is shared, not
+the embryos), fixed in Biodes 733a086.
 
 ## Biodes d39936b (2026-11-24)
 

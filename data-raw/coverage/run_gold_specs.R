@@ -13,7 +13,8 @@ FILL_DEFAULTS <- Sys.getenv("FILL_DEFAULTS", "1") == "1"
 QUESTIONS <- function() {
   all <- c(.split("test.jsonl"), .split("dev.jsonl"))
   if (!Sys.getenv("QUESTION_SET") %in% c("second", "third")) return(utils::head(all, 1000))
-  more <- c(all[-(1:1000)], unlist(lapply(c("dev2.jsonl", "test_draw4.jsonl", "test_draw5.jsonl", "test_heldout.jsonl", "test_newkinds.jsonl", "train.jsonl"), .split), recursive = FALSE))
+  # test_draw5 is Biodes' locked test split: never read
+  more <- c(all[-(1:1000)], unlist(lapply(c("dev2.jsonl", "test_draw4.jsonl", "test_heldout.jsonl", "test_newkinds.jsonl", "train.jsonl"), .split), recursive = FALSE))
   if (Sys.getenv("QUESTION_SET") == "third") return(more[-(1:1000)])   # the rest of train.jsonl (2,695)
   utils::head(more, 1000)
 }

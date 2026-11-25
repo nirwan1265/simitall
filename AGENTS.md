@@ -202,3 +202,12 @@ sweep and `simitall_from_question()` pass `allow_fallback` through (tests use
 follow the spec's `factors.levels`, reference first (`.suite_level_order()`),
 the same as Bioana. `R/suite_handoff.R` has a copy
 in Bioana (`R/read_design.R`): change both together.
+
+## Biodes test splits
+
+Biodes' paper questions come in splits. Example ids and prompts may only be
+shown or committed from `train`, `dev` and `dev2`. The test splits (`test`,
+`test_draw4`, `test_heldout`, `test_newkinds`) are reported as counts only.
+`test_draw5` is locked: never read it, never report it. The coverage scripts
+in `data-raw/coverage/` follow this; per-question files keep train/dev/dev2
+rows only.
