@@ -16,4 +16,4 @@ ranking	other	outcome	treatment_effects	True values of the entries (genetic valu
 survival	wald	outcome	treatment_effects	Log-normal accelerated failure time; each treatment effect e multiplies survival time by exp(time_sd * e / sd_outcome). Hazards are not proportional, so no single hazard ratio is planted.
 biomarker_classification	other	none		Registry simulated: false.
 coexpression_network	other	none		Registry simulated: false.
-regression	wald	outcome	regression_truth	Slopes of the covariate terms (per unit of the fitted, transformed covariate): the goal size (scale per_unit, or odds_ratio_per_unit for yes/no) or the treatment effect per SD of each covariate. Not in the Biodes registry yet (Bioana 0.13.0 contract).
+regression	wald	outcome	regression_truth	Slopes of the covariate terms (per unit of the fitted, transformed covariate): the goal size (scale per_unit, or odds_ratio_per_unit for yes/no) or the treatment effect per SD of each covariate. Biodes registry 0.4.0 (size_from per_unit_effect).
