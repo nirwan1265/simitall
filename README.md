@@ -1,318 +1,167 @@
 # SimItAll
 
-`SimItAll` (SIMulate IT ALL) is an R framework for building
-truth-aware genomics simulations, analyzing their outputs, and benchmarking
-results against the truth used to generate them. It connects genome and
-annotation generation, DNA read simulation and assembly, breeding populations,
-GWAS and genomic selection, bulk and single-cell RNA-seq/eQTLs, ChIP-seq, and
-reproducible reports through one R API. In short, simulate all seq analysis.
+**Simulate the experiment before you run it, with the answer key.**
 
-SimItAll keeps inputs, parameters, random seeds, provenance, and truth outputs
-together so that an entire study can be rerun and checked.
+You describe an experiment in plain words. [Biodes](https://github.com/nirwan1265/BioDesignGPT) turns that
+description into a real design: the treatments, the replicates and a randomized field or growth-chamber layout.
+**SimItAll** then creates realistic data for every plot, plant or seed in that layout. It plants effects that
+you choose, so you know exactly what the right answer is. [Bioana](https://github.com/nirwan1265/Bioana)
+analyses the data and is graded against that answer key.
 
-SimItAll is the **Simitall** head of the Biodes suite. Biodes
-([BioDesignGPT](https://github.com/nirwan1265/BioDesignGPT)) reads the
-experiment in plain language and writes a design folder (`study_spec.json`,
-`field_layout.csv`); SimItAll creates data for every unit of that layout:
+What this tells you before any money is spent:
+
+- Will this design find the effect? SimItAll runs the experiment hundreds of times to check the sample size.
+- Does the analysis find what was planted, and how many false hits does it make?
+- What will the data files look like, so the pipeline can be built and tested in advance?
+
+<p align="center">
+  <img src="docs/bio_suite.svg" alt="BioCore at the center, shared by four heads: Biodes designs the experiment, Simitall simulates the data, Bioana analyzes the results, Biopaint makes the figures" width="860">
+</p>
+
+| Step | Tool | What happens |
+|---|---|---|
+| 1. Question | you | *"RNA-seq of wild type and mutant Arabidopsis under drought and well-watered conditions, 4 plants each; which genes respond to drought differently in the mutant?"* |
+| 2. Design | [Biodes](https://github.com/nirwan1265/BioDesignGPT/tree/main/examples/showcase/02_rnaseq_drought) | 2 x 2 factorial, 16 plants in 4 blocks, model `y ~ water * genotype + block` |
+| 3. Data and answer key | **SimItAll** (this repository) | 5,000 genes x 16 samples of read counts; 500 genes planted with a mutant-specific drought response |
+| 4. Analysis, graded | [Bioana](https://github.com/nirwan1265/Bioana/tree/main/examples/showcase/02_rnaseq_drought) | DESeq2 with the design's model; how many of the 500 it found, and how many false hits |
+| 5. Figures | Biopaint | in progress |
+
+## See it run in R
+
+Three experiments, each starting from a question typed into Biodes. The code below is exactly what produced the
+files in [`examples/showcase/`](examples/showcase), and the `#>` lines are the real R output.
+
+### 1. RNA-seq: which genes respond to drought differently in the mutant?
 
 ```r
 library(simitall)
-simitall_routes("~/biodes_runs/my_design")        # what will be simulated, with which values
-simitall_from_biodes("~/biodes_runs/my_design",   # outcome + genetics + omics, with sim_truth.json
-  params = list(suite_genetics = list(heritability = 0.6, phenotype_model = "gxe")))
-bioana::bioana_analyze("~/biodes_runs/my_design")  # analyse every data set, scored against the truth
+dir <- "examples/showcase/02_rnaseq_drought"      # the folder Biodes wrote: design, layout, sample sheet
+simitall_from_biodes(dir, seed = 2026, params = list(simulate_rnaseq_experiment = list(n_genes = 5000)))
+#> simitall: simulated 16 units (continuous outcome), assays: rnaseq for design 'factorial' (y ~ treatment * treatment2 + block).
+
+counts <- read.delim(file.path(dir, "counts.tsv"))          # the data: reads per gene per plant
+counts[1:3, 1:5]
+#>      gene_id SF_factorial_0001 SF_factorial_0002 SF_factorial_0003 SF_factorial_0004
+#> 1 gene_00001              1543              2347              2675               862
+#> 2 gene_00002               455               374               425               316
+#> 3 gene_00003              1004               692               952               373
+
+goal <- read.delim(file.path(dir, "truth/rnaseq_goal.tsv")) # the answer key
+nrow(goal)                                                  # genes planted with a mutant-specific drought response
+#> [1] 500
+head(goal[, c("feature_id", "effect")], 3)                  # effect = difference of differences, log2
+#>   feature_id    effect
+#> 1 gene_04140  2.026252
+#> 2 gene_01685 -1.222648
+#> 3 gene_04684 -1.638699
 ```
 
-Each run also writes `data_manifest.json`, the list of data sets in the folder
-that [Bioana](https://github.com/nirwan1265/bioana) reads to pick the analysis
-for each one (`docs/BIODES_BRIDGE.md`).
+<p align="center"><img src="examples/showcase/02_rnaseq_drought/summary.png" alt="Drought response per gene in wild type vs mutant; planted interaction genes sit off the diagonal" width="460"></p>
 
-What runs is looked up from the spec's fields in
-[`inst/suite/simulators.tsv`](inst/suite/simulators.tsv) (outcome type,
-genetics from `assays`/`population.mating`, RNA-seq, eQTL, single-cell,
-ChIP-seq, ATAC-seq); parameters and their defaults are in
-[`inst/suite/simulator_parameters.tsv`](inst/suite/simulator_parameters.tsv).
-See [docs/BIODES_BRIDGE.md](docs/BIODES_BRIDGE.md).
+Each point is a gene: its drought response in wild type (x) and in the mutant (y). Genes on the dashed line
+respond the same way in both. The 500 planted genes (red) do not, and those are the genes Bioana has to find.
 
-**Start here:** [Showcase](examples/showcase) | [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Validation and benchmarks](docs/VALIDATION.md)
-
-## Showcase
-
-Three worked examples, from a question typed into Biodes to simulated data with its truth, then on to Bioana's
-analysis (same folder names in each repository):
-
-| Example | What was planted |
-|---|---|
-| [01 GWAS, sorghum panel](examples/showcase/01_gwas_sorghum) | 300 lines x 1,905 markers, 10 QTNs, heritability 0.6, alpha lattice |
-| [02 RNA-seq, genotype x drought](examples/showcase/02_rnaseq_drought) | 5,000 genes: drought-responsive genes and genes whose response differs in the mutant |
-| [03 Seed priming, time to germination](examples/showcase/03_germination_survival) | a delayed hazard ratio of 0.6, seed rot as a competing event, trays as clusters |
-
-## Install simitall
-
-SimItAll keeps R dependencies, Python modules, and external scientific
-software outside this repository. Select a profile that matches the work you
-need; `full` installs the supported union for the operating system.
-
-```bash
-git clone https://github.com/nirwan1265/simitall.git
-cd simitall
-
-# macOS or Linux
-bash install_simitall_macos.sh population
-
-# Windows PowerShell
-powershell -ExecutionPolicy Bypass -File install_simitall_windows.ps1 -Profile population
-```
-
-| Profile | Includes |
-| --- | --- |
-| `minimal` | R package and basic simulation dependencies |
-| `population` | SimuPOP, breeding, phenotype simulation, GWAS/genomic-selection R packages, TASSEL, and GEMMA where the platform supports it |
-| `omics` | Bulk RNA-seq, single-cell, ChIP-seq, and supporting R/Bioconductor packages |
-| `sequencing` | ART, PBSIM/PBSIM3, Badread, Unicycler, QUAST, and helper tools |
-| `full` | Every supported profile component for the current operating system |
-
-TASSEL is installed from Bioconda in the `population` profile. GEMMA is added
-on Linux and Intel macOS; native Windows and Apple Silicon users retain the
-portable R mixed-model workflow and receive a clear GEMMA fallback message.
-Use `check_simitall_dependencies("population")` after activation to inspect
-what is available.
-
-## What SimItAll Does
-
-| `SIMULATE` | `ANALYZE` |
-| --- | --- |
-| Create genomes, annotations, reads, founder panels, pedigrees, populations, phenotypes, and multi-omics truth, directly or for a Biodes design. | Moved to [Bioana](https://github.com/nirwan1265/bioana): every analysis below (assembly, GWAS, eQTL, genomic selection, differential tests) and benchmarks against the simulated truth. |
-
-## Simulate, Analyze, and Validate
-
-SimItAll and Bioana support the complete study loop: SimItAll creates data with
-known truth; [Bioana](https://github.com/nirwan1265/bioana) runs the analysis
-and checks the result against the truth. The "Analyses and outputs" column
-below is Bioana's (`bioana::` functions); install it with
-`remotes::install_github("nirwan1265/bioana")`.
-
-| Study area | Simulations | Analyses and outputs |
-| --- | --- | --- |
-| **Genomes and populations** | Genomes, annotations, founder panels, pedigrees, designed crosses, NAM/MAGIC/RIL/NIL/DH populations, ancestry, recombination, and structural truth | Segregation, ancestry, breakpoint, LD, relatedness, and breeding-composition summaries |
-| **Traits and association** | Quantitative, binary, count, ordinal, family-effect, and GxE traits with causal truth | GWAS, QTL/causal-truth recovery, calibration, kinship/PC adjustment, and genomic prediction/selection |
-| **Bulk and single-cell transcriptomics** | Bulk RNA-seq, eQTLs, ASE, batches, cell types, pseudotime, dropout, ambient RNA, doublets, and cell-type eQTLs | Differential expression, donor-aware pseudobulk, eQTL benchmarking, clustering, PCA, volcano, and QC figures |
-| **Chromatin** | ChIP-seq and ATAC-seq reads, peaks, matched controls, conditions, and differential-accessibility truth | Peak calling, differential peaks, enrichment/QC, and precision/recall/F1 against retained truth |
-| **Gene and functional annotation** | Compact assembly-aware gene-coordinate catalogues and annotation-compatible synthetic features | Interval-to-gene overlap, local GFF3/GTF parsing, Gene Ontology GAF import, evidence-preserving gene-to-GO joins, and GO-term summaries |
-| **Sequencing and assembly** | Illumina short reads, PacBio HiFi/CLR reads, Nanopore reads, hybrid read sets, coverage grids, and synthetic references | Assembly with Unicycler, QUAST comparison, coverage/read-length QC, and truth-aware assembly metrics |
-
-### Gene Coordinates and GO Annotations
-
-The gene-coordinate catalogues (Arabidopsis, barley, rice, wheat, maize, fly)
-and the GO annotation functions moved to Bioana with the rest of the analysis:
+### 2. GWAS: which markers control plant height in 300 sorghum lines?
 
 ```r
-genes <- bioana::read_gene_coordinates("Arabidopsis_thaliana")
-go <- bioana::read_go_gaf("resources/go_annotations/ARATH-mod.gaf.gz")
-gene_go <- bioana::join_gene_go(genes, go)
+dir <- "examples/showcase/01_gwas_sorghum"                  # alpha lattice, 600 plots, 2 replicates
+simitall_from_biodes(dir, seed = 2026, params = list(suite_genetics = list(heritability = 0.6)))
+#> simitall: simulated 600 units (continuous outcome), 300 lines x 1905 markers (diversity_panel) for design 'alpha' (y ~ treatment + rep + (1 | rep:block)).
+
+pheno <- read.delim(file.path(dir, "sample_metadata_template.tsv"))   # plant height per plot
+head(pheno[, c("plot", "rep", "block", "genotype", "primary_outcome")], 4)
+#>   plot rep block     genotype primary_outcome
+#> 1  101   1     1 genotype_258        134.3664
+#> 2  102   1     1 genotype_254        136.7569
+#> 3  103   1     1  genotype_48        119.0678
+#> 4  104   1     1  genotype_93        104.9421
+
+qtn <- read.delim(file.path(dir, "genetic_truth/qtn_truth.tsv"))      # the answer key: 10 causal markers
+head(qtn[order(-abs(qtn$effect)), c("marker_id", "effect", "maf")], 4)
+#>     marker_id   effect       maf
+#> 1  chr3_48370 9.806724 0.1766667
+#> 2 chr2_724691 8.826052 0.3300000
+#> 3  chr3_46778 7.943447 0.2466667
+#> 4 chr4_552758 7.149102 0.4833333
 ```
 
-### Real-Data Import Catalogue
+<p align="center"><img src="examples/showcase/01_gwas_sorghum/summary.png" alt="The 10 planted QTNs along the genome" width="760"></p>
 
-SimItAll also maintains a machine-readable catalogue of public, real-data
-examples for bulk RNA-seq, ChIP-seq, GWAS, and single-cell RNA-seq. It records
-download sources, expected inputs, companion gene-annotation requirements, and
-import/QC checks without bundling large public datasets in the package.
+The genotypes (`genotypes.vcf.gz`) have population structure like a real diversity panel. The 10 planted QTNs
+explain 60% of the variation in plant height, and each has a known effect in cm per allele.
 
-Use `inst/extdata/real_data_catalog.json` to select a documented
-example and keep downloaded files outside Git. Each local download folder
-should include a completed `manifest.json` based on
-`data-raw/real_data_manifests/manifest.template.json`; it records provenance,
-reference assembly, annotation release, gene-ID namespace, and sample-ID
-mappings.
+### 3. Survival: does seed priming change time to germination?
 
-A JSON manifest points to annotation resources; it is not a substitute for a
-GFF3/GTF. Before reporting gene, peak, or locus annotations, SimItAll must
-confirm compatible assembly, chromosome labels, coordinates, and gene IDs. See
-[real-data import examples](docs/REAL_DATA.md) for the initial public datasets
-and download instructions.
+```r
+dir <- "examples/showcase/03_germination_survival"          # 2 lines x primed/not, 12 trays, 10 seeds per cell
+simitall_from_biodes(dir, seed = 2026, interaction_effect = 0)
+#> simitall: simulated 48 units x 10 subsamples (survival outcome) for design 'factorial' (y ~ treatment * treatment2 + (1 | block)).
 
-### Sequencing Platforms
+seeds <- read.delim(file.path(dir, "sample_metadata_template.tsv"))   # one row per seed
+head(seeds[, c("plot", "genotype", "treatment", "subsample", "primary_outcome", "event")], 4)
+#>   plot   genotype  treatment subsample primary_outcome event
+#> 1  101 genotype_1 not primed         1              18     1
+#> 2  101 genotype_1 not primed         2              14     1
+#> 3  101 genotype_1 not primed         3              18     1
+#> 4  101 genotype_1 not primed         4               6     1
+table(event = seeds$event)            # 1 = germinated, 2 = rotted first, 0 = not yet by day 21
+#> event
+#>   0   1   2
+#> 106 260 114
 
-Use `simitall_sequencing_profiles()` to see the validated platform labels:
-
-- **Illumina:** `MiSeq`, `MiSeq i100`, `NextSeq 1000/2000`, and `NovaSeq X`.
-- **PacBio:** `Sequel IIe HiFi`, `Revio HiFi`, and `Vega HiFi`.
-- **Oxford Nanopore:** Nanopore simulation through Badread, with configurable
-  error/length models for MinION-, GridION-, or PromethION-style study designs.
-
-Platform labels select transparent simulator settings and defaults. They do not
-claim to reproduce every current instrument chemistry; empirical error models
-should be supplied when instrument-specific accuracy matters.
-
-### Validation and Benchmarking
-
-Validation lives in **[docs/VALIDATION.md](docs/VALIDATION.md)**, not on this
-project overview page. It contains the reproducible figures, fixed-seed
-benchmarks, source-data expectations, and interpretation boundaries.
-
-Each supported workflow is also described by a four-part validation contract:
-
-1. Simulation truth retained by the run.
-2. Required result files.
-3. Required figures.
-4. Pass criteria for the programmed mechanism.
-
-See [the validation-contract README](inst/agent/knowledge/validation_contracts/README.md)
-for the contract rules and [docs/VALIDATION.md](docs/VALIDATION.md) for the
-human-readable demonstrations.
-
-## Capability Details
-
-- Random genomes or reference-derived genomes with tandem and motif repeats
-- Uniform, Poisson, or fixed repeat spacing with optional GC matching
-- Haploid through polyploid genome copies with SNP and indel divergence
-- Genes, CDS features, operons, promoters, TSSs, terminators, rRNA/tRNA
-  clusters, riboswitches, CRISPR arrays, plasmids, and regulatory elements
-- GWAS cohorts with LD blocks, recombination maps, subpopulations, and
-  quantitative or binary phenotypes
-- Mixed-model GWAS with kinship, principal components, fixed effects,
-  Manhattan/QQ plots, and causal-variant recovery benchmarks (in Bioana)
-- GBLUP, RR-BLUP, Bayesian, and random-forest genomic prediction with
-  leakage-aware cross-validation, parent selection, and crossing plans (in Bioana)
-- Advanced quantitative and binary phenotype architectures through
-  `simplePHENOTYPES`
-- Ordinal and count traits plus shared breeding-family effects through
-  `simstudy`
-- Direct, maternal, and paternal pedigree effects through `pedtricks`
-- F1, F2, backcross, selfing, RIL, NIL, doubled-haploid, NAM, and MAGIC
-  populations
-- SimuPOP mating schemes through `reticulate`, with VCF-compatible genotype
-  output and sample metadata
-- Illumina reads with ART
-- PacBio CLR and HiFi/CCS reads with PBSIM/PBSIM3
-- Oxford Nanopore reads with Badread
-- Hybrid read grids; assembly with Unicycler and evaluation with QUAST (in Bioana)
-- Standalone bulk RNA-seq experiments with technical, biological, or mixed
-  replicates, even when no genotype data are available
-- RNA-seq from the same GWAS individuals, with cis/trans eQTLs, condition and
-  batch effects, genotype-by-condition interactions, latent confounders, and
-  allele-specific expression
-- eQTL association testing with causal-truth precision and recall summaries (in Bioana)
-- Standalone single-cell RNA-seq experiments with technical, biological, or
-  mixed replicates
-- Single-cell RNA-seq from GWAS donors with cell types, marker programs,
-  pseudotime, cell-type-specific eQTLs, dropout, ambient RNA, and doublets
-- Donor-by-cell-type pseudobulk (cell-type eQTL benchmarking in Bioana) without
-  treating cells as independent biological replicates
-- Annotation-aware TF, histone-mark, and nucleosome ChIP-seq with matched
-  inputs, differential binding, FASTQ reads, peak truth, and publication plots
-
-Truth outputs include FASTA, VCF, GFF3, BED, TSV, and JSON files. Functions
-write results to user-selected output paths; generated analyses are not stored
-inside the package source tree.
-
-## Detailed tutorial
-
-The full, step-by-step simulation guide is intentionally kept off this front
-page so the project overview stays easy to scan. It includes runnable R
-examples for genome and annotation generation, GWAS and traits, multi-chromosome
-breeding, sequencing and assembly, bulk RNA-seq/eQTLs, single-cell RNA-seq, and
-ChIP-seq.
-
-**[Open the detailed simulation tutorial](docs/TUTORIAL.md)**
-
-For generated figures, fixed-seed demonstrations, validation summaries, and
-reproduction commands, see **[Results and Validation](docs/VALIDATION.md)**.
-
-## Package layout
-
-```text
-simitall/
-├── analysis/           paper-figure runners and generated output folders
-├── docs/               detailed tutorial and validation documentation
-├── R/                  package functions and internal simulation engines
-├── man/                generated R help pages
-├── inst/extdata/       lightweight manifests and demo files
-├── tests/testthat/     automated tests
-├── DESCRIPTION         package metadata and dependencies
-├── NAMESPACE           generated exports
-├── README.md           project overview and installation
-├── docs/TUTORIAL.md    detailed simulation workflows
-└── docs/VALIDATION.md  reproducible figures and validation notes
+truth <- jsonlite::read_json(file.path(dir, "sim_truth.json"))      # the answer key
+truth$outcome_model$hazard_ratio      # priming effect (hazard ratio), as stated in the question
+#> [1] 0.6
+round(truth$outcome_model$change_time, 1)   # ...which starts on day 6 (a delayed effect)
+#> [1] 6
 ```
 
-## Reproducibility and attribution
+<p align="center"><img src="examples/showcase/03_germination_survival/summary.png" alt="Germination curves for the four groups" width="560"></p>
 
-Set `seed` in each simulator and record tool versions for publication. The
-package orchestrates external software; publications should cite both
-`simitall` and the underlying tools used in an analysis, including ART, PBSIM
-or PBSIM3, Badread, Unicycler, QUAST, SimuPOP, and simplePHENOTYPES as
-applicable. Analyses that generate RNA-seq FASTQ files should also cite
-`Rsubread`/`simReads`. Single-cell analyses using `backend = "splatter"`
-should cite Splatter in addition to `simitall`. ChIP-seq analyses using
-`backend = "chipsim"` should cite ChIPsim.
+Each seed has its own germination day, scored every 2 days up to day 21. Seed rot competes with germination,
+and trays and tray cells share random effects. The priming effect only starts after day 6.
 
-## Future work
+**Every folder has a README** that lists the question, what was planted, the assumptions made and the files:
+[01 GWAS](examples/showcase/01_gwas_sorghum) | [02 RNA-seq](examples/showcase/02_rnaseq_drought) |
+[03 survival](examples/showcase/03_germination_survival). The same folder names continue in
+[Biodes](https://github.com/nirwan1265/BioDesignGPT/tree/main/examples/showcase) (the design) and
+[Bioana](https://github.com/nirwan1265/Bioana/tree/main/examples/showcase) (the analysis, scored against the answer key).
 
-Planned, roughly in order (gains are from the 4,695-question check in
-`docs/SIMULATION_COVERAGE.md`):
+## What SimItAll can simulate
 
-**Better templates (real data to learn from)**
+| Data | Examples |
+|---|---|
+| Field and greenhouse traits | continuous, counts, yes/no, scores, classes, segregation ratios, time-to-event with censoring and competing events, repeated measures |
+| Genetics | diversity panels, crosses (RILs, backcrosses), QTNs with additive, dominance, epistatic and genotype x environment effects, VCF genotypes |
+| Omics | bulk and single-cell RNA-seq, small RNA, eQTL, ChIP-seq, ATAC-seq, DNA methylation, m6A, microbiome amplicons |
+| Designs | anything Biodes writes: CRD, RCBD, alpha lattice, split plots, factorials, repeated measures, covariates (regression, ANCOVA) |
 
-- Plant WGBS template: plants now use the native CG/CHG/CHH engine. Two to four
-  Arabidopsis WGBS samples with all three contexts (e.g. GEO GSE43857, per-site
-  methylated/total read counts) would let plant methylation learn from real
-  data, as mouse does. A maize or sorghum methylome would be better still.
-- Human WGBS template: human questions now borrow the mouse ENCODE template.
-- Rice, potato and soybean miRNA libraries with sample labels (PmiREN) to add
-  to the plant small RNA-seq templates.
+Every run writes `sim_truth.json` (all planted effects and the assumptions made, in plain words) and
+`data_manifest.json` (which file holds which data, read by Bioana).
 
-**New simulators** (questions fully covered once added, over all 4,695 Biodes questions)
+## Check a sample size by simulation
 
-1. Metabolomics / lipidomics (+55): log-normal feature matrix with known changed
-   features. Easy.
-2. Genetics with no lines (+45; BSA / pool-seq bulks, population resequencing):
-   Biodes 0.5 writes `spec$genetics` (`unit` = line / bulk / population,
-   `individuals_per_bulk`, `bulk_fraction`, `generations`). Bulks: allele
-   frequencies in the top and bottom phenotype tails; populations: drift and
-   selection over generations. Today the rest of such a design is simulated and
-   genetics is listed as `needs_genotype_factor`.
-3. Ribo-seq (+42): RNA and ribosome-footprint counts per gene with
-   translational-efficiency truth.
-4. scATAC-seq (+41): ATAC peaks x cells (combine the ATAC and scRNA code).
-5. Hi-C (+38): contact matrices with planted loop and TAD changes.
-6. MeDIP (+31): enrichment counts per window. Quick: reuse `simulate_merip()`
-   (IP over input) with methylated DNA in place of m6A.
-7. Degradome (+22): cleavage-site counts (mostly asked with small RNA).
-8. Spatial (+19), MNase-seq (+16), RIP/CLIP (+14, like `simulate_merip()`).
-9. Data that runs today as the wrong type: amplicon genotyping and immune
-   repertoires (now routed to the 16S template), CRISPR / Tn-seq screens (guide
-   counts; `crispr` is only a treatment now), isoform-level truth for long-read
-   RNA, proteomics, STARR-seq / MPRA reporter counts.
-10. DNase-seq / FAIRE-seq (route to the ATAC simulator) and DAP-seq / SELEX (to
-    the ChIP simulator) once Biodes writes those assay values.
-11. Survival outcomes (lifespan questions), and compositional outcomes.
-12. m6A: learn peak methylation levels and IP enrichment from a real MeRIP-seq
-    dataset (now: Beta-distributed levels, 20x enrichment).
-13. A microbiome or amplicon fallback for organisms with no template (yeast
-    amplicon question pq_0105).
+```r
+dir <- "examples/showcase/02_rnaseq_drought"
+simitall_power_check(dir, n_sim = 100)            # share of simulated experiments where Bioana finds the goal
+simitall_power_sweep(dir, reps = c(3, 4, 6, 8))   # the same across replicate numbers
+```
 
-**Design questions**
+## Install
 
-- Power for more assays: the reps sweep reports power for the primary outcome
-  and for count assays (share of 2-fold genes found); methylation (DMRs), m6A
-  (changed peaks), ChIP/ATAC (differential peaks) need their own power measure.
-- Specs with no factor at all still stop before simulation (Biodes asks "what
-  do you compare or map?"). Missing level counts use Biodes' flagged defaults
-  (`layout_defaults` in `simitall_from_question()`).
+```r
+# install.packages("remotes")
+remotes::install_github("nirwan1265/simitall")
+remotes::install_github("nirwan1265/BioDesignGPT")   # Biodes, to write designs
+remotes::install_github("nirwan1265/Bioana")         # to analyse and score
+```
 
-**Read level**
+To rebuild the three examples: `Rscript examples/showcase/make_showcase.R` from the repository root.
 
-- Read-level engines (FASTQ/BAM) for the count-level simulators that do not
-  have one yet (methylation, small RNA, microbiome).
+## More
 
-## Status
+- **[Detailed README](docs/README_DETAILED.md):** full install profiles, every simulator, the R API, validation
+  and benchmarks, future work.
+- [How SimItAll reads a Biodes design](docs/BIODES_BRIDGE.md) | [Coverage over 4,695 published study designs](docs/SIMULATION_COVERAGE.md) | [Tutorial](docs/TUTORIAL.md)
 
-`simitall` is under active development. Simulated annotations and regulatory
-elements are benchmarking truth, not biological claims. Large-genome and
-high-coverage runs can require substantial memory, storage, and compute time.
-
-## License
-
-MIT
+SimItAll is part of the Biodes suite by Nirwan Tandukar (NC State University). MIT licence.
