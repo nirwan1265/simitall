@@ -141,6 +141,7 @@ and `sim_truth.json` with `routes`, `genetics`, `assays`, `not_simulated`.
 | `primary_outcome.type = nominal`, `.categories`; `analysis.expected_ratio` | classes from a multinomial logit, or the segregation ratio (`segregation_distortion`) | 3 equal classes |
 | `secondary_outcomes`, `analysis.correlation` | extra trait columns with a within-design residual correlation (`trait_residual_cor`) | none |
 | `analysis.agreement` (`raters`, `scale`, `levels`) | one column per rater: true value + bias + noise, or a misclassification matrix | none |
+| `analysis.covariates` [{term, name, column, unit, transform, mean, sd}], terms `covariate`... | covariate columns per unit (`suite_covariates`), slopes planted; truth `goal_truth.true_slopes` / `true_log_odds_ratios`, `regression_truth` | mean 50, SD 10, correlation 0.3; slope = treatment effect per SD |
 | `goal_effect[goal].scale` | identity: the size is on the outcome; log2: it sizes the goal's count features | outcome |
 | `goal_effect.time_course.group`, `.group_factor` | with `scope = within_group`, the one level that changes over time | the non-reference levels |
 

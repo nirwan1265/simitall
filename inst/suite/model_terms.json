@@ -177,6 +177,34 @@
       "columns": [
         "tray"
       ]
+    },
+    "covariate": {
+      "role": "covariate",
+      "from_covariate": 1,
+      "columns": [
+        "covariate"
+      ]
+    },
+    "covariate2": {
+      "role": "covariate",
+      "from_covariate": 2,
+      "columns": [
+        "covariate2"
+      ]
+    },
+    "covariate3": {
+      "role": "covariate",
+      "from_covariate": 3,
+      "columns": [
+        "covariate3"
+      ]
+    },
+    "covariate4": {
+      "role": "covariate",
+      "from_covariate": 4,
+      "columns": [
+        "covariate4"
+      ]
     }
   },
   "combined_level_separator": ":",
@@ -194,5 +222,6 @@
     "period",
     "sequence",
     "check"
-  ]
+  ],
+  "_about_covariate": "covariate, covariate2, ...: measured numeric predictors (regression, ANCOVA), one value per unit in sample_metadata_template.tsv, not layout columns. Column: analysis.terms.<term>, else analysis.covariates[n].column (n = from_covariate, or the entry whose term matches), else the term's name. Always numeric; analysis.covariates[].transform (log, log10, log2, sqrt) is applied before fitting. Simitall simulates their values."
 }

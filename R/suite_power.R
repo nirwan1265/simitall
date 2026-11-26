@@ -72,6 +72,12 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     }
     base <- file.path(root, paste0("reps_", r))
     studyforge::write_design_package(book, s, base)
+    # only design.reps changes: keep the folder's own analysis block (model, covariates, goals) as given
+    w <- jsonlite::read_json(file.path(base, "study_spec.json"))
+    if (!identical(w$analysis, spec$analysis)) {
+      w$analysis <- spec$analysis
+      jsonlite::write_json(w, file.path(base, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null", digits = NA)
+    }
     sim <- file.path(base, "sim")
     dir.create(sim)
     file.copy(file.path(base, c("study_spec.json", "field_layout.csv")), sim)
@@ -132,11 +138,12 @@ simitall_power_sweep <- function(x, reps = NULL, n_sim = NULL, alpha = NULL, eff
     # Bioana's own goal test, when it ran on the outcome, stands for the goal; the ANOVA rows are then context
     goal_tested <- any(grepl("(outcome,", names(found_goal), fixed = TRUE))
     is_goal <- function(term) !goal_tested && any(vapply(goal_sets, function(z) identical(z, sort(all.vars(str2lang(term)))), logical(1)))
-    p <- .suite_parse_model(model, s, book)
+    p <- .suite_parse_model(model, s, book, meta = tryCatch(utils::read.delim(file.path(sim, "sample_metadata_template.tsv"), check.names = FALSE), error = function(e) NULL))
     for (term in names(sig)) {
       vars <- all.vars(str2lang(term))
-      role <- if (all(p$role[vars] == "treatment")) "treatment" else "nuisance"
-      eff <- if (role != "treatment") NA else if (grepl(":", term)) isTRUE(abs(as.numeric(truth$interaction_effects[[term]]$size %||% 0)) > 0) else
+      role <- if (all(p$role[vars] == "treatment")) "treatment" else if (any(p$role[vars] == "covariate")) "covariate" else "nuisance"
+      eff <- if (role == "covariate") term %in% names(truth$regression_truth$true_slopes %||% truth$regression_truth$true_log_odds_ratios)
+             else if (role != "treatment") NA else if (grepl(":", term)) isTRUE(abs(as.numeric(truth$interaction_effects[[term]]$size %||% 0)) > 0) else
         term %in% names(truth$treatment_effects) || term %in% names(truth$numeric_effects)
       rows[[length(rows) + 1]] <- data.frame(
         reps = r, n_units = n_units, term = term,

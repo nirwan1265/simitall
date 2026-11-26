@@ -22,9 +22,11 @@ test_that("goals.tsv covers every goal in the Biodes registry", {
   skip_if_not_installed("studyforge")
   reg <- studyforge::load_registry("analysis_goals")$goals
   tab <- simitall:::.suite_tsv("goals")
-  expect_setequal(tab$goal, vapply(reg, `[[`, "", "id"))
+  # every registry goal is covered; Simitall may plant goals Biodes has not added yet (regression, Bioana 0.13.0)
+  expect_true(all(vapply(reg, `[[`, "", "id") %in% tab$goal))
   tests <- stats::setNames(vapply(reg, `[[`, "", "test"), vapply(reg, `[[`, "", "id"))
-  expect_equal(tab$test, unname(tests[tab$goal]))
+  in_reg <- tab$goal %in% names(tests)
+  expect_equal(tab$test[in_reg], unname(tests[tab$goal[in_reg]]))
   off <- vapply(Filter(function(g) isFALSE(g$simulated), reg), `[[`, "", "id")
   expect_true(all(tab$planted[tab$goal %in% off] == "none"))
 })

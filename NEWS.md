@@ -1,5 +1,26 @@
 # simitall (development)
 
+- Covariates and regression (Bioana 0.13.0 docs/contracts/regression.md):
+  - The design reader takes Bioana 6a87784's edit: terms with role
+    `covariate` (`covariate`..., or listed in `analysis.covariates`) are
+    numeric, looked up in the sample metadata, with their transform;
+    `model_terms.json` gains `covariate`-`covariate4`. Templates without the
+    covariate columns get empty ones (Simitall fills them).
+  - Covariates are simulated per unit (`suite_covariates`): normal with
+    `analysis.covariates[].mean`/`sd` (default 50/10), log-normal when the
+    transform is a log, correlated `covariate_cor` (0.3).
+  - Outcome: slope x covariate (per unit of the fitted, transformed value):
+    the regression goal's size, else the treatment effect per covariate SD;
+    yes/no outcomes with covariates are logistic (log OR per unit).
+    Covariate interactions are centred products.
+  - Planted problems for the diagnostics: `heteroscedasticity`, `curvature`,
+    `outliers` (`outlier_size`).
+  - Truth: `goal_truth.true_slopes` or `true_log_odds_ratios` (coefficients
+    of the uncentred model Bioana fits), `regression_truth` (r_squared,
+    residual_sd, covariate_cor, planted_outliers, heteroscedasticity).
+  - `simitall_power_sweep()` keeps the folder's analysis block when it
+    rebuilds each layout (only `design.reps` changes), so a hand-made or
+    covariate model survives; covariate terms are their own role.
 - Each `simitall_from_biodes()` run now uses R's default generator
   (Mersenne-Twister, Inversion, Rejection) and gives the caller's generator
   back. Biodes' `layout_from_spec()` (agricolae designs) leaves the session

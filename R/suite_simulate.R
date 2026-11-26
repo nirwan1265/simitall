@@ -129,6 +129,10 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       rownames(meta) <- NULL
     } else stop("sample_metadata_template.tsv and field_layout.csv have different row counts.", call. = FALSE)
   }
+  # covariates (role covariate: measured per unit, sample metadata columns) are simulated before the frame reads them
+  cargs <- .suite_args("suite_covariates", spec, params)$args
+  cvs <- .suite_simulate_covariates(spec, p, meta, cargs, note)
+  meta <- cvs$meta
   frame <- .suite_frame(meta, p)
   # factors in the layout that the model does not hold (Biodes analysis.terms.uncovered_factors):
   # tissue measured within each unit, a third factor, ...
@@ -258,6 +262,8 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   # interactions among treatment factors: linear-by-linear, the first factor's
   # first-to-last effect changes by `inter` from the second factor's first to last level
   interactions <- p$fixed_labels[grepl(":", p$fixed_labels)]
+  # terms with a covariate are planted by .suite_covariate_effects (centred products)
+  interactions <- Filter(function(l) !any(all.vars(str2lang(l)) %in% .suite_covariate_terms(p)), interactions)
   inter_default <- list(value = d$interaction_effect_ratio$value * eff, note = d$interaction_effect_ratio$note)
   is_gxe <- function(term) !is.null(genetics) && geno_term %in% all.vars(str2lang(term))
   treat_inter <- Filter(function(l) !is_gxe(l) && all(all.vars(str2lang(l)) %in% names(p$role)[p$role == "treatment"]), interactions)
@@ -305,6 +311,12 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     cells <- tapply(add, key, `[`, 1)
     interaction_effects[[term]] <- list(size = size, pattern = "linear_by_linear", cells = as.list(cells))
   }
+  # covariates: slope x (fitted value - mean); yes/no outcomes with covariates are logistic (log OR per unit)
+  oargs0 <- .suite_args("suite_outcome", spec, params)$args
+  logit_coef <- if (identical(out_route$route, "outcome_binary") && eff != 0) log(as.numeric(oargs0$odds_ratio %||% 3)) / (eff / rsd)
+  cov_eff <- .suite_covariate_effects(y, frame, p, spec, cargs, eff, rsd, cvs$info, note,
+                                      outcome_type = if (identical(out_route$route, "outcome_binary")) "binary" else "continuous", logit_coef = logit_coef)
+  y <- cov_eff$y
   y_design <- y   # intercept + treatment main effects + interactions (+ uncovered below): the design part, no blocks or random terms
   # fixed nuisance terms (block, rep): random draws, fitted as fixed effects
   block_vars <- intersect(names(p$role)[p$role == "block"], p$fixed_labels)
@@ -357,6 +369,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   # repeated measures: correlation among one unit's occasions (suite_outcome within_subject; suite_within.R)
   ws <- .suite_within_series(meta, names(h$layout), repeated, spec)
   wsub <- .suite_within_subject(ws, n, rsd, .suite_args("suite_outcome", spec, params)$args)
+  # planted problems for regression diagnostics (heteroscedastic noise over the first covariate, outliers)
+  cnoise <- .suite_covariate_noise(wsub$eps, cov_eff$x, cargs, rsd, note)
+  wsub$eps <- cnoise$eps
   if (!is.null(wsub$truth$note) && !identical(wsub$truth$structure, "random_intercept")) note(wsub$truth$note)
   y <- y + wsub$add
   y_mean <- y
@@ -377,6 +392,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     if (!is.null(tmpl)) {
       idx <- tmpl_unit
       out <- tmpl
+      for (cc in vapply(cvs$info, `[[`, "", "column")) out[[cc]] <- meta[[cc]][idx]
       out$unit_id <- meta$sample_id[idx]
     } else {
       idx <- rep(seq_len(n), each = n_sub)
@@ -399,7 +415,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   # binary: logit with the unit's random effects when the design measures units more than once (paired yes/no),
   # else the liability threshold; suite_outcome binary_model sets it
   bin_model <- oargs$binary_model %||% "auto"
-  if (identical(bin_model, "auto")) bin_model <- if (length(repeated) || isTRUE(spec$analysis$terms$paired)) "logit" else "liability_threshold"
+  if (identical(bin_model, "auto")) bin_model <- if (length(repeated) || isTRUE(spec$analysis$terms$paired) || length(.suite_covariate_terms(p))) "logit" else "liability_threshold"
   fam <- if (identical(out_route$route, "outcome_survival")) {
     .suite_survival(oargs, spec, y_obs, y_design[idx], y_mean[idx], mu, rsd, eff, grp,
                     treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note,
@@ -443,6 +459,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     block_effects = block_effects, random_sd = random_sd,
     uncovered_effects = if (length(uncovered_effects)) uncovered_effects,
     within_subject = wsub$truth,
+    regression_truth = if (length(cov_eff$truth)) c(cov_eff$truth, list(
+      residual_sd = rsd, covariate_cor = cvs$cor,
+      r_squared = if (!identical(out_route$route, "outcome_binary")) stats::var(y_design) / (stats::var(y_design) + rsd^2)), cnoise$truth),
     secondary_traits = sec$truth, agreement = rat$truth,
     within_unit_sd = if (!is.null(unit_key)) list(sd = unit_sd, note = "rows of one unit (one per level of the within-unit factor) share this effect; they are not independent units",
                                                   unit_columns = setdiff(intersect(names(h$layout), names(meta)), c(uncovered, repeated))),

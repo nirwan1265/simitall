@@ -218,6 +218,17 @@
       status <- "not_planted"; ex$reason <- "primary_outcome.type is not survival"
     }
     ex$model_terms <- as.list(tv)
+  } else if (g$goal == "regression") {
+    rt <- truth$regression_truth
+    if (is.null(rt)) { status <- "not_planted"; ex$reason <- "the model has no covariate terms" }
+    else {
+      terms <- if (length(g$vars)) g$vars else names(rt$covariates)
+      if (!is.null(rt$true_slopes)) ex$true_slopes <- rt$true_slopes[intersect(names(rt$true_slopes), c(terms, names(rt$interactions)))]
+      if (!is.null(rt$true_log_odds_ratios)) ex$true_log_odds_ratios <- rt$true_log_odds_ratios[intersect(names(rt$true_log_odds_ratios), c(terms, names(rt$interactions)))]
+      ex$effect_scale <- rt$slope_scale
+      ex$model_terms <- as.list(terms)
+      ex$true_effect <- unname(unlist(ex$true_slopes %||% ex$true_log_odds_ratios)[1])
+    }
   } else if (g$goal == "variance_components") {
     ex$true_effect <- list(residual_sd = truth$residual_sd, random_sd = truth$random_sd,
                            within_unit_sd = truth$within_unit_sd$sd, heritability = truth$genetics$heritability)

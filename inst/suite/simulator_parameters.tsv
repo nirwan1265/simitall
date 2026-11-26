@@ -124,3 +124,11 @@ simulate_merip	dispersion	0.05	numeric		negative binomial dispersion of both lib
 suite_goal_features	fraction	0.1	numeric		analysis goal (interaction, time_course, trend) on count assays: share of features (genes, taxa, miRNAs) that follow the goal's pattern	
 suite_goal_features	log2fc	1	numeric		goal features: mean absolute log2 fold change of the goal's effect (difference of differences, largest change over time, or change over the numeric factor's range)	What fold change do you expect for the genes that follow this pattern?
 suite_goal_features	log2fc_sd	0.5	numeric		goal features: SD of the absolute log2 fold change (half-normal added to log2fc)	
+suite_covariates	covariate_mean	50	numeric		covariate mean when analysis.covariates[].mean is not given	
+suite_covariates	covariate_sd	10	numeric		covariate SD when analysis.covariates[].sd is not given	
+suite_covariates	covariate_cor	0.3	numeric		correlation between covariates (so VIF has something to check)	Are the measured predictors correlated with each other?
+suite_covariates	interaction_slope_ratio	0.5	numeric		covariate x covariate or treatment x covariate terms: product coefficient as a share of the first covariate's slope (per SD of the second)	
+suite_covariates	heteroscedasticity	0	numeric		planted problem: residual SD x exp(strength x standardized first covariate); 0 = constant variance	
+suite_covariates	curvature	0	numeric		planted problem: quadratic bend of the first covariate's effect (share of its slope per SD); 0 = straight	
+suite_covariates	outliers	0	integer		planted problem: number of units given a residual shift of outlier_size residual SDs	
+suite_covariates	outlier_size	5	numeric		planted outliers: shift in residual SDs	
