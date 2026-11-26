@@ -6,7 +6,10 @@
   `slope_sd_ratio` x residual SD over the full range). Default `none` keeps
   the shared unit effect only (compound symmetry), with the same random draws
   as before. `sim_truth.json` `within_subject` records the structure, rho or
-  slope SD, the occasion column and the unit columns.
+  slope SD, the occasion column and the unit columns. Layout columns unique on
+  every row (a `sample_id`) are ignored when finding the units; when `ar1` or
+  `random_slope` cannot apply (no repeated factor, no unit seen twice) it
+  warns and records `{"structure": "independent", "requested", "reason"}`.
 - Hidden factors in bulk RNA-seq are off by default in the suite
   (`simulate_rnaseq_experiment` `n_latent = 0`): with random scores per unit,
   two hidden factors in a 16-sample design could line up with the treatment

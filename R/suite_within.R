@@ -7,12 +7,16 @@
 # The repeated series: the occasion column (analysis.terms.time, else the first repeated factor) and, per row,
 # the unit it belongs to (all layout columns but the occasion). NULL when no unit is measured more than once.
 .suite_within_series <- function(meta, layout_cols, repeated, spec) {
-  occ <- intersect(c(spec$analysis$terms$time, repeated), repeated)[1]
-  if (is.na(occ) || !occ %in% names(meta)) return(NULL)
+  none <- function(why) structure(list(), reason = why)
+  occ <- c(intersect(c(spec$analysis$terms$time, repeated), repeated), NA_character_)[1]
+  if (is.na(occ) || !occ %in% names(meta)) return(none("the design has no repeated factor (analysis.terms.repeated_factors): units are measured once"))
   key_cols <- setdiff(intersect(layout_cols, names(meta)), occ)
-  if (!length(key_cols)) return(NULL)
+  # a column unique on every row (sample_id, a row number) cannot hold a unit across occasions
+  per_row <- key_cols[vapply(key_cols, function(k) !anyDuplicated(as.character(meta[[k]])), logical(1))]
+  key_cols <- setdiff(key_cols, per_row)
+  if (!length(key_cols)) return(none(sprintf("no layout column besides %s%s identifies a unit", occ, if (length(per_row)) sprintf(" and the per-row id %s", paste(per_row, collapse = ", ")) else "")))
   key <- do.call(paste, c(lapply(meta[key_cols], as.character), sep = "|"))
-  if (!anyDuplicated(key)) return(NULL)
+  if (!anyDuplicated(key)) return(none(sprintf("no unit is measured at more than one %s (units from %s)", occ, paste(key_cols, collapse = ", "))))
   f <- Filter(function(z) identical(z$name, occ), spec$factors %||% list())
   lev <- .suite_level_order(as.character(meta[[occ]]), if (length(f)) as.character(unlist(f[[1]]$levels)) else NULL)
   k <- match(as.character(meta[[occ]]), lev)
@@ -20,7 +24,7 @@
   vals <- if (length(f)) suppressWarnings(as.numeric(unlist(f[[1]]$values))) else numeric()
   pos <- if (length(vals) == length(lev) && !anyNA(vals)) vals else suppressWarnings(as.numeric(sub("^[^0-9.-]*(-?[0-9.]+).*$", "\\1", lev)))
   if (anyNA(pos) || length(unique(pos)) < 2) pos <- seq_along(lev) - 1
-  list(occasion = occ, levels = lev, index = k, position = pos[k], key = key, key_cols = key_cols)
+  list(occasion = occ, levels = lev, index = k, position = pos[k], key = key, key_cols = key_cols, ignored_columns = as.list(per_row))
 }
 
 # Returns the residuals (n) and the slope part to add to the mean; truth describes what was done.
@@ -28,6 +32,11 @@
   structure <- args$within_subject %||% "none"
   eps <- stats::rnorm(n, 0, rsd)
   slope_add <- numeric(n)
+  if (!is.null(ws) && !length(ws)) {
+    if (!identical(structure, "none"))
+      warning(sprintf("within_subject = '%s' not applied: %s. Residuals are independent.", structure, attr(ws, "reason")), call. = FALSE)
+    return(list(eps = eps, add = slope_add, truth = if (!identical(structure, "none")) list(structure = "independent", requested = structure, reason = attr(ws, "reason"))))
+  }
   if (is.null(ws) || identical(structure, "none"))
     return(list(eps = eps, add = slope_add, truth = if (!is.null(ws)) list(structure = "random_intercept", over = ws$occasion,
       note = "units share one random effect over all occasions (compound symmetry; sphericity holds)")))

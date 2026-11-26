@@ -10,6 +10,14 @@ repeated_folder <- function(reps = 40) {
   biodes_folder(spec, "randomized_complete_block_repeated")
 }
 
+goal_like_folder <- function() {
+  testthat::skip_if_not_installed("studyforge")
+  spec <- list(system = "field", organism = "Zea mays", factors = list(list(name = "nitrogen", n_levels = 3)),
+               design = list(reps = 4, chosen = "rcbd", randomization_seed = 42),
+               primary_outcome = list(name = "yield", type = "continuous"), power = list(residual_sd = 10, minimum_detectable_difference = 5))
+  biodes_folder(spec, "rcbd")
+}
+
 within_cor <- function(dir) {
   m <- utils::read.delim(file.path(dir, "sample_metadata_template.tsv"))
   lay <- utils::read.csv(file.path(dir, "field_layout.csv"))
@@ -48,4 +56,22 @@ test_that("within_subject random_slope: variance grows over time; slope SD recor
   v <- within_cor(dir)$var
   expect_gt(v[[4]], 1.5 * v[[1]])
   expect_error(suppressMessages(simitall_from_biodes(dir, seed = 2, params = list(suite_outcome = list(within_subject = "toeplitz")))), "none, ar1 or random_slope")
+})
+
+test_that("a per-row id column in the layout does not hide the units; no repeated factor warns", {
+  dir <- repeated_folder()
+  lay <- utils::read.csv(file.path(dir, "field_layout.csv"))
+  lay$sample_id <- sprintf("S%03d", seq_len(nrow(lay)))
+  utils::write.csv(lay, file.path(dir, "field_layout.csv"), row.names = FALSE)
+  suppressMessages(simitall_from_biodes(dir, seed = 2, params = list(suite_outcome = list(within_subject = "ar1"))))
+  t <- jsonlite::read_json(file.path(dir, "sim_truth.json"))
+  expect_equal(t$within_subject$structure, "ar1")
+  expect_equal(t$within_subject$units, 80)
+  expect_false("sample_id" %in% unlist(t$within_subject$unit_columns))
+  dir2 <- goal_like_folder()
+  expect_warning(suppressMessages(simitall_from_biodes(dir2, seed = 1, params = list(suite_outcome = list(within_subject = "ar1")))),
+                 "not applied: the design has no repeated factor")
+  t2 <- jsonlite::read_json(file.path(dir2, "sim_truth.json"))
+  expect_equal(t2$within_subject$structure, "independent")
+  expect_equal(t2$within_subject$requested, "ar1")
 })

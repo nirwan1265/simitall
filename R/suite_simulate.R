@@ -334,7 +334,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     } else unit_key <- NULL
   }
   # repeated measures: correlation among one unit's occasions (suite_outcome within_subject; suite_within.R)
-  ws <- if (length(repeated)) .suite_within_series(meta, names(h$layout), repeated, spec)
+  ws <- .suite_within_series(meta, names(h$layout), repeated, spec)
   wsub <- .suite_within_subject(ws, n, rsd, .suite_args("suite_outcome", spec, params)$args)
   if (!is.null(wsub$truth$note) && !identical(wsub$truth$structure, "random_intercept")) note(wsub$truth$note)
   y <- y + wsub$add
