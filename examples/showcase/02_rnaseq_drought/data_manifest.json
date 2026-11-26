@@ -1,0 +1,34 @@
+{
+  "manifest_version": "0.1",
+  "written_by": "simitall 0.1.0",
+  "note": "Data sets in this folder for Bioana (github.com/nirwan1265/bioana): data_type is a row of its inst/rules/analyses.tsv; truth/ holds the simulated truth in Bioana's format.",
+  "goal": {
+    "goal": "interaction",
+    "test": "wald_or_lrt",
+    "status": "planted",
+    "truth": "sim_truth.json goal_truth"
+  },
+  "data": [
+    {
+      "id": "rnaseq",
+      "data_type": "feature_counts",
+      "assay": "rnaseq",
+      "files": {
+        "counts": "counts.tsv"
+      },
+      "note": null,
+      "truth": {
+        "kind": "features",
+        "file": "truth/rnaseq.tsv",
+        "term": "treatment",
+        "large": 1,
+        "goal": {
+          "goal": "interaction",
+          "file": "truth/rnaseq_goal.tsv",
+          "term": "treatment:treatment2",
+          "effect_scale": "log2 difference of differences, last levels vs references"
+        }
+      }
+    }
+  ]
+}

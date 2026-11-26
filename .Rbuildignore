@@ -12,3 +12,4 @@
 ^resources$
 ^data-raw$
 ^old_model$
+^examples$

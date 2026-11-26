@@ -1,5 +1,12 @@
 # simitall (development)
 
+- Showcase (`examples/showcase/`): the three Biodes showcase designs (sorghum
+  GWAS, RNA-seq genotype x drought, seed priming survival) simulated with seed
+  2026, with their truth, a summary figure and a README per folder;
+  `make_showcase.R` rebuilds them. Folder names match Biodes and Bioana.
+- Fixes found while building it: the survival goal's note described the old
+  log-normal model; a stated hazard ratio no longer raises a "no data on this
+  scale" note.
 - `goal_terms.treatment_effect`, when given, limits the treatment-effect goal
   (and the replicate choice) to those factors, so an adjustment factor such as
   sex (Biodes 4b7427b, `y ~ treatment + treatment2 + covariate`) is planted as

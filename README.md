@@ -34,7 +34,18 @@ ChIP-seq, ATAC-seq); parameters and their defaults are in
 [`inst/suite/simulator_parameters.tsv`](inst/suite/simulator_parameters.tsv).
 See [docs/BIODES_BRIDGE.md](docs/BIODES_BRIDGE.md).
 
-**Start here:** [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Validation and benchmarks](docs/VALIDATION.md)
+**Start here:** [Showcase](examples/showcase) | [Install](#install-simitall) | [Detailed tutorial](docs/TUTORIAL.md) | [Validation and benchmarks](docs/VALIDATION.md)
+
+## Showcase
+
+Three worked examples, from a question typed into Biodes to simulated data with its truth, then on to Bioana's
+analysis (same folder names in each repository):
+
+| Example | What was planted |
+|---|---|
+| [01 GWAS, sorghum panel](examples/showcase/01_gwas_sorghum) | 300 lines x 1,905 markers, 10 QTNs, heritability 0.6, alpha lattice |
+| [02 RNA-seq, genotype x drought](examples/showcase/02_rnaseq_drought) | 5,000 genes: drought-responsive genes and genes whose response differs in the mutant |
+| [03 Seed priming, time to germination](examples/showcase/03_germination_survival) | a delayed hazard ratio of 0.6, seed rot as a competing event, trays as clusters |
 
 ## Install simitall
 

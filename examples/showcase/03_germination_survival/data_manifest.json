@@ -1,0 +1,41 @@
+{
+  "manifest_version": "0.1",
+  "written_by": "simitall 0.1.0",
+  "note": "Data sets in this folder for Bioana (github.com/nirwan1265/bioana): data_type is a row of its inst/rules/analyses.tsv; truth/ holds the simulated truth in Bioana's format.",
+  "goal": {
+    "goal": "survival",
+    "test": "wald",
+    "status": "planted",
+    "truth": "sim_truth.json goal_truth"
+  },
+  "data": [
+    {
+      "id": "outcome",
+      "data_type": "outcome",
+      "files": {
+        "table": "sample_metadata_template.tsv"
+      },
+      "column": "primary_outcome",
+      "outcome_type": "survival",
+      "truth": {
+        "kind": "outcome",
+        "file": "sim_truth.json",
+        "goal": {
+          "goal": "survival",
+          "field": "goal_truth",
+          "terms": [
+            "treatment",
+            "treatment2"
+          ],
+          "test": "wald"
+        }
+      },
+      "event_column": "event",
+      "event_codes": {
+        "0": "censored",
+        "1": "germination",
+        "2": "seed rot before germination"
+      }
+    }
+  ]
+}

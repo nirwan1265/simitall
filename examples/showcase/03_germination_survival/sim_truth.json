@@ -1,0 +1,311 @@
+{
+  "simulator": "simitall",
+  "simitall_version": "0.1.0",
+  "handoff_version": "0.6.8",
+  "design": "factorial",
+  "model": "y ~ treatment * treatment2 + (1 | block)",
+  "outcome": "primary_outcome",
+  "seed": 2026,
+  "outcome_type": "survival",
+  "outcome_model": {
+    "family": "delayed_effect",
+    "proportional_hazards": false,
+    "median_time": 11.9762297018858,
+    "median_time_source": "from follow-up 21: 0.2 of the reference group without the event at its end (censored_fraction)",
+    "weibull_shape": 1.5,
+    "hazard_ratio": 0.6,
+    "hazard_ratio_source": "analysis.goal_effect.survival (hazard_ratio)",
+    "log_hazard_per_outcome_sd": -0.510825623765991,
+    "change_time": 5.98811485094289,
+    "logrank_weight": "fh_0_1",
+    "follow_up_source": "suite_outcome follow_up or primary_outcome.censoring",
+    "follow_up": 21,
+    "censoring": {
+      "administrative": {
+        "follow_up": 21,
+        "n": 106,
+        "target_fraction": 0.2
+      },
+      "loss": {
+        "loss_fraction": 0,
+        "n": 0,
+        "times": "uniform on (0, follow_up)"
+      }
+    },
+    "n_events": 374,
+    "event_codes": {
+      "0": "censored",
+      "1": "germination",
+      "2": "seed rot before germination"
+    },
+    "competing": {
+      "codes": [
+        2
+      ],
+      "model": "Weibull cause-specific hazard, no treatment effect",
+      "median_alone": 23.9524594037716,
+      "shape": 1.5,
+      "cause_specific_hazard_ratio": 1
+    },
+    "frailty": {
+      "block": {
+        "distribution": "lognormal",
+        "sd_log_hazard": 0.2554,
+        "variance": 0.0652
+      },
+      "plot": {
+        "distribution": "lognormal",
+        "sd_log_hazard": 0.3,
+        "variance": 0.09,
+        "level": "experimental unit (shared by its subsamples)",
+        "column": "unit_id"
+      }
+    },
+    "life_table_width": 2,
+    "landmarks": [
+      7,
+      14
+    ],
+    "rmst_tau": 21,
+    "groups": {
+      "genotype_1:not primed": {
+        "median": 11.9822,
+        "log_hazard": -0,
+        "survival_at": {
+          " 7": 0.6575,
+          "14": 0.3055
+        },
+        "rmst": 10.6283,
+        "cif_event_at": {
+          " 7": 0.2531,
+          "14": 0.5132
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      },
+      "genotype_1:primed": {
+        "median": 15.213,
+        "log_hazard": -0.510825623765991,
+        "survival_at": {
+          " 7": 0.6748,
+          "14": 0.3932
+        },
+        "rmst": 11.6827,
+        "cif_event_at": {
+          " 7": 0.2356,
+          "14": 0.4128
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      },
+      "genotype_2:not primed": {
+        "median": 15.213,
+        "log_hazard": -0.510825623765991,
+        "survival_at": {
+          " 7": 0.6748,
+          "14": 0.3932
+        },
+        "rmst": 11.6827,
+        "cif_event_at": {
+          " 7": 0.2356,
+          "14": 0.4128
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      },
+      "genotype_2:primed": {
+        "median": 19.9484,
+        "log_hazard": -1.02165124753198,
+        "survival_at": {
+          " 7": 0.6853,
+          "14": 0.4575
+        },
+        "rmst": 12.4859,
+        "cif_event_at": {
+          " 7": 0.2249,
+          "14": 0.3399
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      }
+    },
+    "ratios": {
+      "treatment": {
+        "hazard_ratio": {
+          "genotype_1": 1,
+          "genotype_2": 0.6
+        },
+        "hazard_ratio_before_change": [
+          1,
+          1
+        ]
+      },
+      "treatment2": {
+        "hazard_ratio": {
+          "not primed": 1,
+          "primed": 0.6
+        },
+        "hazard_ratio_before_change": [
+          1,
+          1
+        ]
+      }
+    },
+    "note": "primary_outcome = time to the first event or censoring; event 1 = the event, 0 = censored, 2+ = competing events. Group truth is conditional on an average cluster (no frailty)."
+  },
+  "intercept": 0,
+  "residual_sd": 1,
+  "effect": 1,
+  "outcome_scale": {
+    "unit": "days",
+    "standardized": true,
+    "residual_sd_known": false,
+    "residual_sd": 1,
+    "intercept": 0,
+    "note": "the residual SD in days was not stated: the outcome is standardized (residual SD 1, mean 0) and every effect is in residual SDs; the treatment effect is 1 SD. Power depends on the real SD."
+  },
+  "level_effect_pattern": "even_spread",
+  "treatment_effects": {
+    "treatment": {
+      "genotype_1": 0,
+      "genotype_2": 1
+    },
+    "treatment2": {
+      "not primed": 0,
+      "primed": 1
+    }
+  },
+  "numeric_effects": [],
+  "interaction_effects": {
+    "treatment:treatment2": {
+      "size": 0,
+      "pattern": "linear_by_linear",
+      "cells": {
+        "genotype_1:not primed": 0,
+        "genotype_1:primed": 0,
+        "genotype_2:not primed": 0,
+        "genotype_2:primed": 0
+      }
+    }
+  },
+  "block_effects": [],
+  "random_sd": {
+    "block": 0.5
+  },
+  "uncovered_effects": null,
+  "within_subject": null,
+  "adjustment_effects": null,
+  "regression_truth": null,
+  "secondary_traits": null,
+  "agreement": null,
+  "within_unit_sd": null,
+  "subsamples_per_unit": 10,
+  "subsample_sd": 0.5,
+  "dropped_units": [],
+  "assumptions": ["the residual SD in days was not stated: the outcome is standardized (residual SD 1, mean 0) and every effect is in residual SDs; the treatment effect is 1 SD. Power depends on the real SD.", "attrition = 0 (default: fraction of units lost; from power.attrition when given)", "survival model delayed_effect: analysis.survival.logrank_weight fh_0_1 (a stated delayed effect)", "survival median time 12 (from follow-up 21: 0.2 of the reference group without the event at its end (censored_fraction))"],
+  "columns": {
+    "treatment": "genotype",
+    "treatment2": "treatment",
+    "block": "block"
+  },
+  "outcome_simulated": true,
+  "routes": [
+    {
+      "route": "outcome_survival",
+      "layer": "outcome",
+      "simulator": "suite_outcome",
+      "status": "ready",
+      "field": "primary_outcome.type",
+      "matched": "survival"
+    }
+  ],
+  "goal_truth": {
+    "goal": "survival",
+    "terms": [],
+    "variables": [],
+    "test": "wald",
+    "definition": "hazard ratio of a level vs the reference (Cox)",
+    "scale": "hazard_ratio",
+    "size": 1,
+    "size_source": "treatment effect in residual SDs (outcome standardized: residual SD unknown)",
+    "planted": "outcome",
+    "note": "Survival model of suite_outcome survival_model (weibull_ph default; delayed_effect / early_effect from analysis.survival.logrank_weight; lognormal_aft): the goal size is the hazard ratio (or time ratio) of the last level vs the reference; per-group median, landmarks and RMST in outcome_model.groups.",
+    "hazard_ratios": {
+      "treatment": {
+        "genotype_1": 1,
+        "genotype_2": 0.6
+      },
+      "treatment2": {
+        "not primed": 1,
+        "primed": 0.6
+      }
+    },
+    "time_ratios": {
+      "treatment": null,
+      "treatment2": null
+    },
+    "proportional_hazards": false,
+    "true_effect": 0.6,
+    "true_log_hazard_ratio": -0.510825623765991,
+    "effect_scale": "hazard ratio, last level of treatment vs reference (after t = 5.988115; 1 before)",
+    "groups": {
+      "genotype_1:not primed": {
+        "median": 11.9822,
+        "log_hazard": -0,
+        "survival_at": {
+          " 7": 0.6575,
+          "14": 0.3055
+        },
+        "rmst": 10.6283,
+        "cif_event_at": {
+          " 7": 0.2531,
+          "14": 0.5132
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      },
+      "genotype_1:primed": {
+        "median": 15.213,
+        "log_hazard": -0.510825623765991,
+        "survival_at": {
+          " 7": 0.6748,
+          "14": 0.3932
+        },
+        "rmst": 11.6827,
+        "cif_event_at": {
+          " 7": 0.2356,
+          "14": 0.4128
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      },
+      "genotype_2:not primed": {
+        "median": 15.213,
+        "log_hazard": -0.510825623765991,
+        "survival_at": {
+          " 7": 0.6748,
+          "14": 0.3932
+        },
+        "rmst": 11.6827,
+        "cif_event_at": {
+          " 7": 0.2356,
+          "14": 0.4128
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      },
+      "genotype_2:primed": {
+        "median": 19.9484,
+        "log_hazard": -1.02165124753198,
+        "survival_at": {
+          " 7": 0.6853,
+          "14": 0.4575
+        },
+        "rmst": 12.4859,
+        "cif_event_at": {
+          " 7": 0.2249,
+          "14": 0.3399
+        },
+        "median_note": "median of the event of interest alone (net of competing events)"
+      }
+    },
+    "model_terms": [
+      "treatment",
+      "treatment2"
+    ],
+    "status": "planted"
+  }
+}

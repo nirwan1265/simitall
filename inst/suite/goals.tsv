@@ -13,7 +13,7 @@ qtl_mapping	other	genetics	genetics.qtn_truth	QTN effects from the phenotype mod
 genomic_prediction	other	genetics	genetics.genetic_values	True genetic values of the lines (genetic_truth/genetic_values.tsv); accuracy is the correlation of predictions with them.
 variance_components	other	outcome	random_sd	Residual SD, random-term SDs, within-unit SD and (genetics) heritability.
 ranking	other	outcome	treatment_effects	True values of the entries (genetic values when the design has lines, else the treatment levels); the effect is the top entries' mean minus the mean of all entries.
-survival	wald	outcome	treatment_effects	Log-normal accelerated failure time; each treatment effect e multiplies survival time by exp(time_sd * e / sd_outcome). Hazards are not proportional, so no single hazard ratio is planted.
+survival	wald	outcome	treatment_effects	Survival model of suite_outcome survival_model (weibull_ph default; delayed_effect / early_effect from analysis.survival.logrank_weight; lognormal_aft): the goal size is the hazard ratio (or time ratio) of the last level vs the reference; per-group median, landmarks and RMST in outcome_model.groups.
 biomarker_classification	other	none		Registry simulated: false.
 coexpression_network	other	none		Registry simulated: false.
 regression	wald	outcome	regression_truth	Slopes of the covariate terms (per unit of the fitted, transformed covariate): the goal size (scale per_unit, or odds_ratio_per_unit for yes/no) or the treatment effect per SD of each covariate. Biodes registry 0.4.0 (size_from per_unit_effect).

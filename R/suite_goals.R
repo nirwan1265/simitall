@@ -24,7 +24,9 @@
                  format(ge$size), if (!is.null(spec$primary_outcome$unit)) paste0(" ", spec$primary_outcome$unit) else ""))
   size <- if (stated) as.numeric(ge$size) else eff
   feature_size <- if (!is.null(ge$size) && identical(gscale, "log2")) as.numeric(ge$size)
-  if (!is.null(ge$size) && !on_outcome && is.null(feature_size))
+  # survival scales (hazard_ratio, time_ratio, rmst_difference) are planted by the survival model itself
+  surv_scale <- gscale %in% c("hazard_ratio", "time_ratio", "rmst_difference", "log_hazard")
+  if (!is.null(ge$size) && !on_outcome && is.null(feature_size) && !surv_scale)
     note(sprintf("goal effect size %s on scale %s: no %s-scale data simulated for it; the outcome uses the treatment effect", format(ge$size), gscale, gscale))
   if (!stated && !is.null(spec$analysis$primary_goal) && on_outcome)
     note(sprintf("goal effect size for %s = %s (analysis.goal_effect.%s.size not stated: the treatment effect)", goal, format(size), goal))
