@@ -130,3 +130,19 @@ test_that("strata outside the model (Biodes: stated blocks < 10, no + block) get
   expect_equal(om$strata$block$sd, 0.5)
   expect_match(om$strata$block$note, "strata\\(\\)")
 })
+
+test_that("Biodes 0.6.7 subsamples: an expanded template keeps its rows; seeds of one unit share a frailty", {
+  dir <- surv_folder(design = "rcbd", reps = 6)
+  lay <- utils::read.csv(file.path(dir, "field_layout.csv")); meta <- utils::read.delim(file.path(dir, "sample_metadata_template.tsv"))
+  m2 <- meta[rep(seq_len(nrow(meta)), each = 5), ]; m2$subsample <- rep(1:5, nrow(meta)); m2$sample_id <- sprintf("S%03d", seq_len(nrow(m2)))
+  utils::write.table(m2, file.path(dir, "sample_metadata_template.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json")); s$subsamples_per_unit <- 5; s$analysis$survival$cluster <- "plot"
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  suppressMessages(simitall_from_biodes(dir, seed = 1))
+  r <- read_surv(dir)
+  out <- utils::read.delim(file.path(dir, "sample_metadata_template.tsv"))
+  expect_equal(nrow(out), nrow(lay) * 5)
+  expect_equal(out$sample_id, m2$sample_id)
+  expect_equal(length(unique(out$unit_id)), nrow(lay))
+  expect_equal(r$truth$outcome_model$frailty$plot$sd_log_hazard, 0.3)
+})

@@ -92,3 +92,29 @@ test_that("raters: continuous ratings with the planted ICC2; ordinal ratings wit
   expect_equal((po - pe) / (1 - pe), ag$expected_kappa, tolerance = 0.07)
   expect_gt(ag$expected_weighted_kappa_quadratic, ag$expected_kappa)
 })
+
+test_that("Biodes 0.6.7: a yes/no trait with expected_ratio draws labels; raters in long format share a true score", {
+  dir <- cat_folder(list(name = "height_class", type = "binary", categories = list("tall", "dwarf")), reps = 300)
+  edit_spec(dir, function(s) { s$analysis$model <- "y ~ 1"; s$analysis$expected_ratio <- list(tall = 3, dwarf = 1); s })
+  r <- run_cat(dir)
+  expect_equal(r$truth$outcome_type, "nominal")
+  expect_equal(mean(r$data$primary_outcome == "tall"), 0.75, tolerance = 0.06)
+  # long format: one row per unit and rater
+  dir <- cat_folder(list(name = "rust", type = "ordinal"), reps = 100)
+  lay <- utils::read.csv(file.path(dir, "field_layout.csv"))
+  meta <- utils::read.delim(file.path(dir, "sample_metadata_template.tsv"))
+  long_lay <- lay[rep(seq_len(nrow(lay)), each = 3), ]; long_lay$rater <- rep(c("r1", "r2", "r3"), nrow(lay))
+  long_meta <- meta[rep(seq_len(nrow(meta)), each = 3), ]; long_meta$rater <- long_lay$rater
+  long_meta$sample_id <- paste0(long_meta$sample_id, "_", long_meta$rater)
+  utils::write.csv(long_lay, file.path(dir, "field_layout.csv"), row.names = FALSE)
+  utils::write.table(long_meta, file.path(dir, "sample_metadata_template.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+  edit_spec(dir, function(s) { s$analysis$agreement <- list(rater_column = "rater", score_column = "primary_outcome", unit_column = "plot", scale = "ordinal"); s })
+  r <- run_cat(dir)
+  ag <- r$truth$agreement
+  expect_equal(ag$format, "long")
+  expect_setequal(unlist(ag$raters), c("r1", "r2", "r3"))
+  w <- stats::reshape(r$data[, c("plot", "rater", "primary_outcome")], idvar = "plot", timevar = "rater", direction = "wide")
+  po <- mean(w$primary_outcome.r1 == w$primary_outcome.r2)
+  expect_equal(po, sum(diag(t(matrix(unlist(ag$misclassification), length(ag$levels), byrow = TRUE)) %*% diag(unlist(ag$true_class_shares)) %*%
+                         matrix(unlist(ag$misclassification), length(ag$levels), byrow = TRUE))), tolerance = 0.12)
+})

@@ -23,7 +23,7 @@
 }
 
 .suite_survival <- function(a, spec, y_obs, y_design, y_mean, mu, rsd, eff, groups, cond_effects, random_sd, note,
-                            model_from_params = FALSE, block_effects = list(), median_default = FALSE, strata_data = NULL) {
+                            model_from_params = FALSE, block_effects = list(), median_default = FALSE, strata_data = NULL, cluster = NULL) {
   ss <- spec$analysis$survival %||% list()
   lw <- ss$logrank_weight
   model <- a$survival_model %||% "weibull_ph"
@@ -71,6 +71,13 @@
   eo <- coef * (y_mean - y_design) / rsd      # blocks, random terms: frailty
   # strata that are not model terms (Biodes 0.6.6: stated blocks < 10 -> analysis.survival.strata, no + block):
   # each stratum its own baseline hazard, a log-hazard shift drawn with SD strata_log_hazard_sd
+  # several subjects per unit (seeds in one tray cell; Biodes subsamples_per_unit, analysis.survival.cluster):
+  # a shared log-normal frailty per unit
+  cl_sd <- NULL
+  if (!is.null(cluster)) {
+    cl_sd <- as.numeric(a$cluster_log_hazard_sd %||% 0.3)
+    eo <- eo + stats::rnorm(max(cluster), 0, cl_sd)[cluster]
+  }
   strata_shift <- list()
   for (sc in setdiff(intersect(unlist(ss$strata), names(strata_data %||% list())), names(block_effects))) {
     lev <- unique(as.character(strata_data[[sc]]))
@@ -162,6 +169,8 @@
     r })
   frailty <- if (model != "lognormal_aft" && length(random_sd)) lapply(random_sd, function(s) list(distribution = "lognormal",
     sd_log_hazard = round(abs(coef) * s / rsd, 4), variance = round((coef * s / rsd)^2, 4)))
+  if (!is.null(cl_sd)) frailty[[spec$analysis$survival$cluster %||% "unit"]] <- list(distribution = "lognormal", sd_log_hazard = cl_sd, variance = cl_sd^2,
+    level = "experimental unit (shared by its subsamples)", column = "unit_id")
   n_ok <- sum(ok)
   m <- list(family = model, proportional_hazards = ph, median_time = med, median_time_source = med_src,
             weibull_shape = if (!is.na(k)) k, hazard_ratio = if (model != "lognormal_aft") hr, hazard_ratio_source = if (model != "lognormal_aft") hr_src,

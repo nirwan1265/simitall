@@ -113,11 +113,20 @@
 # Raters (analysis.agreement {raters: [columns], scale, levels}): continuous = true value + rater bias + rater
 # noise (truth: ICC2 from the variances); nominal / ordinal = the true class read through a misclassification
 # matrix per rater (truth: expected pairwise kappa). The true value is the primary outcome.
-.suite_ratings <- function(spec, a, truth_value, fam, note) {
+.suite_ratings <- function(spec, a, truth_value, fam, note, rows = NULL) {
   ag <- spec$analysis$agreement
   if (is.null(ag)) return(NULL)
   raters <- as.character(unlist(ag$raters))
-  if (!length(raters)) { note("analysis.agreement in long format (rater_column/score_column) is not simulated yet; give raters as columns"); return(NULL) }
+  # long format (Biodes 0.6.7: one row per unit and rater; rater_column, score_column, unit_column): the true value
+  # is the unit's (its first row's simulated value); each row's score is that rater's reading of it
+  long <- !length(raters) && !is.null(ag$rater_column) && !is.null(rows) && all(c(ag$rater_column, ag$unit_column %||% "") %in% names(rows))
+  if (!length(raters) && !long) { note("analysis.agreement without raters or a rater_column in the template: not simulated"); return(NULL) }
+  if (long) {
+    unit <- as.character(rows[[ag$unit_column]]); rr <- as.character(rows[[ag$rater_column]])
+    first <- match(unit, unit)
+    truth_value <- truth_value[first]
+    raters <- unique(rr)
+  }
   scale <- ag$scale %||% if (fam$type %in% c("ordinal", "nominal", "binary")) if (fam$type == "nominal") "nominal" else "ordinal" else "continuous"
   ok <- !is.na(truth_value)
   n <- length(truth_value); cols <- list()
@@ -125,9 +134,10 @@
     tv <- as.numeric(truth_value)
     sb <- as.numeric(a$rater_bias_sd %||% 0.3) * stats::sd(tv[ok]); se <- as.numeric(a$rater_noise_sd %||% 0.3) * stats::sd(tv[ok])
     bias <- stats::setNames(stats::rnorm(length(raters), 0, sb), raters)
-    for (r in raters) cols[[r]] <- round(tv + bias[[r]] + stats::rnorm(n, 0, se), 6)
-    vt <- stats::var(tv[ok])
-    return(list(columns = cols, truth = list(scale = "continuous", raters = as.list(raters), true_value = "primary_outcome",
+    if (long) { score <- round(tv + unname(bias[rr]) + stats::rnorm(n, 0, se), 6); vt <- stats::var(tv[ok][!duplicated(unit[ok])]) }
+    else { for (r in raters) cols[[r]] <- round(tv + bias[[r]] + stats::rnorm(n, 0, se), 6); vt <- stats::var(tv[ok]) }
+    return(list(columns = cols, score = if (long) score, truth = list(scale = "continuous", raters = as.list(raters),
+      format = if (long) "long" else "wide", true_value = if (long) "each unit's value before rating (not written)" else "primary_outcome",
       true_value_variance = vt, rater_bias_sd = sb, rater_noise_sd = se, rater_bias = as.list(round(bias, 4)),
       icc2 = vt / (vt + sb^2 + se^2), icc3 = vt / (vt + se^2),
       note = "rating = true value (primary_outcome) + rater bias + noise; ICC2 = two-way random, absolute agreement, single rater, from the planted variances")))
@@ -148,11 +158,15 @@
     others <- if (scale == "ordinal") intersect(c(i - 1, i + 1), seq_len(K)) else setdiff(seq_len(K), i)
     M[i, i] <- acc; M[i, others] <- (1 - acc) / length(others)
   }
-  for (r in raters) cols[[r]] <- vapply(tc, function(x) if (is.na(x)) NA_character_ else lev[sample.int(K, 1, prob = M[match(x, lev), ])], "")
-  pi <- as.numeric(table(factor(tc[ok], lev))) / sum(ok)
+  read1 <- function(x) if (is.na(x)) NA_character_ else lev[sample.int(K, 1, prob = M[match(x, lev), ])]
+  score <- NULL
+  if (long) score <- vapply(tc, read1, "") else for (r in raters) cols[[r]] <- vapply(tc, read1, "")
+  pi <- as.numeric(table(factor(if (long) tc[ok][!duplicated(unit[ok])] else tc[ok], lev))) / sum(if (long) !duplicated(unit[ok]) else ok)
   kap <- .suite_expected_kappa(pi, M, M)
   wq <- 1 - outer(seq_len(K), seq_len(K), function(i, j) (i - j)^2) / (K - 1)^2
-  list(columns = cols, truth = list(scale = scale, raters = as.list(raters), levels = as.list(lev), true_class = "primary_outcome",
+  if (long && fam$type %in% c("ordinal", "count", "binary") && all(grepl("^-?[0-9]+$", lev))) score <- as.integer(score)
+  list(columns = cols, score = score, truth = list(scale = scale, raters = as.list(raters), levels = as.list(lev),
+    format = if (long) "long" else "wide", true_class = if (long) "each unit's class before rating (not written)" else "primary_outcome",
     rater_accuracy = acc, misclassification = stats::setNames(lapply(seq_len(K), function(i) as.list(M[i, ])), lev),
     true_class_shares = as.list(stats::setNames(round(pi, 4), lev)),
     expected_kappa = kap, expected_weighted_kappa_quadratic = if (scale == "ordinal") .suite_expected_kappa(pi, M, M, wq),

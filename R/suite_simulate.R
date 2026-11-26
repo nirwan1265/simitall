@@ -109,7 +109,22 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   if (is.na(n_sub) || n_sub < 1L) n_sub <- 1L
 
   meta <- h$meta
-  if (nrow(meta) != nrow(h$layout)) stop("sample_metadata_template.tsv and field_layout.csv have different row counts.", call. = FALSE)
+  # Biodes 0.6.7 may write the template already expanded to one row per subsample (column `subsample`): keep its rows
+  # and sample ids for the output, and simulate the units from the layout
+  tmpl <- NULL
+  if (nrow(meta) != nrow(h$layout)) {
+    if (n_sub > 1 && nrow(meta) == nrow(h$layout) * n_sub && "subsample" %in% names(meta)) {
+      lay_cols <- intersect(names(h$layout), names(meta))
+      key <- function(x) do.call(paste, c(lapply(x[lay_cols], as.character), sep = "|"))
+      tmpl <- meta
+      tmpl_unit <- match(key(meta), key(h$layout))
+      if (anyNA(tmpl_unit) || anyDuplicated(key(h$layout))) stop("sample_metadata_template.tsv subsample rows do not map to field_layout.csv units.", call. = FALSE)
+      meta <- meta[match(seq_len(nrow(h$layout)), tmpl_unit), , drop = FALSE]
+      meta$subsample <- NULL
+      meta$sample_id <- if ("plot" %in% names(h$layout)) paste0("plot_", h$layout$plot) else paste0("unit_", seq_len(nrow(meta)))
+      rownames(meta) <- NULL
+    } else stop("sample_metadata_template.tsv and field_layout.csv have different row counts.", call. = FALSE)
+  }
   frame <- .suite_frame(meta, p)
   # factors in the layout that the model does not hold (Biodes analysis.terms.uncovered_factors):
   # tissue measured within each unit, a third factor, ...
@@ -355,11 +370,17 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   out <- meta
   idx <- seq_len(n)
   if (n_sub > 1) {
-    idx <- rep(seq_len(n), each = n_sub)
-    out <- meta[idx, , drop = FALSE]
-    out$unit_id <- meta$sample_id[idx]
-    out$subsample <- rep(seq_len(n_sub), times = n)
-    out$sample_id <- paste0(out$unit_id, "_s", out$subsample)
+    if (!is.null(tmpl)) {
+      idx <- tmpl_unit
+      out <- tmpl
+      out$unit_id <- meta$sample_id[idx]
+    } else {
+      idx <- rep(seq_len(n), each = n_sub)
+      out <- meta[idx, , drop = FALSE]
+      out$unit_id <- meta$sample_id[idx]
+      out$subsample <- rep(seq_len(n_sub), times = n)
+      out$sample_id <- paste0(out$unit_id, "_s", out$subsample)
+    }
     y_obs <- y[idx] + stats::rnorm(length(idx), 0, d$subsample_sd_ratio$value * rsd)
   } else {
     y_obs <- y
@@ -380,9 +401,14 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
                     treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note,
                     model_from_params = !is.null(params$suite_outcome$survival_model), block_effects = block_effects,
                     strata_data = meta[idx, intersect(unlist(spec$analysis$survival$strata), names(meta)), drop = FALSE],
+                    cluster = if (n_sub > 1) idx,
                     median_default = grepl("^default", .suite_args("suite_outcome", spec, params)$source[["median_time"]] %||% "default"))
-  } else if (identical(out_route$route, "outcome_nominal")) {
-    .suite_nominal(oargs, spec, y_mean[idx], y_design[idx], mu, rsd, eff, grp, note)
+  } else if (identical(out_route$route, "outcome_nominal") || (identical(out_route$route, "outcome_binary") && length(spec$analysis$expected_ratio))) {
+    # a stated segregation ratio on a yes/no trait (Biodes: tall/dwarf 3:1) draws the class labels from the ratio
+    f <- .suite_nominal(oargs, spec, y_mean[idx], y_design[idx], mu, rsd, eff, grp, note)
+    # the data hold class labels, so the outcome is written as nominal (two classes) for Bioana's goodness of fit
+    if (identical(out_route$route, "outcome_binary")) { f$model$note <- paste(f$model$note, "| primary_outcome.type binary with analysis.expected_ratio: class labels drawn from the ratio, written as a two-class nominal outcome"); note("binary outcome with analysis.expected_ratio: class labels from the ratio, written as nominal") }
+    f
   } else if (identical(out_route$route, "outcome_binary") && identical(bin_model, "logit")) {
     .suite_binary_logit(oargs, y_mean[idx], y_design[idx], mu, rsd, eff, grp, cond_eff, random_sd, unit_sd, block_effects)
   } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
@@ -393,8 +419,9 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   # traits for correlation (spec secondary_outcomes) and raters for agreement (analysis.agreement)
   sec <- .suite_secondary_traits(spec, oargs, (y_obs - y_mean[idx]) / rsd, y_mean[idx], mu, rsd)
   for (nm in names(sec$columns)) out[[nm]] <- sec$columns[[nm]]
-  rat <- .suite_ratings(spec, oargs, fam$y, fam, note)
+  rat <- .suite_ratings(spec, oargs, fam$y, fam, note, rows = out)
   for (nm in names(rat$columns)) out[[nm]] <- rat$columns[[nm]]
+  if (!is.null(rat$score)) out[[spec$analysis$agreement$score_column %||% "primary_outcome"]] <- if (has_outcome) rat$score else NA
 
   mpath <- file.path(outdir, "sample_metadata_template.tsv")
   utils::write.table(out, mpath, sep = "\t", row.names = FALSE, quote = FALSE, na = "")

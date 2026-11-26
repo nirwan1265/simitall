@@ -1,5 +1,14 @@
 # simitall (development)
 
+- Biodes 0.6.7: a template already expanded to one row per subsample
+  (`subsample` column) keeps its rows and sample ids; units come from the
+  layout. Survival with subsamples (seeds in a tray cell,
+  `analysis.survival.cluster`) gives each unit a shared log-normal frailty
+  (`cluster_log_hazard_sd`, 0.3). A yes/no trait with
+  `analysis.expected_ratio` draws class labels from the ratio and is written
+  as a two-class nominal outcome. Raters in long format
+  (`analysis.agreement` `rater_column`, `score_column`, `unit_column`): each
+  unit's true score is read once per rater into the score column.
 - Categorical outcomes, traits and raters (Bioana
   docs/contracts/categorical_correlation_agreement.md):
   - `primary_outcome.type = "nominal"` (new route `outcome_nominal`):
