@@ -14,6 +14,7 @@ suite_outcome	change_time		numeric		survival outcome, delayed_effect / crossing:
 suite_outcome	follow_up		numeric		survival outcome: end of follow-up (administrative censoring); default the time that leaves censored_fraction without an event	How long are units followed?
 suite_outcome	loss_fraction	0	numeric	power.loss_fraction	survival outcome: share of units lost to follow-up at a uniform time before its end (random loss, recorded apart from administrative censoring)	
 suite_outcome	competing_median_ratio	2	numeric		survival outcome with primary_outcome.event_codes 2+: median time of each competing event alone, as a multiple of median_time	
+suite_outcome	strata_log_hazard_sd	0.3	numeric		survival outcome: SD of the log-hazard shift of each stratum in analysis.survival.strata that is not a model term (stratum-specific baseline hazard)	
 suite_outcome	within_subject	none	character		repeated measures (the same units at several occasions): none = shared unit effect only (sphericity holds); ar1 = residuals of a unit correlated rho^lag over the occasions; random_slope = each unit its own slope over time. Recorded in sim_truth.json within_subject	Are measurements on the same unit closer in time more alike than ones far apart?
 suite_outcome	within_rho	0.7	numeric		within_subject = ar1: correlation of a unit's residuals at adjacent occasions	
 suite_outcome	slope_sd_ratio	1	numeric		within_subject = random_slope: SD of the units' change over the full time range, in residual SDs	

@@ -118,3 +118,15 @@ test_that("Biodes 0.6.6 fields: logrank_weight picks the non-PH model, censoring
   suppressMessages(simitall_from_biodes(dir, seed = 1, params = list(suite_outcome = list(survival_model = "weibull_ph"))))
   expect_equal(read_surv(dir)$truth$outcome_model$family, "weibull_ph")
 })
+
+test_that("strata outside the model (Biodes: stated blocks < 10, no + block) get their own baseline hazard", {
+  dir <- surv_folder(design = "rcbd", reps = 6)
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json"))
+  s$analysis$model <- "y ~ treatment"; s$analysis$survival <- list(strata = list("block"))
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  suppressMessages(simitall_from_biodes(dir, seed = 1, params = list(suite_outcome = list(strata_log_hazard_sd = 0.5))))
+  om <- read_surv(dir)$truth$outcome_model
+  expect_length(om$strata$block$log_hazard_shift, 6)
+  expect_equal(om$strata$block$sd, 0.5)
+  expect_match(om$strata$block$note, "strata\\(\\)")
+})

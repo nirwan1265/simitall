@@ -374,6 +374,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     .suite_survival(oargs, spec, y_obs, y_design[idx], y_mean[idx], mu, rsd, eff, grp,
                     treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note,
                     model_from_params = !is.null(params$suite_outcome$survival_model), block_effects = block_effects,
+                    strata_data = meta[idx, intersect(unlist(spec$analysis$survival$strata), names(meta)), drop = FALSE],
                     median_default = grepl("^default", .suite_args("suite_outcome", spec, params)$source[["median_time"]] %||% "default"))
   } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
   assay_routes <- routes[routes$layer == "assay" & routes$status == "ready", , drop = FALSE]

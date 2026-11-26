@@ -1,5 +1,9 @@
 # simitall (development)
 
+- Survival strata that are not model terms (Biodes 01d41ef: stated blocks
+  under 10 go to `analysis.survival.strata` with no `+ block`) get their own
+  baseline hazard: a log-hazard shift per stratum with SD
+  `strata_log_hazard_sd` (0.3), recorded in `outcome_model.strata`.
 - Survival with a stated follow-up and no stated median: the reference
   group's median is set so that `1 - power.event_probability` (else
   `censored_fraction`) of it is still without the event at the end of

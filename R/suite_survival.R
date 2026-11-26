@@ -23,7 +23,7 @@
 }
 
 .suite_survival <- function(a, spec, y_obs, y_design, y_mean, mu, rsd, eff, groups, cond_effects, random_sd, note,
-                            model_from_params = FALSE, block_effects = list(), median_default = FALSE) {
+                            model_from_params = FALSE, block_effects = list(), median_default = FALSE, strata_data = NULL) {
   ss <- spec$analysis$survival %||% list()
   lw <- ss$logrank_weight
   model <- a$survival_model %||% "weibull_ph"
@@ -69,6 +69,16 @@
   t0 <- as.numeric(a$change_time %||% (med / 2))
   et <- coef * (y_design - mu) / rsd          # treatment part of the log hazard (time-varying in non-PH models)
   eo <- coef * (y_mean - y_design) / rsd      # blocks, random terms: frailty
+  # strata that are not model terms (Biodes 0.6.6: stated blocks < 10 -> analysis.survival.strata, no + block):
+  # each stratum its own baseline hazard, a log-hazard shift drawn with SD strata_log_hazard_sd
+  strata_shift <- list()
+  for (sc in setdiff(intersect(unlist(ss$strata), names(strata_data %||% list())), names(block_effects))) {
+    lev <- unique(as.character(strata_data[[sc]]))
+    sh <- stats::setNames(stats::rnorm(length(lev), 0, as.numeric(a$strata_log_hazard_sd %||% 0.3)), lev)
+    eo <- eo + unname(sh[as.character(strata_data[[sc]])])
+    strata_shift[[sc]] <- list(log_hazard_shift = as.list(round(sh, 4)), sd = as.numeric(a$strata_log_hazard_sd %||% 0.3),
+                               note = "not in analysis.model: each stratum its own baseline hazard (fit with strata())")
+  }
   draw1 <- function(et, eo) {
     E <- stats::rexp(length(et)) / exp(eo)
     switch(model,
@@ -166,8 +176,9 @@
             event_codes = if (length(codes)) codes, competing = if (length(comp)) list(codes = as.list(comp), model = "Weibull cause-specific hazard, no treatment effect",
               median_alone = med * as.numeric(a$competing_median_ratio %||% 2), shape = kc, cause_specific_hazard_ratio = 1),
             frailty = frailty,
-            strata = if (length(ss$strata)) lapply(stats::setNames(nm = intersect(unlist(ss$strata), names(block_effects))), function(b)
+            strata = if (length(ss$strata)) c(lapply(stats::setNames(nm = intersect(unlist(ss$strata), names(block_effects))), function(b)
               list(log_hazard_shift = lapply(block_effects[[b]], function(e) round(coef * e / rsd, 4)), note = "fixed block effects: each stratum its own baseline hazard multiple")),
+              strata_shift),
             life_table_width = if (!is.na(w)) w,
             landmarks = as.list(lms), rmst_tau = tau, groups = gt, ratios = ratios,
             note = paste0("primary_outcome = time to the first event or censoring; event 1 = the event, 0 = censored",
