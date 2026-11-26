@@ -1,5 +1,25 @@
 # simitall (development)
 
+- Categorical outcomes, traits and raters (Bioana
+  docs/contracts/categorical_correlation_agreement.md):
+  - `primary_outcome.type = "nominal"` (new route `outcome_nominal`):
+    multinomial logit on the design, classes from
+    `primary_outcome.categories`; truth `outcome_model.group_probability`.
+    With `analysis.expected_ratio` (e.g. 3:1) classes follow the ratio;
+    `segregation_distortion` shifts it (truth `true_ratio`, `distorted`).
+  - Binary outcomes on the logit scale with the unit's effect when units are
+    measured more than once (`binary_model = "auto"`, or `"logit"`); truth
+    the conditional odds ratios (`odds_ratio`, default 3) and the unit
+    effect SD on the logit scale. Single measurements keep the liability
+    threshold.
+  - `secondary_outcomes` [{name, column, unit, baseline_mean, residual_sd}]:
+    extra trait columns sharing `secondary_effect_share` of the design
+    effects, residuals correlated `trait_residual_cor`; truth
+    `secondary_traits.within_design_correlation`.
+  - `analysis.agreement` {raters, scale}: continuous ratings = true value +
+    rater bias + noise (truth ICC2, ICC3); nominal/ordinal ratings through a
+    misclassification matrix (`rater_accuracy`; truth expected kappa and, for
+    ordinal, quadratic weighted kappa). Long format is not simulated yet.
 - Survival strata that are not model terms (Biodes 01d41ef: stated blocks
   under 10 go to `analysis.survival.strata` with no `+ block`) get their own
   baseline hazard: a log-hazard shift per stratum with SD

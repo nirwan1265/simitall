@@ -366,21 +366,35 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   }
   # outcome family (simulators.tsv outcome_* rows)
   oargs <- .suite_args("suite_outcome", spec, params)$args
+  # treatment groups (cells of the treatment and within-unit factors) in level order, reference first
+  gv <- intersect(c(treat_vars, uncovered), names(frame))
+  grp <- if (length(gv)) do.call(paste, c(lapply(frame[idx, gv, drop = FALSE], as.character), sep = ":")) else rep("all", length(idx))
+  grp <- factor(grp, levels = unique(grp[if (length(gv)) do.call(order, lapply(frame[idx, gv, drop = FALSE], as.integer)) else seq_along(grp)]))
+  cond_eff <- treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)]
+  # binary: logit with the unit's random effects when the design measures units more than once (paired yes/no),
+  # else the liability threshold; suite_outcome binary_model sets it
+  bin_model <- oargs$binary_model %||% "auto"
+  if (identical(bin_model, "auto")) bin_model <- if (length(repeated) || isTRUE(spec$analysis$terms$paired)) "logit" else "liability_threshold"
   fam <- if (identical(out_route$route, "outcome_survival")) {
-    gv <- intersect(c(treat_vars, uncovered), names(frame))
-    grp <- if (length(gv)) do.call(paste, c(lapply(frame[idx, gv, drop = FALSE], as.character), sep = ":")) else rep("all", length(idx))
-    # groups in level order (reference first), so "first" and "last" group mean reference and last levels
-    grp <- factor(grp, levels = unique(grp[if (length(gv)) do.call(order, lapply(frame[idx, gv, drop = FALSE], as.integer)) else seq_along(grp)]))
     .suite_survival(oargs, spec, y_obs, y_design[idx], y_mean[idx], mu, rsd, eff, grp,
                     treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note,
                     model_from_params = !is.null(params$suite_outcome$survival_model), block_effects = block_effects,
                     strata_data = meta[idx, intersect(unlist(spec$analysis$survival$strata), names(meta)), drop = FALSE],
                     median_default = grepl("^default", .suite_args("suite_outcome", spec, params)$source[["median_time"]] %||% "default"))
+  } else if (identical(out_route$route, "outcome_nominal")) {
+    .suite_nominal(oargs, spec, y_mean[idx], y_design[idx], mu, rsd, eff, grp, note)
+  } else if (identical(out_route$route, "outcome_binary") && identical(bin_model, "logit")) {
+    .suite_binary_logit(oargs, y_mean[idx], y_design[idx], mu, rsd, eff, grp, cond_eff, random_sd, unit_sd, block_effects)
   } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
   assay_routes <- routes[routes$layer == "assay" & routes$status == "ready", , drop = FALSE]
   has_outcome <- !is.null(spec$primary_outcome) || !nrow(assay_routes)
   out$primary_outcome <- if (has_outcome) fam$y else NA
   if (!is.null(fam$event)) out$event <- if (has_outcome) fam$event else NA
+  # traits for correlation (spec secondary_outcomes) and raters for agreement (analysis.agreement)
+  sec <- .suite_secondary_traits(spec, oargs, (y_obs - y_mean[idx]) / rsd, y_mean[idx], mu, rsd)
+  for (nm in names(sec$columns)) out[[nm]] <- sec$columns[[nm]]
+  rat <- .suite_ratings(spec, oargs, fam$y, fam, note)
+  for (nm in names(rat$columns)) out[[nm]] <- rat$columns[[nm]]
 
   mpath <- file.path(outdir, "sample_metadata_template.tsv")
   utils::write.table(out, mpath, sep = "\t", row.names = FALSE, quote = FALSE, na = "")
@@ -398,6 +412,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     block_effects = block_effects, random_sd = random_sd,
     uncovered_effects = if (length(uncovered_effects)) uncovered_effects,
     within_subject = wsub$truth,
+    secondary_traits = sec$truth, agreement = rat$truth,
     within_unit_sd = if (!is.null(unit_key)) list(sd = unit_sd, note = "rows of one unit (one per level of the within-unit factor) share this effect; they are not independent units",
                                                   unit_columns = setdiff(intersect(names(h$layout), names(meta)), c(uncovered, repeated))),
     subsamples_per_unit = n_sub, subsample_sd = if (n_sub > 1) d$subsample_sd_ratio$value * rsd else 0,

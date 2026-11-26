@@ -2,6 +2,17 @@ simulator	argument	value	type	spec_field	note	ask
 suite_outcome	prevalence	0.2	numeric		binary outcome: share of units scored 1 (liability above the 1 - prevalence quantile)	What share of units do you expect to be positive (binary outcome)?
 suite_outcome	count_distribution	negative_binomial	character		count outcome: negative_binomial or poisson	
 suite_outcome	dispersion	5	numeric		count outcome: negative binomial size (smaller = more overdispersed)	
+suite_outcome	binary_model	auto	character		binary outcome: liability_threshold (share above a quantile), logit (P = plogis(intercept + effects), odds ratios conditional on the unit), or auto = logit when units are measured more than once (paired yes/no), else liability_threshold	
+suite_outcome	odds_ratio	3	numeric		binary logit: odds ratio of the full treatment effect (last level vs reference), conditional on the unit	What odds ratio do you expect between the treatment and the reference?
+suite_outcome	nominal_categories	3	integer		nominal outcome: number of classes when primary_outcome.categories and analysis.expected_ratio are absent	
+suite_outcome	nominal_probabilities		numeric_vector		nominal outcome: class shares in the reference group (default equal; analysis.expected_ratio wins)	
+suite_outcome	nominal_odds_ratio	3	numeric		nominal outcome: odds ratio of the last class vs the reference class for the full treatment effect (earlier classes get a share)	
+suite_outcome	segregation_distortion	0	numeric		nominal outcome with analysis.expected_ratio: log-odds shift of the first class (0 = the expected ratio holds; e.g. -0.3 = segregation distortion against it)	
+suite_outcome	trait_residual_cor	0.5	numeric		secondary_outcomes: within-design residual correlation of each trait with the primary outcome and with each other	How strongly do you expect the traits to be correlated within a treatment?
+suite_outcome	secondary_effect_share	0.5	numeric		secondary_outcomes: share of the primary outcome's treatment, block and random effects each trait carries (in its own SDs)	
+suite_outcome	rater_bias_sd	0.3	numeric		analysis.agreement, continuous: SD of each rater's constant bias, as a share of the SD of the true values	
+suite_outcome	rater_noise_sd	0.3	numeric		analysis.agreement, continuous: SD of each rating's noise, as a share of the SD of the true values	
+suite_outcome	rater_accuracy	0.8	numeric		analysis.agreement, nominal/ordinal: probability a rater gives the true class (errors go to adjacent scores for ordinal, to the other classes for nominal)	
 suite_outcome	min_mean	0.1	numeric		count outcome: unit means below this are floored	
 suite_outcome	category_probabilities	0.25,0.25,0.25,0.25	numeric_vector		ordinal outcome: share of units in each score category (lowest first)	
 suite_outcome	median_time	30	numeric		survival outcome: median time to event of a unit at the overall mean	What is the typical (median) time to the event, in your time unit?
