@@ -18,6 +18,7 @@ Biodes turned it into an `alpha` design with the model `y ~ treatment + rep + (1
 ![summary](summary.png)
 
 The planted QTNs: genome position, additive effect per allele and minor allele frequency; the ticks at the bottom are the markers in `genotypes.vcf.gz`.
+A quick look drawn by `make_showcase.R`; the full figure set for each example belongs to Biopaint.
 
 ## Files
 

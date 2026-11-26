@@ -4,6 +4,10 @@
   GWAS, RNA-seq genotype x drought, seed priming survival) simulated with seed
   2026, with their truth, a summary figure and a README per folder;
   `make_showcase.R` rebuilds them. Folder names match Biodes and Bioana.
+- A hazard ratio in `params` (`suite_outcome = list(hazard_ratio = ...)`) now
+  overrides the spec's stated one, so its direction can be tried both ways;
+  the showcase's options `SHOWCASE_PRIMING_HR` and `SHOWCASE_INTERACTION` use
+  this and `interaction_effect`, and example 03's README lists the choices.
 - Fixes found while building it: the survival goal's note described the old
   log-normal model; a stated hazard ratio no longer raises a "no data on this
   scale" note.

@@ -146,3 +146,11 @@ test_that("Biodes 0.6.7 subsamples: an expanded template keeps its rows; seeds o
   expect_equal(length(unique(out$unit_id)), nrow(lay))
   expect_equal(r$truth$outcome_model$frailty$plot$sd_log_hazard, 0.3)
 })
+
+test_that("a hazard ratio set in params overrides the spec's stated one", {
+  dir <- surv_folder(power = list(target_hazard_ratio = 0.6))
+  suppressMessages(simitall_from_biodes(dir, seed = 1, params = list(suite_outcome = list(hazard_ratio = 1.67))))
+  om <- read_surv(dir)$truth$outcome_model
+  expect_equal(om$hazard_ratio, 1.67)
+  expect_match(om$hazard_ratio_source, "^params")
+})

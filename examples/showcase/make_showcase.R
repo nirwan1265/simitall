@@ -6,6 +6,10 @@
 # sample_metadata_template.tsv) from BIODES_SHOWCASE, else ../BioDesignGPT/examples/showcase, else GitHub.
 # Outputs, per folder: the Biodes files, Simitall's data and truth, summary.png and README.md.
 # The same folder names continue in Bioana (analysis scored against this truth) and Biopaint (figures).
+#
+# Options for 03_germination_survival (environment variables):
+#   SHOWCASE_INTERACTION = 0 (default) | model   no genotype x priming interaction, or the model's default-size one
+#   SHOWCASE_PRIMING_HR  = (unset: the 0.6 typed in the question) | e.g. 1.67   hazard ratio of the priming effect
 
 suppressMessages({
   if (requireNamespace("devtools", quietly = TRUE) && file.exists("DESCRIPTION")) devtools::load_all(".", quiet = TRUE) else library(simitall)
@@ -25,8 +29,15 @@ examples <- list(
                            params_text = "heritability 0.6 (`suite_genetics`)"),
   "02_rnaseq_drought" = list(params = list(simulate_rnaseq_experiment = list(n_genes = 5000)),
                              params_text = "5,000 genes (`simulate_rnaseq_experiment`)"),
-  "03_germination_survival" = list(params = list(), interaction_effect = 0,
-                                   params_text = "default settings except no genotype x priming interaction (`interaction_effect = 0`: the question does not ask for one)")
+  "03_germination_survival" = local({
+    inter <- Sys.getenv("SHOWCASE_INTERACTION", "0"); hr <- Sys.getenv("SHOWCASE_PRIMING_HR", "")
+    list(params = if (nzchar(hr)) list(suite_outcome = list(hazard_ratio = as.numeric(hr))) else list(),
+         interaction_effect = if (identical(inter, "model")) NULL else as.numeric(inter),
+         params_text = paste0("default settings except ",
+                              if (identical(inter, "model")) "the model's genotype x priming interaction at its default size" else "no genotype x priming interaction",
+                              if (nzchar(hr)) sprintf(" and a priming hazard ratio of %s instead of the 0.6 in the question", hr) else "",
+                              " (see Choices below)"))
+  })
 )
 
 fmt <- function(x, d = 2) formatC(as.numeric(x), digits = d, format = "f", big.mark = ",")
@@ -152,8 +163,11 @@ for (nm in names(examples)) {
     planted <- c(
       sprintf("- **Seeds:** %d seeds = %d tray x genotype x priming cells x %d seeds; each seed has its own time, scored every %s days up to day %s.",
               n, nrow(lay), as.integer(spec$subsamples_per_unit %||% 10), om$life_table_width, om$follow_up),
-      sprintf("- **Model:** Weibull hazard (shape %s) with a delayed effect: hazard ratio 1 until day %s, then %s for primed vs not primed seeds (the HR stated in the question, and in the spec as `power.target_hazard_ratio`; below 1, so primed seeds germinate more slowly once the effect starts; the delay is `logrank_weight: fh_0_1`). The second line gets the same hazard ratio against the first; no genotype x priming interaction.",
-              om$weibull_shape, fmt(om$change_time, 1), om$hazard_ratio),
+      sprintf("- **Model:** Weibull hazard (shape %s) with a delayed effect: hazard ratio 1 until day %s, then %s for primed vs not primed seeds (%s; the delay is `logrank_weight: fh_0_1`). The second line gets the same hazard ratio against the first%s.",
+              om$weibull_shape, fmt(om$change_time, 1), om$hazard_ratio,
+              if (grepl("^params", om$hazard_ratio_source)) "set with the SHOWCASE_PRIMING_HR option instead of the question's 0.6"
+              else sprintf("the HR stated in the question, and in the spec as `power.target_hazard_ratio`; %s", if (om$hazard_ratio < 1) "below 1, so primed seeds germinate more slowly once the effect starts" else "above 1, so primed seeds germinate faster once the effect starts"),
+              if (identical(ex$interaction_effect, 0)) "; no genotype x priming interaction" else ", plus the model's genotype x priming interaction"),
       sprintf("- **Germination speed:** the reference group (genotype 1, not primed) has a median of %s days (set so 20%% of it has not germinated by day %s).", fmt(om$median_time, 1), om$follow_up),
       sprintf("- **Seed rot (competing event, code 2):** its own hazard with no treatment effect, median %s days if nothing else happened. Outcome: %d germinated, %d rotted (%s%% of seeds), %d still waiting at day %s (censored).",
               fmt(om$competing$median_alone, 0), ev[["1"]], ev[["2"]], fmt(100 * ev[["2"]] / n, 0), ev[["0"]], om$follow_up),
@@ -161,7 +175,15 @@ for (nm in names(examples)) {
               fmt(om$frailty$block$sd_log_hazard, 2), fmt(om$frailty$plot$sd_log_hazard, 2)),
       "", "True values per group (conditional on an average tray), from `sim_truth.json` `outcome_model.groups`:", "",
       "| genotype | treatment | median, germination alone (days) | germinated by day 14 (CIF) | not germinated or rotted by day 14 | RMST to day 21 (days) |",
-      "|---|---|---|---|---|---|", gtab)
+      "|---|---|---|---|---|---|", gtab, "",
+      "### Choices made for this example, and how to change them", "",
+      sprintf("- **%s.** The Biodes model is `treatment * treatment2`, so by default Simitall would plant a genotype x priming interaction the question never asked about. %s Option: `SHOWCASE_INTERACTION=model Rscript examples/showcase/make_showcase.R` plants it at the default size (`interaction_effect` in `simitall_from_biodes()`).",
+              if (identical(ex$interaction_effect, 0)) "No interaction" else "Interaction planted",
+              if (identical(ex$interaction_effect, 0)) "It is turned off here (`interaction_effect = 0`) so the story stays \"a delayed priming effect\"." else "Here it is planted at the model's default size."),
+      sprintf("- **HR %s %s germination.** A hazard ratio below 1 means primed seeds germinate *more slowly* once the effect starts; above 1, faster. %s If priming should speed germination, the question should say HR 1.67, or run `SHOWCASE_PRIMING_HR=1.67 Rscript examples/showcase/make_showcase.R` (`params = list(suite_outcome = list(hazard_ratio = 1.67))`, which overrides the spec).",
+              om$hazard_ratio, if (om$hazard_ratio < 1) "slows" else "speeds",
+              if (grepl("^params", om$hazard_ratio_source)) "Here the HR comes from the option, not the question." else "0.6 is what the question typed, so that is what is planted."),
+      "- **Survival fixes found while building this.** The survival goal's note in `sim_truth.json` still described the old log-normal model, and a stated hazard ratio raised a misleading \"no data on this scale\" note. Both were fixed in Simitall before these files were written.")
   }
 
   # README
@@ -175,7 +197,8 @@ for (nm in names(examples)) {
     sprintf("Biodes turned it into %s `%s` design with the model `%s` ([Biodes folder](%s/%s)). Simitall simulated data for that exact layout, with seed 2026 and %s, and recorded everything it planted in [`sim_truth.json`](sim_truth.json).",
             if (grepl("^[aeiou]", spec$design$chosen)) "an" else "a", spec$design$chosen, spec$analysis$model, biodes_url, nm, ex$params_text),
     "", "## What was planted", "", planted, "",
-    "## Summary figure", "", "![summary](summary.png)", "", fig_caption, "",
+    "## Summary figure", "", "![summary](summary.png)", "", fig_caption,
+    "A quick look drawn by `make_showcase.R`; the full figure set for each example belongs to Biopaint.", "",
     "## Files", "",
     paste0("- From Biodes: ", paste(rel(files), collapse = ", ")),
     paste0("- From Simitall: ", paste(rel(data_files), collapse = ", ")),

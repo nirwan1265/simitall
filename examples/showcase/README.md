@@ -11,11 +11,15 @@ then analyses the same folder and scores itself against that truth. The folder n
 | [02 RNA-seq, genotype x drought](02_rnaseq_drought) | wild type / mutant x well-watered / drought, 4 plants each; `y ~ treatment * treatment2 + block` | 5,000 genes: 500 respond to drought in both genotypes, 500 respond differently in the mutant (the goal) |
 | [03 Seed priming, time to germination](03_germination_survival) | 2 lines x primed / not, 12 trays, 10 seeds per cell; checked every 2 days to day 21 | hazard ratio 0.6 that starts after a delay, seed rot as a competing event, tray and cell frailty, censoring at day 21 |
 
-Each folder's README gives the question, what was planted in words, one summary figure and the links on to Bioana.
+Each folder's README gives the question, what was planted in words, one summary figure (a quick look; the full
+figure set is Biopaint's) and the links on to Bioana. Example 03 lists the choices made where the question was silent,
+each with an option to change it.
 
 Rebuild all three (seed 2026), from the repository root:
 
 ```sh
 Rscript examples/showcase/make_showcase.R                       # reads ../BioDesignGPT/examples/showcase, else GitHub
 BIODES_SHOWCASE=/path/to/BioDesignGPT/examples/showcase Rscript examples/showcase/make_showcase.R
+SHOWCASE_INTERACTION=model Rscript examples/showcase/make_showcase.R   # 03: plant the model's genotype x priming interaction
+SHOWCASE_PRIMING_HR=1.67 Rscript examples/showcase/make_showcase.R    # 03: priming speeds germination (HR > 1)
 ```

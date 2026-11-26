@@ -23,7 +23,7 @@
 }
 
 .suite_survival <- function(a, spec, y_obs, y_design, y_mean, mu, rsd, eff, groups, cond_effects, random_sd, note,
-                            model_from_params = FALSE, block_effects = list(), median_default = FALSE, strata_data = NULL, cluster = NULL) {
+                            model_from_params = FALSE, block_effects = list(), median_default = FALSE, strata_data = NULL, cluster = NULL, hr_from_params = FALSE) {
   ss <- spec$analysis$survival %||% list()
   lw <- ss$logrank_weight
   model <- a$survival_model %||% "weibull_ph"
@@ -58,6 +58,8 @@
   if (!is.null(spec$power$target_hazard_ratio)) { hr <- as.numeric(spec$power$target_hazard_ratio); hr_src <- "power.target_hazard_ratio" }
   if (!is.null(ge$size) && identical(ge$scale, "hazard_ratio")) { hr <- as.numeric(ge$size); hr_src <- "analysis.goal_effect.survival (hazard_ratio)" }
   if (!is.null(ge$size) && identical(ge$scale, "time_ratio") && !is.na(k)) { hr <- as.numeric(ge$size)^(-k); hr_src <- "analysis.goal_effect.survival (time_ratio^-shape)" }
+  # a hazard ratio set in params wins over the spec (e.g. to try the opposite direction of a stated HR)
+  if (hr_from_params) { hr <- as.numeric(a$hazard_ratio); hr_src <- "params suite_outcome hazard_ratio (overrides the spec)"; note(sprintf("hazard ratio %s from params, overriding the spec", format(hr))) }
   coef <- if (eff != 0) log(hr) / (eff / rsd) else 0
   codes <- spec$primary_outcome$event_codes
   comp <- if (length(codes)) setdiff(suppressWarnings(as.integer(names(codes))), c(0L, 1L, NA)) else integer()

@@ -19,6 +19,7 @@ Biodes turned it into a `factorial` design with the model `y ~ treatment * treat
 ![summary](summary.png)
 
 Each point is a gene: its observed log2 fold change under drought in each genotype. On the dashed line, drought acts the same in both genotypes; the planted interaction genes (red) sit off it.
+A quick look drawn by `make_showcase.R`; the full figure set for each example belongs to Biopaint.
 
 ## Files
 
