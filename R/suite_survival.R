@@ -135,6 +135,7 @@
   grid <- seq(0, max(tau, lms, follow, 4 * med) * 1.001, length.out = 8001)
   Hc <- if (length(comp)) length(comp) * (grid / lam_c)^kc else 0 * grid
   gid <- intersect(levels(factor(groups)), as.character(groups[ok])); groups <- as.character(groups); gt <- list()
+  if (model == "lognormal_aft") eo <- rep(0, length(groups))
   gm <- tapply(y_design, groups, mean)
   for (g in gid) {
     e <- coef * (gm[[g]] - mu) / rsd
@@ -147,15 +148,33 @@
       delayed_effect = H0(pmin(grid, t0)) + exp(e) * pmax(H0(grid) - H0(t0), 0),
       crossing = exp(e) * H0(pmin(grid, t0)) + exp(-e) * pmax(H0(grid) - H0(t0), 0),
       early_effect = exp(e) * H0(pmin(grid, t0)) + pmax(H0(grid) - H0(t0), 0))
-    S1 <- exp(-H1); S <- exp(-H1 - Hc)
     at <- function(f, x) stats::approx(grid, f, xout = x, rule = 2)$y
-    rm <- { i <- grid <= tau; sum(diff(grid[i]) * (S[i][-1] + S[i][-sum(i)]) / 2) }
-    one <- list(median = if (any(S1 <= 0.5)) round(grid[which(S1 <= 0.5)[1]], 4) else NA, log_hazard = e,
-                survival_at = stats::setNames(as.list(round(at(S, lms), 4)), format(lms)), rmst = round(rm, 4))
-    if (length(comp)) {
-      h1 <- c(0, diff(H1)); cif <- cumsum(h1 * c(1, S[-length(S)]))
-      one$cif_event_at <- stats::setNames(as.list(round(at(cif, lms), 4)), format(lms))
-      one$median_note <- "median of the event of interest alone (net of competing events)"
+    lk <- trimws(format(lms))
+    rmst_of <- function(S) { i <- grid <= tau; sum(diff(grid[i]) * (S[i][-1] + S[i][-sum(i)]) / 2) }
+    # measures for one frailty multiplier set fr (exp of the log-hazard shifts; 1 = an average cluster), averaged
+    measures <- function(fr) {
+      S1 <- rowMeans(exp(-outer(H1, fr))); S <- rowMeans(exp(-outer(H1, fr) - Hc))
+      out <- list(median = if (any(S1 <= 0.5)) round(grid[which(S1 <= 0.5)[1]], 4) else NA,
+                  event_free_survival_at = stats::setNames(as.list(round(at(S, lms), 4)), lk), event_free_rmst = round(rmst_of(S), 4))
+      if (length(comp)) {
+        h1 <- c(0, diff(H1))
+        cif <- rowMeans(vapply(fr, function(f) { Sf <- exp(-f * H1 - Hc); cumsum(f * h1 * c(1, Sf[-length(Sf)])) }, numeric(length(grid))))
+        out$cif_event_at <- stats::setNames(as.list(round(at(cif, lms), 4)), lk)
+      }
+      out
+    }
+    cond <- measures(1)
+    one <- c(list(log_hazard = e), cond)
+    # kept under the old names too (same values): free of any event, not the event of interest alone
+    one$survival_at <- cond$event_free_survival_at; one$rmst <- cond$event_free_rmst
+    one$measure_notes <- list(median = if (length(comp)) "median of the event of interest alone (net of competing events)" else "median time to the event",
+                           event_free = if (length(comp)) "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names" else "event_free_*: free of the event; survival_at and rmst are the same values",
+                           cif = if (length(comp)) "cif_event_at: cumulative incidence of the event of interest, with competing events")
+    # marginal over the clusters as they were drawn in this data set (trays, cells, blocks): what the observed
+    # group curves estimate; the conditional values above are for an average cluster (frailty 1)
+    if (model != "lognormal_aft") {
+      fr <- exp(eo[as.character(groups) == g & ok])
+      if (length(fr) && stats::sd(log(fr)) > 0) one$marginal <- c(measures(fr), list(note = sprintf("averaged over the %d units' realised frailties (SD %.2f on the log hazard)", length(fr), stats::sd(log(fr)))))
     }
     gt[[g]] <- one
   }
@@ -194,7 +213,7 @@
             landmarks = as.list(lms), rmst_tau = tau, groups = gt, ratios = ratios,
             note = paste0("primary_outcome = time to the first event or censoring; event 1 = the event, 0 = censored",
                           if (length(comp)) ", 2+ = competing events" else "",
-                          ". Group truth is conditional on an average cluster (no frailty)."))
+                          ". Group truth (outcome_model.groups) is conditional on an average cluster (frailty 1); groups[].marginal averages over the realised cluster frailties, as the observed group curves do."))
   m <- m[!vapply(m, is.null, logical(1))]
   list(type = "survival", y = round(y, 3), event = as.integer(ev), model = m)
 }

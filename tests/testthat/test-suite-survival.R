@@ -154,3 +154,17 @@ test_that("a hazard ratio set in params overrides the spec's stated one", {
   expect_equal(om$hazard_ratio, 1.67)
   expect_match(om$hazard_ratio_source, "^params")
 })
+
+test_that("group truth names what it measures and gives the marginal over the realised frailties", {
+  dir <- surv_folder(extra_po = list(event_codes = list("0" = "censored", "1" = "germinated", "2" = "rot")),
+                     analysis = list(survival = list(landmarks = list(7, 14))), design = "rcbd", reps = 6)
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json")); s$analysis$model <- "y ~ treatment + (1 | block)"
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  suppressMessages(simitall_from_biodes(dir, seed = 1))
+  g <- read_surv(dir)$truth$outcome_model$groups$control
+  expect_named(g$event_free_survival_at, c("7", "14"))
+  expect_equal(g$survival_at, g$event_free_survival_at)
+  expect_equal(g$rmst, g$event_free_rmst)
+  expect_match(g$measure_notes$event_free, "free of any event")
+  expect_true(all(c("median", "event_free_survival_at", "event_free_rmst", "cif_event_at") %in% names(g$marginal)))
+})

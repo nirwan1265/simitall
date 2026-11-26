@@ -69,60 +69,148 @@
     "rmst_tau": 21,
     "groups": {
       "genotype_1:not primed": {
-        "median": 11.9822,
         "log_hazard": -0,
+        "median": 11.9822,
+        "event_free_survival_at": {
+          "7": 0.6575,
+          "14": 0.3055
+        },
+        "event_free_rmst": 10.6283,
+        "cif_event_at": {
+          "7": 0.2531,
+          "14": 0.5132
+        },
         "survival_at": {
-          " 7": 0.6575,
+          "7": 0.6575,
           "14": 0.3055
         },
         "rmst": 10.6283,
-        "cif_event_at": {
-          " 7": 0.2531,
-          "14": 0.5132
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 10.4417,
+          "event_free_survival_at": {
+            "7": 0.6113,
+            "14": 0.252
+          },
+          "event_free_rmst": 9.79,
+          "cif_event_at": {
+            "7": 0.3024,
+            "14": 0.5807
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.19 on the log hazard)"
+        }
       },
       "genotype_1:primed": {
-        "median": 15.213,
         "log_hazard": -0.510825623765991,
+        "median": 15.213,
+        "event_free_survival_at": {
+          "7": 0.6748,
+          "14": 0.3932
+        },
+        "event_free_rmst": 11.6827,
+        "cif_event_at": {
+          "7": 0.2356,
+          "14": 0.4128
+        },
         "survival_at": {
-          " 7": 0.6748,
+          "7": 0.6748,
           "14": 0.3932
         },
         "rmst": 11.6827,
-        "cif_event_at": {
-          " 7": 0.2356,
-          "14": 0.4128
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 12.0302,
+          "event_free_survival_at": {
+            "7": 0.6088,
+            "14": 0.3194
+          },
+          "event_free_rmst": 10.4755,
+          "cif_event_at": {
+            "7": 0.3061,
+            "14": 0.506
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.28 on the log hazard)"
+        }
       },
       "genotype_2:not primed": {
-        "median": 15.213,
         "log_hazard": -0.510825623765991,
+        "median": 15.213,
+        "event_free_survival_at": {
+          "7": 0.6748,
+          "14": 0.3932
+        },
+        "event_free_rmst": 11.6827,
+        "cif_event_at": {
+          "7": 0.2356,
+          "14": 0.4128
+        },
         "survival_at": {
-          " 7": 0.6748,
+          "7": 0.6748,
           "14": 0.3932
         },
         "rmst": 11.6827,
-        "cif_event_at": {
-          " 7": 0.2356,
-          "14": 0.4128
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 12.1321,
+          "event_free_survival_at": {
+            "7": 0.6128,
+            "14": 0.3214
+          },
+          "event_free_rmst": 10.5214,
+          "cif_event_at": {
+            "7": 0.3018,
+            "14": 0.503
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.23 on the log hazard)"
+        }
       },
       "genotype_2:primed": {
-        "median": 19.9484,
         "log_hazard": -1.02165124753198,
+        "median": 19.9484,
+        "event_free_survival_at": {
+          "7": 0.6853,
+          "14": 0.4575
+        },
+        "event_free_rmst": 12.4859,
+        "cif_event_at": {
+          "7": 0.2249,
+          "14": 0.3399
+        },
         "survival_at": {
-          " 7": 0.6853,
+          "7": 0.6853,
           "14": 0.4575
         },
         "rmst": 12.4859,
-        "cif_event_at": {
-          " 7": 0.2249,
-          "14": 0.3399
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 16.5977,
+          "event_free_survival_at": {
+            "7": 0.6381,
+            "14": 0.4085
+          },
+          "event_free_rmst": 11.6482,
+          "cif_event_at": {
+            "7": 0.2756,
+            "14": 0.4022
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.35 on the log hazard)"
+        }
       }
     },
     "ratios": {
@@ -147,7 +235,7 @@
         ]
       }
     },
-    "note": "primary_outcome = time to the first event or censoring; event 1 = the event, 0 = censored, 2+ = competing events. Group truth is conditional on an average cluster (no frailty)."
+    "note": "primary_outcome = time to the first event or censoring; event 1 = the event, 0 = censored, 2+ = competing events. Group truth (outcome_model.groups) is conditional on an average cluster (frailty 1); groups[].marginal averages over the realised cluster frailties, as the observed group curves do."
   },
   "intercept": 0,
   "residual_sd": 1,
@@ -246,60 +334,148 @@
     "effect_scale": "hazard ratio, last level of treatment vs reference (after t = 5.988115; 1 before)",
     "groups": {
       "genotype_1:not primed": {
-        "median": 11.9822,
         "log_hazard": -0,
+        "median": 11.9822,
+        "event_free_survival_at": {
+          "7": 0.6575,
+          "14": 0.3055
+        },
+        "event_free_rmst": 10.6283,
+        "cif_event_at": {
+          "7": 0.2531,
+          "14": 0.5132
+        },
         "survival_at": {
-          " 7": 0.6575,
+          "7": 0.6575,
           "14": 0.3055
         },
         "rmst": 10.6283,
-        "cif_event_at": {
-          " 7": 0.2531,
-          "14": 0.5132
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 10.4417,
+          "event_free_survival_at": {
+            "7": 0.6113,
+            "14": 0.252
+          },
+          "event_free_rmst": 9.79,
+          "cif_event_at": {
+            "7": 0.3024,
+            "14": 0.5807
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.19 on the log hazard)"
+        }
       },
       "genotype_1:primed": {
-        "median": 15.213,
         "log_hazard": -0.510825623765991,
+        "median": 15.213,
+        "event_free_survival_at": {
+          "7": 0.6748,
+          "14": 0.3932
+        },
+        "event_free_rmst": 11.6827,
+        "cif_event_at": {
+          "7": 0.2356,
+          "14": 0.4128
+        },
         "survival_at": {
-          " 7": 0.6748,
+          "7": 0.6748,
           "14": 0.3932
         },
         "rmst": 11.6827,
-        "cif_event_at": {
-          " 7": 0.2356,
-          "14": 0.4128
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 12.0302,
+          "event_free_survival_at": {
+            "7": 0.6088,
+            "14": 0.3194
+          },
+          "event_free_rmst": 10.4755,
+          "cif_event_at": {
+            "7": 0.3061,
+            "14": 0.506
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.28 on the log hazard)"
+        }
       },
       "genotype_2:not primed": {
-        "median": 15.213,
         "log_hazard": -0.510825623765991,
+        "median": 15.213,
+        "event_free_survival_at": {
+          "7": 0.6748,
+          "14": 0.3932
+        },
+        "event_free_rmst": 11.6827,
+        "cif_event_at": {
+          "7": 0.2356,
+          "14": 0.4128
+        },
         "survival_at": {
-          " 7": 0.6748,
+          "7": 0.6748,
           "14": 0.3932
         },
         "rmst": 11.6827,
-        "cif_event_at": {
-          " 7": 0.2356,
-          "14": 0.4128
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 12.1321,
+          "event_free_survival_at": {
+            "7": 0.6128,
+            "14": 0.3214
+          },
+          "event_free_rmst": 10.5214,
+          "cif_event_at": {
+            "7": 0.3018,
+            "14": 0.503
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.23 on the log hazard)"
+        }
       },
       "genotype_2:primed": {
-        "median": 19.9484,
         "log_hazard": -1.02165124753198,
+        "median": 19.9484,
+        "event_free_survival_at": {
+          "7": 0.6853,
+          "14": 0.4575
+        },
+        "event_free_rmst": 12.4859,
+        "cif_event_at": {
+          "7": 0.2249,
+          "14": 0.3399
+        },
         "survival_at": {
-          " 7": 0.6853,
+          "7": 0.6853,
           "14": 0.4575
         },
         "rmst": 12.4859,
-        "cif_event_at": {
-          " 7": 0.2249,
-          "14": 0.3399
+        "measure_notes": {
+          "median": "median of the event of interest alone (net of competing events)",
+          "event_free": "event_free_*: free of any event (the event of interest and the competing events); survival_at and rmst are the same values under their old names",
+          "cif": "cif_event_at: cumulative incidence of the event of interest, with competing events"
         },
-        "median_note": "median of the event of interest alone (net of competing events)"
+        "marginal": {
+          "median": 16.5977,
+          "event_free_survival_at": {
+            "7": 0.6381,
+            "14": 0.4085
+          },
+          "event_free_rmst": 11.6482,
+          "cif_event_at": {
+            "7": 0.2756,
+            "14": 0.4022
+          },
+          "note": "averaged over the 120 units' realised frailties (SD 0.35 on the log hazard)"
+        }
       }
     },
     "model_terms": [

@@ -1,5 +1,16 @@
 # simitall (development)
 
+- Survival group truth (`outcome_model.groups`) says what each value
+  measures: `event_free_survival_at` and `event_free_rmst` (free of any event,
+  the event of interest and competing ones; the old `survival_at` / `rmst`
+  stay as the same values), `median` (event of interest alone),
+  `cif_event_at`, with `measure_notes`. New `groups[].marginal`: the same
+  measures averaged over the units' realised cluster frailties (trays, cells,
+  blocks), which is what the observed group curves estimate; the top-level
+  values stay conditional on an average cluster. Landmark keys are trimmed
+  ("7", not " 7"). Over 25 seeds of the showcase design, observed event-free
+  survival at day 14 averaged 0.387, against 0.386 (marginal) and 0.387
+  (conditional).
 - Showcase (`examples/showcase/`): the three Biodes showcase designs (sorghum
   GWAS, RNA-seq genotype x drought, seed priming survival) simulated with seed
   2026, with their truth, a summary figure and a README per folder;
