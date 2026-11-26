@@ -142,6 +142,9 @@
     ex$reason <- "Biodes registry simulated: false"
   } else if (g$goal == "treatment_effect" || (g$goal == "trend" && is.null(x$tr_var))) {
     tv <- intersect(x$treat_vars, names(truth$treatment_effects))
+    # goal_terms.treatment_effect, when Biodes gives them, name the factors the question is about (an
+    # adjustment factor such as sex is then not part of the goal)
+    if (g$goal == "treatment_effect" && length(g$vars)) tv <- intersect(g$vars, tv)
     d <- lapply(truth$treatment_effects[tv], function(e) as.list(lev_diff(e)))
     ex$terms <- as.list(tv); ex$variables <- as.list(tv)
     ex$level_differences <- d

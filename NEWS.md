@@ -1,5 +1,10 @@
 # simitall (development)
 
+- `goal_terms.treatment_effect`, when given, limits the treatment-effect goal
+  (and the replicate choice) to those factors, so an adjustment factor such as
+  sex (Biodes 4b7427b, `y ~ treatment + treatment2 + covariate`) is planted as
+  a main effect but is not part of the goal. Additive models plant no
+  interaction.
 - A count primary outcome with `secondary_outcomes` now carries the unit's
   residual in its mean (Poisson around it), so the planted trait correlation
   reaches the counts; before, counts were drawn around the design mean only

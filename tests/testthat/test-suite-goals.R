@@ -148,3 +148,13 @@ test_that("an outcome with a unit but no SD is simulated standardized and says s
   expect_equal(c(t$residual_sd, t$intercept, t$effect), c(4, 50, 5))
   expect_equal(t$outcome_scale$residual_sd_source, "power.cv x primary_outcome.baseline_mean")
 })
+
+test_that("goal_terms.treatment_effect limits the goal to the named factors (an adjustment factor stays out)", {
+  dir <- goal_folder("factorial", list(list(name = "diet", n_levels = 2), list(name = "sex", n_levels = 2, levels = list("female", "male"))), "treatment_effect")
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json"))
+  s$analysis$model <- "y ~ treatment + treatment2"; s$analysis$goal_terms <- list(treatment_effect = list("treatment"))
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  gt <- sim_goal(dir)$truth$goal_truth
+  expect_equal(unlist(gt$model_terms), "treatment")
+  expect_named(gt$level_differences, "treatment")
+})
