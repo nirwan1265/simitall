@@ -7,6 +7,13 @@ suite_outcome	category_probabilities	0.25,0.25,0.25,0.25	numeric_vector		ordinal
 suite_outcome	median_time	30	numeric		survival outcome: median time to event of a unit at the overall mean	What is the typical (median) time to the event, in your time unit?
 suite_outcome	time_sd	0.5	numeric		survival outcome: SD of log time to event (log-normal)	
 suite_outcome	censored_fraction	0.2	numeric		survival outcome: share of units still without the event at the end of follow-up (censored)	What share of units do you expect to still be event-free at the end?
+suite_outcome	survival_model	weibull_ph	character		survival outcome: weibull_ph (proportional hazards; HR and time ratio), exponential, lognormal_aft (time ratios, hazards not proportional), delayed_effect (HR 1 until change_time), crossing (HR then 1/HR after change_time)	
+suite_outcome	weibull_shape	1.5	numeric		survival outcome, Weibull models: shape (>1 hazard rises with time)	
+suite_outcome	hazard_ratio	0.6	numeric	power.target_hazard_ratio	survival outcome: hazard ratio of the full treatment effect (last level vs reference); the survival goal size wins when its scale is hazard_ratio or time_ratio	What hazard ratio do you expect between the treatment and the reference?
+suite_outcome	change_time		numeric		survival outcome, delayed_effect / crossing: time the hazard ratio changes (default half the median time)	
+suite_outcome	follow_up		numeric		survival outcome: end of follow-up (administrative censoring); default the time that leaves censored_fraction without an event	How long are units followed?
+suite_outcome	loss_fraction	0	numeric	power.loss_fraction	survival outcome: share of units lost to follow-up at a uniform time before its end (random loss, recorded apart from administrative censoring)	
+suite_outcome	competing_median_ratio	2	numeric		survival outcome with primary_outcome.event_codes 2+: median time of each competing event alone, as a multiple of median_time	
 suite_outcome	within_subject	none	character		repeated measures (the same units at several occasions): none = shared unit effect only (sphericity holds); ar1 = residuals of a unit correlated rho^lag over the occasions; random_slope = each unit its own slope over time. Recorded in sim_truth.json within_subject	Are measurements on the same unit closer in time more alike than ones far apart?
 suite_outcome	within_rho	0.7	numeric		within_subject = ar1: correlation of a unit's residuals at adjacent occasions	
 suite_outcome	slope_sd_ratio	1	numeric		within_subject = random_slope: SD of the units' change over the full time range, in residual SDs	

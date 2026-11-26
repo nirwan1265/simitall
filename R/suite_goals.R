@@ -49,7 +49,7 @@
        definition = ge$definition, size = size, size_stated = stated, scale = gscale, feature_size = feature_size,
        terms = unname(terms), vars = unname(vars),
        shape = shape, peak = ge$peak, half_time = ge$half_time, scope = ge$scope, group = ge$group, group_factor = ge$group_factor,
-       per_unit = ge$per_unit, standardized = standardized)
+       per_unit = ge$per_unit, standardized = standardized, survival_scale = if (goal == "survival") ge$scale)
 }
 
 # hours in a time unit (Biodes .sf_unit_name names); NA when unknown
@@ -194,10 +194,26 @@
   } else if (g$goal == "survival") {
     m <- x$fam$model
     tv <- intersect(x$treat_vars, names(truth$treatment_effects))
-    if (identical(m$family, "lognormal_aft")) {
-      ex$time_ratios <- lapply(truth$treatment_effects[tv], function(e) as.list(exp(m$time_sd * lev_diff(e) / m$scale$sd_outcome)))
-      ex$true_effect <- if (length(tv)) unlist(ex$time_ratios[[1]])[length(ex$time_ratios[[1]])] else 1
-      ex$effect_scale <- "time ratio (accelerated failure time), last level vs reference; hazards are not proportional"
+    if (identical(x$fam$type, "survival") && length(tv)) {
+      r <- m$ratios[[tv[1]]]
+      last <- function(z) { z <- unlist(z); z[length(z)] }
+      # Biodes 0.6 writes scale "log_hazard": the estimand is the hazard ratio
+      gs <- if (identical(g$survival_scale, "log_hazard")) "hazard_ratio" else g$survival_scale %||% if (isTRUE(m$proportional_hazards) || m$family %in% c("delayed_effect", "crossing")) "hazard_ratio" else "time_ratio"
+      ex$hazard_ratios <- lapply(m$ratios, `[[`, "hazard_ratio"); ex$time_ratios <- lapply(m$ratios, `[[`, "time_ratio")
+      ex$proportional_hazards <- m$proportional_hazards
+      if (gs == "rmst_difference") {
+        gr <- m$groups; ex$true_effect <- if (length(gr) > 1) gr[[length(gr)]]$rmst - gr[[1]]$rmst else 0
+        ex$effect_scale <- sprintf("RMST difference at tau = %s, last group minus first", format(m$rmst_tau))
+      } else if (gs == "hazard_ratio" && !is.null(r$hazard_ratio)) {
+        ex$true_effect <- last(r$hazard_ratio)
+        ex$true_log_hazard_ratio <- log(last(r$hazard_ratio))   # the Cox coefficient
+        ex$effect_scale <- sprintf("hazard ratio, last level of %s vs reference%s", tv[1],
+          switch(m$family, delayed_effect = sprintf(" (after t = %s; 1 before)", format(m$change_time)), crossing = sprintf(" (before t = %s; inverted after)", format(m$change_time)), ""))
+      } else {
+        ex$true_effect <- last(r$time_ratio)
+        ex$effect_scale <- sprintf("time ratio, last level of %s vs reference (%s)", tv[1], m$family)
+      }
+      ex$groups <- m$groups
     } else {
       status <- "not_planted"; ex$reason <- "primary_outcome.type is not survival"
     }

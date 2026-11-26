@@ -34,7 +34,10 @@
               column = "primary_outcome", outcome_type = outcome_type, truth = list(kind = "outcome", file = "sim_truth.json",
               goal = if (identical(truth$goal_truth$planted, "outcome")) list(goal = truth$goal_truth$goal, field = "goal_truth",
                                                                               terms = truth$goal_truth$model_terms, test = truth$goal_truth$test)))
-    if (identical(outcome_type, "survival")) e$event_column <- "event"
+    if (identical(outcome_type, "survival")) {
+      e$event_column <- "event"
+      if (!is.null(truth$outcome_model$event_codes)) e$event_codes <- truth$outcome_model$event_codes
+    }
     add(e)
   }
   a <- truth$assays %||% list()

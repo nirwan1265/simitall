@@ -1,5 +1,22 @@
 # simitall (development)
 
+- Survival outcomes (Bioana docs/contracts/survival.md): `suite_outcome`
+  `survival_model` = `weibull_ph` (new default; proportional hazards, shape
+  `weibull_shape` 1.5), `exponential`, `lognormal_aft` (the old model),
+  `delayed_effect` (HR 1 until `change_time`) or `crossing` (HR, then 1/HR).
+  The full treatment effect has hazard ratio `hazard_ratio` (0.6;
+  `power.target_hazard_ratio`, or the survival goal's size on
+  `hazard_ratio`/`time_ratio`). Censoring is administrative at `follow_up`
+  plus random loss (`loss_fraction`, `power.loss_fraction`), counted apart.
+  `primary_outcome.event_codes` 2+ add competing events (event column 0/1/2,
+  Weibull cause-specific hazards with no treatment effect). Blocks and random
+  terms act as a log-normal frailty (variance in truth).
+  `analysis.survival.life_table` rounds times up to the scoring grid.
+  `sim_truth.json` `outcome_model` gives per group the median, S(t) at
+  `analysis.survival.landmarks`, RMST at `rmst_tau`, CIF at the landmarks
+  (competing), the hazard and time ratios per level, `proportional_hazards`,
+  and the censoring counts; `goal_truth` for the survival goal reports the
+  HR (and its log), time ratio or RMST difference.
 - Repeated measures can break sphericity: `suite_outcome` `within_subject`
   = `ar1` (a unit's residuals correlate `within_rho`^lag over the occasions,
   default rho 0.7) or `random_slope` (each unit its own slope over time, SD

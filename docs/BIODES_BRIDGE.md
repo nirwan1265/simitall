@@ -137,6 +137,7 @@ and `sim_truth.json` with `routes`, `genetics`, `assays`, `not_simulated`.
 | `factors[].values`, `.unit`, `.scale`, `.log_base`, `.log_offset` | sampling times, dose values (trend on log_base(x + log_offset) for `scale = log`) | numbers in the level labels; offset = smallest positive level when a level is 0 |
 | `primary_outcome.unit`, `.baseline_mean`, `power.residual_sd`, `power.cv` | the outcome's scale (`sim_truth.json` `outcome_scale`); SD from CV % x baseline mean | a unit with no SD: standardized (SD 1, mean 0, effects in SDs); no unit: SD 10, mean 100 |
 | `analysis.terms.repeated_factors`, `.time` | the occasion a unit is measured at; correlation over occasions from `suite_outcome` `within_subject` (none / ar1 / random_slope), in `sim_truth.json` `within_subject` | none: shared unit effect only |
+| `primary_outcome.type = survival`, `.event_codes`; `power.target_hazard_ratio`, `.loss_fraction`; `analysis.survival.landmarks`, `.rmst_tau`, `.life_table` | survival times and event codes (`suite_outcome` `survival_model`), truth per group in `outcome_model` | Weibull PH, HR 0.6, median 30, 20% administratively censored |
 | `goal_effect[goal].scale` | identity: the size is on the outcome; log2: it sizes the goal's count features | outcome |
 | `goal_effect.time_course.group`, `.group_factor` | with `scope = within_group`, the one level that changes over time | the non-reference levels |
 

@@ -286,6 +286,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     cells <- tapply(add, key, `[`, 1)
     interaction_effects[[term]] <- list(size = size, pattern = "linear_by_linear", cells = as.list(cells))
   }
+  y_design <- y   # intercept + treatment main effects + interactions (+ uncovered below): the design part, no blocks or random terms
   # fixed nuisance terms (block, rep): random draws, fitted as fixed effects
   block_vars <- intersect(names(p$role)[p$role == "block"], p$fixed_labels)
   block_effects <- list()
@@ -314,6 +315,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       stats::setNames(if (length(lev) > 1) seq(0, eff, length.out = length(lev)) else 0, lev)
     uncovered_effects[[v]] <- as.list(e)
     y <- y + e[as.character(frame[[v]])]
+    y_design <- y_design + e[as.character(frame[[v]])]
   }
   # rows of one unit (one per within-unit level, e.g. leaf and root of one plant) share that unit's effect
   unit_sd <- 0
@@ -364,7 +366,12 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   }
   # outcome family (simulators.tsv outcome_* rows)
   oargs <- .suite_args("suite_outcome", spec, params)$args
-  fam <- .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
+  fam <- if (identical(out_route$route, "outcome_survival")) {
+    gv <- intersect(c(treat_vars, uncovered), names(frame))
+    grp <- if (length(gv)) do.call(paste, c(lapply(frame[idx, gv, drop = FALSE], as.character), sep = ":")) else rep("all", length(idx))
+    .suite_survival(oargs, spec, y_obs, y_design[idx], y_mean[idx], mu, rsd, eff, grp,
+                    treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note)
+  } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
   assay_routes <- routes[routes$layer == "assay" & routes$status == "ready", , drop = FALSE]
   has_outcome <- !is.null(spec$primary_outcome) || !nrow(assay_routes)
   out$primary_outcome <- if (has_outcome) fam$y else NA
@@ -501,18 +508,6 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       list(type = "ordinal", y = ifelse(ok, findInterval(y_obs, cuts) + 1L, NA_integer_),
            model = list(family = "ordinal_threshold", category_probabilities = pr, thresholds = cuts,
                         note = "score 1..k; treatment_effects are on the latent (Gaussian) scale"))
-    },
-    outcome_survival = {
-      # log-normal accelerated failure time: log T = log(median) + time_sd * z, z the standardised Gaussian outcome
-      z <- (y_obs - mean(y_obs[ok])) / stats::sd(y_obs[ok])
-      t <- a$median_time * exp(a$time_sd * z)
-      follow <- stats::quantile(t[ok], 1 - a$censored_fraction, names = FALSE)
-      ev <- as.integer(t <= follow)
-      list(type = "survival", y = ifelse(ok, round(pmin(t, follow), 3), NA_real_), event = ifelse(ok, ev, NA_integer_),
-           model = list(family = "lognormal_aft", median_time = a$median_time, time_sd = a$time_sd,
-                        follow_up = follow, censored_fraction = a$censored_fraction,
-                        scale = list(sd_outcome = stats::sd(y_obs[ok])),
-                        note = "primary_outcome = time to event or end of follow-up; event 1 = event, 0 = censored. treatment_effects are on the Gaussian scale: an effect e multiplies time by exp(time_sd * e / scale$sd_outcome)"))
     },
     stop("No outcome model for route ", route, call. = FALSE))
 }
