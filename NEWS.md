@@ -1,5 +1,14 @@
 # simitall (development)
 
+- Hidden factors in bulk RNA-seq are off by default in the suite
+  (`simulate_rnaseq_experiment` `n_latent = 0`): with random scores per unit,
+  two hidden factors in a 16-sample design could line up with the treatment
+  and shift many genes with no planted effect (Bioana's `called_not_planted`).
+  `n_latent` and `latent_effect_sd` are now listed in
+  `simulator_parameters.tsv` for bulk and single-cell; when used, scores per
+  unit and loadings per gene are written (`rnaseq/latent_scores.tsv`,
+  `rnaseq/latent_loadings.tsv`) and recorded in `sim_truth.json` under the
+  assay's `counts.hidden_factors`.
 - Biodes 0.6.4 outcome scale: `primary_outcome.unit`, `baseline_mean`,
   `power.residual_sd` and `power.cv` (%, times the baseline mean when no SD)
   set the outcome's scale. An outcome with a unit but no SD (or one Biodes

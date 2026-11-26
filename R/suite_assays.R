@@ -62,11 +62,26 @@
   names(counts)[-1] <- sm$sample[match(names(counts)[-1], sm$library_id)]
   counts <- counts[, c("gene_id", ctx$meta$sample_id)]
   path <- .suite_write_counts(counts, ctx)
+  # hidden factors (n_latent > 0): scores per unit and loadings per gene, so genes they move can be told from planted ones
+  n_lat <- as.integer(a$args$n_latent %||% 2L)
+  latent <- list(n_latent = n_lat, latent_effect_sd = a$args$latent_effect_sd %||% 0.2)
+  if (n_lat > 0) {
+    ldir <- file.path(ctx$outdir, "rnaseq"); dir.create(ldir, showWarnings = FALSE)
+    sc <- utils::read.delim(res$latent_scores, check.names = FALSE)
+    bio <- names(sc)[-1]
+    unit <- sm$sample[match(bio, sm$biological_id)]
+    sc <- data.frame(sample_id = unit, t(as.matrix(sc[, -1, drop = FALSE])), check.names = FALSE, row.names = NULL)
+    names(sc)[-1] <- utils::read.delim(res$latent_scores)[[1]]
+    utils::write.table(sc, file.path(ldir, "latent_scores.tsv"), sep = "\t", row.names = FALSE, quote = FALSE)
+    file.copy(res$latent_loadings, file.path(ldir, "latent_loadings.tsv"), overwrite = TRUE)
+    latent <- c(latent, list(scores = "rnaseq/latent_scores.tsv", loadings = "rnaseq/latent_loadings.tsv",
+      note = "log2 expression += loadings %*% scores; genes with large loadings change with the scores, not with the design"))
+  }
   list(paths = c(counts = path), args = a,
        counts_truth = list(n_genes = nrow(counts), condition_term = ctx$cond_term, batch_term = attr(d, "batch_term"),
                            reference = attr(d, "levels")[1], de_fraction = a$args$condition_effect_fraction,
                            de_log2fc_sd = a$args$condition_effect_sd, batch_effect_sd = a$args$batch_effect_sd,
-                           de_genes = .suite_de_truth(res$condition_truth)))
+                           hidden_factors = latent, de_genes = .suite_de_truth(res$condition_truth)))
 }
 
 # eQTL: each unit carries its line's genotypes; cis/trans eQTL plus treatment effects.
@@ -113,6 +128,8 @@
   list(paths = c(counts = path, cell_metadata = res$cell_metadata, matrix = res$matrix, marker_truth = res$marker_truth), args = a,
        counts_truth = list(n_genes = nrow(counts), condition_term = ctx$cond_term, batch_term = attr(d, "batch_term"),
                            reference = attr(d, "levels")[1], pseudobulk = "sum of cells per unit",
+                           hidden_factors = list(n_latent = as.integer(a$args$n_latent %||% 2L), latent_effect_sd = a$args$latent_effect_sd %||% 0.25,
+                                                 level = "cell", scores = "single_cell/sc.latent_scores.tsv", loadings = "single_cell/sc.latent_loadings.tsv"),
                            de_genes = .suite_de_truth(res$condition_truth)),
        truth = list(n_cells = nrow(cells), cell_types = as.list(table(cells$cell_type)),
                     marker_truth = "single_cell/sc.marker_truth.tsv", cell_metadata = "single_cell/sc.cell_metadata.tsv"))

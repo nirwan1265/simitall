@@ -35,6 +35,8 @@ simulate_rnaseq_experiment	condition_effect_fraction	0.1	numeric		share of genes
 simulate_rnaseq_experiment	condition_effect_sd	1	numeric		SD of the true log2 fold changes	
 simulate_rnaseq_experiment	batch_effect_sd	0.15	numeric		SD of block (batch) effects on log2 expression	
 simulate_rnaseq_experiment	library_size_mean	5000000	numeric			
+simulate_rnaseq_experiment	n_latent	0	integer		hidden factors not in the design (unmeasured biology shared by many genes); random scores per unit, so in a small design they can line up with a treatment by chance and shift genes that have no planted effect. 0 = none; when > 0 the scores and loadings are written to rnaseq/ and recorded in sim_truth.json	
+simulate_rnaseq_experiment	latent_effect_sd	0.2	numeric		SD of each gene's loading on a hidden factor (log2 scale), used when n_latent > 0	
 simulate_rnaseq_from_gwas	n_genes	1000	integer			
 simulate_rnaseq_from_gwas	n_cis_eqtl	100	integer		genes with a cis-eQTL	
 simulate_rnaseq_from_gwas	n_trans_eqtl	25	integer			
@@ -47,6 +49,8 @@ simulate_scrnaseq_experiment	cells_per_replicate	200	integer		cells per experime
 simulate_scrnaseq_experiment	condition_effect_fraction	0.1	numeric			
 simulate_scrnaseq_experiment	condition_effect_sd	0.6	numeric			
 simulate_scrnaseq_experiment	batch_effect_sd	0.2	numeric			
+simulate_scrnaseq_experiment	n_latent	2	integer		cell-level hidden factors (cell states within a cell type); scores are per cell, so they mostly average out in the pseudobulk per unit. Scores and loadings: single_cell/sc.latent_scores.tsv, sc.latent_loadings.tsv	
+simulate_scrnaseq_experiment	latent_effect_sd	0.25	numeric		SD of each gene's loading on a cell-level hidden factor (log scale)	
 suite_peak_genome	chromosome_length	300000	integer		synthetic chromosome for ChIP/ATAC reads	
 suite_peak_genome	n_genes	200	integer			
 simulate_chipseq	assay_type	TF	character		TF, histone or nucleosome	
