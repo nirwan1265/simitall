@@ -4,8 +4,10 @@
   group's median is set so that `1 - power.event_probability` (else
   `censored_fraction`) of it is still without the event at the end of
   follow-up (`outcome_model.median_time_source`), instead of a fixed 30 that
-  could exceed the follow-up. Interval-scored times are capped at the
-  follow-up; group medians beyond the follow-up are still reported.
+  could exceed the follow-up. Interval scoring: an event is seen at the
+  next check; one after the last check before the follow-up ends is censored
+  there; a lost unit is censored at the check before it was lost. Group
+  medians beyond the follow-up are still reported.
 - Biodes 0.6.6 survival fields: `analysis.survival.logrank_weight`
   `fh_0_1` (stated delayed effect) simulates `delayed_effect`, `fh_1_0`
   the new `early_effect` (HR until `change_time`, then 1), unless `params`

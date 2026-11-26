@@ -98,7 +98,16 @@
   ev <- ifelse(tmin <= pmin(follow, closs), cause, 0L)
   status <- ifelse(ev > 0, "event", ifelse(closs < follow & closs < tmin, "lost", "administrative"))
   w <- .suite_num_list(ss$life_table)[1]
-  if (!is.na(w) && w > 0) y <- pmin(ceiling(y / w) * w, follow)
+  if (!is.na(w) && w > 0) {
+    # checks every w: an event is seen at the next check; a check past the follow-up never happens, so an event
+    # after the last check is censored there; a lost unit was last seen at the check before it was lost
+    last <- floor(follow / w + 1e-9) * w
+    seen <- ceiling(y / w - 1e-9) * w
+    late <- ev > 0 & seen > last
+    status[late] <- "administrative"
+    ev[late] <- 0L
+    y <- ifelse(ev > 0, seen, ifelse(status == "lost", floor(y / w + 1e-9) * w, last))
+  }
   y[!ok] <- NA; ev[!ok] <- NA
 
   # truth per group (conditional on an average cluster): S(t), median, landmarks, RMST
