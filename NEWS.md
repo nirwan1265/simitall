@@ -1,5 +1,12 @@
 # simitall (development)
 
+- Repeated measures can break sphericity: `suite_outcome` `within_subject`
+  = `ar1` (a unit's residuals correlate `within_rho`^lag over the occasions,
+  default rho 0.7) or `random_slope` (each unit its own slope over time, SD
+  `slope_sd_ratio` x residual SD over the full range). Default `none` keeps
+  the shared unit effect only (compound symmetry), with the same random draws
+  as before. `sim_truth.json` `within_subject` records the structure, rho or
+  slope SD, the occasion column and the unit columns.
 - Hidden factors in bulk RNA-seq are off by default in the suite
   (`simulate_rnaseq_experiment` `n_latent = 0`): with random scores per unit,
   two hidden factors in a 16-sample design could line up with the treatment

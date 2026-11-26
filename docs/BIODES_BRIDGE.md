@@ -136,6 +136,7 @@ and `sim_truth.json` with `routes`, `genetics`, `assays`, `not_simulated`.
 | `analysis.primary_goal`, `goal_terms`, `goal_effect[goal]` (`size`, `shape`, `peak`, `half_time`, `scope`) | which truth to plant (`inst/suite/goals.tsv`), written to `sim_truth.json` `goal_truth` | `treatment_effect`; size = the treatment effect |
 | `factors[].values`, `.unit`, `.scale`, `.log_base`, `.log_offset` | sampling times, dose values (trend on log_base(x + log_offset) for `scale = log`) | numbers in the level labels; offset = smallest positive level when a level is 0 |
 | `primary_outcome.unit`, `.baseline_mean`, `power.residual_sd`, `power.cv` | the outcome's scale (`sim_truth.json` `outcome_scale`); SD from CV % x baseline mean | a unit with no SD: standardized (SD 1, mean 0, effects in SDs); no unit: SD 10, mean 100 |
+| `analysis.terms.repeated_factors`, `.time` | the occasion a unit is measured at; correlation over occasions from `suite_outcome` `within_subject` (none / ar1 / random_slope), in `sim_truth.json` `within_subject` | none: shared unit effect only |
 | `goal_effect[goal].scale` | identity: the size is on the outcome; log2: it sizes the goal's count features | outcome |
 | `goal_effect.time_course.group`, `.group_factor` | with `scope = within_group`, the one level that changes over time | the non-reference levels |
 

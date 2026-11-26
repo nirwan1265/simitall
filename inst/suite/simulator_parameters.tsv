@@ -7,6 +7,9 @@ suite_outcome	category_probabilities	0.25,0.25,0.25,0.25	numeric_vector		ordinal
 suite_outcome	median_time	30	numeric		survival outcome: median time to event of a unit at the overall mean	What is the typical (median) time to the event, in your time unit?
 suite_outcome	time_sd	0.5	numeric		survival outcome: SD of log time to event (log-normal)	
 suite_outcome	censored_fraction	0.2	numeric		survival outcome: share of units still without the event at the end of follow-up (censored)	What share of units do you expect to still be event-free at the end?
+suite_outcome	within_subject	none	character		repeated measures (the same units at several occasions): none = shared unit effect only (sphericity holds); ar1 = residuals of a unit correlated rho^lag over the occasions; random_slope = each unit its own slope over time. Recorded in sim_truth.json within_subject	Are measurements on the same unit closer in time more alike than ones far apart?
+suite_outcome	within_rho	0.7	numeric		within_subject = ar1: correlation of a unit's residuals at adjacent occasions	
+suite_outcome	slope_sd_ratio	1	numeric		within_subject = random_slope: SD of the units' change over the full time range, in residual SDs	
 suite_genetics	phenotype_model	additive	character		row of phenotype_models.tsv: additive, additive_dominance, epistatic, gxe, full	Genetic architecture: additive, dominance, epistasis, or genotype x treatment?
 suite_genetics	heritability	0.5	numeric		plot-level heritability: genetic variance / (genetic + residual variance)	How heritable is the trait (0-1)?
 suite_genetics	n_add_qtn		integer		override the phenotype model's additive QTN count	

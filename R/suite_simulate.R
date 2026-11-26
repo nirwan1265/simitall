@@ -333,8 +333,13 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
       y <- y + stats::rnorm(nlevels(u), 0, unit_sd)[as.integer(u)]
     } else unit_key <- NULL
   }
+  # repeated measures: correlation among one unit's occasions (suite_outcome within_subject; suite_within.R)
+  ws <- if (length(repeated)) .suite_within_series(meta, names(h$layout), repeated, spec)
+  wsub <- .suite_within_subject(ws, n, rsd, .suite_args("suite_outcome", spec, params)$args)
+  if (!is.null(wsub$truth$note) && !identical(wsub$truth$structure, "random_intercept")) note(wsub$truth$note)
+  y <- y + wsub$add
   y_mean <- y
-  y <- y + stats::rnorm(n, 0, rsd)
+  y <- y + wsub$eps
 
   # attrition: whole units lost
   dropped <- character()
@@ -380,6 +385,7 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     interaction_effects = interaction_effects,
     block_effects = block_effects, random_sd = random_sd,
     uncovered_effects = if (length(uncovered_effects)) uncovered_effects,
+    within_subject = wsub$truth,
     within_unit_sd = if (!is.null(unit_key)) list(sd = unit_sd, note = "rows of one unit (one per level of the within-unit factor) share this effect; they are not independent units",
                                                   unit_columns = setdiff(intersect(names(h$layout), names(meta)), c(uncovered, repeated))),
     subsamples_per_unit = n_sub, subsample_sd = if (n_sub > 1) d$subsample_sd_ratio$value * rsd else 0,
