@@ -1,5 +1,19 @@
 # simitall (development)
 
+- A count primary outcome with `secondary_outcomes` now carries the unit's
+  residual in its mean (Poisson around it), so the planted trait correlation
+  reaches the counts; before, counts were drawn around the design mean only
+  and could not correlate (Bioana 0.13.1). `secondary_traits` gains
+  `expected_observed_correlation` (the latent correlation thinned by the
+  Poisson noise of count traits).
+- Biodes 0.6.8 a-priori power (`power.method`, `effect_size_name`,
+  `effect_size`): with no stated difference Simitall plants that effect
+  (d: difference in SDs; f: SD of the level means; f2: covariate slopes; r:
+  trait correlation). New `simitall_power_check(dir, n_sim)` simulates the
+  folder at its own n and reports the share of experiments where Bioana
+  detects the goal next to Biodes' planned power: ANCOVA d = 0.5, 64 per
+  group: 75% (planned 80%); regression f2 = 0.15, n = 55: 77% (80%), both
+  within Monte Carlo error over 100 experiments.
 - Covariates and regression (Bioana 0.13.0 docs/contracts/regression.md):
   - The design reader takes Bioana 6a87784's edit: terms with role
     `covariate` (`covariate`..., or listed in `analysis.covariates`) are

@@ -139,3 +139,23 @@ test_that("secondary traits keep their own type (a count trait is counts)", {
   expect_equal(r$truth$secondary_traits$traits$tiller_number$type, "count")
   expect_gt(stats::cor(r$data$primary_outcome, x), 0.15)        # latent 0.5, thinned by the Poisson draw
 })
+
+test_that("a count primary carries its residual, so the planted trait correlation reaches it", {
+  dir <- cat_folder(list(name = "tiller_number", type = "count"), reps = 150,
+                    extra = list(secondary_outcomes = list(list(name = "plant_height", type = "continuous", column = "plant_height"))))
+  r <- run_cat(dir)
+  expect_equal(r$truth$outcome_model$family, "poisson_around_unit_value")
+  eo <- r$truth$secondary_traits$expected_observed_correlation$primary_outcome$plant_height
+  expect_equal(eo, 0.5 * sqrt(100 / 200), tolerance = 1e-3)
+  res <- sapply(c("primary_outcome", "plant_height"), function(v) stats::resid(stats::lm(r$data[[v]] ~ r$layout$treatment)))
+  expect_equal(stats::cor(res)[1, 2], eo, tolerance = 0.12)
+})
+
+test_that("Biodes' a-priori effect sizes map to the planted effect when no difference is stated", {
+  ap <- simitall:::.suite_apriori_effect
+  expect_equal(ap(list(power = list(effect_size_name = "d", effect_size = 0.5)))$in_sd, 0.5)
+  # f = SD of the level means / SD; 3 evenly spaced levels 0, e/2, e have SD e x sqrt(1/6)
+  expect_equal(ap(list(power = list(effect_size_name = "f", effect_size = 0.25), factors = list(list(n_levels = 3))))$in_sd, 0.25 / sqrt(1 / 6))
+  expect_equal(ap(list(power = list(effect_size_name = "f2", effect_size = 0.15)))$f2, 0.15)
+  expect_length(ap(list(power = list(effect_size_name = "d", effect_size = 0.5, minimum_detectable_difference = 3))), 0)
+})

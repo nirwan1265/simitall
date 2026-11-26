@@ -53,8 +53,13 @@
     if (binary) { lor <- if (identical(ge$scale, "odds_ratio_per_unit")) log(sz) else sz; return(lor * rsd / logit_coef) }
     sz
   }
-  slope <- vapply(terms, function(v) { st <- stated(v); if (!is.null(st)) st else eff / stats::sd(x[[v]], na.rm = TRUE) }, 0)
-  if (is.null(ge$size)) note(sprintf("covariate slopes: the treatment effect per SD of each covariate (%s)", paste(sprintf("%s %s", terms, signif(slope, 3)), collapse = ", ")))
+  # Biodes' a-priori f2 (pwr.f2.test) with no stated slope: equal standardized slopes explaining f2 x residual variance
+  f2 <- .suite_apriori_effect(spec)$f2
+  b_sd <- if (!is.null(f2) && is.null(ge$size)) { K <- length(terms); rho <- as.numeric(a$covariate_cor %||% 0.3)
+    tot <- K + K * (K - 1) * (if (K > 1) rho else 0); rsd * sqrt(f2 / tot) } else eff
+  if (!is.null(f2) && is.null(ge$size)) note(sprintf("covariate slopes from Biodes' a-priori f2 = %s (equal standardized slopes)", format(f2)))
+  slope <- vapply(terms, function(v) { st <- stated(v); if (!is.null(st)) st else b_sd / stats::sd(x[[v]], na.rm = TRUE) }, 0)
+  if (is.null(ge$size) && is.null(f2)) note(sprintf("covariate slopes: the treatment effect per SD of each covariate (%s)", paste(sprintf("%s %s", terms, signif(slope, 3)), collapse = ", ")))
   for (v in terms) y <- y + slope[[v]] * xc[[v]]
   # curvature: a quadratic term in the first covariate (its effect over +-1 SD bends by `curvature` x the slope)
   curv <- as.numeric(a$curvature %||% 0)

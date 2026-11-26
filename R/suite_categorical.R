@@ -75,11 +75,13 @@
 # Secondary traits (spec secondary_outcomes [{name, unit, column, baseline_mean, residual_sd}]): each shares
 # secondary_effect_share of the primary's design and random effects (in its own SDs) and has residuals correlated
 # trait_residual_cor with the primary's and with each other (the within-design correlation).
-.suite_secondary_traits <- function(spec, a, z0, y_mean, mu, rsd) {
+.suite_secondary_traits <- function(spec, a, z0, y_mean, mu, rsd, primary_type = "continuous") {
   sec <- spec$secondary_outcomes %||% list()
   if (!length(sec)) return(NULL)
   K <- length(sec)
-  rho <- as.numeric(a$trait_residual_cor %||% 0.5)
+  # Biodes' a-priori r (pwr.r.test) stands in for the default correlation; a value set in params wins
+  r_ap <- .suite_apriori_effect(spec)$r
+  rho <- as.numeric(if (!isTRUE(a$trait_residual_cor_from_params) && !is.null(r_ap)) r_ap else a$trait_residual_cor %||% 0.5)
   share <- as.numeric(a$secondary_effect_share %||% 0.5)
   R <- matrix(rho, K + 1, K + 1); diag(R) <- 1
   if (min(eigen(R, only.values = TRUE)$values) <= 0) stop("trait_residual_cor gives a correlation matrix that is not positive definite.", call. = FALSE)
@@ -107,7 +109,13 @@
   }
   nms <- c("primary_outcome", names(cols))
   dimnames(R) <- list(nms, nms)
+  # expected correlation of the observed values: Poisson noise around a count trait's latent value thins its
+  # correlations by sqrt(latent variance / (latent variance + mean))
+  thin <- c(primary_outcome = if (identical(primary_type, "count")) sqrt(rsd^2 / (rsd^2 + mu)) else 1,
+            vapply(seq_len(K), function(k) { s <- sec[[k]]; if (identical(s$type, "count")) { sd_k <- as.numeric(s$residual_sd %||% rsd); m_k <- as.numeric(s$baseline_mean %||% mu); sqrt(sd_k^2 / (sd_k^2 + m_k)) } else 1 }, 0))
+  Robs <- R * outer(thin, thin); diag(Robs) <- 1
   list(columns = cols, truth = list(traits = info, within_design_correlation = stats::setNames(lapply(seq_len(nrow(R)), function(i) as.list(R[i, ])), nms),
+    expected_observed_correlation = if (any(thin < 1)) stats::setNames(lapply(seq_len(nrow(Robs)), function(i) as.list(round(Robs[i, ], 4))), nms),
     method = spec$analysis$correlation$method %||% "pearson",
     note = "traits = their mean + effect_share x the primary's design and random effects (in their SDs) + residuals with this correlation; raw correlations also carry the shared treatment effects"))
 }

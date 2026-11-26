@@ -90,10 +90,13 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   # Count outcomes draw counts around the mean and keep their defaults.
   standardized <- is.null(residual_sd) && is.null(sd_spec) && (!is.null(po$unit) || sd_asked) && out_route$route != "outcome_count"
   outcome_scale <- list(unit = po$unit %||% "none stated (arbitrary units)", standardized = standardized)
+  # Biodes 0.6.8 a-priori power (power.method / effect_size_name / effect_size): with no stated difference, the
+  # effect Simitall plants is the one Biodes sized n for, so a seed-repeat power check compares like with like
+  apriori <- .suite_apriori_effect(spec)
   if (standardized) {
     rsd <- 1; mu <- 0
     stated <- spec$power$minimum_detectable_difference
-    eff <- as.numeric(effect %||% d$effect_in_residual_sd$value)
+    eff <- as.numeric(effect %||% (if (!is.null(apriori$in_sd)) apriori$in_sd) %||% d$effect_in_residual_sd$value)
     outcome_scale <- c(outcome_scale, list(residual_sd_known = FALSE, residual_sd = 1, intercept = 0,
       stated_effect = if (!is.null(stated)) sprintf("%s %s", format(stated), po$unit %||% ""),
       note = sprintf("the residual SD%s was not stated%s: the outcome is standardized (residual SD 1, mean 0) and every effect is in residual SDs; the treatment effect is %s SD. Power depends on the real SD.",
@@ -102,7 +105,8 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     note(outcome_scale$note)
   } else {
     rsd <- as.numeric(pick(residual_sd, sd_spec, d$residual_sd, "residual SD"))
-    eff_default <- list(value = d$effect_in_residual_sd$value * rsd, note = d$effect_in_residual_sd$note)
+    eff_default <- if (!is.null(apriori$in_sd)) list(value = apriori$in_sd * rsd, note = apriori$note)
+                   else list(value = d$effect_in_residual_sd$value * rsd, note = d$effect_in_residual_sd$note)
     eff <- as.numeric(pick(effect, spec$power$minimum_detectable_difference, eff_default, "treatment effect"))
     mu <- as.numeric(pick(NULL, po$baseline_mean, d$intercept, "intercept"))
     outcome_scale <- c(outcome_scale, list(residual_sd_known = !is.null(residual_sd) || !is.null(sd_spec), residual_sd = rsd, intercept = mu,
@@ -431,13 +435,14 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     f
   } else if (identical(out_route$route, "outcome_binary") && identical(bin_model, "logit")) {
     .suite_binary_logit(oargs, y_mean[idx], y_design[idx], mu, rsd, eff, grp, cond_eff, random_sd, unit_sd, block_effects)
-  } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
+  } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], c(oargs, list(count_with_residual = length(spec$secondary_outcomes) > 0)))
   assay_routes <- routes[routes$layer == "assay" & routes$status == "ready", , drop = FALSE]
   has_outcome <- !is.null(spec$primary_outcome) || !nrow(assay_routes)
   out$primary_outcome <- if (has_outcome) fam$y else NA
   if (!is.null(fam$event)) out$event <- if (has_outcome) fam$event else NA
   # traits for correlation (spec secondary_outcomes) and raters for agreement (analysis.agreement)
-  sec <- .suite_secondary_traits(spec, oargs, (y_obs - y_mean[idx]) / rsd, y_mean[idx], mu, rsd)
+  sec <- .suite_secondary_traits(spec, c(oargs, list(trait_residual_cor_from_params = !is.null(params$suite_outcome$trait_residual_cor))),
+                                 (y_obs - y_mean[idx]) / rsd, y_mean[idx], mu, rsd, primary_type = fam$type)
   for (nm in names(sec$columns)) out[[nm]] <- sec$columns[[nm]]
   rat <- .suite_ratings(spec, oargs, fam$y, fam, note, rows = out)
   for (nm in names(rat$columns)) out[[nm]] <- rat$columns[[nm]]
@@ -565,12 +570,17 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
                         note = "treatment_effects are on the liability (Gaussian) scale"))
     },
     outcome_count = {
-      m <- pmax(y_mean, a$min_mean)
-      yc <- if (identical(a$count_distribution, "poisson")) stats::rpois(length(m), m)
+      # with traits to correlate (secondary_outcomes), the unit's residual is part of its count mean and the
+      # counts are Poisson around it, so the planted residual correlation reaches the counts
+      lat <- isTRUE(a$count_with_residual)
+      m <- pmax(if (lat) y_obs else y_mean, a$min_mean)
+      yc <- if (lat || identical(a$count_distribution, "poisson")) stats::rpois(length(m), ifelse(ok, m, 1))
             else stats::rnbinom(length(m), mu = m, size = a$dispersion)
       list(type = "count", y = ifelse(ok, yc, NA_integer_),
-           model = list(family = a$count_distribution, link = "identity", dispersion = a$dispersion, min_mean = a$min_mean,
-                        note = "unit mean = intercept + effects (no residual draw); counts drawn around it"))
+           model = list(family = if (lat) "poisson_around_unit_value" else a$count_distribution, link = "identity",
+                        dispersion = if (!lat) a$dispersion, min_mean = a$min_mean,
+                        note = if (lat) "unit mean = intercept + effects + the unit's residual (correlated with the secondary traits); Poisson counts around it"
+                               else "unit mean = intercept + effects (no residual draw); counts drawn around it"))
     },
     outcome_ordinal = {
       pr <- a$category_probabilities / sum(a$category_probabilities)

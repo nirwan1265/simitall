@@ -209,3 +209,53 @@ print.simitall_power_sweep <- function(x, ...) {
   }
   invisible(x)
 }
+
+
+# Biodes 0.6.8 power block -> the treatment effect in residual SDs that matches Biodes' a-priori effect size:
+# d (pwr.t.test) = difference / SD; f (pwr.anova.test) = SD of the level means / SD, levels evenly spaced from 0
+# to the effect. f2 (pwr.f2.test, regression) and r (pwr.r.test, correlation) are applied where those effects are
+# planted (covariate slopes, trait correlation): .suite_apriori_effect() returns them as they are.
+.suite_apriori_effect <- function(spec) {
+  pw <- spec$power %||% list()
+  nm <- pw$effect_size_name; es <- suppressWarnings(as.numeric(pw$effect_size))
+  if (is.null(nm) || !length(es) || is.na(es) || !is.null(pw$minimum_detectable_difference)) return(list())
+  k <- as.integer(if (length(spec$factors)) spec$factors[[1]]$n_levels %||% 2 else 2)
+  sd_pop <- function(k) { x <- seq(0, 1, length.out = max(k, 2)); sqrt(mean((x - mean(x))^2)) }
+  out <- switch(nm,
+    d = list(in_sd = es),
+    f = list(in_sd = es / sd_pop(k)),
+    f2 = list(f2 = es),
+    r = list(r = es),
+    list())
+  if (length(out)) out$note <- sprintf("Biodes a-priori power: %s %s = %s (%s); planted so the simulated effect is the one n was sized for",
+                                       pw$method %||% "", nm, format(es), pw$source %||% "")
+  out
+}
+
+#' Check Biodes' a-priori sample size by simulation
+#'
+#' Simulates the folder `n_sim` times at its own `design.reps`, fits each with Bioana, and reports the share of
+#' experiments where Bioana detects the primary goal, next to the power Biodes planned for (`power.power`,
+#' `power.method`, effect size and n from Biodes 0.6.8's power block). With no stated difference, Simitall plants
+#' the effect size Biodes used, so the two answer the same question.
+#'
+#' @inheritParams simitall_power_sweep
+#' @return Invisibly, a list: planned (Biodes' block), achieved (share detected), mc_se, n_sim, sweep (the rows).
+#' @export
+simitall_power_check <- function(x, n_sim = 50, alpha = 0.05, seed = 1, allow_fallback = FALSE) {
+  dir <- if (inherits(x, "simitall_suite_run")) x$design_dir %||% x$dir else x
+  spec <- jsonlite::read_json(file.path(dir, "study_spec.json"))
+  y <- simitall_power_sweep(dir, reps = spec$design$reps, n_sim = n_sim, alpha = alpha, seed = seed, show = FALSE, allow_fallback = allow_fallback)
+  yy <- as.data.frame(unclass(y))
+  g <- yy[yy$goal_term %in% TRUE, , drop = FALSE]
+  achieved <- if (nrow(g)) min(g$power) else NA
+  pw <- spec$power %||% list()
+  planned <- pw[intersect(names(pw), c("method", "effect_size_name", "effect_size", "alpha", "power", "n_per_group", "n_total", "source"))]
+  res <- list(planned = planned, achieved = achieved, mc_se = if (nrow(g)) max(g$mc_se, na.rm = TRUE) else NA,
+              goal_rows = g[, intersect(c("term", "factor", "power", "mc_se", "n_fits"), names(g)), drop = FALSE], n_sim = n_sim, sweep = y)
+  cat(sprintf("Planned (Biodes): %s, %s = %s, n %s, power %s\nSimulated (Simitall + Bioana, %d experiments): goal detected in %.0f%% (MC SE %.0f%%)\n",
+              planned$method %||% "-", planned$effect_size_name %||% "-", format(planned$effect_size %||% "-"),
+              format(planned$n_total %||% planned$n_per_group %||% "-"), format(planned$power %||% "-"),
+              n_sim, 100 * achieved, 100 * res$mc_se))
+  invisible(res)
+}
