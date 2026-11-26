@@ -147,7 +147,11 @@
     # goal_terms.treatment_effect, when Biodes gives them, name the factors the question is about (an
     # adjustment factor such as sex is then not part of the goal)
     if (g$goal == "treatment_effect" && length(g$vars)) tv <- intersect(g$vars, tv)
-    if (length(g$adjust)) tv <- tv[!vapply(tv, function(v) (if (v %in% names(p$col)) p$col[[v]] else v) %in% g$adjust, logical(1))]
+    if (length(g$adjust)) {
+      adj <- tv[vapply(tv, function(v) (if (v %in% names(p$col)) p$col[[v]] else v) %in% g$adjust, logical(1))]
+      if (length(adj)) ex$adjustment_effects <- lapply(truth$treatment_effects[adj], function(e) as.list(lev_diff(e)))
+      tv <- setdiff(tv, adj)
+    }
     d <- lapply(truth$treatment_effects[tv], function(e) as.list(lev_diff(e)))
     ex$terms <- as.list(tv); ex$variables <- as.list(tv)
     ex$level_differences <- d

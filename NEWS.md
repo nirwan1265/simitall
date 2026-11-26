@@ -5,7 +5,10 @@
   sex (Biodes 4b7427b, `y ~ treatment + treatment2 + covariate`) is planted as
   a main effect but is not part of the goal. Additive models plant no
   interaction. Biodes 412c0e6's other two marks, `analysis.adjust_for` and
-  `factors[].role: "adjustment"`, keep a factor out of the goal too.
+  `factors[].role: "adjustment"`, keep a factor out of the goal too. The
+  adjustment factor's planted effects are recorded in `sim_truth.json`
+  `adjustment_effects` (and `goal_truth.adjustment_effects`), level vs
+  reference.
 - A count primary outcome with `secondary_outcomes` now carries the unit's
   residual in its mean (Poisson around it), so the planted trait correlation
   reaches the counts; before, counts were drawn around the design mean only

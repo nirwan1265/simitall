@@ -164,7 +164,10 @@ test_that("adjustment factors marked by analysis.adjust_for or factors[].role st
   s <- jsonlite::read_json(file.path(dir, "study_spec.json"))
   s$analysis$model <- "y ~ treatment + treatment2"; s$analysis$goal_terms <- NULL; s$analysis$adjust_for <- list("sex")
   jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
-  expect_equal(unlist(sim_goal(dir)$truth$goal_truth$model_terms), "treatment")
+  t <- sim_goal(dir)$truth
+  expect_equal(unlist(t$goal_truth$model_terms), "treatment")
+  expect_equal(unlist(t$adjustment_effects$treatment2), c(female = 0, male = 10))
+  expect_equal(unlist(t$goal_truth$adjustment_effects$treatment2), c(female = 0, male = 10))
   s$analysis$adjust_for <- NULL; s$factors[[2]]$role <- "adjustment"
   jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
   expect_equal(unlist(sim_goal(dir)$truth$goal_truth$model_terms), "treatment")

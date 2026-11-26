@@ -464,6 +464,12 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
     block_effects = block_effects, random_sd = random_sd,
     uncovered_effects = if (length(uncovered_effects)) uncovered_effects,
     within_subject = wsub$truth,
+    # adjustment factors (Biodes analysis.adjust_for / factors[].role adjustment): planted like any factor, kept out
+    # of the goal; their level effects (vs the reference level) are listed here
+    adjustment_effects = {
+      adj_v <- Filter(function(v) (if (v %in% names(p$col)) p$col[[v]] else v) %in% gl$adjust, names(treatment_effects))
+      if (length(adj_v)) lapply(treatment_effects[adj_v], function(e) { e <- unlist(e); as.list(e - e[1]) })
+    },
     regression_truth = if (length(cov_eff$truth)) c(cov_eff$truth, list(
       residual_sd = rsd, covariate_cor = cvs$cor,
       r_squared = if (!identical(out_route$route, "outcome_binary")) stats::var(y_design) / (stats::var(y_design) + rsd^2)), cnoise$truth),
