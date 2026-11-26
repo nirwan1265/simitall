@@ -104,6 +104,9 @@ test_that("Biodes 0.6.6 fields: logrank_weight picks the non-PH model, censoring
   expect_equal(om$family, "delayed_effect")
   expect_equal(om$follow_up, 21)
   expect_lte(max(r$data$primary_outcome), 21)
+  # no median stated: set from the follow-up so 20% of the reference group is still without the event at day 21
+  expect_match(om$median_time_source, "from follow-up 21")
+  expect_equal(om$median_time, 21 * (log(2) / -log(0.2))^(1 / 1.5), tolerance = 1e-6)
   expect_length(om$strata$block$log_hazard_shift, 6)
   s$analysis$survival$logrank_weight <- "fh_1_0"
   jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")

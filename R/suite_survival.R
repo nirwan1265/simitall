@@ -23,7 +23,7 @@
 }
 
 .suite_survival <- function(a, spec, y_obs, y_design, y_mean, mu, rsd, eff, groups, cond_effects, random_sd, note,
-                            model_from_params = FALSE, block_effects = list()) {
+                            model_from_params = FALSE, block_effects = list(), median_default = FALSE) {
   ss <- spec$analysis$survival %||% list()
   lw <- ss$logrank_weight
   model <- a$survival_model %||% "weibull_ph"
@@ -39,9 +39,20 @@
   if (!model %in% models) stop(sprintf("suite_outcome survival_model must be one of %s, not '%s'.", paste(models, collapse = ", "), model), call. = FALSE)
   ok <- !is.na(y_obs); n <- length(y_obs)
   ge <- spec$analysis$goal_effect$survival %||% list()
-  med <- as.numeric(a$median_time)
+  med <- as.numeric(a$median_time); med_src <- if (median_default) "default" else "suite_outcome median_time"
   k <- if (model == "exponential") 1 else as.numeric(a$weibull_shape %||% 1.5)
   if (model == "lognormal_aft") k <- NA_real_
+  # a stated follow-up with no stated median: the reference group's median is set so that the share without the
+  # event at the end of follow-up is 1 - power.event_probability (or censored_fraction), not a fixed 30
+  if (median_default && !is.null(a$follow_up)) {
+    left <- if (!is.null(spec$power$event_probability)) 1 - as.numeric(spec$power$event_probability) else as.numeric(a$censored_fraction)
+    left <- min(max(left, 0.01), 0.99)
+    med <- if (model == "lognormal_aft") as.numeric(a$follow_up) / exp(a$time_sd * stats::qnorm(1 - left))
+           else as.numeric(a$follow_up) * (log(2) / -log(left))^(1 / k)
+    med_src <- sprintf("from follow-up %s: %s of the reference group without the event at its end (%s)", format(a$follow_up), format(left),
+                       if (!is.null(spec$power$event_probability)) "1 - power.event_probability" else "censored_fraction")
+    note(sprintf("survival median time %s (%s)", format(signif(med, 3)), med_src))
+  }
   # hazard ratio of the full treatment effect (reference -> last level)
   hr <- as.numeric(a$hazard_ratio %||% 0.6); hr_src <- "suite_outcome hazard_ratio"
   if (!is.null(spec$power$target_hazard_ratio)) { hr <- as.numeric(spec$power$target_hazard_ratio); hr_src <- "power.target_hazard_ratio" }
@@ -87,13 +98,13 @@
   ev <- ifelse(tmin <= pmin(follow, closs), cause, 0L)
   status <- ifelse(ev > 0, "event", ifelse(closs < follow & closs < tmin, "lost", "administrative"))
   w <- .suite_num_list(ss$life_table)[1]
-  if (!is.na(w) && w > 0) y <- pmin(ceiling(y / w) * w, ceiling(follow / w) * w)
+  if (!is.na(w) && w > 0) y <- pmin(ceiling(y / w) * w, follow)
   y[!ok] <- NA; ev[!ok] <- NA
 
   # truth per group (conditional on an average cluster): S(t), median, landmarks, RMST
   tau <- .suite_num_list(ss$rmst_tau)[1]; if (is.na(tau)) tau <- follow
   lms <- .suite_num_list(ss$landmarks); if (!length(lms)) lms <- signif(c(med, follow), 3)
-  grid <- seq(0, max(tau, lms, follow) * 1.001, length.out = 4001)
+  grid <- seq(0, max(tau, lms, follow, 4 * med) * 1.001, length.out = 8001)
   Hc <- if (length(comp)) length(comp) * (grid / lam_c)^kc else 0 * grid
   gid <- intersect(levels(factor(groups)), as.character(groups[ok])); groups <- as.character(groups); gt <- list()
   gm <- tapply(y_design, groups, mean)
@@ -133,7 +144,7 @@
   frailty <- if (model != "lognormal_aft" && length(random_sd)) lapply(random_sd, function(s) list(distribution = "lognormal",
     sd_log_hazard = round(abs(coef) * s / rsd, 4), variance = round((coef * s / rsd)^2, 4)))
   n_ok <- sum(ok)
-  m <- list(family = model, proportional_hazards = ph, median_time = med,
+  m <- list(family = model, proportional_hazards = ph, median_time = med, median_time_source = med_src,
             weibull_shape = if (!is.na(k)) k, hazard_ratio = if (model != "lognormal_aft") hr, hazard_ratio_source = if (model != "lognormal_aft") hr_src,
             log_hazard_per_outcome_sd = if (model != "lognormal_aft") coef,
             change_time = if (model %in% c("delayed_effect", "crossing", "early_effect")) t0,
