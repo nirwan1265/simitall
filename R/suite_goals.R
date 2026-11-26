@@ -49,7 +49,9 @@
        definition = ge$definition, size = size, size_stated = stated, scale = gscale, feature_size = feature_size,
        terms = unname(terms), vars = unname(vars),
        shape = shape, peak = ge$peak, half_time = ge$half_time, scope = ge$scope, group = ge$group, group_factor = ge$group_factor,
-       per_unit = ge$per_unit, standardized = standardized, survival_scale = if (goal == "survival") ge$scale)
+       per_unit = ge$per_unit, standardized = standardized,
+       # adjustment factors (Biodes 412c0e6: analysis.adjust_for, factors[].role "adjustment"): never part of the goal
+       adjust = unique(c(unlist(spec$analysis$adjust_for), unlist(lapply(Filter(function(f) identical(f$role, "adjustment"), spec$factors %||% list()), `[[`, "name")))), survival_scale = if (goal == "survival") ge$scale)
 }
 
 # hours in a time unit (Biodes .sf_unit_name names); NA when unknown
@@ -145,6 +147,7 @@
     # goal_terms.treatment_effect, when Biodes gives them, name the factors the question is about (an
     # adjustment factor such as sex is then not part of the goal)
     if (g$goal == "treatment_effect" && length(g$vars)) tv <- intersect(g$vars, tv)
+    if (length(g$adjust)) tv <- tv[!vapply(tv, function(v) (if (v %in% names(p$col)) p$col[[v]] else v) %in% g$adjust, logical(1))]
     d <- lapply(truth$treatment_effects[tv], function(e) as.list(lev_diff(e)))
     ex$terms <- as.list(tv); ex$variables <- as.list(tv)
     ex$level_differences <- d

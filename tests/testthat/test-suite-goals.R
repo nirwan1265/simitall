@@ -158,3 +158,14 @@ test_that("goal_terms.treatment_effect limits the goal to the named factors (an 
   expect_equal(unlist(gt$model_terms), "treatment")
   expect_named(gt$level_differences, "treatment")
 })
+
+test_that("adjustment factors marked by analysis.adjust_for or factors[].role stay out of the goal", {
+  dir <- goal_folder("factorial", list(list(name = "diet", n_levels = 2), list(name = "sex", n_levels = 2, levels = list("female", "male"))), "treatment_effect")
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json"))
+  s$analysis$model <- "y ~ treatment + treatment2"; s$analysis$goal_terms <- NULL; s$analysis$adjust_for <- list("sex")
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  expect_equal(unlist(sim_goal(dir)$truth$goal_truth$model_terms), "treatment")
+  s$analysis$adjust_for <- NULL; s$factors[[2]]$role <- "adjustment"
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  expect_equal(unlist(sim_goal(dir)$truth$goal_truth$model_terms), "treatment")
+})
