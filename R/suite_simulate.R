@@ -75,7 +75,11 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
                  out_route$matched, out_route$status, out_route$note), call. = FALSE)
   }
   seed <- seed %||% spec$design$randomization_seed %||% d$seed
-  set.seed(seed)
+  # R's default generator for this run, whatever the session uses (agricolae's design functions, called by Biodes'
+  # layout_from_spec(), switch the session to Super-Duper, whose draws drift); the caller's kind is restored after
+  old_kind <- RNGkind()
+  on.exit(suppressWarnings(RNGkind(kind = old_kind[1], normal.kind = old_kind[2], sample.kind = old_kind[3])), add = TRUE)
+  set.seed(seed, kind = "Mersenne-Twister", normal.kind = "Inversion", sample.kind = "Rejection")
   # the outcome's scale (Biodes 0.6.4: primary_outcome.unit, baseline_mean, power.residual_sd, power.cv in %)
   po <- spec$primary_outcome %||% list()
   sd_spec <- spec$power$residual_sd %||% if (!is.null(spec$power$cv) && !is.null(po$baseline_mean)) as.numeric(spec$power$cv) / 100 * as.numeric(po$baseline_mean)

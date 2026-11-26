@@ -92,8 +92,18 @@
   for (k in seq_len(K)) {
     s <- sec[[k]]; nm <- s$column %||% s$name %||% paste0("trait_", k)
     m_k <- as.numeric(s$baseline_mean %||% mu); sd_k <- as.numeric(s$residual_sd %||% rsd)
-    cols[[nm]] <- round(m_k + share * (y_mean - mu) * sd_k / rsd + sd_k * Z[, k], 6)
-    info[[nm]] <- list(name = s$name %||% nm, unit = s$unit, mean = m_k, residual_sd = sd_k, effect_share = share)
+    v <- m_k + share * (y_mean - mu) * sd_k / rsd + sd_k * Z[, k]
+    # the trait's own type (Biodes 0e5dcc9 secondary_outcomes[].type): counts drawn around the latent value,
+    # yes/no and scores cut from it, so the planted correlation is on the latent scale
+    ty <- s$type %||% "continuous"
+    cols[[nm]] <- switch(ty,
+      count = ifelse(is.na(v), NA_integer_, stats::rpois(length(v), pmax(ifelse(is.na(v), 1, v), as.numeric(a$min_mean %||% 0.1)))),
+      binary = as.integer(v > stats::quantile(v, 1 - as.numeric(a$prevalence %||% 0.2), na.rm = TRUE)),
+      ordinal = { pr <- as.numeric(unlist(a$category_probabilities %||% c(.25, .25, .25, .25))); pr <- pr / sum(pr)
+                  findInterval(v, stats::quantile(v, cumsum(pr)[-length(pr)], na.rm = TRUE, names = FALSE)) + 1L },
+      round(v, 6))
+    info[[nm]] <- list(name = s$name %||% nm, type = ty, unit = s$unit, mean = m_k, residual_sd = sd_k, effect_share = share,
+                       scale_note = if (ty != "continuous") sprintf("%s drawn from the latent trait%s; the correlation below is the latent one", ty, if (ty == "count") " (Poisson around it)" else ""))
   }
   nms <- c("primary_outcome", names(cols))
   dimnames(R) <- list(nms, nms)

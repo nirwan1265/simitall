@@ -107,7 +107,7 @@
   tall <- cbind(t1, tc)
   tmin <- apply(tall, 1, min); cause <- c(1L, comp)[apply(tall, 1, which.min)]
   # censoring
-  follow <- as.numeric(a$follow_up %||% stats::quantile(tmin[ok], 1 - a$censored_fraction, names = FALSE))
+  follow <- round(as.numeric(a$follow_up %||% stats::quantile(tmin[ok], 1 - a$censored_fraction, names = FALSE)), 3)   # times are written to 3 decimals
   lossf <- as.numeric(a$loss_fraction %||% 0)
   lost <- stats::runif(n) < lossf
   closs <- ifelse(lost, stats::runif(n, 0, follow), Inf)

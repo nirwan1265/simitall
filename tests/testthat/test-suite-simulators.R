@@ -139,18 +139,18 @@ test_that("omics assays write one library per unit, named by sample_id", {
 })
 
 test_that("factors the model does not hold (tissue within each plant) get effects, and a plant's rows share its effect", {
-  d <- make_design_folder("rcbd", NULL, list(design_factor("genotype", 3), design_factor("water", 2), design_factor("tissue", 2)), reps = 4,
+  d <- make_design_folder("rcbd", NULL, list(design_factor("genotype", 3), design_factor("water", 2), design_factor("tissue", 2)), reps = 30,
                           extra = list(assays = list("rnaseq", "crispr")))
   s <- jsonlite::read_json(file.path(d, "study_spec.json"))
   expect_equal(unlist(s$analysis$terms$uncovered_factors), "tissue")
-  suppressMessages(simitall_from_biodes(d, params = list(simulate_rnaseq_experiment = list(n_genes = 200))))
+  suppressMessages(simitall_from_biodes(d, params = list(simulate_rnaseq_experiment = list(n_genes = 100))))
   t <- jsonlite::read_json(file.path(d, "sim_truth.json"))
   expect_equal(names(t$uncovered_effects), "tissue")
   expect_gt(t$within_unit_sd$sd, 0)
   expect_null(t$not_simulated)                                  # CRISPR is a treatment, not a missing simulator
   expect_equal(unlist(t$treatment_assays), "crispr")
   meta <- read.delim(file.path(d, "sample_metadata_template.tsv"))
-  expect_equal(nrow(meta), 3 * 2 * 4 * 2)                        # one row per plant and tissue
+  expect_equal(nrow(meta), 3 * 2 * 30 * 2)                       # one row per plant and tissue
   # RNA-seq condition = water x tissue: true DE for every non-reference combination
   expect_equal(length(t$counts$de_genes), 2 * 2 - 1)
   # rows of one plant share its effect: leaf and root of a plant correlate after removing fixed effects
@@ -158,7 +158,7 @@ test_that("factors the model does not hold (tissue within each plant) get effect
   r <- stats::residuals(fit)
   pr <- split(r, meta$plot)
   pairs <- do.call(rbind, pr[lengths(pr) == 2])
-  expect_gt(stats::cor(pairs[, 1], pairs[, 2]), 0.2)
+  expect_gt(stats::cor(pairs[, 1], pairs[, 2]), 0)              # true 0.2 (unit SD 5, residual SD 10); 180 pairs
 })
 
 test_that("a factor named 'treatment' that is not the first factor maps through analysis.terms", {

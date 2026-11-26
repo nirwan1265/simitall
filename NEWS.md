@@ -1,5 +1,14 @@
 # simitall (development)
 
+- Each `simitall_from_biodes()` run now uses R's default generator
+  (Mersenne-Twister, Inversion, Rejection) and gives the caller's generator
+  back. Biodes' `layout_from_spec()` (agricolae designs) leaves the session
+  on Super-Duper, whose draws drifted: a 3:1 segregation came out 0.77 on
+  average over 20 seeds after a barley layout. Same seed, same data now,
+  whatever ran before. Survival follow-up times are rounded like the data,
+  so no time exceeds it.
+- `secondary_outcomes[].type` (Biodes 0e5dcc9): count traits are Poisson
+  counts around the latent trait, yes/no and score traits are cut from it.
 - Biodes 0.6.7: a template already expanded to one row per subsample
   (`subsample` column) keeps its rows and sample ids; units come from the
   layout. Survival with subsamples (seeds in a tray cell,

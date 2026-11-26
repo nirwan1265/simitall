@@ -118,3 +118,24 @@ test_that("Biodes 0.6.7: a yes/no trait with expected_ratio draws labels; raters
   expect_equal(po, sum(diag(t(matrix(unlist(ag$misclassification), length(ag$levels), byrow = TRUE)) %*% diag(unlist(ag$true_class_shares)) %*%
                          matrix(unlist(ag$misclassification), length(ag$levels), byrow = TRUE))), tolerance = 0.12)
 })
+
+test_that("a run uses Mersenne-Twister whatever the session uses, and gives the caller's generator back", {
+  dir <- cat_folder(list(name = "colour", type = "nominal", categories = list("tall", "dwarf")), reps = 200)
+  edit_spec(dir, function(s) { s$analysis$model <- "y ~ 1"; s$analysis$expected_ratio <- list(tall = 3, dwarf = 1); s })
+  a <- run_cat(dir)$data$primary_outcome
+  old <- RNGkind(); on.exit(RNGkind(old[1], old[2], old[3]), add = TRUE)
+  suppressWarnings(RNGkind("Super-Duper"))          # what agricolae (Biodes layout_from_spec) leaves behind
+  b <- run_cat(dir)$data$primary_outcome
+  expect_identical(a, b)
+  expect_equal(RNGkind()[1], "Super-Duper")
+})
+
+test_that("secondary traits keep their own type (a count trait is counts)", {
+  dir <- cat_folder(list(name = "plant_height", type = "continuous"), reps = 100,
+                    extra = list(secondary_outcomes = list(list(name = "tiller_number", type = "count", column = "tiller_number"))))
+  r <- run_cat(dir)
+  x <- r$data$tiller_number
+  expect_true(all(x == round(x)) && all(x >= 0))
+  expect_equal(r$truth$secondary_traits$traits$tiller_number$type, "count")
+  expect_gt(stats::cor(r$data$primary_outcome, x), 0.15)        # latent 0.5, thinned by the Poisson draw
+})
