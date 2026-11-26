@@ -5,6 +5,11 @@
 #   lognormal_aft  - log-normal accelerated failure time (time ratios; hazards not proportional)
 #   delayed_effect - HR 1 until change_time, then the HR (non-PH; weighted log-rank fh_0_1, RMST)
 #   crossing       - the HR until change_time, then 1/HR (curves cross)
+#   early_effect   - the HR until change_time, then 1
+# Biodes 0.6.6: analysis.survival.logrank_weight fh_0_1 (a stated delayed effect) -> delayed_effect, fh_1_0 (early)
+# -> early_effect, unless params set survival_model; the follow-up length is read from primary_outcome.censoring
+# ("administrative at 21 days ...") when follow_up is not given; analysis.survival.strata are recorded with their
+# log-hazard shifts (fixed block effects).
 # The treatment effect `eff` maps to the hazard ratio `hazard_ratio` (power.target_hazard_ratio, or the
 # survival goal's size), so the last level of a treatment factor has that HR against its reference. Blocks and
 # random terms become a shared log-normal frailty on the log hazard. Censoring: administrative at follow_up
@@ -17,12 +22,22 @@
   vapply(x, function(z) as.numeric(if (is.list(z)) z$value %||% z[[1]] else z), 0)
 }
 
-.suite_survival <- function(a, spec, y_obs, y_design, y_mean, mu, rsd, eff, groups, cond_effects, random_sd, note) {
+.suite_survival <- function(a, spec, y_obs, y_design, y_mean, mu, rsd, eff, groups, cond_effects, random_sd, note,
+                            model_from_params = FALSE, block_effects = list()) {
+  ss <- spec$analysis$survival %||% list()
+  lw <- ss$logrank_weight
   model <- a$survival_model %||% "weibull_ph"
-  models <- c("weibull_ph", "exponential", "lognormal_aft", "delayed_effect", "crossing")
+  if (!model_from_params && !is.null(lw)) {
+    model <- switch(lw, fh_0_1 = "delayed_effect", fh_1_0 = "early_effect", model)
+    note(sprintf("survival model %s: analysis.survival.logrank_weight %s (a stated %s effect)", model, lw, if (lw == "fh_0_1") "delayed" else "early"))
+  }
+  if (is.null(a$follow_up) && !is.null(spec$primary_outcome$censoring)) {
+    fu <- suppressWarnings(as.numeric(sub(".*administrative at ([0-9.]+).*", "\\1", spec$primary_outcome$censoring)))
+    if (!is.na(fu) && grepl("administrative at [0-9]", spec$primary_outcome$censoring)) a$follow_up <- fu
+  }
+  models <- c("weibull_ph", "exponential", "lognormal_aft", "delayed_effect", "crossing", "early_effect")
   if (!model %in% models) stop(sprintf("suite_outcome survival_model must be one of %s, not '%s'.", paste(models, collapse = ", "), model), call. = FALSE)
   ok <- !is.na(y_obs); n <- length(y_obs)
-  ss <- spec$analysis$survival %||% list()
   ge <- spec$analysis$goal_effect$survival %||% list()
   med <- as.numeric(a$median_time)
   k <- if (model == "exponential") 1 else as.numeric(a$weibull_shape %||% 1.5)
@@ -48,7 +63,8 @@
     switch(model,
       weibull_ph = , exponential = H0inv(E / exp(et)),
       delayed_effect = ifelse(E <= H0(t0), H0inv(E), H0inv(H0(t0) + (E - H0(t0)) / exp(et))),
-      crossing = { a1 <- exp(et) * H0(t0); ifelse(E <= a1, H0inv(E / exp(et)), H0inv(H0(t0) + (E - a1) * exp(et))) })
+      crossing = { a1 <- exp(et) * H0(t0); ifelse(E <= a1, H0inv(E / exp(et)), H0inv(H0(t0) + (E - a1) * exp(et))) },
+      early_effect = { a1 <- exp(et) * H0(t0); ifelse(E <= a1, H0inv(E / exp(et)), H0inv(H0(t0) + (E - a1))) })
   }
   if (model == "lognormal_aft") {
     z <- (y_obs - mean(y_obs[ok])) / stats::sd(y_obs[ok])
@@ -79,7 +95,7 @@
   lms <- .suite_num_list(ss$landmarks); if (!length(lms)) lms <- signif(c(med, follow), 3)
   grid <- seq(0, max(tau, lms, follow) * 1.001, length.out = 4001)
   Hc <- if (length(comp)) length(comp) * (grid / lam_c)^kc else 0 * grid
-  gid <- unique(groups[ok]); gt <- list()
+  gid <- intersect(levels(factor(groups)), as.character(groups[ok])); groups <- as.character(groups); gt <- list()
   gm <- tapply(y_design, groups, mean)
   for (g in gid) {
     e <- coef * (gm[[g]] - mu) / rsd
@@ -90,7 +106,8 @@
     } else switch(model,
       weibull_ph = , exponential = exp(e) * H0(grid),
       delayed_effect = H0(pmin(grid, t0)) + exp(e) * pmax(H0(grid) - H0(t0), 0),
-      crossing = exp(e) * H0(pmin(grid, t0)) + exp(-e) * pmax(H0(grid) - H0(t0), 0))
+      crossing = exp(e) * H0(pmin(grid, t0)) + exp(-e) * pmax(H0(grid) - H0(t0), 0),
+      early_effect = exp(e) * H0(pmin(grid, t0)) + pmax(H0(grid) - H0(t0), 0))
     S1 <- exp(-H1); S <- exp(-H1 - Hc)
     at <- function(f, x) stats::approx(grid, f, xout = x, rule = 2)$y
     rm <- { i <- grid <= tau; sum(diff(grid[i]) * (S[i][-1] + S[i][-sum(i)]) / 2) }
@@ -111,6 +128,7 @@
     if (model == "lognormal_aft") r$time_ratio <- as.list(round(exp(a$time_sd * d / sd_out), 4))
     if (model == "delayed_effect") r$hazard_ratio_before_change <- as.list(rep(1, length(d)))
     if (model == "crossing") r$hazard_ratio_after_change <- as.list(round(exp(-coef * d / rsd), 4))
+    if (model == "early_effect") r$hazard_ratio_after_change <- as.list(rep(1, length(d)))
     r })
   frailty <- if (model != "lognormal_aft" && length(random_sd)) lapply(random_sd, function(s) list(distribution = "lognormal",
     sd_log_hazard = round(abs(coef) * s / rsd, 4), variance = round((coef * s / rsd)^2, 4)))
@@ -118,7 +136,8 @@
   m <- list(family = model, proportional_hazards = ph, median_time = med,
             weibull_shape = if (!is.na(k)) k, hazard_ratio = if (model != "lognormal_aft") hr, hazard_ratio_source = if (model != "lognormal_aft") hr_src,
             log_hazard_per_outcome_sd = if (model != "lognormal_aft") coef,
-            change_time = if (model %in% c("delayed_effect", "crossing")) t0,
+            change_time = if (model %in% c("delayed_effect", "crossing", "early_effect")) t0,
+            logrank_weight = lw, follow_up_source = if (!is.null(a$follow_up)) "suite_outcome follow_up or primary_outcome.censoring" else "quantile leaving censored_fraction",
             time_sd = if (model == "lognormal_aft") a$time_sd, scale = if (model == "lognormal_aft") list(sd_outcome = sd_out),
             follow_up = follow, censoring = list(
               administrative = list(follow_up = follow, n = sum(status[ok] == "administrative"), target_fraction = a$censored_fraction),
@@ -126,7 +145,10 @@
             n_events = sum(ev[ok] > 0),
             event_codes = if (length(codes)) codes, competing = if (length(comp)) list(codes = as.list(comp), model = "Weibull cause-specific hazard, no treatment effect",
               median_alone = med * as.numeric(a$competing_median_ratio %||% 2), shape = kc, cause_specific_hazard_ratio = 1),
-            frailty = frailty, life_table_width = if (!is.na(w)) w,
+            frailty = frailty,
+            strata = if (length(ss$strata)) lapply(stats::setNames(nm = intersect(unlist(ss$strata), names(block_effects))), function(b)
+              list(log_hazard_shift = lapply(block_effects[[b]], function(e) round(coef * e / rsd, 4)), note = "fixed block effects: each stratum its own baseline hazard multiple")),
+            life_table_width = if (!is.na(w)) w,
             landmarks = as.list(lms), rmst_tau = tau, groups = gt, ratios = ratios,
             note = paste0("primary_outcome = time to the first event or censoring; event 1 = the event, 0 = censored",
                           if (length(comp)) ", 2+ = competing events" else "",

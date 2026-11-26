@@ -369,8 +369,11 @@ simitall_from_biodes <- function(biodes_dir, outdir = biodes_dir, seed = NULL, e
   fam <- if (identical(out_route$route, "outcome_survival")) {
     gv <- intersect(c(treat_vars, uncovered), names(frame))
     grp <- if (length(gv)) do.call(paste, c(lapply(frame[idx, gv, drop = FALSE], as.character), sep = ":")) else rep("all", length(idx))
+    # groups in level order (reference first), so "first" and "last" group mean reference and last levels
+    grp <- factor(grp, levels = unique(grp[if (length(gv)) do.call(order, lapply(frame[idx, gv, drop = FALSE], as.integer)) else seq_along(grp)]))
     .suite_survival(oargs, spec, y_obs, y_design[idx], y_mean[idx], mu, rsd, eff, grp,
-                    treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note)
+                    treatment_effects[setdiff(intersect(treat_vars, names(treatment_effects)), if (!is.null(genetics)) geno_term)], random_sd, note,
+                    model_from_params = !is.null(params$suite_outcome$survival_model), block_effects = block_effects)
   } else .suite_outcome_family(out_route$route, y_obs, y_mean[idx], oargs)
   assay_routes <- routes[routes$layer == "assay" & routes$status == "ready", , drop = FALSE]
   has_outcome <- !is.null(spec$primary_outcome) || !nrow(assay_routes)

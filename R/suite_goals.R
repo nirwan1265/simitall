@@ -198,17 +198,17 @@
       r <- m$ratios[[tv[1]]]
       last <- function(z) { z <- unlist(z); z[length(z)] }
       # Biodes 0.6 writes scale "log_hazard": the estimand is the hazard ratio
-      gs <- if (identical(g$survival_scale, "log_hazard")) "hazard_ratio" else g$survival_scale %||% if (isTRUE(m$proportional_hazards) || m$family %in% c("delayed_effect", "crossing")) "hazard_ratio" else "time_ratio"
+      gs <- if (identical(g$survival_scale, "log_hazard")) "hazard_ratio" else g$survival_scale %||% if (isTRUE(m$proportional_hazards) || m$family %in% c("delayed_effect", "crossing", "early_effect")) "hazard_ratio" else "time_ratio"
       ex$hazard_ratios <- lapply(m$ratios, `[[`, "hazard_ratio"); ex$time_ratios <- lapply(m$ratios, `[[`, "time_ratio")
       ex$proportional_hazards <- m$proportional_hazards
       if (gs == "rmst_difference") {
         gr <- m$groups; ex$true_effect <- if (length(gr) > 1) gr[[length(gr)]]$rmst - gr[[1]]$rmst else 0
-        ex$effect_scale <- sprintf("RMST difference at tau = %s, last group minus first", format(m$rmst_tau))
+        ex$effect_scale <- sprintf("RMST difference at tau = %s: group %s minus reference group %s", format(m$rmst_tau), names(gr)[length(gr)], names(gr)[1])
       } else if (gs == "hazard_ratio" && !is.null(r$hazard_ratio)) {
         ex$true_effect <- last(r$hazard_ratio)
         ex$true_log_hazard_ratio <- log(last(r$hazard_ratio))   # the Cox coefficient
         ex$effect_scale <- sprintf("hazard ratio, last level of %s vs reference%s", tv[1],
-          switch(m$family, delayed_effect = sprintf(" (after t = %s; 1 before)", format(m$change_time)), crossing = sprintf(" (before t = %s; inverted after)", format(m$change_time)), ""))
+          switch(m$family, delayed_effect = sprintf(" (after t = %s; 1 before)", format(m$change_time)), early_effect = sprintf(" (before t = %s; 1 after)", format(m$change_time)), crossing = sprintf(" (before t = %s; inverted after)", format(m$change_time)), ""))
       } else {
         ex$true_effect <- last(r$time_ratio)
         ex$effect_scale <- sprintf("time ratio, last level of %s vs reference (%s)", tv[1], m$family)

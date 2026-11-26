@@ -1,5 +1,12 @@
 # simitall (development)
 
+- Biodes 0.6.6 survival fields: `analysis.survival.logrank_weight`
+  `fh_0_1` (stated delayed effect) simulates `delayed_effect`, `fh_1_0`
+  the new `early_effect` (HR until `change_time`, then 1), unless `params`
+  name a model; the follow-up length is read from `primary_outcome.censoring`
+  ("administrative at 21 days"); `analysis.survival.strata` are recorded with
+  each stratum's log-hazard shift. Survival groups in the truth are in level
+  order (reference first); the RMST-difference goal names the two groups.
 - Survival outcomes (Bioana docs/contracts/survival.md): `suite_outcome`
   `survival_model` = `weibull_ph` (new default; proportional hazards, shape
   `weibull_shape` 1.5), `exponential`, `lognormal_aft` (the old model),

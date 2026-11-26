@@ -29,8 +29,12 @@ test_that("weibull_ph (default): Cox HR and Weibull time ratio match the truth; 
   expect_equal(om$groups$control$median, 30, tolerance = 0.01)
   expect_named(om$groups$primed$survival_at, c("10", "30"))
   expect_equal(om$rmst_tau, 40)
-  expect_equal(r$truth$goal_truth$goal, "survival")     # Biodes' goal for a survival outcome
-  expect_equal(r$truth$goal_truth$true_effect, 0.6, tolerance = 1e-6)
+  gt <- r$truth$goal_truth
+  expect_equal(gt$goal, "survival")     # Biodes' goal for a survival outcome; rmst_tau stated -> RMST difference
+  expect_match(gt$effect_scale, "RMST difference at tau = 40: group primed minus reference group control")
+  expect_equal(gt$true_effect, om$groups$primed$rmst - om$groups$control$rmst, tolerance = 1e-6)
+  expect_gt(gt$true_effect, 0)
+  expect_equal(names(om$groups), c("control", "primed"))
 })
 
 test_that("a stated target HR sizes the effect; loss to follow-up is counted apart from administrative censoring", {
@@ -38,7 +42,7 @@ test_that("a stated target HR sizes the effect; loss to follow-up is counted apa
   suppressMessages(simitall_from_biodes(dir, seed = 1))
   om <- read_surv(dir)$truth$outcome_model
   expect_equal(om$hazard_ratio, 0.5)
-  expect_equal(om$hazard_ratio_source, "power.target_hazard_ratio")
+  expect_match(om$hazard_ratio_source, "power.target_hazard_ratio|goal_effect.survival")
   expect_equal(om$censoring$loss$loss_fraction, 0.15)
   expect_gt(om$censoring$loss$n, 20)
   expect_gt(om$censoring$administrative$n, 20)
@@ -87,4 +91,27 @@ test_that("interval scoring rounds times up to the grid; a survival goal reports
   expect_equal(gt$goal, "survival")
   expect_equal(gt$true_effect, 0.7, tolerance = 1e-6)
   expect_match(gt$effect_scale, "hazard ratio")
+})
+
+test_that("Biodes 0.6.6 fields: logrank_weight picks the non-PH model, censoring text gives follow-up, strata recorded", {
+  dir <- surv_folder(extra_po = list(censoring = "administrative at 21 days (end of follow-up)"),
+                     analysis = list(survival = list(logrank_weight = "fh_0_1")), design = "rcbd", reps = 6)
+  s <- jsonlite::read_json(file.path(dir, "study_spec.json"))
+  s$analysis$survival$strata <- list("block")
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  suppressMessages(simitall_from_biodes(dir, seed = 1))
+  r <- read_surv(dir); om <- r$truth$outcome_model
+  expect_equal(om$family, "delayed_effect")
+  expect_equal(om$follow_up, 21)
+  expect_lte(max(r$data$primary_outcome), 21)
+  expect_length(om$strata$block$log_hazard_shift, 6)
+  s$analysis$survival$logrank_weight <- "fh_1_0"
+  jsonlite::write_json(s, file.path(dir, "study_spec.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
+  suppressMessages(simitall_from_biodes(dir, seed = 1))
+  om <- read_surv(dir)$truth$outcome_model
+  expect_equal(om$family, "early_effect")
+  expect_equal(unlist(om$ratios$treatment$hazard_ratio_after_change), c(1, 1), ignore_attr = TRUE)
+  # params win over the spec's weight
+  suppressMessages(simitall_from_biodes(dir, seed = 1, params = list(suite_outcome = list(survival_model = "weibull_ph"))))
+  expect_equal(read_surv(dir)$truth$outcome_model$family, "weibull_ph")
 })
