@@ -29,9 +29,9 @@ Depends:
     R (>= 4.1.0)
 Imports:
     jsonlite,
-    Matrix,
-    reticulate
+    Matrix
 Suggests:
+    reticulate,
     bioana,
     BGLR,
     ChIPsim,

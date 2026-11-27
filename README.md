@@ -2,6 +2,8 @@
 
 **Simulate the experiment before you run it, with the answer key.**
 
+**[▶ Try it in your browser](https://nirwan1265.github.io/BioDesignGPT/try/): design an experiment in Biodes, then simulate data with Simitall.** Nothing to install; it runs R in the page.
+
 You describe an experiment in plain words. [Biodes](https://github.com/nirwan1265/BioDesignGPT) turns that
 description into a real design: the treatments, the replicates and a randomized field or growth-chamber layout.
 **SimItAll** then creates realistic data for every plot, plant or seed in that layout. It plants effects that
@@ -20,18 +22,69 @@ What this tells you before any money is spent:
 
 | Step | Tool | What happens |
 |---|---|---|
-| 1. Question | you | *"RNA-seq of wild type and mutant Arabidopsis under drought and well-watered conditions, 4 plants each; which genes respond to drought differently in the mutant?"* |
-| 2. Design | [Biodes](https://github.com/nirwan1265/BioDesignGPT/tree/main/examples/showcase/02_rnaseq_drought) | 2 x 2 factorial, 16 plants in 4 blocks, model `y ~ water * genotype + block` |
-| 3. Data and answer key | **SimItAll** (this repository) | 5,000 genes x 16 samples of read counts; 500 genes planted with a mutant-specific drought response |
-| 4. Analysis, graded | [Bioana](https://github.com/nirwan1265/Bioana/tree/main/examples/showcase/02_rnaseq_drought) | DESeq2 with the design's model; how many of the 500 it found, and how many false hits |
+| 1. Question | you | *"Field trial of 24 sorghum hybrids under two nitrogen rates and two irrigation regimes at 3 locations over 2 seasons with 3 replicates; irrigation can only be applied to whole main plots; we want to know whether the nitrogen response differs between hybrids."* |
+| 2. Design | [Biodes](https://github.com/nirwan1265/BioDesignGPT) | split plot: irrigation on whole plots, hybrid x nitrogen in subplots, 1,728 plots; model `y ~ water * genotype * nitrogen + block + (1 \| block:water)` |
+| 3. Data and answer key | **SimItAll** (this repository) | grain yield for every plot, with a planted hybrid x nitrogen interaction of known size and a whole-plot error |
+| 4. Analysis, graded | [Bioana](https://github.com/nirwan1265/Bioana) | the split-plot mixed model; does it find the planted interaction, and how close are the estimates? |
 | 5. Figures | Biopaint | in progress |
 
 ## See it run in R
 
-Three experiments, each starting from a question typed into Biodes. The code below is exactly what produced the
-files in [`examples/showcase/`](examples/showcase), and the `#>` lines are the real R output.
+### The main example: a sorghum split-plot field trial
 
-### 1. RNA-seq: which genes respond to drought differently in the mutant?
+The same question as in the [browser demo](https://nirwan1265.github.io/BioDesignGPT/try/). The `#>` lines are the
+real R output.
+
+```r
+library(studyforge)   # Biodes
+library(simitall)
+q <- "Field trial of 24 sorghum hybrids under two nitrogen rates (0 and 120 kg N/ha) and two irrigation regimes (full and deficit) at 3 locations over 2 seasons with 3 replicates; irrigation can only be applied to whole main plots; we measure grain yield and want to know whether the nitrogen response differs between hybrids."
+a <- studyforge_ask(q)                                                       # Biodes reads the question
+write_design_package(layout_from_spec(a$spec, seed = 2026), a$spec, "sorghum_trial")   # design + randomized layout
+simitall_from_biodes("sorghum_trial", seed = 2026)                          # SimItAll: data + answer key
+#> simitall: simulated 1728 units (continuous outcome) for design 'split_plot_factorial' (y ~ treatment * treatment2 * treatment3 + block + (1 | block:treatment)).
+
+yield <- read.delim("sorghum_trial/sample_metadata_template.tsv")           # grain yield per plot
+head(yield[, c("location", "season", "block", "plot", "water", "genotype", "nitrogen", "primary_outcome")], 5)
+#>     location   season block plot water    genotype    nitrogen primary_outcome
+#> 1 location_1 season_1     1  101  full  genotype_2   0 kg N/ha        124.5469
+#> 2 location_1 season_1     1  101  full genotype_19 120 kg N/ha        127.6459
+#> 3 location_1 season_1     1  101  full genotype_19   0 kg N/ha        100.1582
+#> 4 location_1 season_1     1  101  full  genotype_1   0 kg N/ha        100.5543
+#> 5 location_1 season_1     1  101  full genotype_24   0 kg N/ha        117.9764
+
+truth <- jsonlite::read_json("sorghum_trial/sim_truth.json")                # the answer key
+truth$goal_truth$goal                                                       # what the question asks
+#> [1] "interaction"
+unlist(truth$goal_truth$columns)
+#> treatment3 treatment2
+#> "nitrogen" "genotype"
+dod <- do.call(rbind, lapply(truth$goal_truth$difference_of_differences, as.data.frame))
+dod[c(1, 2, 12, 23), ]       # how much more each hybrid gains from 120 kg N than hybrid 1 does
+#>        level_a     level_b      value
+#> 1  120 kg N/ha  genotype_2  0.4347826
+#> 2  120 kg N/ha  genotype_3  0.8695652
+#> 12 120 kg N/ha genotype_13  5.2173913
+#> 23 120 kg N/ha genotype_24 10.0000000
+unlist(truth$treatment_effects$treatment3)    # the nitrogen effect for hybrid 1
+#>   0 kg N/ha 120 kg N/ha
+#>           0          10
+unlist(truth$random_sd)                       # whole-plot error: irrigation plots within blocks
+#> block:treatment
+#>               5
+```
+
+Biodes saw that irrigation can only go on whole plots and made it a split plot, with its own whole-plot error.
+SimItAll planted exactly that structure: a whole-plot random effect (SD 5), and a nitrogen response that grows
+steadily across the 24 hybrids. An analysis that ignores the whole plots, or misses the interaction, will be
+caught when it is scored against `sim_truth.json`.
+
+### Three more examples
+
+Each starts from a question typed into Biodes. The code below is exactly what produced the files in
+[`examples/showcase/`](examples/showcase), and the `#>` lines are the real R output.
+
+#### 1. RNA-seq: which genes respond to drought differently in the mutant?
 
 ```r
 library(simitall)
@@ -61,7 +114,7 @@ head(goal[, c("feature_id", "effect")], 3)                  # effect = differenc
 Each point is a gene: its drought response in wild type (x) and in the mutant (y). Genes on the dashed line
 respond the same way in both. The 500 planted genes (red) do not, and those are the genes Bioana has to find.
 
-### 2. GWAS: which markers control plant height in 300 sorghum lines?
+#### 2. GWAS: which markers control plant height in 300 sorghum lines?
 
 ```r
 dir <- "examples/showcase/01_gwas_sorghum"                  # alpha lattice, 600 plots, 2 replicates
@@ -90,7 +143,7 @@ head(qtn[order(-abs(qtn$effect)), c("marker_id", "effect", "maf")], 4)
 The genotypes (`genotypes.vcf.gz`) have population structure like a real diversity panel. The 10 planted QTNs
 explain 60% of the variation in plant height, and each has a known effect in cm per allele.
 
-### 3. Survival: does seed priming change time to germination?
+#### 3. Survival: does seed priming change time to germination?
 
 ```r
 dir <- "examples/showcase/03_germination_survival"          # 2 lines x primed/not, 12 trays, 10 seeds per cell
